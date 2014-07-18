@@ -1,4 +1,5 @@
 #Thu Jul 17 17:29:37 CDT 2014
+#Edit this file, and rename to config.properties.
 #Do not remove any keys from this file
 #Any non needed settings can be left blank.
 httpdport=8082
