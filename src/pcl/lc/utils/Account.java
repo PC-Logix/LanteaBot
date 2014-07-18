@@ -15,7 +15,6 @@ public class Account {
 		String user = null;
 		
 		if (IRCBot.authed.containsKey(u.getNick())) {
-			System.out.println("Found user in authed list");
 			return IRCBot.authed.get(u.getNick());
 		} else {
 			event.getBot().sendRaw().rawLineNow("WHOIS " + u.getNick());

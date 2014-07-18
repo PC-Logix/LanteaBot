@@ -41,6 +41,7 @@ public class IRCBot {
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
+	public static HashMap<String, Integer> admins = new HashMap<String,Integer>();
 	public final static String USER_AGENT = "Mozilla/5.0 (I lied this is Java)";
 	public static String ournick = null;
 
@@ -60,8 +61,7 @@ public class IRCBot {
 	public static String enablehttpd = null;
 	public static String proxyhost = null;
 	public static String proxyport = null;
-	public static String admins = null;
-	
+	static String adminlist = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
 	public static Properties prop = new Properties();
@@ -102,7 +102,7 @@ public class IRCBot {
 			httpdport = prop.getProperty("httpdport", "8081");
 			proxyhost = prop.getProperty("proxyhost");
 			proxyport = prop.getProperty("proxyport");
-			admins = prop.getProperty("admins");
+			adminlist = prop.getProperty("admins");
 			
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -164,6 +164,18 @@ public class IRCBot {
 				config.addAutoJoinChannel(channels);
 			}
 		}
+		
+		if (!adminlist.isEmpty()) {
+			if (adminlist.contains(",")) {
+				for (String s: adminlist.split(","))
+			    {
+					admins.put(s, 1);
+			    }
+			} else {
+				admins.put(adminlist, 1);
+			}
+		}
+		
 		config.addCapHandler(new EnableCapHandler("extended-join", true));
 		config.addCapHandler(new EnableCapHandler("account-notify", true));
 		config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));

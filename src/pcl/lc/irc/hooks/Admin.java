@@ -97,9 +97,16 @@ public class Admin extends ListenerAdapter {
 				}
 			}
 
+			if (triggerWord.equals(IRCBot.commandprefix + "listadmins")) {
+				String account = Account.getAccount(event.getUser(), event);
+				if (IRCBot.admins.containsKey(account)) {
+					event.respond("Current admins: " + IRCBot.admins.toString());
+				}
+			}
+			
 			if (triggerWord.equals(IRCBot.commandprefix + "prefix")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					String newPrefix = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					IRCBot.prop.setProperty("commandprefix", newPrefix);
 					IRCBot.commandprefix = newPrefix;
@@ -111,7 +118,7 @@ public class Admin extends ListenerAdapter {
 			if (triggerWord.equals(IRCBot.commandprefix + "join")) {
 				String account = Account.getAccount(event.getUser(), event);
 				System.out.print(account);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					if (event.getBot().getUserChannelDao().getChannel(channel).isInviteOnly()) {
 						sendKnock(channel, event);
@@ -126,7 +133,7 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(IRCBot.commandprefix + "part")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					if (channel.isEmpty()) {
 						channel = event.getChannel().getName();
@@ -140,7 +147,7 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(IRCBot.commandprefix + "shutdown")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					event.respond("Exiting");
 					System.exit(1);
 				}
@@ -148,7 +155,7 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(IRCBot.commandprefix + "flushauth")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					//IRCBot.authed.clear();
 					for(Channel chan : event.getBot().getUserBot().getChannels()) {
 						IRCBot.bot.sendRaw().rawLineNow("who " + chan.getName() + " %an");
@@ -160,7 +167,7 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(IRCBot.commandprefix + "cycle")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					if (channel.isEmpty()) {
 						channel = event.getChannel().getName();
@@ -171,7 +178,7 @@ public class Admin extends ListenerAdapter {
 			}
 			if (triggerWord.equals(IRCBot.commandprefix + "raw")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					String string = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					event.getBot().sendRaw().rawLine(string);
 				}
@@ -179,7 +186,7 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(IRCBot.commandprefix + "chgnick")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					String nick = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					event.getBot().sendRaw().rawLineNow("NICK " + nick);
 				}
@@ -187,7 +194,7 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(IRCBot.commandprefix + "load")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (account.equals("Michiyo")) {
+				if (IRCBot.admins.containsKey(account)) {
 					String module = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					try {
 						IRCBot.config.addListener((Listener) Class.forName( "pcl.lc.irc.hooks." + module ).newInstance());
