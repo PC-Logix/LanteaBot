@@ -169,7 +169,6 @@ public class IRCBot {
 		}
 		
 		if (!adminProps.isEmpty()) {
-			
 			String[] pairs = adminProps.split(",");
 			for (int i=0;i<pairs.length;i++) {
 			    String pair = pairs[i];
@@ -201,8 +200,10 @@ public class IRCBot {
 		}
 
 		try {
-			httpd httpServer = new httpd();
-			httpServer.start();
+			if(!IRCBot.httpdport.isEmpty()) {
+				httpd httpServer = new httpd();
+				httpServer.start();
+			}
 			scheduler = new TaskScheduler();
 			scheduler.start();
 			bot = new PircBotX(config.buildConfiguration());
