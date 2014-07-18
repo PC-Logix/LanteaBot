@@ -1,7 +1,9 @@
 package pcl.lc.irc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -17,6 +19,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.reflections.Reflections;
 
 import pcl.lc.irc.job.TaskScheduler;
+import pcl.lc.utils.CommentedProperties;
 import pcl.lc.utils.TimedHashMap;
 import pcl.lc.httpd.*;
 
@@ -61,10 +64,10 @@ public class IRCBot {
 	public static String enablehttpd = null;
 	public static String proxyhost = null;
 	public static String proxyport = null;
-	static String adminlist = null;
+	static String adminProps = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
-	public static Properties prop = new Properties();
+	public static CommentedProperties prop = new CommentedProperties();
 
 	public static void saveProps() {
 		FileOutputStream output = null;
@@ -102,7 +105,7 @@ public class IRCBot {
 			httpdport = prop.getProperty("httpdport", "8081");
 			proxyhost = prop.getProperty("proxyhost");
 			proxyport = prop.getProperty("proxyport");
-			adminlist = prop.getProperty("admins");
+			adminProps = prop.getProperty("admins");
 			
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -165,14 +168,13 @@ public class IRCBot {
 			}
 		}
 		
-		if (!adminlist.isEmpty()) {
-			if (adminlist.contains(",")) {
-				for (String s: adminlist.split(","))
-			    {
-					admins.put(s, 1);
-			    }
-			} else {
-				admins.put(adminlist, 1);
+		if (!adminProps.isEmpty()) {
+			
+			String[] pairs = adminProps.split(",");
+			for (int i=0;i<pairs.length;i++) {
+			    String pair = pairs[i];
+			    String[] keyValue = pair.split(":");
+			    admins.put(keyValue[0], Integer.valueOf(keyValue[1]));
 			}
 		}
 		
