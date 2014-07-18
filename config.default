@@ -1,0 +1,14 @@
+#Set the needed options below, and rename to config.properties
+#DO NOT remove keys just leave them blank if not needed
+nick=LanteaBot
+httpdport=8081
+server=irc.esper.net
+serverport=6667
+serverpass=
+commandprefix=@
+channels=
+nsaccount=
+nspass=
+proxyhost=
+proxyport=
+admins=
