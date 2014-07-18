@@ -60,6 +60,7 @@ public class IRCBot {
 	public static String enablehttpd = null;
 	public static String proxyhost = null;
 	public static String proxyport = null;
+	public static String admins = null;
 	
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
@@ -101,6 +102,7 @@ public class IRCBot {
 			httpdport = prop.getProperty("httpdport", "8081");
 			proxyhost = prop.getProperty("proxyhost");
 			proxyport = prop.getProperty("proxyport");
+			admins = prop.getProperty("admins");
 			
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -142,7 +144,7 @@ public class IRCBot {
 		
 		IRCBot.INSTANCE = this;
 
-		config.setName("MichiBot").setLogin("lb");
+		config.setName(nick).setLogin("lb");
 		config.setAutoNickChange(true);
 		config.setCapEnabled(true);
 		config.setAutoReconnect(true);
