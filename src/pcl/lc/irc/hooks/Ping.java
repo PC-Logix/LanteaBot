@@ -13,6 +13,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.NoticeEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.TimedHashMap;
 
 /**
  * @author Caitlyn
@@ -25,7 +26,7 @@ public class Ping extends ListenerAdapter {
 		IRCBot.registerCommand("ping");
 	}
 
-	public static HashMap<String, List<Object>> users = new HashMap<String, List<Object>>();
+	public static TimedHashMap<String, List<Object>> users = new TimedHashMap<String, List<Object>>(60000, null);
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
