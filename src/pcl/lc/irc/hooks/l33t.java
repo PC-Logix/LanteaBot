@@ -73,7 +73,7 @@ public class l33t extends ListenerAdapter {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(IRCBot.commandprefix + "1337")) {
+			if (triggerWord.equals(prefix + "1337")) {
 				String s = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 				event.respond(toLeet(s));
 			}

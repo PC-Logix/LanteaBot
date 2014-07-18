@@ -49,7 +49,7 @@ public class isup extends ListenerAdapter {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(IRCBot.commandprefix + "isup")) {
+			if (triggerWord.equals(prefix + "isup")) {
 				String site = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 				boolean rez = ping(site, 1000);
 				if (rez) {

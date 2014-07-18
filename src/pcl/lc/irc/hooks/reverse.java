@@ -30,7 +30,7 @@ public class reverse extends ListenerAdapter {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(IRCBot.commandprefix + "reverse")) {
+			if (triggerWord.equals(prefix + "reverse")) {
 				String s = event.getMessage().substring(event.getMessage().indexOf("reverse") + 7).trim();
 				event.respond(new StringBuffer(Colors.removeFormattingAndColors(s)).reverse().toString());
 			}

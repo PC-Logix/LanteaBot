@@ -41,7 +41,7 @@ public class Rot13 extends ListenerAdapter {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(IRCBot.commandprefix + "rot13")) {
+			if (triggerWord.equals(prefix + "rot13")) {
 				String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
 				event.respond(rot13(s));
 			} 

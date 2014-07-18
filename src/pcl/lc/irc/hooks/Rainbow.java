@@ -14,6 +14,7 @@ import pcl.lc.irc.IRCBot;
  * @author Caitlyn
  *
  */
+@SuppressWarnings("rawtypes")
 public class Rainbow extends ListenerAdapter {
 	public Rainbow() {
 		IRCBot.registerCommand("rainbow");
@@ -59,7 +60,7 @@ public class Rainbow extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 
-			if (triggerWord.equals(IRCBot.commandprefix + "rainbow")) {
+			if (triggerWord.equals(prefix + "rainbow")) {
 				String s = event.getMessage().substring(event.getMessage().indexOf("rainbow") + 7).trim();
 				event.respond(makeRainbow(s));
 			}

@@ -30,7 +30,7 @@ public class EightBall extends ListenerAdapter {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(IRCBot.commandprefix + "8ball")) {
+			if (triggerWord.equals(prefix + "8ball")) {
 				Random generator = new Random();
 				String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
 				int randommessage = generator.nextInt( 4 );

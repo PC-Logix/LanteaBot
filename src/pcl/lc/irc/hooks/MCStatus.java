@@ -38,7 +38,7 @@ public class MCStatus extends ListenerAdapter {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(IRCBot.commandprefix + "mcstatus")) {
+			if (triggerWord.equals(prefix + "mcstatus")) {
 				URL url = new URL("http://status.mojang.com/check");
 				JSONTokener tokener = null;
 				try {

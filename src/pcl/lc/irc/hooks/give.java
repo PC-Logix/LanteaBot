@@ -30,7 +30,7 @@ public class give extends ListenerAdapter {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(IRCBot.commandprefix + "give")) {
+			if (triggerWord.equals(prefix + "give")) {
 				String[] who = event.getMessage().split(" ");
 				event.getChannel().send().action("gives " + who[1] + " some " + who[2]);
 			}
