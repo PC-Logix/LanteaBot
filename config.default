@@ -16,6 +16,7 @@ nsaccount=
 nspass=
 
 #list of Admins format is nsaccount:accesslevel,nsaccount:accesslevel eg: user:9, user2:3
+#Make sure you use nickserv accounts, and not nicknames.
 admins=
 commandprefix=*
 channels=
