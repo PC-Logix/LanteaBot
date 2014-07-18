@@ -1,14 +1,21 @@
-#Set the needed options below, and rename to config.properties
-#DO NOT remove keys just leave them blank if not needed
+#Thu Jul 17 17:29:37 CDT 2014
+#Do not remove any keys from this file
+#Any non needed settings can be left blank.
+httpdport=8082
+
+#IRC Connection Information
 nick=LanteaBot
-httpdport=8081
 server=irc.esper.net
 serverport=6667
 serverpass=
-commandprefix=@
-channels=
-nsaccount=
-nspass=
 proxyhost=
 proxyport=
+
+#NickServ account information.
+nsaccount=
+nspass=
+
+#list of Admins format is nsaccount:accesslevel,nsaccount:accesslevel eg: user:9, user2:3
 admins=
+commandprefix=*
+channels=
