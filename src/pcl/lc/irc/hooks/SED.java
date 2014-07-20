@@ -39,6 +39,13 @@ public class SED extends ListenerAdapter {
 				if (event.getMessage().matches("s/(.+)/(.+)")) {
 					if (!event.getChannel().getName().equals("#oc")) {
 						String message = event.getMessage();
+						if (!message.substring(message.length() - 2).equals("/g")) {
+							if(!message.substring(message.length() - 2).equals("/i")) {
+								if (!message.substring(message.length() - 1).equals("/")) {
+									message = message + "/";
+								}
+							}
+						}
 						if (IRCBot.messages.containsKey(messageEvent)) {
 							try {
 								reply = Unix4j.fromString(IRCBot.messages.get(messageEvent).toString()).sed(message).toStringResult();

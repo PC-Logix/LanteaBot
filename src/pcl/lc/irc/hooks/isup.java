@@ -23,6 +23,7 @@ public class isup extends ListenerAdapter {
 	}
 
 	public static boolean ping(String url, int timeout) {
+
 		url = url.replaceFirst("https", "http"); // Otherwise an exception may be thrown on invalid SSL certificates.
 
 		try {
@@ -51,6 +52,9 @@ public class isup extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "isup")) {
 				String site = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
+				if (!site.startsWith("http://")){
+					site = "http://" + site;
+				}
 				boolean rez = ping(site, 1000);
 				if (rez) {
 					event.respond(site + " Is Up.");

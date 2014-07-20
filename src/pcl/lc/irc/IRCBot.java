@@ -179,7 +179,7 @@ public class IRCBot {
 		
 		config.addCapHandler(new EnableCapHandler("extended-join", true));
 		config.addCapHandler(new EnableCapHandler("account-notify", true));
-		config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
+		//config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
 
 		config.setEncoding(Charset.forName("UTF-8"));
 		config.setServer(server, Integer.parseInt(serverport), serverpass);
