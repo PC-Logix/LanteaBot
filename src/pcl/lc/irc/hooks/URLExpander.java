@@ -18,6 +18,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.utils.HTTPQuery;
+import pcl.lc.utils.TitleExtractor;
 import pcl.lc.utils.getVideoInfo;
 
 /**
@@ -84,14 +85,14 @@ public class URLExpander extends ListenerAdapter {
 							String json = q.readWhole().replace("[", "").replace("]", "");
 							q.close();
 							String jItem = new JSONObject(json).getString("long-url");
+							System.out.println(jItem);
 							if (jItem.indexOf("youtube") != -1 || jItem.indexOf("youtu.be") != -1) {
 								String vinfo = getVideoInfo.getVideoSearch(jItem, true, false);
 								event.respond(vinfo);
 							} else {
-								event.respond(jItem);
+								String title = TitleExtractor.getPageTitle(jItem);
+								event.respond(jItem + " Page title: " + title);
 							}
-						} else {
-							System.out.println("Not Supported");
 						}
 					} catch (Exception e) { }
 				}

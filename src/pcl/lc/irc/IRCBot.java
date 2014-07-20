@@ -45,7 +45,7 @@ public class IRCBot {
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
 	public static HashMap<String, Integer> admins = new HashMap<String,Integer>();
-	public final static String USER_AGENT = "Mozilla/5.0 (I lied this is Java)";
+	public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 	public static String ournick = null;
 
 	private Logger log = Logger.getLogger("lanteabot");
