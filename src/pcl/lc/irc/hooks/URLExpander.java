@@ -10,6 +10,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -52,7 +54,21 @@ public class URLExpander extends ListenerAdapter {
 		String s = ourinput.trim();
 		if (s.length() > 1) {
 			if (event.getChannel().getName() != "#oc") {
-				if (s.startsWith("http://") || s.startsWith("www.//")) {
+				int matchStart = 1;
+				int matchEnd = 1;
+				final Pattern urlPattern = Pattern.compile(
+				        "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+				                + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
+				                + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+				        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+				Matcher matcher = urlPattern.matcher(s);
+				while (matcher.find()) {
+				    matchStart = matcher.start(1);
+				    matchEnd = matcher.end();
+				    // now you have the offsets of a URL match
+				}
+				String url = s.substring(matchStart, matchEnd);
+				if (url != null) {
 					HTTPQuery q = null;
 					HTTPQuery supportedServices = null;
 					try {
@@ -60,10 +76,10 @@ public class URLExpander extends ListenerAdapter {
 						supportedServices.connect(true,false);
 						String services = supportedServices.readWhole();
 						supportedServices.close();
-						URL myUrl = new URL(s);
+						URL myUrl = new URL(url);
 						if (services.contains(myUrl.getHost())) {
-							q = HTTPQuery.create("http://api.longurl.org/v2/expand?format=json&url="+URLEncoder.encode(s,"UTF8"));
-							s = s.replace("http://", "").replace("https://", "");
+							q = HTTPQuery.create("http://api.longurl.org/v2/expand?format=json&url="+URLEncoder.encode(url,"UTF8"));
+							url = url.replace("http://", "").replace("https://", "");
 							q.connect(true,false);
 							String json = q.readWhole().replace("[", "").replace("]", "");
 							q.close();
@@ -74,6 +90,8 @@ public class URLExpander extends ListenerAdapter {
 							} else {
 								event.respond(jItem);
 							}
+						} else {
+							System.out.println("Not Supported");
 						}
 					} catch (Exception e) { }
 				}

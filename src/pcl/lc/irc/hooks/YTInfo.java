@@ -20,7 +20,7 @@ public class YTInfo extends ListenerAdapter {
 		String s = ourinput.trim();
 		if (s.length() > 1) {
 			if (event.getChannel().getName() != "#oc") {
-				if (s.indexOf("youtube") != -1 || s.indexOf("youtu.be") != -1) {
+				if (s.indexOf("youtube.com") != -1 || s.indexOf("youtu.be") != -1) {
 					String vinfo = getVideoInfo.getVideoSearch(s, true, false);
 					event.respond(vinfo);
 				}
