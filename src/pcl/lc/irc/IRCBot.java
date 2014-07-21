@@ -23,6 +23,7 @@ import pcl.lc.utils.CommentedProperties;
 import pcl.lc.utils.TimedHashMap;
 import pcl.lc.httpd.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -89,23 +90,30 @@ public class IRCBot {
 		InputStream input = null;
 
 		try {
-			input = new FileInputStream("config.properties");
+			
+	        File file = new File("config.properties");
+	        if (!file.exists()) {
+	            System.out.println("Config file missing, edit config.default, and rename to config.properties");
+	            System.exit(1);
+	        }
+			
+			input = new FileInputStream(file);
 			// load a properties file
 			prop.load(input);
 
 			server = prop.getProperty("server", "irc.esper.net");
 			serverport = prop.getProperty("serverport", "6667");
-			serverpass = prop.getProperty("serverpass");
+			serverpass = prop.getProperty("serverpass", "");
 			nick = prop.getProperty("nick","LanteaBot");
-			nspass = prop.getProperty("nspass");
-			nsaccount = prop.getProperty("nsaccount");
-			channels = prop.getProperty("channels");
+			nspass = prop.getProperty("nspass", "");
+			nsaccount = prop.getProperty("nsaccount", "");
+			channels = prop.getProperty("channels", "");
 			commandprefix = prop.getProperty("commandprefix", "@");
 			enablehttpd = prop.getProperty("enablehttpd", "true");
 			httpdport = prop.getProperty("httpdport", "8081");
-			proxyhost = prop.getProperty("proxyhost");
-			proxyport = prop.getProperty("proxyport");
-			adminProps = prop.getProperty("admins");
+			proxyhost = prop.getProperty("proxyhost", "");
+			proxyport = prop.getProperty("proxyport", "");
+			adminProps = prop.getProperty("admins", "");
 			
 		} catch (IOException ex) {
 			ex.printStackTrace();
