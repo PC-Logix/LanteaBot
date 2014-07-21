@@ -53,8 +53,8 @@ public class URLExpander extends ListenerAdapter {
 		super.onMessage(event);
 		String ourinput = event.getMessage();
 		String s = ourinput.trim();
+		if (!event.getChannel().getName().equals("#oc")) {
 		if (s.length() > 1) {
-			if (event.getChannel().getName() != "#oc") {
 				int matchStart = 1;
 				int matchEnd = 1;
 				final Pattern urlPattern = Pattern.compile(
@@ -66,7 +66,6 @@ public class URLExpander extends ListenerAdapter {
 				while (matcher.find()) {
 				    matchStart = matcher.start(1);
 				    matchEnd = matcher.end();
-				    // now you have the offsets of a URL match
 				}
 				String url = s.substring(matchStart, matchEnd);
 				if (url != null) {
@@ -87,7 +86,15 @@ public class URLExpander extends ListenerAdapter {
 							String jItem = new JSONObject(json).getString("long-url");
 							System.out.println(jItem);
 							if (jItem.indexOf("youtube") != -1 || jItem.indexOf("youtu.be") != -1) {
-								String vinfo = getVideoInfo.getVideoSearch(jItem, true, false);
+								String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+
+								Pattern compiledPattern = Pattern.compile(pattern);
+								Matcher matcher1 = compiledPattern.matcher(url);
+
+								if (matcher1.find()) {
+									url = matcher1.group();
+								}
+								String vinfo = getVideoInfo.getVideoSearch(url, true, false);
 								event.respond(vinfo);
 							} else {
 								String title = TitleExtractor.getPageTitle(jItem);
