@@ -65,6 +65,7 @@ public class IRCBot {
 	public static String enablehttpd = null;
 	public static String proxyhost = null;
 	public static String proxyport = null;
+	public static String enableTLS = null;
 	static String adminProps = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
@@ -114,6 +115,7 @@ public class IRCBot {
 			proxyhost = prop.getProperty("proxyhost", "");
 			proxyport = prop.getProperty("proxyport", "");
 			adminProps = prop.getProperty("admins", "");
+			enableTLS = prop.getProperty("enableTLS", "");
 			
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -162,7 +164,7 @@ public class IRCBot {
 		config.setAutoNickChange(true);
 		if (!nspass.isEmpty())
 			config.setNickservPassword(nspass);
-		
+
 		if (!channels.isEmpty()) {
 			if (channels.contains(",")) {
 				String[] joinChannels = channels.split(",");
@@ -187,7 +189,8 @@ public class IRCBot {
 		
 		config.addCapHandler(new EnableCapHandler("extended-join", true));
 		config.addCapHandler(new EnableCapHandler("account-notify", true));
-		//config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
+		if (enableTLS.equals("true"))
+			config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
 
 		config.setEncoding(Charset.forName("UTF-8"));
 		config.setServer(server, Integer.parseInt(serverport), serverpass);
