@@ -1,6 +1,3 @@
-/**
- * 
- */
 package pcl.lc.irc.hooks;
 
 import java.io.InputStream;
