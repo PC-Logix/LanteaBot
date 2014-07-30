@@ -40,7 +40,7 @@ public class getVideoInfo {
 	}
 	
 	
-	public String getVideoInfo(String vID) {
+	public String returnVideoInfo(String vID) {
 		HTTPQuery q = null;
 
 		try {

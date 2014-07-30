@@ -26,7 +26,7 @@ public class Drama extends ListenerAdapter {
 	}
 
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
@@ -41,18 +41,11 @@ public class Drama extends ListenerAdapter {
 				URL obj = new URL("http://asie.pl/drama.php?plain");
 				try {
 					HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-					// optional default is GET
 					con.setRequestMethod("GET");
-
-					//add request header
 					con.setRequestProperty("User-Agent", IRCBot.USER_AGENT);
-
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(con.getInputStream()));
+					BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 					String inputLine;
 					StringBuffer response = new StringBuffer();
-
 					while ((inputLine = in.readLine()) != null) {
 						response.append(inputLine);
 					}
@@ -61,8 +54,6 @@ public class Drama extends ListenerAdapter {
 				} catch (IOException ex) {
 					event.respond("Server returned an error " + ex);
 				}
-				//print result
-
 			}
 		}
 	}

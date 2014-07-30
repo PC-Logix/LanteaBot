@@ -3,10 +3,6 @@
  */
 package pcl.lc.irc.hooks;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;

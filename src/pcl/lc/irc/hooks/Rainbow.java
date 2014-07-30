@@ -49,7 +49,7 @@ public class Rainbow extends ListenerAdapter {
 		return messageout;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);

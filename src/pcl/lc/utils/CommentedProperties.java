@@ -10,16 +10,19 @@ import java.util.*;
  * 
  * Written for Java version 1.4
  */
+@SuppressWarnings("serial")
 public class CommentedProperties extends java.util.Properties {
 
 	/**
 	 * Use a Vector to keep a copy of lines that are a comment or 'blank'
 	 */
+	@SuppressWarnings("rawtypes")
 	public Vector lineData = new Vector(0, 1);
 
 	/**
 	 * Use a Vector to keep a copy of lines containing a key, i.e. they are a property.
 	 */
+	@SuppressWarnings("rawtypes")
 	public Vector keyData = new Vector(0, 1);
 
 	/**
@@ -27,6 +30,7 @@ public class CommentedProperties extends java.util.Properties {
 	 * Overload the load method in Properties so we can keep comment and blank lines.
 	 * @param   inStream   The InputStream to read.
 	 */
+	@SuppressWarnings("unchecked")
 	public void load(InputStream inStream) throws IOException
 	{
 		// The spec says that the file must be encoded using ISO-8859-1.
@@ -290,6 +294,7 @@ public class CommentedProperties extends java.util.Properties {
 	 * @param   keyString	 The Property key.
 	 * @param   value		 The value of this Property.
 	 */
+	@SuppressWarnings("unchecked")
 	public void add(String keyString, String value)
 	{
 		put(keyString, value);
@@ -303,6 +308,7 @@ public class CommentedProperties extends java.util.Properties {
 	 * @param   line The string to add to the end, make sure this is a comment
 	 *			   or a 'whitespace' line.
 	 */
+	@SuppressWarnings("unchecked")
 	public void addLine(String line)
 	{
 		lineData.add(line);

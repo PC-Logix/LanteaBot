@@ -4,7 +4,6 @@
 package pcl.lc.irc.hooks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;

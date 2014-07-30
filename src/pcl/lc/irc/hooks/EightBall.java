@@ -14,7 +14,7 @@ import pcl.lc.irc.IRCBot;
  * @author Caitlyn
  *
  */
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({ "rawtypes" })
 public class EightBall extends ListenerAdapter {
 	public EightBall() {
 		IRCBot.registerCommand("8ball");
@@ -31,10 +31,12 @@ public class EightBall extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "8ball")) {
-				Random generator = new Random();
-				String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
-				int randommessage = generator.nextInt( 4 );
-				event.respond(ballmessages[randommessage]);
+				if (ourinput.length() > prefix.length() + "8ball".length()) {
+					Random generator = new Random();
+					String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
+					int randommessage = generator.nextInt( 4 );
+					event.respond(ballmessages[randommessage]);
+				}
 			}
 		}
 	}

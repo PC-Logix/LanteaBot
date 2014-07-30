@@ -28,7 +28,7 @@ public class MCStatus extends ListenerAdapter {
 			return Colors.NORMAL + Colors.RED + Colors.BOLD + "Down" + Colors.NORMAL;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);

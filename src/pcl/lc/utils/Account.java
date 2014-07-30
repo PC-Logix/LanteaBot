@@ -11,6 +11,7 @@ import org.pircbotx.hooks.events.WhoisEvent;
 import pcl.lc.irc.IRCBot;
 
 public class Account {
+	@SuppressWarnings("rawtypes")
 	public static String getAccount(User u, MessageEvent event) {
 		String user = null;
 		
