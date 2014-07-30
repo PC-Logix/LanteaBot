@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +19,7 @@ import org.json.JSONObject;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.HTTPQuery;
 import pcl.lc.utils.TitleExtractor;
 import pcl.lc.utils.getVideoInfo;
@@ -25,8 +28,12 @@ import pcl.lc.utils.getVideoInfo;
  * @author caitlyn
  *
  */
+@SuppressWarnings("rawtypes")
 public class URLExpander extends ListenerAdapter {
-
+	List<String> disabledChannels;
+	public URLExpander() throws IOException {
+		disabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("urldisabled-channels", "").split(",")));
+	}
 	
 	public static boolean find(File f, String searchString) {
 	    boolean result = false;
@@ -53,7 +60,7 @@ public class URLExpander extends ListenerAdapter {
 		super.onMessage(event);
 		String ourinput = event.getMessage();
 		String s = ourinput.trim();
-		if (!event.getChannel().getName().equals("#oc")) {
+		if (!disabledChannels.contains(event.getChannel().getName().toString())) {
 		if (s.length() > 1) {
 				int matchStart = 1;
 				int matchEnd = 1;
@@ -87,10 +94,8 @@ public class URLExpander extends ListenerAdapter {
 							System.out.println(jItem);
 							if (jItem.indexOf("youtube") != -1 || jItem.indexOf("youtu.be") != -1) {
 								String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
-
 								Pattern compiledPattern = Pattern.compile(pattern);
 								Matcher matcher1 = compiledPattern.matcher(url);
-
 								if (matcher1.find()) {
 									url = matcher1.group();
 								}
