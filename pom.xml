@@ -8,9 +8,6 @@
     <resources>
       <resource>
         <directory>botsrc</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
       </resource>
     </resources>
     <plugins>
@@ -40,54 +37,16 @@
 		<artifactId>commons-lang3</artifactId>
 		<version>3.3.2</version>
 	</dependency>
-<dependency>
-	<groupId>commons-validator</groupId>
-	<artifactId>commons-validator</artifactId>
-	<version>1.4.0</version>
-</dependency>
-  </dependencies>
-</project>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>LanteaBot</groupId>
-  <artifactId>LanteaBot</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>botsrc</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.unix4j</groupId>
-  		<artifactId>unix4j-command</artifactId>
-  		<version>0.3</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.reflections</groupId>
-  		<artifactId>reflections</artifactId>
-  		<version>0.9.9-RC1</version>
-  	</dependency>
-  	<dependency>
-		<groupId>org.apache.commons</groupId>
-		<artifactId>commons-lang3</artifactId>
-		<version>3.3.2</version>
+	<dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.1</version>
+        <scope>provided</scope>
+	</dependency>
+	<dependency>
+		<groupId>xstream</groupId>
+		<artifactId>xstream</artifactId>
+		<version>1.2.2</version>
 	</dependency>
   </dependencies>
 </project>
