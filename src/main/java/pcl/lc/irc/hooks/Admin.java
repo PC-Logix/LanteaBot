@@ -187,7 +187,7 @@ public class Admin extends ListenerAdapter {
 				if (IRCBot.admins.containsKey(account)) {
 					
 					Runtime r = Runtime.getRuntime();
-					Process p = r.exec("git pull", null, new File("~/LanteaBot/"));
+					Process p = r.exec("/usr/bin/git pull", null, new File("~/LanteaBot/"));
 					p.waitFor();
 					BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					String line = "";
@@ -199,7 +199,7 @@ public class Admin extends ListenerAdapter {
 					b.close();
 					
 					Runtime r2 = Runtime.getRuntime();
-					Process p2 = r2.exec("gradle build", null, new File("~/LanteaBot/"));
+					Process p2 = r2.exec("/usr/bin/gradle build", null, new File("~/LanteaBot/"));
 					p2.waitFor();
 					BufferedReader b2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
 					String line2 = "";
