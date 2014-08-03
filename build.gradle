@@ -1,0 +1,20 @@
+repositories {
+    mavenCentral()
+}
+apply plugin: 'java'
+
+dependencies { 
+  compile fileTree(dir: 'lib', includes: ['*.jar'])
+  compile 'org.unix4j:unix4j-command:0.3'
+  compile 'org.reflections:reflections:0.9.9-RC1'
+  compile 'org.apache.commons:commons-lang3:3.3.2'
+  compile 'com.google.code.gson:gson:2.1'
+  compile 'xstream:xstream:1.2.2'
+}
+
+jar {
+   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest {
+        attributes 'Main-Class': 'AppStub'
+    }
+}
