@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -29,10 +30,9 @@ import pcl.lc.utils.TimedHashMap;
 
 public class IRCBot {
 
-	private static IRCBot INSTANCE;
 
 	public static Logger getLog() {
-		return IRCBot.INSTANCE.log;
+		return IRCBot.log;
 	}
 
 
@@ -42,6 +42,7 @@ public class IRCBot {
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
 	public static HashMap<String, Integer> admins = new HashMap<String,Integer>();
+	public static HashMap<String, Object> botConfig = new HashMap<String, Object>();
 	public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 	public static String ournick = null;
 
@@ -49,9 +50,6 @@ public class IRCBot {
 	public static PircBotX bot;
 	private TaskScheduler scheduler;
 
-	public static String server = null;
-	public static String serverport = null;
-	public static String serverpass = null;
 	public static String nick = null;
 	public static String nspass = null;
 	public static String nsaccount = null;
@@ -91,16 +89,15 @@ public class IRCBot {
 	        File file = new File("config.properties");
 	        if (!file.exists()) {
 	            System.out.println("Config file missing, edit config.default, and rename to config.properties");
-	            System.exit(1);
+	            file.createNewFile();
 	        }
 			
 			input = new FileInputStream(file);
 			// load a properties file
 			prop.load(input);
-
-			server = prop.getProperty("server", "irc.esper.net");
-			serverport = prop.getProperty("serverport", "6667");
-			serverpass = prop.getProperty("serverpass", "");
+botConfig.put("server", prop.getProperty("server", "irc.esper.net"));
+botConfig.put("serverport", prop.getProperty("serverport", "6667"));
+botConfig.put("serverpass", prop.getProperty("serverpass", ""));
 			nick = prop.getProperty("nick","LanteaBot");
 			nspass = prop.getProperty("nspass", "");
 			nsaccount = prop.getProperty("nsaccount", "");
@@ -112,7 +109,7 @@ public class IRCBot {
 			proxyport = prop.getProperty("proxyport", "");
 			adminProps = prop.getProperty("admins", "");
 			enableTLS = prop.getProperty("enableTLS", "");
-			
+			saveProps();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -153,8 +150,6 @@ public class IRCBot {
 			System.setProperty("socksProxyPort",proxyport);
 		}
 		
-		IRCBot.INSTANCE = this;
-
 		config.setName(nick).setLogin("lb");
 		config.setAutoNickChange(true);
 		config.setCapEnabled(true);
@@ -192,7 +187,7 @@ public class IRCBot {
 			config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
 
 		config.setEncoding(Charset.forName("UTF-8"));
-		config.setServer(server, Integer.parseInt(serverport), serverpass);
+		config.setServer(botConfig.get("server").toString(), Integer.parseInt(botConfig.get("serverport").toString()), botConfig.get("serverpass").toString());
 
 		//Load all classes in the pcl.lc.irc.hooks package.
 		Reflections plugins = new Reflections("pcl.lc.irc.hooks");
