@@ -186,9 +186,8 @@ public class Admin extends ListenerAdapter {
 				String account = Account.getAccount(event.getUser(), event);			
 				if (IRCBot.admins.containsKey(account)) {
 					
-					
 					Runtime r = Runtime.getRuntime();
-					Process p = r.exec("gradle build", null, new File("~/LanteaBot/"));
+					Process p = r.exec("git pull", null, new File("~/LanteaBot/"));
 					p.waitFor();
 					BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					String line = "";
@@ -198,6 +197,18 @@ public class Admin extends ListenerAdapter {
 					}
 
 					b.close();
+					
+					Runtime r2 = Runtime.getRuntime();
+					Process p2 = r2.exec("gradle build", null, new File("~/LanteaBot/"));
+					p2.waitFor();
+					BufferedReader b2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
+					String line2 = "";
+
+					while ((line2 = b2.readLine()) != null) {
+					  System.out.println(line2);
+					}
+
+					b2.close();
 					
 					
 					//Code to restart the bot after the gradle build finishes.
