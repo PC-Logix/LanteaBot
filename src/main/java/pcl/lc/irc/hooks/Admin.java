@@ -72,7 +72,7 @@ public class Admin extends ListenerAdapter {
 	public int getPull() throws InterruptedException, IOException {
 		File pathToExecutable = new File( "/usr/bin/git" );
 		ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "pull");
-		builder.directory( new File(System.getProperty("user.home") + "LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+		builder.directory( new File(System.getProperty("user.home") + "/LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
 		builder.redirectErrorStream(true);
 		Process process =  builder.start();
 
@@ -92,7 +92,7 @@ public class Admin extends ListenerAdapter {
 	public int gradleBuild() throws InterruptedException, IOException {
 		File pathToExecutable = new File( "/usr/bin/gradle" );
 		ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "build");
-		builder.directory( new File(System.getProperty("user.home") + "LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+		builder.directory( new File(System.getProperty("user.home") + "/LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
 		builder.redirectErrorStream(true);
 		Process process =  builder.start();
 
