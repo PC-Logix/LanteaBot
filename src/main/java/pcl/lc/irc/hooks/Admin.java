@@ -2,8 +2,10 @@ package pcl.lc.irc.hooks;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
@@ -66,6 +68,47 @@ public class Admin extends ListenerAdapter {
 		}
 	}
 
+
+	public int getPull() throws InterruptedException, IOException {
+		File pathToExecutable = new File( "/usr/bin/git" );
+		ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "pull");
+		builder.directory( new File( "~/LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+		builder.redirectErrorStream(true);
+		Process process =  builder.start();
+
+		Scanner s = new Scanner(process.getInputStream());
+		StringBuilder text = new StringBuilder();
+		while (s.hasNextLine()) {
+			text.append(s.nextLine());
+			text.append("\n");
+		}
+		s.close();
+
+		int result = process.waitFor();
+		return result;
+	}
+
+
+	public int gradleBuild() throws InterruptedException, IOException {
+		File pathToExecutable = new File( "/usr/bin/gradle" );
+		ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "build");
+		builder.directory( new File( "~/LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+		builder.redirectErrorStream(true);
+		Process process =  builder.start();
+
+		Scanner s = new Scanner(process.getInputStream());
+		StringBuilder text = new StringBuilder();
+		while (s.hasNextLine()) {
+			text.append(s.nextLine());
+			text.append("\n");
+		}
+		s.close();
+
+		int result = process.waitFor();
+		return result;
+	}
+
+
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
@@ -109,7 +152,7 @@ public class Admin extends ListenerAdapter {
 					event.respond("Current admins: " + IRCBot.admins.toString());
 				}
 			}
-			
+
 			if (triggerWord.equals(IRCBot.commandprefix + "prefix")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
@@ -162,78 +205,55 @@ public class Admin extends ListenerAdapter {
 			if (triggerWord.equals(IRCBot.commandprefix + "restart")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
-					  final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-					  final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+					final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+					final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
-					  /* is it a jar file? */
-					  if(!currentJar.getName().endsWith(".jar"))
-					    return;
+					/* is it a jar file? */
+					if(!currentJar.getName().endsWith(".jar"))
+						return;
 
-					  /* Build command: java -jar application.jar */
-					  final ArrayList<String> command = new ArrayList<String>();
-					  command.add(javaBin);
-					  command.add("-jar");
-					  command.add(currentJar.getPath());
+					/* Build command: java -jar application.jar */
+					final ArrayList<String> command = new ArrayList<String>();
+					command.add(javaBin);
+					command.add("-jar");
+					command.add(currentJar.getPath());
 
-					  final ProcessBuilder builder = new ProcessBuilder(command);
-					  builder.start();
-					  System.exit(0);
+					final ProcessBuilder builder = new ProcessBuilder(command);
+					builder.start();
+					System.exit(0);
 				}
 			}
-			
-			
+
+
 			if (triggerWord.equals(IRCBot.commandprefix + "update")) {
 				String account = Account.getAccount(event.getUser(), event);			
 				if (IRCBot.admins.containsKey(account)) {
-					
-					System.out.println(new File("/usr/bin/git").exists());
-					
-					Runtime r = Runtime.getRuntime();
-					Process p = r.exec("/usr/bin/git pull", null, new File("~/LanteaBot/"));
-					p.waitFor();
-					BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					String line = "";
 
-					while ((line = b.readLine()) != null) {
-					  System.out.println(line);
-					}
+					getPull();
+					gradleBuild();
 
-					b.close();
-					
-					Runtime r2 = Runtime.getRuntime();
-					Process p2 = r2.exec("/usr/bin/gradle build", null, new File("~/LanteaBot/"));
-					p2.waitFor();
-					BufferedReader b2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-					String line2 = "";
 
-					while ((line2 = b2.readLine()) != null) {
-					  System.out.println(line2);
-					}
-
-					b2.close();
-					
-					
 					//Code to restart the bot after the gradle build finishes.
-					  final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-					  final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+					final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+					final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
-					  /* is it a jar file? */
-					  if(!currentJar.getName().endsWith(".jar"))
-					    return;
+					/* is it a jar file? */
+					if(!currentJar.getName().endsWith(".jar"))
+						return;
 
-					  /* Build command: java -jar application.jar */
-					  final ArrayList<String> command = new ArrayList<String>();
-					  command.add(javaBin);
-					  command.add("-jar");
-					  command.add(currentJar.getPath());
+					/* Build command: java -jar application.jar */
+					final ArrayList<String> command = new ArrayList<String>();
+					command.add(javaBin);
+					command.add("-jar");
+					command.add(currentJar.getPath());
 
-					  final ProcessBuilder builder = new ProcessBuilder(command);
-					  builder.start();
-					  System.exit(0);
+					final ProcessBuilder builder = new ProcessBuilder(command);
+					builder.start();
+					System.exit(0);
 				}
 			}
-			
-			
+
+
 			if (triggerWord.equals(IRCBot.commandprefix + "flushauth")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
