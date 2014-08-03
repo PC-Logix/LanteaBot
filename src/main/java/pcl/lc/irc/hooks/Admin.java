@@ -186,6 +186,8 @@ public class Admin extends ListenerAdapter {
 				String account = Account.getAccount(event.getUser(), event);			
 				if (IRCBot.admins.containsKey(account)) {
 					
+					System.out.println(new File("/usr/bin/git").exists());
+					
 					Runtime r = Runtime.getRuntime();
 					Process p = r.exec("/usr/bin/git pull", null, new File("~/LanteaBot/"));
 					p.waitFor();
