@@ -1,9 +1,15 @@
 package pcl.lc.irc.hooks;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
+
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 
@@ -153,6 +159,68 @@ public class Admin extends ListenerAdapter {
 				}
 			}
 
+			if (triggerWord.equals(IRCBot.commandprefix + "restart")) {
+				String account = Account.getAccount(event.getUser(), event);
+				if (IRCBot.admins.containsKey(account)) {
+					  final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+					  final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+					  /* is it a jar file? */
+					  if(!currentJar.getName().endsWith(".jar"))
+					    return;
+
+					  /* Build command: java -jar application.jar */
+					  final ArrayList<String> command = new ArrayList<String>();
+					  command.add(javaBin);
+					  command.add("-jar");
+					  command.add(currentJar.getPath());
+
+					  final ProcessBuilder builder = new ProcessBuilder(command);
+					  builder.start();
+					  System.exit(0);
+				}
+			}
+			
+			
+			if (triggerWord.equals(IRCBot.commandprefix + "update")) {
+				String account = Account.getAccount(event.getUser(), event);			
+				if (IRCBot.admins.containsKey(account)) {
+					
+					
+					Runtime r = Runtime.getRuntime();
+					Process p = r.exec("gradle build", null, new File("~/LanteaBot/"));
+					p.waitFor();
+					BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					String line = "";
+
+					while ((line = b.readLine()) != null) {
+					  System.out.println(line);
+					}
+
+					b.close();
+					
+					
+					//Code to restart the bot after the gradle build finishes.
+					  final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+					  final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+					  /* is it a jar file? */
+					  if(!currentJar.getName().endsWith(".jar"))
+					    return;
+
+					  /* Build command: java -jar application.jar */
+					  final ArrayList<String> command = new ArrayList<String>();
+					  command.add(javaBin);
+					  command.add("-jar");
+					  command.add(currentJar.getPath());
+
+					  final ProcessBuilder builder = new ProcessBuilder(command);
+					  builder.start();
+					  System.exit(0);
+				}
+			}
+			
+			
 			if (triggerWord.equals(IRCBot.commandprefix + "flushauth")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
