@@ -201,6 +201,13 @@ public class Admin extends ListenerAdapter {
 					System.exit(1);
 				}
 			}
+			
+			if (triggerWord.equals(IRCBot.commandprefix + "test")) {
+				String account = Account.getAccount(event.getUser(), event);
+				if (IRCBot.admins.containsKey(account)) {
+					event.respond("Success");
+				}
+			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "restart")) {
 				String account = Account.getAccount(event.getUser(), event);
