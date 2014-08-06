@@ -114,7 +114,6 @@ public class Admin extends ListenerAdapter {
 			IRCBot.httpServer.stop();
 		}
 		
-		//Code to restart the bot after the gradle build finishes.
 		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 		final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 

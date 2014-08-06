@@ -26,10 +26,10 @@ public class lookup extends ListenerAdapter {
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {
-			String[] firstWord = StringUtils.split(trigger);
-			String triggerWord = firstWord[0];
+			String[] message = StringUtils.split(trigger);
+			String triggerWord = message[0];
 			if (triggerWord.equals(prefix + "lookup")) {
-				InetAddress addr = InetAddress.getByName("cube.stary2001.co.uk");
+				InetAddress addr = InetAddress.getByName(message[1]);
 				event.respond("Hostname: " + addr.getHostName() + " IP: " + addr.getHostAddress());
 			}
 		}

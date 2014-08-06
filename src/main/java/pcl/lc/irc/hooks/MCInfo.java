@@ -37,8 +37,8 @@ public class MCInfo extends ListenerAdapter {
 				String server = request[1];
 				String port = request[2];
 				System.out.println(server + ":" + port);
-				MinecraftPingReply data = new MinecraftPing().getPing(new MinecraftPingOptions().setHostname(server).setPort(Integer.parseInt(port)));
-				System.out.println(data.getDescription() + "  --  " + data.getPlayers().getOnline() + "/" + data.getPlayers().getMax());
+				MinecraftPingReply data = new MinecraftPing().getPing(server, Integer.parseInt(port));
+				event.respond("Server info: Version: " + data.getVersion() + " MOTD: " + data.getMotd() + " Players: " + data.getOnlinePlayers() + "/" + data.getMaxPlayers());
 			}
 		}
 	}
