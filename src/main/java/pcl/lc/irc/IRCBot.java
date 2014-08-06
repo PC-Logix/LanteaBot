@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -25,6 +24,7 @@ import org.reflections.Reflections;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.job.TaskScheduler;
+import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.CommentedProperties;
 import pcl.lc.utils.TimedHashMap;
 
@@ -65,6 +65,8 @@ public class IRCBot {
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
 
+	public static httpd httpServer = new httpd();
+	
 	public static void saveProps() {
 		FileOutputStream output = null;
 		try {
@@ -95,9 +97,9 @@ public class IRCBot {
 			input = new FileInputStream(file);
 			// load a properties file
 			prop.load(input);
-botConfig.put("server", prop.getProperty("server", "irc.esper.net"));
-botConfig.put("serverport", prop.getProperty("serverport", "6667"));
-botConfig.put("serverpass", prop.getProperty("serverpass", ""));
+			botConfig.put("server", prop.getProperty("server", "irc.esper.net"));
+			botConfig.put("serverport", prop.getProperty("serverport", "6667"));
+			botConfig.put("serverpass", prop.getProperty("serverpass", ""));
 			nick = prop.getProperty("nick","LanteaBot");
 			nspass = prop.getProperty("nspass", "");
 			nsaccount = prop.getProperty("nsaccount", "");
@@ -206,9 +208,13 @@ botConfig.put("serverpass", prop.getProperty("serverpass", ""));
 
 		try {
 			if(!IRCBot.httpdport.isEmpty()) {
-				httpd httpServer = new httpd();
+				
 				httpServer.start();
 			}
+
+			WikiChangeWatcher WikiChange = new WikiChangeWatcher();
+			WikiChange.start();
+			
 			scheduler = new TaskScheduler();
 			scheduler.start();
 			bot = new PircBotX(config.buildConfiguration());
