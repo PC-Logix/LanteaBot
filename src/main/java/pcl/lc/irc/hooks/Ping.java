@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.pircbotx.User;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.NoticeEvent;
+
+import com.google.common.base.Joiner;
 
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.TimedHashMap;
@@ -35,14 +38,23 @@ public class Ping extends ListenerAdapter {
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {
-			String[] firstWord = StringUtils.split(trigger);
-			String triggerWord = firstWord[0];
+			String[] message = StringUtils.split(trigger);
+			String triggerWord = message[0];
 			if (triggerWord.equals(prefix + "p") || triggerWord.equals(prefix + "ping")) {
 				List<Object> eventData = new ArrayList<Object>();
 				eventData.add(event.getChannel().getName());
 				eventData.add(System.currentTimeMillis());
-				users.put(event.getUser().getNick(), eventData);
-				IRCBot.bot.sendIRC().ctcpCommand(event.getUser().getNick(), "PING " + System.currentTimeMillis());
+				if (message.length > 1) {
+					for (User u : event.getChannel().getUsers()) {
+						if(u.getNick().toLowerCase().equals(message[1])) {
+							users.put(message[1].toLowerCase(), eventData);
+							IRCBot.bot.sendIRC().ctcpCommand(message[1].toLowerCase(), "PING " + System.currentTimeMillis());	
+						}
+					}
+				} else {
+					users.put(event.getUser().getNick().toLowerCase(), eventData);
+					IRCBot.bot.sendIRC().ctcpCommand(event.getUser().getNick(), "PING " + System.currentTimeMillis());					
+				}
 			}
 		}
 	}
@@ -50,12 +62,13 @@ public class Ping extends ListenerAdapter {
 	@Override
 	public void onNotice(final NoticeEvent event) {
 		if (event.getNotice().startsWith("PING ")) {
-			if (users.containsKey(event.getUser().getNick())) {
+			if (users.containsKey(event.getUser().getNick().toLowerCase())) {
 				long currentTime = System.currentTimeMillis();
-				String channel = (String) users.get(event.getUser().getNick()).get(0);
-				Long timeStamp = (Long) users.get(event.getUser().getNick()).get(1);
+				String channel = (String) users.get(event.getUser().getNick().toLowerCase()).get(0);
+				Long timeStamp = (Long) users.get(event.getUser().getNick().toLowerCase()).get(1);
 				float time = currentTime - timeStamp;
 				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + event.getUser().getNick() + " " + time / 1000 + "s");
+				users.remove(event.getUser().getNick().toLowerCase());
 			}
 		}
 	}
