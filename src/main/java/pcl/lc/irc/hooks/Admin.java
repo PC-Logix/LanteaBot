@@ -1,9 +1,8 @@
 package pcl.lc.irc.hooks;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,6 +11,7 @@ import org.pircbotx.Channel;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 
+import pcl.lc.httpd.httpd;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 
@@ -108,6 +108,30 @@ public class Admin extends ListenerAdapter {
 		return result;
 	}
 
+	public void restart() throws URISyntaxException, IOException, Exception {
+		
+		if(!IRCBot.httpdport.isEmpty()) {
+			IRCBot.httpServer.stop();
+		}
+		
+		//Code to restart the bot after the gradle build finishes.
+		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+		/* is it a jar file? */
+		if(!currentJar.getName().endsWith(".jar"))
+			return;
+
+		/* Build command: java -jar application.jar */
+		final ArrayList<String> command = new ArrayList<String>();
+		command.add(javaBin);
+		command.add("-jar");
+		command.add(currentJar.getPath());
+
+		final ProcessBuilder builder = new ProcessBuilder(command);
+		builder.start();
+		System.exit(0);
+	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -197,6 +221,9 @@ public class Admin extends ListenerAdapter {
 			if (triggerWord.equals(IRCBot.commandprefix + "shutdown")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
+					if(!IRCBot.httpdport.isEmpty()) {
+						IRCBot.httpServer.stop();
+					}
 					event.respond("Exiting");
 					System.exit(1);
 				}
@@ -212,22 +239,7 @@ public class Admin extends ListenerAdapter {
 			if (triggerWord.equals(IRCBot.commandprefix + "restart")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
-					final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-					final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-
-					/* is it a jar file? */
-					if(!currentJar.getName().endsWith(".jar"))
-						return;
-
-					/* Build command: java -jar application.jar */
-					final ArrayList<String> command = new ArrayList<String>();
-					command.add(javaBin);
-					command.add("-jar");
-					command.add(currentJar.getPath());
-
-					final ProcessBuilder builder = new ProcessBuilder(command);
-					builder.start();
-					System.exit(0);
+					restart();
 				}
 			}
 
@@ -235,28 +247,9 @@ public class Admin extends ListenerAdapter {
 			if (triggerWord.equals(IRCBot.commandprefix + "update")) {
 				String account = Account.getAccount(event.getUser(), event);			
 				if (IRCBot.admins.containsKey(account)) {
-
 					getPull();
 					gradleBuild();
-
-
-					//Code to restart the bot after the gradle build finishes.
-					final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-					final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-
-					/* is it a jar file? */
-					if(!currentJar.getName().endsWith(".jar"))
-						return;
-
-					/* Build command: java -jar application.jar */
-					final ArrayList<String> command = new ArrayList<String>();
-					command.add(javaBin);
-					command.add("-jar");
-					command.add(currentJar.getPath());
-
-					final ProcessBuilder builder = new ProcessBuilder(command);
-					builder.start();
-					System.exit(0);
+					restart();
 				}
 			}
 
@@ -268,7 +261,6 @@ public class Admin extends ListenerAdapter {
 					for(Channel chan : event.getBot().getUserBot().getChannels()) {
 						IRCBot.bot.sendRaw().rawLineNow("who " + chan.getName() + " %an");
 					}
-
 					event.respond("Authed hashmap size: " + IRCBot.authed.size());
 				}
 			}

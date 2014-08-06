@@ -75,7 +75,8 @@ public class httpd {
                 throw new MethodNotSupportedException(method + " method not supported");
             }
             String target = request.getRequestLine().getUri();
-IRCBot.bot.sendIRC().message("#MichiBot", target);
+            
+            IRCBot.bot.sendIRC().message("#MichiBot", target);
 
             if (request instanceof HttpEntityEnclosingRequest) {
                 HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -117,7 +118,7 @@ IRCBot.bot.sendIRC().message("#MichiBot", target);
     static class RequestListenerThread extends Thread {
 
         private final HttpConnectionFactory<DefaultBHttpServerConnection> connFactory;
-        private final ServerSocket serversocket;
+        private static ServerSocket serversocket = null;
         private final HttpService httpService;
 
         public RequestListenerThread(
@@ -125,17 +126,17 @@ IRCBot.bot.sendIRC().message("#MichiBot", target);
                 final HttpService httpService,
                 final SSLServerSocketFactory sf) throws IOException {
             this.connFactory = DefaultBHttpServerConnectionFactory.INSTANCE;
-            this.serversocket = sf != null ? sf.createServerSocket(port) : new ServerSocket(port);
+            RequestListenerThread.serversocket = sf != null ? sf.createServerSocket(port) : new ServerSocket(port);
             this.httpService = httpService;
         }
 
         @Override
         public void run() {
-            System.out.println("Listening on port " + this.serversocket.getLocalPort());
+            System.out.println("Listening on port " + RequestListenerThread.serversocket.getLocalPort());
             while (!Thread.interrupted()) {
                 try {
                     // Set up HTTP connection
-                    Socket socket = this.serversocket.accept();
+                    Socket socket = RequestListenerThread.serversocket.accept();
                     System.out.println("Incoming connection from " + socket.getInetAddress());
                     HttpServerConnection conn = this.connFactory.createConnection(socket);
 
@@ -234,4 +235,12 @@ IRCBot.bot.sendIRC().message("#MichiBot", target);
         t.setDaemon(false);
         t.start();
 	}
+
+	public void stop() throws IOException {
+		// TODO Auto-generated method stub
+		RequestListenerThread.serversocket.close();
+	}
+	
+	
+	
 }
