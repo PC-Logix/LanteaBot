@@ -1,6 +1,3 @@
-/**
- * 
- */
 package pcl.lc.irc.hooks;
 
 import java.io.File;
@@ -31,7 +28,7 @@ import pcl.lc.utils.CommentedProperties;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Announcements extends ListenerAdapter {
+public class Announcements extends ListenerAdapter implements Runnable {
 
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
@@ -70,14 +67,13 @@ public class Announcements extends ListenerAdapter {
 			prop.load(input);
 			Announcements.clear();
 			for(String key : prop.stringPropertyNames()) {
-				  //value = prop.getProperty(key);
-				  //System.out.println(key + " => " + value);
 				  List<Object> eventData = new ArrayList<Object>();
 				  eventData.add("Channel");
 				  eventData.add("Event");
 				  eventData.add("Message");
 				  Announcements.put(key, eventData);
 				}
+			IRCBot.log.fine(Announcements.toString());
 			System.out.println(Announcements.toString());
 			
 		} catch (IOException ex) {
@@ -121,5 +117,11 @@ public class Announcements extends ListenerAdapter {
 				setConfig();
 			}
 		}
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 }
