@@ -299,7 +299,7 @@ public class Admin extends ListenerAdapter {
 						IRCBot.config.addListener((Listener) Class.forName( "pcl.lc.irc.hooks." + module ).newInstance());
 						event.respond("Module " + module + " Loaded");
 					} catch( ClassNotFoundException e ) {
-						event.respond("Module " + module + " not loaded");
+						event.respond("Module " + module + " not loaded " + e.fillInStackTrace());
 					}
 				}
 			}
