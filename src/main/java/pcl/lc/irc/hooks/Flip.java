@@ -34,7 +34,7 @@ public class Flip extends ListenerAdapter {
 	    REPLACEMENT['f'] =  "ɟ";
 	    REPLACEMENT['g'] =  "ƃ";
 	    REPLACEMENT['h'] =  "ɥ";
-	    REPLACEMENT['i'] =  "ⵑ";
+	    REPLACEMENT['i'] =  "!";
 	    REPLACEMENT['j'] =  "ṛ";
 	    REPLACEMENT['k'] =  "ʞ";
 	    REPLACEMENT['l'] =  "ʃ";
@@ -57,15 +57,15 @@ public class Flip extends ListenerAdapter {
 	    REPLACEMENT['A'] =  "∀";
 	    REPLACEMENT['B'] =  "ჵ";
 	    REPLACEMENT['C'] =  "Ↄ";
-	    REPLACEMENT['D'] =  "ᗡ";
+	    REPLACEMENT['D'] =  "◖";
 	    REPLACEMENT['E'] =  "Ǝ";
 	    REPLACEMENT['F'] =  "Ⅎ";
 	    REPLACEMENT['G'] =  "⅁";
 	    REPLACEMENT['H'] =  "H";
 	    REPLACEMENT['I'] =  "I";
-	    REPLACEMENT['J'] =  "ᒋ";
+	    REPLACEMENT['J'] =  "J";
 	    REPLACEMENT['K'] =  "ʞ";
-	    REPLACEMENT['L'] =  "⅂";
+	    REPLACEMENT['L'] =  "L";
 	    REPLACEMENT['M'] =  "W";
 	    REPLACEMENT['N'] =  "И";
 	    REPLACEMENT['O'] =  "O";
@@ -78,13 +78,12 @@ public class Flip extends ListenerAdapter {
 	    REPLACEMENT['V'] =  "ᴧ";
 	    REPLACEMENT['W'] =  "M";
 	    REPLACEMENT['X'] =  "X";
-	    REPLACEMENT['Y'] =  "⅄";
+	    REPLACEMENT['Y'] =  "Y";
 	    REPLACEMENT['Z'] =  "Z";
 	    
 	    
 	    REPLACEMENT['.'] =  "˙";
 	    REPLACEMENT['_'] =  "‾";
-	    REPLACEMENT['&'] =  "⅋";
 	    REPLACEMENT['!'] =  "¡";
 	    REPLACEMENT[';'] =  "؛";
 	    REPLACEMENT['?'] =  "¿";
@@ -98,22 +97,9 @@ public class Flip extends ListenerAdapter {
 	    REPLACEMENT['{'] =  "}";
 	    REPLACEMENT['}'] =  "{";
 	    REPLACEMENT['<'] =  "<";
-	    REPLACEMENT['>'] =  ">";
-	    
-	    REPLACEMENT['0'] =  "0";
-	    REPLACEMENT['1'] =  "⥝";
-	    REPLACEMENT['2'] =  "ⵒ";
-	    REPLACEMENT['3'] =  "Ɛ";
-	    REPLACEMENT['4'] =  "ᔭ";
-	    REPLACEMENT['5'] =  "Ϛ";
-	    REPLACEMENT['6'] =  "9";
-	    REPLACEMENT['7'] =  "∠";
-	    REPLACEMENT['8'] =  "8";
-	    REPLACEMENT['9'] =  "6";
-	    
-	    
+	    REPLACEMENT['>'] =  ">";    
 	}
-	
+	 
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
