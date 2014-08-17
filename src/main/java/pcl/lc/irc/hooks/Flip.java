@@ -1,9 +1,5 @@
 package pcl.lc.irc.hooks;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -26,7 +22,7 @@ public class Flip extends ListenerAdapter {
 	    for(int i=Character.MIN_VALUE;i<=Character.MAX_VALUE;i++)
 	        REPLACEMENT[i] = Character.toString(Character.toLowerCase((char) i));
 	    // substitute
-	    REPLACEMENT['a'] =  "ɐ";
+	    REPLACEMENT['a'] =  "\u0250";
 	    REPLACEMENT['b'] =  "q";
 	    REPLACEMENT['c'] =  "ɔ";
 	    REPLACEMENT['d'] =  "p";
