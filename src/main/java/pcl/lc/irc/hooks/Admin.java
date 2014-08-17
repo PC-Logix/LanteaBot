@@ -3,6 +3,7 @@ package pcl.lc.irc.hooks;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -264,6 +265,13 @@ public class Admin extends ListenerAdapter {
 				}
 			}
 
+			if (triggerWord.equals(IRCBot.commandprefix + "charset")) {
+				String account = Account.getAccount(event.getUser(), event);
+				if (IRCBot.admins.containsKey(account)) {
+					event.respond("Default Charset=" + Charset.defaultCharset());
+				}
+			}
+			
 			if (triggerWord.equals(IRCBot.commandprefix + "cycle")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
