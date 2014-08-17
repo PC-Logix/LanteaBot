@@ -3,6 +3,7 @@
  */
 package pcl.lc.irc.hooks;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,10 @@ public class Ping extends ListenerAdapter {
 				String channel = (String) users.get(event.getUser().getNick().toLowerCase()).get(0);
 				Long timeStamp = (Long) users.get(event.getUser().getNick().toLowerCase()).get(1);
 				float time = currentTime - timeStamp;
-				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + event.getUser().getNick() + " " + time / 1000 + "s");
+				
+		        DecimalFormat df = new DecimalFormat("#.##");
+				
+				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + event.getUser().getNick() + " " + df.format(time / 1000) + "s");
 				users.remove(event.getUser().getNick().toLowerCase());
 			}
 		}

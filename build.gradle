@@ -12,6 +12,13 @@ dependencies {
   compile 'xstream:xstream:1.2.2'
 }
 
+if (System.getenv().BUILD_NUMBER != null)
+	ext.buildNumber = System.getenv().BUILD_NUMBER?.toInteger()
+else
+	ext.buildNumber = 0
+
+archivesBaseName = "LanteaBot"
+jar.classifier = "${ext.buildNumber}"
 jar {
    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest {
