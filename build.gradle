@@ -2,7 +2,7 @@ repositories {
     mavenCentral()
 }
 apply plugin: 'java'
-
+compileJava.options.encoding = 'UTF-8'
 tasks.withType(Compile) {
   options.encoding = 'UTF-8'
 }
