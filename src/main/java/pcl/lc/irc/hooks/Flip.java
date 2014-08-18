@@ -93,7 +93,71 @@ public class Flip extends ListenerAdapter {
 	    REPLACEMENT['{'] =  "}";
 	    REPLACEMENT['}'] =  "{";
 	    REPLACEMENT['<'] =  "<";
-	    REPLACEMENT['>'] =  ">";    
+	    REPLACEMENT['>'] =  ">";
+	    
+	    //reverse the flips
+	    REPLACEMENT['\u0250'] =  "a";
+	    REPLACEMENT['q'] =  "b";
+	    REPLACEMENT['ɔ'] =  "c";
+	    REPLACEMENT['p'] =  "d";
+	    REPLACEMENT['ǝ'] =  "ǝ";
+	    REPLACEMENT['ɟ'] =  "f";
+	    REPLACEMENT['ƃ'] =  "g";
+	    REPLACEMENT['ɥ'] =  "h";
+	    REPLACEMENT['!'] =  "!";
+	    REPLACEMENT['ṛ'] =  "j";
+	    REPLACEMENT['ʞ'] =  "k";
+	    REPLACEMENT['ʃ'] =  "l";
+	    REPLACEMENT['ɯ'] =  "m";
+	    REPLACEMENT['u'] =  "n";
+	    REPLACEMENT['o'] =  "o";
+	    REPLACEMENT['d'] =  "p";
+	    REPLACEMENT['b'] =  "q";
+	    REPLACEMENT['ɹ'] =  "r";
+	    REPLACEMENT['s'] =  "s";
+	    REPLACEMENT['ʇ'] =  "t";
+	    REPLACEMENT['n'] =  "u";
+	    REPLACEMENT['ʌ'] =  "v";
+	    REPLACEMENT['ʍ'] =  "w";
+	    REPLACEMENT['x'] =  "x";
+	    REPLACEMENT['ʎ'] =  "y";
+	    REPLACEMENT['z'] =  "z";
+	    
+
+	    REPLACEMENT['∀'] =  "A";
+	    REPLACEMENT['ჵ'] =  "B";
+	    REPLACEMENT['Ↄ'] =  "C";
+	    REPLACEMENT['◖'] =  "D";
+	    REPLACEMENT['Ǝ'] =  "E";
+	    REPLACEMENT['Ⅎ'] =  "F";
+	    REPLACEMENT['⅁'] =  "G";
+	    REPLACEMENT['H'] =  "H";
+	    REPLACEMENT['I'] =  "I";
+	    REPLACEMENT['J'] =  "J";
+	    REPLACEMENT['ʞ'] =  "K";
+	    REPLACEMENT['L'] =  "L";
+	    REPLACEMENT['W'] =  "M";
+	    REPLACEMENT['И'] =  "N";
+	    REPLACEMENT['O'] =  "O";
+	    REPLACEMENT['Ԁ'] =  "P";
+	    REPLACEMENT['Ό'] =  "Q";
+	    REPLACEMENT['ᴚ'] =  "R";
+	    REPLACEMENT['S'] =  "S";
+	    REPLACEMENT['⊥'] =  "T";
+	    REPLACEMENT['n'] =  "U";
+	    REPLACEMENT['ᴧ'] =  "V";
+	    REPLACEMENT['M'] =  "W";
+	    REPLACEMENT['X'] =  "X";
+	    REPLACEMENT['Y'] =  "Y";
+	    REPLACEMENT['Z'] =  "Z";
+	    
+	    
+	    REPLACEMENT['˙'] =  ".";
+	    REPLACEMENT['‾'] =  "_";
+	    REPLACEMENT['¡'] =  "!";
+	    REPLACEMENT['؛'] =  ";";
+	    REPLACEMENT['¿'] =  "?";
+	    REPLACEMENT['\''] =  ",";
 	}
 	 
 	@SuppressWarnings({ "unchecked" })
