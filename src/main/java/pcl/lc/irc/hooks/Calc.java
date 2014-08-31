@@ -1,5 +1,8 @@
 package pcl.lc.irc.hooks;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
@@ -33,8 +36,8 @@ public class Calc extends ListenerAdapter {
 				String expression = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 				Expression e = new ExpressionBuilder(expression).build();
 				double result = e.evaluate();
-				String result2 = Double.toString(result);
-				event.respond(result2);
+				NumberFormat formatter = new DecimalFormat("#,###.##");
+				event.respond(formatter.format(result));
 			}
 		}
 	}
