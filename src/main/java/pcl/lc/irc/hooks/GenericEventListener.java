@@ -106,6 +106,7 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onServerResponse(final ServerResponseEvent event) {
+		//System.out.println(event.getCode());
 		if(event.getCode() == 352) {
 			System.out.println(event.getParsedResponse());
 			Object nick = event.getParsedResponse().toArray()[5];
@@ -114,6 +115,7 @@ public class GenericEventListener extends ListenerAdapter {
 				IRCBot.users.remove(nick);
 			}
 			IRCBot.users.put(nick.toString(), server.toString());
+			IRCBot.bot.sendRaw().rawLine("whois " + nick.toString());
 		}
 		if(event.getCode() == 354) {
 			Object nick = event.getParsedResponse().toArray()[1];
@@ -123,7 +125,14 @@ public class GenericEventListener extends ListenerAdapter {
 			}if (!nsaccount.toString().equals("0")) {
 				IRCBot.authed.put(nick.toString(),nsaccount.toString());
 			}
-
+		}
+		if(event.getCode() == 330) {
+			Object nick = event.getParsedResponse().toArray()[1];
+			Object nsaccount = event.getParsedResponse().toArray()[2];
+			if (IRCBot.authed.containsKey(nick)) {
+				IRCBot.authed.remove(nick);
+			}
+			IRCBot.authed.put(nick.toString(),nsaccount.toString());
 		}
 		if(event.getCode() == 372) {
 			
