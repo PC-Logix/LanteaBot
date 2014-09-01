@@ -3,6 +3,7 @@
 #Do not remove any keys from this file
 #Any non needed settings can be left blank.
 httpdport=8082
+httpDocRoot=
 
 #IRC Connection Information
 nick=LanteaBot

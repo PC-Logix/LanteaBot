@@ -85,7 +85,7 @@ public class httpd {
             }
 
             final File file = new File(this.docRoot, URLDecoder.decode(target, "UTF-8"));
-            if (!file.exists()) {
+            if (!file.getPath().startsWith(new File(docRoot).getPath()) || !file.exists()) {
 
                 response.setStatusCode(HttpStatus.SC_NOT_FOUND);
                 StringEntity entity = new StringEntity(
@@ -194,7 +194,7 @@ public class httpd {
 	public void start() throws Exception {
 		System.out.println("Starting Webserver");
 	       // Document root directory
-        String docRoot = "c:/";
+        String docRoot = IRCBot.botConfig.get("httpDocRoot").toString();
         int port = Integer.parseInt(IRCBot.httpdport);
 
         // Set up the HTTP protocol processor
