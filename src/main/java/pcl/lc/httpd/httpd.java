@@ -50,197 +50,193 @@ import javax.net.ssl.SSLServerSocketFactory;
  * Basic, yet fully functional and spec compliant, HTTP/1.1 file server.
  */
 public class httpd {
+	private static boolean stop = false;
 
-	
 	public httpd() {
- 
+
 	}
 
-    static class HttpFileHandler implements HttpRequestHandler  {
+	static class HttpFileHandler implements HttpRequestHandler  {
 
-        private final String docRoot;
+		private final String docRoot;
 
-        public HttpFileHandler(final String docRoot) {
-            super();
-            this.docRoot = docRoot;
-        }
+		public HttpFileHandler(final String docRoot) {
+			super();
+			this.docRoot = docRoot;
+		}
 
-        public void handle(
-                final HttpRequest request,
-                final HttpResponse response,
-                final HttpContext context) throws HttpException, IOException {
+		public void handle(
+				final HttpRequest request,
+				final HttpResponse response,
+				final HttpContext context) throws HttpException, IOException {
 
-            String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
-            if (!method.equals("GET") && !method.equals("HEAD") && !method.equals("POST")) {
-                throw new MethodNotSupportedException(method + " method not supported");
-            }
-            String target = request.getRequestLine().getUri();
-            
-            IRCBot.bot.sendIRC().message("#MichiBot", target);
+			String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
+			if (!method.equals("GET") && !method.equals("HEAD") && !method.equals("POST")) {
+				throw new MethodNotSupportedException(method + " method not supported");
+			}
+			String target = request.getRequestLine().getUri();
 
-            if (request instanceof HttpEntityEnclosingRequest) {
-                HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
-                byte[] entityContent = EntityUtils.toByteArray(entity);
-                System.out.println("Incoming entity content (bytes): " + entityContent.length);
-            }
+			IRCBot.bot.sendIRC().message("#MichiBot", target);
 
-            final File file = new File(this.docRoot, URLDecoder.decode(target, "UTF-8"));
-            if (!file.exists()) {
+			if (request instanceof HttpEntityEnclosingRequest) {
+				HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+				byte[] entityContent = EntityUtils.toByteArray(entity);
+				System.out.println("Incoming entity content (bytes): " + entityContent.length);
+			}
 
-                response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-                StringEntity entity = new StringEntity(
-                        "<html><body><h1>File" + file.getPath() +
-                        " not found</h1></body></html>",
-                        ContentType.create("text/html", "UTF-8"));
-                response.setEntity(entity);
-                System.out.println("File " + file.getPath() + " not found");
+			final File file = new File(this.docRoot, URLDecoder.decode(target, "UTF-8"));
+			if (!file.exists()) {
 
-            } else if (!file.getPath().startsWith(new File(docRoot).getPath()) || !file.canRead() || file.isDirectory()) {
+				response.setStatusCode(HttpStatus.SC_NOT_FOUND);
+				StringEntity entity = new StringEntity(
+						"<html><body><h1>File" + file.getPath() +
+						" not found</h1></body></html>",
+						ContentType.create("text/html", "UTF-8"));
+				response.setEntity(entity);
+				System.out.println("File " + file.getPath() + " not found");
 
-                response.setStatusCode(HttpStatus.SC_FORBIDDEN);
-                StringEntity entity = new StringEntity(
-                        "<html><body><h1>Access denied</h1></body></html>",
-                        ContentType.create("text/html", "UTF-8"));
-                response.setEntity(entity);
-                System.out.println("Cannot read file " + file.getPath());
+			} else if (!file.getPath().startsWith(new File(docRoot).getPath()) || !file.canRead() || file.isDirectory()) {
 
-            } else {
+				response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+				StringEntity entity = new StringEntity(
+						"<html><body><h1>Access denied</h1></body></html>",
+						ContentType.create("text/html", "UTF-8"));
+				response.setEntity(entity);
+				System.out.println("Cannot read file " + file.getPath());
 
-                response.setStatusCode(HttpStatus.SC_OK);
-                FileEntity body = new FileEntity(file, ContentType.create("text/html", (Charset) null));
-                response.setEntity(body);
-                System.out.println("Serving file " + file.getPath());
-            }
-        }
+			} else {
 
-    }
+				response.setStatusCode(HttpStatus.SC_OK);
+				FileEntity body = new FileEntity(file, ContentType.create("text/html", (Charset) null));
+				response.setEntity(body);
+				System.out.println("Serving file " + file.getPath());
+			}
+		}
 
-    static class RequestListenerThread extends Thread {
+	}
 
-        private final HttpConnectionFactory<DefaultBHttpServerConnection> connFactory;
-        private static ServerSocket serversocket = null;
-        private final HttpService httpService;
+	static class RequestListenerThread extends Thread {
 
-        public RequestListenerThread(
-                final int port,
-                final HttpService httpService,
-                final SSLServerSocketFactory sf) throws IOException {
-            this.connFactory = DefaultBHttpServerConnectionFactory.INSTANCE;
-            RequestListenerThread.serversocket = sf != null ? sf.createServerSocket(port) : new ServerSocket(port);
-            this.httpService = httpService;
-        }
+		private final HttpConnectionFactory<DefaultBHttpServerConnection> connFactory;
+		private static ServerSocket serversocket = null;
+		private final HttpService httpService;
 
-        @Override
-        public void run() {
-            System.out.println("Listening on port " + RequestListenerThread.serversocket.getLocalPort());
-            while (!Thread.interrupted()) {
-                try {
-                    // Set up HTTP connection
-                    Socket socket = RequestListenerThread.serversocket.accept();
-                    System.out.println("Incoming connection from " + socket.getInetAddress());
-                    HttpServerConnection conn = this.connFactory.createConnection(socket);
+		public RequestListenerThread(
+				final int port,
+				final HttpService httpService,
+				final SSLServerSocketFactory sf) throws IOException {
+			this.connFactory = DefaultBHttpServerConnectionFactory.INSTANCE;
+			RequestListenerThread.serversocket = sf != null ? sf.createServerSocket(port) : new ServerSocket(port);
+			this.httpService = httpService;
+		}
 
-                    // Start worker thread
-                    Thread t = new WorkerThread(this.httpService, conn);
-                    t.setDaemon(true);
-                    t.start();
-                } catch (InterruptedIOException ex) {
-                    break;
-                } catch (IOException e) {
-                    System.err.println("I/O error initialising connection thread: "
-                            + e.getMessage());
-                    break;
-                }
-            }
-        }
-    }
+		@Override
+		public void run() {
+			System.out.println("Listening on port " + RequestListenerThread.serversocket.getLocalPort());
+			while (!Thread.interrupted() || stop == true) {
+				try {
+					// Set up HTTP connection
+					Socket socket = RequestListenerThread.serversocket.accept();
+					System.out.println("Incoming connection from " + socket.getInetAddress());
+					HttpServerConnection conn = this.connFactory.createConnection(socket);
 
-    static class WorkerThread extends Thread {
+					// Start worker thread
+					Thread t = new WorkerThread(this.httpService, conn);
+					t.setDaemon(true);
+					t.start();
+				} catch (InterruptedIOException ex) {
+					break;
+				} catch (IOException e) {
+					System.err.println("I/O error initialising connection thread: "
+							+ e.getMessage());
+					break;
+				}
+			}
+		}
+	}
 
-        private final HttpService httpservice;
-        private final HttpServerConnection conn;
+	static class WorkerThread extends Thread {
 
-        public WorkerThread(
-                final HttpService httpservice,
-                final HttpServerConnection conn) {
-            super();
-            this.httpservice = httpservice;
-            this.conn = conn;
-        }
+		private final HttpService httpservice;
+		private final HttpServerConnection conn;
 
-        @Override
-        public void run() {
-            System.out.println("New connection thread");
-            HttpContext context = new BasicHttpContext(null);
-            try {
-                while (!Thread.interrupted() && this.conn.isOpen()) {
-                    this.httpservice.handleRequest(this.conn, context);
-                }
-            } catch (ConnectionClosedException ex) {
-                System.err.println("Client closed connection");
-            } catch (IOException ex) {
-                System.err.println("I/O error: " + ex.getMessage());
-            } catch (HttpException ex) {
-                System.err.println("Unrecoverable HTTP protocol violation: " + ex.getMessage());
-            } finally {
-                try {
-                    this.conn.shutdown();
-                } catch (IOException ignore) {}
-            }
-        }
+		public WorkerThread(
+				final HttpService httpservice,
+				final HttpServerConnection conn) {
+			super();
+			this.httpservice = httpservice;
+			this.conn = conn;
+		}
 
-    }
+		@Override
+		public void run() {
+			System.out.println("New connection thread");
+			HttpContext context = new BasicHttpContext(null);
+			try {
+				while (!Thread.interrupted() && this.conn.isOpen()) {
+					this.httpservice.handleRequest(this.conn, context);
+				}
+			} catch (ConnectionClosedException ex) {
+				System.err.println("Client closed connection");
+			} catch (IOException ex) {
+				System.err.println("I/O error: " + ex.getMessage());
+			} catch (HttpException ex) {
+				System.err.println("Unrecoverable HTTP protocol violation: " + ex.getMessage());
+			} finally {
+				try {
+					this.conn.shutdown();
+				} catch (IOException ignore) {}
+			}
+		}
+
+	}
 
 	public void start() throws Exception {
 		System.out.println("Starting Webserver");
-	       // Document root directory
-        String docRoot = IRCBot.botConfig.get("httpDocRoot").toString();
-        int port = Integer.parseInt(IRCBot.httpdport);
+		// Document root directory
+		String docRoot = IRCBot.botConfig.get("httpDocRoot").toString();
+		int port = Integer.parseInt(IRCBot.httpdport);
 
-        // Set up the HTTP protocol processor
-        HttpProcessor httpproc = HttpProcessorBuilder.create()
-                .add(new ResponseDate())
-                .add(new ResponseServer("Test/1.1"))
-                .add(new ResponseContent())
-                .add(new ResponseConnControl()).build();
+		// Set up the HTTP protocol processor
+		HttpProcessor httpproc = HttpProcessorBuilder.create()
+				.add(new ResponseDate())
+				.add(new ResponseServer("Test/1.1"))
+				.add(new ResponseContent())
+				.add(new ResponseConnControl()).build();
 
-        // Set up request handlers
-        UriHttpRequestHandlerMapper reqistry = new UriHttpRequestHandlerMapper();
-        reqistry.register("*", new HttpFileHandler(docRoot));
+		// Set up request handlers
+		UriHttpRequestHandlerMapper reqistry = new UriHttpRequestHandlerMapper();
+		reqistry.register("*", new HttpFileHandler(docRoot));
 
-        // Set up the HTTP service
-        HttpService httpService = new HttpService(httpproc, reqistry);
+		// Set up the HTTP service
+		HttpService httpService = new HttpService(httpproc, reqistry);
 
-        SSLServerSocketFactory sf = null;
-        if (port == 8443) {
-            // Initialize SSL context
-            ClassLoader cl = httpd.class.getClassLoader();
-            URL url = cl.getResource("my.keystore");
-            if (url == null) {
-                System.out.println("Keystore not found");
-                System.exit(1);
-            }
-            KeyStore keystore  = KeyStore.getInstance("jks");
-            keystore.load(url.openStream(), "secret".toCharArray());
-            KeyManagerFactory kmfactory = KeyManagerFactory.getInstance(
-                    KeyManagerFactory.getDefaultAlgorithm());
-            kmfactory.init(keystore, "secret".toCharArray());
-            KeyManager[] keymanagers = kmfactory.getKeyManagers();
-            SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(keymanagers, null, null);
-            sf = sslcontext.getServerSocketFactory();
-        }
+		SSLServerSocketFactory sf = null;
+		if (port == 8443) {
+			// Initialize SSL context
+			ClassLoader cl = httpd.class.getClassLoader();
+			URL url = cl.getResource("my.keystore");
+			if (url == null) {
+				System.out.println("Keystore not found");
+				System.exit(1);
+			}
+			KeyStore keystore  = KeyStore.getInstance("jks");
+			keystore.load(url.openStream(), "secret".toCharArray());
+			KeyManagerFactory kmfactory = KeyManagerFactory.getInstance(
+					KeyManagerFactory.getDefaultAlgorithm());
+			kmfactory.init(keystore, "secret".toCharArray());
+			KeyManager[] keymanagers = kmfactory.getKeyManagers();
+			SSLContext sslcontext = SSLContext.getInstance("TLS");
+			sslcontext.init(keymanagers, null, null);
+			sf = sslcontext.getServerSocketFactory();
+		}
 
-        Thread t = new RequestListenerThread(port, httpService, sf);
-        t.setDaemon(false);
-        t.start();
+		Thread t = new RequestListenerThread(port, httpService, sf);
+		t.setDaemon(false);
+		t.start();
 	}
 
 	public void stop() throws IOException {
-		// TODO Auto-generated method stub
-		RequestListenerThread.serversocket.close();
+		stop = true;
 	}
-	
-	
-	
 }
