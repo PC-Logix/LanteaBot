@@ -85,7 +85,7 @@ public class httpd {
             }
 
             final File file = new File(this.docRoot, URLDecoder.decode(target, "UTF-8"));
-            if (!file.getPath().startsWith(new File(docRoot).getPath()) || !file.exists()) {
+            if (!file.exists()) {
 
                 response.setStatusCode(HttpStatus.SC_NOT_FOUND);
                 StringEntity entity = new StringEntity(
@@ -95,7 +95,7 @@ public class httpd {
                 response.setEntity(entity);
                 System.out.println("File " + file.getPath() + " not found");
 
-            } else if (!file.canRead() || file.isDirectory()) {
+            } else if (!file.getPath().startsWith(new File(docRoot).getPath()) || !file.canRead() || file.isDirectory()) {
 
                 response.setStatusCode(HttpStatus.SC_FORBIDDEN);
                 StringEntity entity = new StringEntity(
