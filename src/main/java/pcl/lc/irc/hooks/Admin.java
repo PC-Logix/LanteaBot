@@ -14,6 +14,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.Account;
 
 import org.pircbotx.hooks.events.*;
@@ -121,15 +122,8 @@ public class Admin extends ListenerAdapter {
 		/* is it a jar file? */
 		if(!currentJar.getName().endsWith(".jar"))
 			return;
-
-		/* Build command: java -jar application.jar */
-		final ArrayList<String> command = new ArrayList<String>();
-		command.add(javaBin);
-		command.add("-jar");
-		command.add(currentJar.getPath());
-
-		final ProcessBuilder builder = new ProcessBuilder(command);
-		builder.start();
+		
+		Runtime.getRuntime().exec(javaBin + " -jar " + currentJar.getPath());
 		System.exit(0);
 	}
 
@@ -224,6 +218,7 @@ public class Admin extends ListenerAdapter {
 					if(!IRCBot.httpdport.isEmpty()) {
 						IRCBot.httpServer.stop();
 					}
+					//WikiChangeWatcher.stop();
 					event.respond("Exiting");
 					System.exit(1);
 				}
