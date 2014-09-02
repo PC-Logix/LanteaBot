@@ -122,8 +122,13 @@ public class Admin extends ListenerAdapter {
 		/* is it a jar file? */
 		if(!currentJar.getName().endsWith(".jar"))
 			return;
+        try {
+        	Runtime.getRuntime().exec(javaBin + " -jar " + currentJar.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Finished");
 		
-		Runtime.getRuntime().exec(javaBin + " -jar " + currentJar.getPath());
 		System.exit(0);
 	}
 
