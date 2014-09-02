@@ -237,7 +237,7 @@ public class httpd {
 	}
 
 	public void stop() throws IOException {
-		RequestListenerThread.serversocket.close();
 		stop = true;
+		RequestListenerThread.serversocket.close();
 	}
 }
