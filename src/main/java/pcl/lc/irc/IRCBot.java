@@ -221,6 +221,7 @@ public class IRCBot {
 			scheduler = new TaskScheduler();
 			scheduler.start();
 			bot = new PircBotX(config.buildConfiguration());
+			Thread.sleep(2000);
 			bot.startBot();
 		} catch (Exception ex) {
 			ex.printStackTrace();
