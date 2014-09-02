@@ -173,7 +173,7 @@ public class httpd {
 			System.out.println("New connection thread");
 			HttpContext context = new BasicHttpContext(null);
 			try {
-				while (!Thread.interrupted() && this.conn.isOpen()) {
+				while (!Thread.interrupted() && this.conn.isOpen() || stop == false) {
 					this.httpservice.handleRequest(this.conn, context);
 				}
 			} catch (ConnectionClosedException ex) {
