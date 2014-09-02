@@ -211,33 +211,13 @@ public class httpd {
 		// Set up the HTTP service
 		HttpService httpService = new HttpService(httpproc, reqistry);
 
-		SSLServerSocketFactory sf = null;
-		if (port == 8443) {
-			// Initialize SSL context
-			ClassLoader cl = httpd.class.getClassLoader();
-			URL url = cl.getResource("my.keystore");
-			if (url == null) {
-				System.out.println("Keystore not found");
-				System.exit(1);
-			}
-			KeyStore keystore  = KeyStore.getInstance("jks");
-			keystore.load(url.openStream(), "secret".toCharArray());
-			KeyManagerFactory kmfactory = KeyManagerFactory.getInstance(
-					KeyManagerFactory.getDefaultAlgorithm());
-			kmfactory.init(keystore, "secret".toCharArray());
-			KeyManager[] keymanagers = kmfactory.getKeyManagers();
-			SSLContext sslcontext = SSLContext.getInstance("TLS");
-			sslcontext.init(keymanagers, null, null);
-			sf = sslcontext.getServerSocketFactory();
-		}
 
-		Thread t = new RequestListenerThread(port, httpService, sf);
+		Thread t = new RequestListenerThread(port, httpService, null);
 		t.setDaemon(false);
 		t.start();
 	}
 
 	public void stop() throws IOException {
 		stop = true;
-		RequestListenerThread.serversocket.close();
 	}
 }
