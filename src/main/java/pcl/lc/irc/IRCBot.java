@@ -107,7 +107,8 @@ public class IRCBot {
 			commandprefix = prop.getProperty("commandprefix", "@");
 			enablehttpd = prop.getProperty("enablehttpd", "true");
 			httpdport = prop.getProperty("httpdport", "8081");
-			botConfig.put("httpDocRoot", prop.getProperty("httpDocRoot"));
+			botConfig.put("httpDocRoot", prop.getProperty("httpDocRoot", ""));
+			botConfig.put("wikiWatcherURL", prop.getProperty("wikiWatcherURL", ""));
 			proxyhost = prop.getProperty("proxyhost", "");
 			proxyport = prop.getProperty("proxyport", "");
 			adminProps = prop.getProperty("admins", "");
@@ -212,8 +213,10 @@ public class IRCBot {
 				httpServer.start();
 			}
 
-			WikiChangeWatcher WikiChange = new WikiChangeWatcher();
-			WikiChange.start();
+			if(!botConfig.get("wikiWatcherURL").equals("")) {
+				WikiChangeWatcher WikiChange = new WikiChangeWatcher();
+				WikiChange.start();
+			}
 
 			scheduler = new TaskScheduler();
 			scheduler.start();
