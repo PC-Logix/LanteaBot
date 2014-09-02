@@ -112,7 +112,7 @@ public class Admin extends ListenerAdapter {
 
 	public void restart() throws URISyntaxException, IOException, Exception {
 		
-		if(!IRCBot.httpdport.isEmpty() && !botConfig.get("httpDocRoot").equals("")) {
+		if(!IRCBot.httpdport.isEmpty() && !IRCBot.botConfig.get("httpDocRoot").equals("")) {
 			IRCBot.httpServer.stop();
 		}
 		
