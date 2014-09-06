@@ -95,11 +95,12 @@ public class URLExpander extends ListenerAdapter {
 							if (jItem.indexOf("youtube") != -1 || jItem.indexOf("youtu.be") != -1) {
 								String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 								Pattern compiledPattern = Pattern.compile(pattern);
-								Matcher matcher1 = compiledPattern.matcher(url);
+								Matcher matcher1 = compiledPattern.matcher(jItem);
 								if (matcher1.find()) {
 									url = matcher1.group();
 								}
 								String vinfo = getVideoInfo.getVideoSearch(url, true, false);
+								System.out.println(url);
 								event.respond(vinfo);
 							} else {
 								String title = TitleExtractor.getPageTitle(jItem);
