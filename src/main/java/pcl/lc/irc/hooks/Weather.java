@@ -51,7 +51,8 @@ public class Weather extends ListenerAdapter {
 					String relative_humidity = (String) xpath.evaluate("/response/current_observation/relative_humidity", doc, XPathConstants.STRING);
 					String wind = (String) xpath.evaluate("/response/current_observation/wind_string", doc, XPathConstants.STRING);
 					String weather = (String) xpath.evaluate("/response/current_observation/weather", doc, XPathConstants.STRING);
-					event.respond("Current weather for " + location_name + " Current Temp: " + temperature + " Current Humidity: " + relative_humidity + " Wind: " + wind + " Conditions: " + weather);
+					String wind_kph = (String) xpath.evaluate("/response/current_observation/wind_kph", doc, XPathConstants.STRING);
+					event.respond("Current weather for " + location_name + " Current Temp: " + temperature + " Current Humidity: " + relative_humidity + " Wind: " + wind + "/" + wind_kph + " Conditions: " + weather);
 				}
 			}
 		}
