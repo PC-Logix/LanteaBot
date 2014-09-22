@@ -1,6 +1,7 @@
 package pcl.lc.irc.hooks;
 
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,10 +37,13 @@ public class Weather extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "weather")) {
 				if (IRCBot.botConfig.get("WUndergroundAPI") != null) {
-					String[] loc = event.getMessage().split(" ");
+					String loc = event.getMessage().substring(event.getMessage().indexOf("weather") + 7).trim();
 					DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 					DocumentBuilder db = dbf.newDocumentBuilder();
-					Document doc = db.parse(new URL("http://api.wunderground.com/api/" + IRCBot.botConfig.get("WUndergroundAPI") + "/conditions/q/" + loc[1] + ".xml").openStream());
+					String location = loc;
+					location = URLEncoder.encode(location, "UTF-8").replace("+", "%20");
+					System.out.println("http://api.wunderground.com/api/" + IRCBot.botConfig.get("WUndergroundAPI") + "/conditions/q/" + location + ".xml");
+					Document doc = db.parse(new URL("http://api.wunderground.com/api/" + IRCBot.botConfig.get("WUndergroundAPI") + "/conditions/q/" + location + ".xml").openStream());
 					XPathFactory xPathfactory = XPathFactory.newInstance();
 					XPath xpath = xPathfactory.newXPath();
 					String location_name = (String) xpath.evaluate("/response/current_observation/display_location/full", doc, XPathConstants.STRING);
