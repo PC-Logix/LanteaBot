@@ -100,6 +100,7 @@ public class IRCBot {
 			botConfig.put("server", prop.getProperty("server", "irc.esper.net"));
 			botConfig.put("serverport", prop.getProperty("serverport", "6667"));
 			botConfig.put("serverpass", prop.getProperty("serverpass", ""));
+			botConfig.put("WUndergroundAPI", prop.getProperty("WUndergroundAPI", ""));
 			nick = prop.getProperty("nick","LanteaBot");
 			nspass = prop.getProperty("nspass", "");
 			nsaccount = prop.getProperty("nsaccount", "");
