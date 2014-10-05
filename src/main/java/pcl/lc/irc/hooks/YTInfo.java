@@ -32,7 +32,7 @@ public class YTInfo extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		String ourinput = event.getMessage().toLowerCase();
+		String ourinput = event.getMessage();
 		String s = ourinput.trim();
 		if (!disabledChannels.contains(event.getChannel().getName().toString())) {
 			if (s.length() > 1) {
@@ -57,7 +57,9 @@ public class YTInfo extends ListenerAdapter {
 						url = matcher1.group();
 					}
 					String vinfo = getVideoInfo.getVideoSearch(url, true, false);
-					event.respond(vinfo);
+					if (vinfo != null) {
+						event.respond(vinfo);
+					}
 				}
 			}
 		}
