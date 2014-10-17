@@ -50,7 +50,7 @@ public class Drama extends ListenerAdapter {
 						response.append(inputLine);
 					}
 					in.close();
-					event.respond(response.toString().replace("</h1><h3><a href=\"http://asie.pl/drama.php?2\">Give it one more try!</a></h3>", "");
+					event.respond(response.toString().replace("</h1><h3><a href=\"http://asie.pl/drama.php?2\">Give it one more try!</a></h3>", ""));
 				} catch (IOException ex) {
 					event.respond("Server returned an error " + ex);
 				}
