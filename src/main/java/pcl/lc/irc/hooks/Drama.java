@@ -38,7 +38,7 @@ public class Drama extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "drama")) {
 
-				URL obj = new URL("http://asie.pl/drama.php?plain");
+				URL obj = new URL("http://asie.pl/drama.php?2&plain");
 				try {
 					HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 					con.setRequestMethod("GET");
