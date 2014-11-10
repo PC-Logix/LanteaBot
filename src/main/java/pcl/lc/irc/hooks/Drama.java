@@ -38,7 +38,7 @@ public class Drama extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "drama")) {
 
-				URL obj = new URL("http://asie.pl/drama.php?plain");
+				URL obj = new URL("http://asie.pl/drama.php?2&plain");
 				try {
 					HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 					con.setRequestMethod("GET");
@@ -50,7 +50,7 @@ public class Drama extends ListenerAdapter {
 						response.append(inputLine);
 					}
 					in.close();
-					event.respond(response.toString());
+					event.respond(response.toString().replace("</h1><h3><a href=\"http://asie.pl/drama.php?2\">Give it one more try!</a></h3>", ""));
 				} catch (IOException ex) {
 					event.respond("Server returned an error " + ex);
 				}
