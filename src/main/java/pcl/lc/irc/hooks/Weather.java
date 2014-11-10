@@ -58,7 +58,7 @@ public class Weather extends ListenerAdapter {
 					String winddir16Point = (String) xpath.evaluate("/data/current_condition/winddir16Point", doc, XPathConstants.STRING);
 
 					if (weather.length() > 0) {
-						event.respond("Current weather for " + location_name + " Current Temp: " + temp_F + "캟/" + temp_C + "캜 Feels Like: " + FeelsLikeF + "캟/" + FeelsLikeC + "캜 Current Humidity: " + humidity + " Wind: From the " + winddir16Point + " " + windspeedMiles + " Mph/" + windspeedKmph + " Km/h Conditions: " + weather);					
+						event.respond("Current weather for " + location_name + " Current Temp: " + temp_F + "째F/" + temp_C + "째C Feels Like: " + FeelsLikeF + "째F/" + FeelsLikeC + "째C Current Humidity: " + humidity + " Wind: From the " + winddir16Point + " " + windspeedMiles + " Mph/" + windspeedKmph + " Km/h Conditions: " + weather);					
 					} else {
 						event.getUser().send().notice("No data returned");
 					}
