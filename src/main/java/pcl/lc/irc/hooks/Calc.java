@@ -34,10 +34,15 @@ public class Calc extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "calc")) {
 				String expression = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
-				Expression e = new ExpressionBuilder(expression).build();
-				double result = e.evaluate();
-				NumberFormat formatter = new DecimalFormat("#,###.##");
-				event.respond(formatter.format(result));
+				if (expression.equalsIgnoreCase("the meaning of life")) {
+					event.respond("42");
+				} else {
+					Expression e = new ExpressionBuilder(expression).build();
+					double result = e.evaluate();
+					NumberFormat formatter = new DecimalFormat("#,###.##");
+					event.respond(formatter.format(result));
+				}
+				
 			}
 		}
 	}
