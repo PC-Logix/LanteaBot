@@ -1,9 +1,15 @@
 package pcl.lc.irc.hooks;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.unix4j.Unix4j;
 
 import pcl.lc.irc.IRCBot;
 
@@ -58,8 +64,24 @@ public class Flip extends ListenerAdapter {
 				StringBuilder sb = new StringBuilder(s.length());
 				//for(int i=0;i<s.length();i++)
 					//sb.append(REPLACEMENT[s.charAt(i)]);
-
-				event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());
+				if (s.equals("^")) {
+					Iterator it = IRCBot.messages.entries().iterator();
+					Map.Entry pairs = null;
+				    while (it.hasNext()) {
+				        pairs = (Map.Entry)it.next();
+				    }
+					if (pairs.getKey().equals(event.getChannel().getName().toString())) {
+						try {
+							event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(pairs.getValue().toString()))).reverse().toString());
+							return;
+						} catch(IllegalArgumentException e) {
+							event.respond("Invalid regex");
+							return;
+						}
+					}
+				} else {
+					event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				
+				}
 			}
 		}
 	}
