@@ -4,9 +4,6 @@
 package pcl.lc.irc.hooks;
 
 import java.util.ArrayList;
-
-import com.google.common.collect.Multimaps;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +23,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class SED extends ListenerAdapter {
 	public List<String> disabledChannels;
+	public List<String> idfk = new ArrayList<String>();
 	public SED() {
 		disabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("seddisabled-channels", "").split(",")));
 	}
@@ -56,24 +54,29 @@ public class SED extends ListenerAdapter {
 								}
 							}
 						}
-						Iterator it = IRCBot.messages.entrySet().iterator();
+						Iterator it = IRCBot.messages.entries().iterator();
 					    while (it.hasNext()) {
 					        Map.Entry pairs = (Map.Entry)it.next();
-					        //System.out.println(pairs.getKey() + " = " + pairs.getValue());
-							if (pairs.getValue().toString().matches(".*\\b" + s + "\\b.*")) {
+							if (pairs.getValue().toString().matches(".*\\b*" + Pattern.quote(s) + "*\\b.*") && pairs.getKey().equals(event.getChannel().getName().toString())) {
 								try {
 									reply = Unix4j.fromString(pairs.getValue().toString()).sed(message).toStringResult();
+									it.remove();
+									event.respond(reply);
+									return;
 								} catch(IllegalArgumentException e) {
 									event.respond("Invalid regex");
 									return;
 								}
-								event.respond(reply);
 							}
 					    }
 						return;
 					}
 				} else {
-					IRCBot.messages.put(messageEvent, "<" + event.getUser().getNick().toString() + "> " + event.getMessage());
+					if (!IRCBot.messages.containsValue("<" + event.getUser().getNick().toString() + "> " + event.getMessage())) {
+						IRCBot.messages.put(event.getChannel().getName().toString(), "<" + event.getUser().getNick().toString() + "> " + event.getMessage());
+						System.out.println(IRCBot.messages.toString());						
+					}
+					System.out.println(IRCBot.messages.toString());
 				}
 			}
 		}

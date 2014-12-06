@@ -22,11 +22,12 @@ import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.reflections.Reflections;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.job.TaskScheduler;
 import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.CommentedProperties;
-import pcl.lc.utils.TimedHashMap;
 
 public class IRCBot {
 
@@ -37,7 +38,8 @@ public class IRCBot {
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static TimedHashMap messages = new TimedHashMap(600000, null );
+	//public static TimedHashMap messages = new TimedHashMap(600000, null );
+	public static ListMultimap<String, String> messages = ArrayListMultimap.create();
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
