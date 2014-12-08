@@ -264,6 +264,23 @@ public class Admin extends ListenerAdapter {
 					event.respond("Authed hashmap size: " + IRCBot.authed.size());
 				}
 			}
+			
+			if (triggerWord.equals(IRCBot.commandprefix + "RAM")) {
+				String account = Account.getAccount(event.getUser(), event);
+				if (IRCBot.admins.containsKey(account)) {
+					Runtime rt = Runtime.getRuntime();
+				    long m0 = rt.totalMemory() - rt.freeMemory();
+				    event.respond("Used RAM: " + m0);
+				}
+			}
+			
+			if (triggerWord.equals(IRCBot.commandprefix + "flushhash")) {
+				String account = Account.getAccount(event.getUser(), event);
+				if (IRCBot.admins.containsKey(account)) {
+					IRCBot.messages.clear();
+					event.respond("Hashmap size: " + IRCBot.messages.size());
+				}
+			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "charset")) {
 				String account = Account.getAccount(event.getUser(), event);

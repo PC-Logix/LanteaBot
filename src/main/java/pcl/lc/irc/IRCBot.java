@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class IRCBot {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	//public static TimedHashMap messages = new TimedHashMap(600000, null );
-	public static TreeMap<UUID, List<String>> messages = new TreeMap<UUID, List<String>>(Collections.reverseOrder());;
+	public static LinkedHashMap<UUID, List<String>> messages = new LinkedHashMap<UUID, List<String>>();
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();

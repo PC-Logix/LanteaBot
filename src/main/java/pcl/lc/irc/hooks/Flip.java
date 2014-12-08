@@ -1,7 +1,11 @@
 package pcl.lc.irc.hooks;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
@@ -10,6 +14,9 @@ import org.pircbotx.Colors;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.unix4j.Unix4j;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import pcl.lc.irc.IRCBot;
 
@@ -24,9 +31,9 @@ public class Flip extends ListenerAdapter {
 	}
 
 	private static final String
-		flipOriginal =	"!().12345679<>?ABCDEFGJKLMPQRTUVWY[]_abcdefghijklmnpqrtuvwy{},'\"┳",
-		flipReplace =	"¡)(˙⇂ⵒƐㄣϛ9Ɫ6><¿∀ℇƆᗡƎℲפſ丬˥WԀΌᴚ⊥∩ΛMλ][‾ɐqɔpǝɟɓɥıɾʞlɯudbɹʇnʌʍʎ}{',„┻";
-	
+	flipOriginal =	"!().12345679<>?ABCDEFGJKLMPQRTUVWY[]_abcdefghijklmnpqrtuvwy{},'\"┳",
+	flipReplace =	"¡)(˙⇂ⵒƐㄣϛ9Ɫ6><¿∀ℇƆᗡƎℲפſ丬˥WԀΌᴚ⊥∩ΛMλ][‾ɐqɔpǝɟɓɥıɾʞlɯudbɹʇnʌʍʎ}{',„┻";
+
 	private static String mutate(String original, String replacement, CharSequence str) {
 		char[] chars = new char[str.length()];
 		for (int i = 0; i < chars.length; ++i) {
@@ -44,11 +51,11 @@ public class Flip extends ListenerAdapter {
 		}
 		return new String(chars);
 	}
-	
+
 	public static String flip(CharSequence str) {
 		return mutate(flipOriginal, flipReplace, str);
 	}
-	
+
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
@@ -61,18 +68,13 @@ public class Flip extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "flip")) {
 				String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
-				//StringBuilder sb = new StringBuilder(s.length());
-				//for(int i=0;i<s.length();i++)
-					//sb.append(REPLACEMENT[s.charAt(i)]);
 				if (s.equals("^")) {
-					Iterator it = IRCBot.messages.entrySet().iterator();
-					Map.Entry pairs = null;
-				    while (it.hasNext()) {
-				        pairs = (Map.Entry)it.next();
-				    }
-					if (pairs.getKey().equals(event.getChannel().getName().toString())) {
-							event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(pairs.getValue().toString()))).reverse().toString());
+					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+					for(Entry<UUID, List<String>> entry : Iterables.skip(Lists.reverse(list),1)){	
+						if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
+							event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
 							return;
+						}
 					}
 				} else {
 					event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				
