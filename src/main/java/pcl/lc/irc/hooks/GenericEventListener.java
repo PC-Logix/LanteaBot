@@ -2,11 +2,16 @@
  * 
  */
 package pcl.lc.irc.hooks;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.pircbotx.hooks.events.*;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ConnectEvent;
 import org.pircbotx.hooks.events.InviteEvent;
 import org.pircbotx.hooks.events.JoinEvent;
+import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.NickChangeEvent;
 import org.pircbotx.hooks.events.PingEvent;
 import org.pircbotx.hooks.events.ServerResponseEvent;
@@ -29,6 +34,19 @@ public class GenericEventListener extends ListenerAdapter {
 		System.out.println("onPing listener loaded");
 	}
 
+	
+	@SuppressWarnings({ "unchecked" })
+	@Override
+	public void onMessage(final MessageEvent event) throws Exception {
+		super.onMessage(event);
+		List<String> list = new ArrayList<String>();
+		list.add(event.getChannel().getName().toString());
+		list.add(event.getUser().getNick().toString());
+		list.add(event.getMessage());
+		IRCBot.messages.put(UUID.randomUUID(), list);
+	}
+	
+	
 	@Override
 	public void onConnect(final ConnectEvent event) {
 		if (!IRCBot.nspass.isEmpty())

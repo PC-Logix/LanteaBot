@@ -61,23 +61,18 @@ public class Flip extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "flip")) {
 				String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
-				StringBuilder sb = new StringBuilder(s.length());
+				//StringBuilder sb = new StringBuilder(s.length());
 				//for(int i=0;i<s.length();i++)
 					//sb.append(REPLACEMENT[s.charAt(i)]);
 				if (s.equals("^")) {
-					Iterator it = IRCBot.messages.entries().iterator();
+					Iterator it = IRCBot.messages.entrySet().iterator();
 					Map.Entry pairs = null;
 				    while (it.hasNext()) {
 				        pairs = (Map.Entry)it.next();
 				    }
 					if (pairs.getKey().equals(event.getChannel().getName().toString())) {
-						try {
 							event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(pairs.getValue().toString()))).reverse().toString());
 							return;
-						} catch(IllegalArgumentException e) {
-							event.respond("Invalid regex");
-							return;
-						}
 					}
 				} else {
 					event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				

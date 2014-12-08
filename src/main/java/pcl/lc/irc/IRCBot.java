@@ -8,8 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.pircbotx.Configuration;
@@ -24,10 +29,13 @@ import org.reflections.Reflections;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
+
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.job.TaskScheduler;
 import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.CommentedProperties;
+import pcl.lc.utils.TimedHashMap;
 
 public class IRCBot {
 
@@ -39,7 +47,7 @@ public class IRCBot {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	//public static TimedHashMap messages = new TimedHashMap(600000, null );
-	public static ListMultimap<String, String> messages = ArrayListMultimap.create();
+	public static TreeMap<UUID, List<String>> messages = new TreeMap<UUID, List<String>>(Collections.reverseOrder());;
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
