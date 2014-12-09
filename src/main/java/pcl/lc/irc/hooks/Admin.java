@@ -16,6 +16,7 @@ import pcl.lc.httpd.httpd;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.Account;
+import pcl.lc.utils.FormatUtils;
 
 import org.pircbotx.hooks.events.*;
 
@@ -266,12 +267,12 @@ public class Admin extends ListenerAdapter {
 				}
 			}
 			
-			if (triggerWord.equals(IRCBot.commandprefix + "RAM")) {
+			if (triggerWord.equals(IRCBot.commandprefix + "ram")) {
 				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					Runtime rt = Runtime.getRuntime();
 				    long m0 = rt.totalMemory() - rt.freeMemory();
-				    event.respond("Used RAM: " + m0);
+				    event.respond("Used RAM: " + FormatUtils.convertToStringRepresentation(m0));
 				}
 			}
 			
