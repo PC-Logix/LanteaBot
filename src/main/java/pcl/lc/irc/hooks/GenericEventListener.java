@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.events.*;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ConnectEvent;
@@ -39,11 +40,18 @@ public class GenericEventListener extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		List<String> list = new ArrayList<String>();
-		list.add(event.getChannel().getName().toString());
-		list.add(event.getUser().getNick().toString());
-		list.add(event.getMessage());
-		IRCBot.messages.put(UUID.randomUUID(), list);
+		String[] firstWord = StringUtils.split(event.getMessage());
+		String triggerWord = firstWord[0];
+		System.out.println(event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(IRCBot.commandprefix) && IRCBot.commands.contains(triggerWord.replace(IRCBot.commandprefix, "")));
+		if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(IRCBot.commandprefix) && IRCBot.commands.contains(triggerWord.replace(IRCBot.commandprefix, ""))) {
+
+		} else {
+			List<String> list = new ArrayList<String>();
+			list.add(event.getChannel().getName().toString());
+			list.add(event.getUser().getNick().toString());
+			list.add(event.getMessage());
+			IRCBot.messages.put(UUID.randomUUID(), list);
+		}
 	}
 	
 	
