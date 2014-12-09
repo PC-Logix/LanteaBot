@@ -16,6 +16,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.unix4j.Unix4j;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
@@ -59,14 +60,17 @@ public class SED extends ListenerAdapter {
 								}
 							}
 						}
-
 						for (Entry<UUID, List<String>> entry : IRCBot.messages.entrySet()) {
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-								System.out.println(entry.getValue().get(2));
 								if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 									try {
 										reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
 										event.getChannel().send().message("<" + entry.getValue().get(1) + "> " + reply);
+										List<String> list = new ArrayList<String>();
+										list.add(event.getChannel().getName().toString());
+										list.add(entry.getValue().get(1));
+										list.add(reply);
+										IRCBot.messages.put(UUID.randomUUID(), list);
 										return;
 									} catch(IllegalArgumentException e) {
 										event.respond("Invalid regex");
@@ -84,7 +88,6 @@ public class SED extends ListenerAdapter {
 						String account = Account.getAccount(event.getUser(), event);
 						if (IRCBot.admins.containsKey(account)) {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
-							System.out.println(command);
 							if (command.equals("disable")) {
 								disabledChannels.add(event.getChannel().getName().toString());
 								IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
