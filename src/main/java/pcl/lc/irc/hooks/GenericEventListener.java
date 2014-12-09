@@ -42,7 +42,6 @@ public class GenericEventListener extends ListenerAdapter {
 		super.onMessage(event);
 		String[] firstWord = StringUtils.split(event.getMessage());
 		String triggerWord = firstWord[0];
-		System.out.println(event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(IRCBot.commandprefix) && IRCBot.commands.contains(triggerWord.replace(IRCBot.commandprefix, "")));
 		if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(IRCBot.commandprefix) && IRCBot.commands.contains(triggerWord.replace(IRCBot.commandprefix, ""))) {
 
 		} else {
