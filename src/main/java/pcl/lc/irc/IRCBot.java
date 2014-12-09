@@ -46,9 +46,15 @@ public class IRCBot {
 	}
 
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	//public static TimedHashMap messages = new TimedHashMap(600000, null );
-	public static LinkedHashMap<UUID, List<String>> messages = new LinkedHashMap<UUID, List<String>>();
+	private static final int MAX_MESSAGES = 150;
+	public static LinkedHashMap<UUID, List<String>> messages = new LinkedHashMap<UUID, List<String>>(MAX_MESSAGES + 1, .75F, false) {
+		private static final long serialVersionUID = 3558133365599892107L;
+		@SuppressWarnings("rawtypes")
+		protected boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > MAX_MESSAGES;
+         }
+	};
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
