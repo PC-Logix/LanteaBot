@@ -41,6 +41,7 @@ public class Admin extends ListenerAdapter {
 		IRCBot.registerCommand("nick");
 		IRCBot.registerCommand("lctodo");
 		IRCBot.registerCommand("hashcount");
+		IRCBot.registerCommand("flushhash");
 	}
 
 	private void sendKnock(String channel, MessageEvent event) {
