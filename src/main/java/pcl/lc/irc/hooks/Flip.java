@@ -70,7 +70,7 @@ public class Flip extends ListenerAdapter {
 				String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
 				if (s.equals("^")) {
 					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for(Entry<UUID, List<String>> entry : Iterables.skip(Lists.reverse(list),1)){	
+					for(Entry<UUID, List<String>> entry : Lists.reverse(list)){	
 						if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
 							event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
 							return;
