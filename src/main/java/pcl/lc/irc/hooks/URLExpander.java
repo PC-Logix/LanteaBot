@@ -74,17 +74,19 @@ public class URLExpander extends ListenerAdapter {
 			String triggerWord2 = firstWord[0];
 			if (triggerWord2.equals(prefix + "url")) {
 				String account = Account.getAccount(event.getUser(), event);
-				if (IRCBot.admins.containsKey(account)) {
+				if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
 					String command = event.getMessage().substring(event.getMessage().indexOf("url") + 3).trim();
 					System.out.println(command);
 					if (command.equals("disable")) {
 						disabledChannels.add(event.getChannel().getName().toString());
 						IRCBot.prop.setProperty("urldisabled-channels", Joiner.on(",").join(disabledChannels));
+						event.respond("Disabled URLInfo for this channel");
 						IRCBot.saveProps();
 						return;
 					} else if (command.equals("enable")) {
 						disabledChannels.remove(event.getChannel().getName().toString());
 						IRCBot.prop.setProperty("urldisabled-channels", Joiner.on(",").join(disabledChannels));
+						event.respond("Disabled URLInfo for this channel");
 						IRCBot.saveProps();
 						return;
 					} else if (command.equals("list")) {

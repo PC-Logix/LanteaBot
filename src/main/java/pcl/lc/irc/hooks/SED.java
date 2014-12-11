@@ -87,16 +87,18 @@ public class SED extends ListenerAdapter {
 					String triggerWord2 = firstWord[0];
 					if (triggerWord2.equals(prefix + "sed")) {
 						String account = Account.getAccount(event.getUser(), event);
-						if (IRCBot.admins.containsKey(account)) {
+						if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {
 								disabledChannels.add(event.getChannel().getName().toString());
 								IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
+								event.respond("Disabled SED for this channel");
 								IRCBot.saveProps();
 								return;
 							} else if (command.equals("enable")) {
 								disabledChannels.remove(event.getChannel().getName().toString());
 								IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
+								event.respond("Enable SED for this channel");
 								IRCBot.saveProps();
 								return;
 							} else if (command.equals("list")) {
