@@ -60,7 +60,8 @@ public class SED extends ListenerAdapter {
 								}
 							}
 						}
-						for (Entry<UUID, List<String>> entry : IRCBot.messages.entrySet()) {
+						List<Entry<UUID, List<String>>> messageList = new ArrayList<>(IRCBot.messages.entrySet());
+						for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
 								if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 									try {
