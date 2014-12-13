@@ -19,6 +19,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -60,6 +61,7 @@ public class Flip extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
+
 		String prefix = IRCBot.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
@@ -67,19 +69,21 @@ public class Flip extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "flip")) {
-				String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
-				if (s.equals("^")) {
-					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for(Entry<UUID, List<String>> entry : Lists.reverse(list)){	
-						if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-							event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
-							return;
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
+					if (s.equals("^")) {
+						List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+						for(Entry<UUID, List<String>> entry : Lists.reverse(list)){	
+							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
+								event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
+								return;
+							}
 						}
+					} else {
+						event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				
 					}
-				} else {
-					event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				
 				}
-			}
+			}			
 		}
 	}
 }

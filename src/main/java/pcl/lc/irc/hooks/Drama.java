@@ -14,6 +14,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -37,24 +38,25 @@ public class Drama extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "drama")) {
-
-				URL obj = new URL("http://asie.pl/drama.php?2&plain");
-				try {
-					HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-					con.setRequestMethod("GET");
-					con.setRequestProperty("User-Agent", IRCBot.USER_AGENT);
-					BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-					String inputLine;
-					StringBuffer response = new StringBuffer();
-					while ((inputLine = in.readLine()) != null) {
-						response.append(inputLine);
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					URL obj = new URL("http://asie.pl/drama.php?2&plain");
+					try {
+						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+						con.setRequestMethod("GET");
+						con.setRequestProperty("User-Agent", IRCBot.USER_AGENT);
+						BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+						String inputLine;
+						StringBuffer response = new StringBuffer();
+						while ((inputLine = in.readLine()) != null) {
+							response.append(inputLine);
+						}
+						in.close();
+						event.respond(response.toString().replace("</h1><h3><a href=\"http://asie.pl/drama.php?2\">Give it one more try!</a></h3>", ""));
+					} catch (IOException ex) {
+						event.respond("Server returned an error " + ex);
 					}
-					in.close();
-					event.respond(response.toString().replace("</h1><h3><a href=\"http://asie.pl/drama.php?2\">Give it one more try!</a></h3>", ""));
-				} catch (IOException ex) {
-					event.respond("Server returned an error " + ex);
 				}
-			}
+			}			
 		}
 	}
 }

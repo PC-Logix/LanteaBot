@@ -9,6 +9,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -53,6 +54,7 @@ public class Rainbow extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
+
 		String prefix = IRCBot.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
@@ -61,9 +63,11 @@ public class Rainbow extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 
 			if (triggerWord.equals(prefix + "rainbow")) {
-				String s = event.getMessage().substring(event.getMessage().indexOf("rainbow") + 7).trim();
-				event.respond(makeRainbow(s));
-			}
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String s = event.getMessage().substring(event.getMessage().indexOf("rainbow") + 7).trim();
+					event.respond(makeRainbow(s));
+				}
+			}			
 		}
 	}
 }

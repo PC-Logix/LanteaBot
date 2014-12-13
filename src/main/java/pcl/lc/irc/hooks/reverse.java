@@ -9,6 +9,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -31,9 +32,11 @@ public class reverse extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "reverse")) {
-				String s = event.getMessage().substring(event.getMessage().indexOf("reverse") + 7).trim();
-				event.respond(new StringBuffer(Colors.removeFormattingAndColors(s)).reverse().toString());
-			}
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String s = event.getMessage().substring(event.getMessage().indexOf("reverse") + 7).trim();
+					event.respond(new StringBuffer(Colors.removeFormattingAndColors(s)).reverse().toString());
+				}
+			}			
 		}
 	}
 }

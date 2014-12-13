@@ -8,6 +8,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -74,9 +75,11 @@ public class l33t extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "1337")) {
-				String s = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
-				event.respond(toLeet(s));
-			}
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String s = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
+					event.respond(toLeet(s));
+				}
+			}			
 		}
 	}
 }

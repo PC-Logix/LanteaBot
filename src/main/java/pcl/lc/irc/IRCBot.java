@@ -60,6 +60,7 @@ public class IRCBot {
 	public static HashMap<String, String> authed = new HashMap<String,String>();
 	public static HashMap<String, Integer> admins = new HashMap<String,Integer>();
 	public static HashMap<String, Object> botConfig = new HashMap<String, Object>();
+	public static ArrayList<String> ignoredUsers = new ArrayList<String>();
 	public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 	public static String ournick = null;
 
@@ -71,6 +72,7 @@ public class IRCBot {
 	public static String nspass = null;
 	public static String nsaccount = null;
 	public static String channels = null;
+	public static String ignoredUsersProp = null;
 	public static String commandprefix = null;
 	public static String httpdport = null;
 	public static String enablehttpd = null;
@@ -122,6 +124,7 @@ public class IRCBot {
 			nspass = prop.getProperty("nspass", "");
 			nsaccount = prop.getProperty("nsaccount", "");
 			channels = prop.getProperty("channels", "");
+			ignoredUsersProp = prop.getProperty("ignoredUsers", "");
 			commandprefix = prop.getProperty("commandprefix", "@");
 			enablehttpd = prop.getProperty("enablehttpd", "true");
 			httpdport = prop.getProperty("httpdport", "8081");
@@ -145,6 +148,17 @@ public class IRCBot {
 		}
 	}
 
+	public static boolean isIgnored(String nick) {
+		if (authed.containsKey(nick) && ignoredUsers.contains(nick)) {
+			return true;
+		} else if (ignoredUsers.contains(nick)){
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static ArrayList<String> commands = new ArrayList();
 	public static void registerCommand(String command) {
@@ -200,6 +214,14 @@ public class IRCBot {
 			    String pair = pairs[i];
 			    String[] keyValue = pair.split(":");
 			    admins.put(keyValue[0], Integer.valueOf(keyValue[1]));
+			}
+		}
+		
+		if (!ignoredUsersProp.isEmpty()) {
+			String[] pairs = ignoredUsersProp.split(",");
+			for (int i=0;i<pairs.length;i++) {
+			    String pair = pairs[i];
+			    ignoredUsers.add(pair);
 			}
 		}
 		

@@ -8,6 +8,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.mcping.MinecraftPing;
 import pcl.lc.utils.mcping.MinecraftPingOptions;
 import pcl.lc.utils.mcping.MinecraftPingReply;
@@ -33,13 +34,15 @@ public class MCInfo extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "mcinfo")) {
-				String[] request = ourinput.split("\\s+");
-				String server = request[1];
-				String port = request[2];
-				System.out.println(server + ":" + port);
-				MinecraftPingReply data = new MinecraftPing().getPing(server, Integer.parseInt(port));
-				event.respond("Server info: Version: " + data.getVersion() + " MOTD: " + data.getMotd() + " Players: " + data.getOnlinePlayers() + "/" + data.getMaxPlayers());
-			}
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String[] request = ourinput.split("\\s+");
+					String server = request[1];
+					String port = request[2];
+					System.out.println(server + ":" + port);
+					MinecraftPingReply data = new MinecraftPing().getPing(server, Integer.parseInt(port));
+					event.respond("Server info: Version: " + data.getVersion() + " MOTD: " + data.getMotd() + " Players: " + data.getOnlinePlayers() + "/" + data.getMaxPlayers());
+				}
+			}			
 		}
 	}
 }

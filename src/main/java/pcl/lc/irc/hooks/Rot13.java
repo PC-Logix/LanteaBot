@@ -8,6 +8,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -35,16 +36,19 @@ public class Rot13 extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		String prefix = IRCBot.commandprefix;
-		String ourinput = event.getMessage().toLowerCase();
-		String trigger = ourinput.trim();
-		if (trigger.length() > 1) {
-			String[] firstWord = StringUtils.split(trigger);
-			String triggerWord = firstWord[0];
-			if (triggerWord.equals(prefix + "rot13")) {
-				String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
-				event.respond(rot13(s));
-			} 
+
+			String prefix = IRCBot.commandprefix;
+			String ourinput = event.getMessage().toLowerCase();
+			String trigger = ourinput.trim();
+			if (trigger.length() > 1) {
+				String[] firstWord = StringUtils.split(trigger);
+				String triggerWord = firstWord[0];
+				if (triggerWord.equals(prefix + "rot13")) {
+					if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
+					event.respond(rot13(s));
+				} 
+			}			
 		}
 	}
 }

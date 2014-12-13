@@ -12,6 +12,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 @SuppressWarnings("rawtypes")
 public class MCStatus extends ListenerAdapter {
@@ -39,28 +40,30 @@ public class MCStatus extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "mcstatus")) {
-				URL url = new URL("http://status.mojang.com/check");
-				JSONTokener tokener = null;
-				try {
-					tokener = new JSONTokener(url.openStream());
-					JSONArray root = new JSONArray(tokener);
-					String message = "";
-					message = message + "Website: "			+ isUp(root.getJSONObject(0).getString("minecraft.net")) + " ";
-					message = message + "Session: "			+ isUp(root.getJSONObject(1).getString("session.minecraft.net")) + " ";
-					message = message + "Account: "			+ isUp(root.getJSONObject(2).getString("account.mojang.com")) + " ";
-					message = message + "Auth: "			+ isUp(root.getJSONObject(3).getString("auth.mojang.com")) + " ";
-					message = message + "Skins: "			+ isUp(root.getJSONObject(4).getString("skins.minecraft.net")) + " ";
-					message = message + "Authserver: " 		+ isUp(root.getJSONObject(5).getString("authserver.mojang.com")) + " ";
-					message = message + "Session: " 		+ isUp(root.getJSONObject(6).getString("sessionserver.mojang.com")) + " ";
-					message = message + "API: " 			+ isUp(root.getJSONObject(7).getString("api.mojang.com")) + " ";
-					message = message + "Textures: " 		+ isUp(root.getJSONObject(8).getString("textures.minecraft.net")) + " ";
-					event.respond(message);
-				} catch (IOException ex) {
-					event.respond("Server returned an error " + ex);
-				} catch (JSONException ex) {
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					URL url = new URL("http://status.mojang.com/check");
+					JSONTokener tokener = null;
+					try {
+						tokener = new JSONTokener(url.openStream());
+						JSONArray root = new JSONArray(tokener);
+						String message = "";
+						message = message + "Website: "			+ isUp(root.getJSONObject(0).getString("minecraft.net")) + " ";
+						message = message + "Session: "			+ isUp(root.getJSONObject(1).getString("session.minecraft.net")) + " ";
+						message = message + "Account: "			+ isUp(root.getJSONObject(2).getString("account.mojang.com")) + " ";
+						message = message + "Auth: "			+ isUp(root.getJSONObject(3).getString("auth.mojang.com")) + " ";
+						message = message + "Skins: "			+ isUp(root.getJSONObject(4).getString("skins.minecraft.net")) + " ";
+						message = message + "Authserver: " 		+ isUp(root.getJSONObject(5).getString("authserver.mojang.com")) + " ";
+						message = message + "Session: " 		+ isUp(root.getJSONObject(6).getString("sessionserver.mojang.com")) + " ";
+						message = message + "API: " 			+ isUp(root.getJSONObject(7).getString("api.mojang.com")) + " ";
+						message = message + "Textures: " 		+ isUp(root.getJSONObject(8).getString("textures.minecraft.net")) + " ";
+						event.respond(message);
+					} catch (IOException ex) {
+						event.respond("Server returned an error " + ex);
+					} catch (JSONException ex) {
 						event.respond("Error " + ex);
 					}
-			}
+				}
+			}			
 		}
 	}
 }

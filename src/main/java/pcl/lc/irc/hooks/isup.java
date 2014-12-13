@@ -6,11 +6,13 @@ package pcl.lc.irc.hooks;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -51,17 +53,19 @@ public class isup extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "isup")) {
-				String site = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
-				if (!site.startsWith("http://")){
-					site = "http://" + site;
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String site = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
+					if (!site.startsWith("http://")){
+						site = "http://" + site;
+					}
+					boolean rez = ping(site, 1000);
+					if (rez) {
+						event.respond(site + " Is Up.");
+					} else {
+						event.respond(site + " Is Down.");
+					}
 				}
-				boolean rez = ping(site, 1000);
-				if (rez) {
-					event.respond(site + " Is Up.");
-				} else {
-					event.respond(site + " Is Down.");
-				}
-			}
+			}			
 		}
 	}
 }

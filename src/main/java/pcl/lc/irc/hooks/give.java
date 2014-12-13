@@ -8,6 +8,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -24,6 +25,7 @@ public class give extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
+
 		String prefix = IRCBot.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
@@ -31,9 +33,11 @@ public class give extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "give")) {
-				String[] who = event.getMessage().split(" ");
-				event.getChannel().send().action("gives " + who[1] + " some " + who[2]);
-			}
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					String[] who = event.getMessage().split(" ");
+					event.getChannel().send().action("gives " + who[1] + " some " + who[2]);
+				}
+			}			
 		}
 	}
 }

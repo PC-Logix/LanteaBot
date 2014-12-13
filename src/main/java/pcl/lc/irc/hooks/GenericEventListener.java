@@ -19,6 +19,7 @@ import org.pircbotx.hooks.events.ServerResponseEvent;
 import org.pircbotx.hooks.types.GenericCTCPEvent;
 
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
@@ -35,25 +36,27 @@ public class GenericEventListener extends ListenerAdapter {
 		System.out.println("onPing listener loaded");
 	}
 
-	
+
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		String[] firstWord = StringUtils.split(event.getMessage());
-		String triggerWord = firstWord[0];
-		if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(IRCBot.commandprefix) && IRCBot.commands.contains(triggerWord.replace(IRCBot.commandprefix, ""))) {
+		if (!IRCBot.isIgnored(event.getUser().getNick())) {
+			String[] firstWord = StringUtils.split(event.getMessage());
+			String triggerWord = firstWord[0];
+			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(IRCBot.commandprefix) && IRCBot.commands.contains(triggerWord.replace(IRCBot.commandprefix, ""))) {
 
-		} else {
-			List<String> list = new ArrayList<String>();
-			list.add(event.getChannel().getName().toString());
-			list.add(event.getUser().getNick().toString());
-			list.add(event.getMessage());
-			IRCBot.messages.put(UUID.randomUUID(), list);
+			} else {
+				List<String> list = new ArrayList<String>();
+				list.add(event.getChannel().getName().toString());
+				list.add(event.getUser().getNick().toString());
+				list.add(event.getMessage());
+				IRCBot.messages.put(UUID.randomUUID(), list);
+			}			
 		}
 	}
-	
-	
+
+
 	@Override
 	public void onConnect(final ConnectEvent event) {
 		if (!IRCBot.nspass.isEmpty())
@@ -131,9 +134,9 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onServerResponse(final ServerResponseEvent event) {
-		System.out.println(event.getCode());
+		//System.out.println(event.getCode());
 		if(event.getCode() == 352) {
-			System.out.println(event.getParsedResponse());
+			//System.out.println(event.getParsedResponse());
 			Object nick = event.getParsedResponse().toArray()[5];
 			Object server = event.getParsedResponse().toArray()[4];
 			if (IRCBot.users.containsKey(nick)) {
@@ -146,7 +149,8 @@ public class GenericEventListener extends ListenerAdapter {
 			Object nsaccount = event.getParsedResponse().toArray()[2];
 			if (IRCBot.authed.containsKey(nick)) {
 				IRCBot.authed.remove(nick);
-			}if (!nsaccount.toString().equals("0")) {
+			}
+			if (!nsaccount.toString().equals("0")) {
 				IRCBot.authed.put(nick.toString(),nsaccount.toString());
 			}
 		}
@@ -159,13 +163,13 @@ public class GenericEventListener extends ListenerAdapter {
 			IRCBot.authed.put(nick.toString(),nsaccount.toString());
 		}
 		if(event.getCode() == 372) {
-			
+
 		}
 	}
-	
+
 	@Override
 	public void onUnknown(final UnknownEvent event) {
-		System.out.println("UnknownEvent: "+ event.getLine());
+		//System.out.println("UnknownEvent: "+ event.getLine());
 		if(event.getLine().contains("ACCOUNT")) {
 			String nick = event.getLine().substring(event.getLine().indexOf(":") + 1, event.getLine().indexOf("!"));
 			if(event.getLine().split("\\s")[2].equals("*")) {
