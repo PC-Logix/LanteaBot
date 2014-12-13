@@ -20,6 +20,7 @@ import pcl.lc.utils.FormatUtils;
 
 import org.pircbotx.hooks.events.*;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -43,6 +44,9 @@ public class Admin extends ListenerAdapter {
 		IRCBot.registerCommand("lctodo");
 		IRCBot.registerCommand("hashcount");
 		IRCBot.registerCommand("flushhash");
+		IRCBot.registerCommand("ignore");
+		IRCBot.registerCommand("unignore");
+		IRCBot.registerCommand("ignorelist");
 	}
 
 	private void sendKnock(String channel, MessageEvent event) {
@@ -113,24 +117,24 @@ public class Admin extends ListenerAdapter {
 	}
 
 	public void restart() throws URISyntaxException, IOException, Exception {
-		
+
 		if(!IRCBot.httpdport.isEmpty() && !IRCBot.botConfig.get("httpDocRoot").equals("")) {
 			IRCBot.httpServer.stop();
 		}
-		
+
 		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 		final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
 		/* is it a jar file? */
 		if(!currentJar.getName().endsWith(".jar"))
 			return;
-        try {
-        	Runtime.getRuntime().exec(javaBin + " -jar " + currentJar.getPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Finished");
-		
+		try {
+			Runtime.getRuntime().exec(javaBin + " -jar " + currentJar.getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Finished");
+
 		System.exit(0);
 	}
 
@@ -146,7 +150,7 @@ public class Admin extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			String lowerNick = IRCBot.ournick.toLowerCase();
-
+			String account = Account.getAccount(event.getUser(), event);
 			if (event.getMessage().toLowerCase().startsWith(lowerNick + " prefix")) {
 				event.respond(prefix);
 			} 
@@ -172,14 +176,12 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "listadmins")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					event.respond("Current admins: " + IRCBot.admins.toString());
 				}
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "prefix")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					String newPrefix = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					IRCBot.prop.setProperty("commandprefix", newPrefix);
@@ -190,7 +192,6 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "join")) {
-				String account = Account.getAccount(event.getUser(), event);
 				System.out.print(account);
 				if (IRCBot.admins.containsKey(account)) {
 					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
@@ -206,8 +207,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "part")) {
-				String account = Account.getAccount(event.getUser(), event);
-				if (IRCBot.admins.containsKey(account)) {
+				if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
 					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					if (channel.isEmpty()) {
 						channel = event.getChannel().getName();
@@ -220,7 +220,6 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "shutdown")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					if(!IRCBot.httpdport.isEmpty()) {
 						IRCBot.httpServer.stop();
@@ -230,24 +229,21 @@ public class Admin extends ListenerAdapter {
 					System.exit(1);
 				}
 			}
-			
+
 			if (triggerWord.equals(IRCBot.commandprefix + "test")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					event.respond("Success");
 				}
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "restart")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					restart();
 				}
 			}
 
 
-			if (triggerWord.equals(IRCBot.commandprefix + "update")) {
-				String account = Account.getAccount(event.getUser(), event);			
+			if (triggerWord.equals(IRCBot.commandprefix + "update")) {			
 				if (IRCBot.admins.containsKey(account)) {
 					getPull();
 					gradleBuild();
@@ -257,7 +253,6 @@ public class Admin extends ListenerAdapter {
 
 
 			if (triggerWord.equals(IRCBot.commandprefix + "flushauth")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					//IRCBot.authed.clear();
 					for(Channel chan : event.getBot().getUserBot().getChannels()) {
@@ -266,18 +261,16 @@ public class Admin extends ListenerAdapter {
 					event.respond("Authed hashmap size: " + IRCBot.authed.size());
 				}
 			}
-			
+
 			if (triggerWord.equals(IRCBot.commandprefix + "ram")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					Runtime rt = Runtime.getRuntime();
-				    long m0 = rt.totalMemory() - rt.freeMemory();
-				    event.respond("Used RAM: " + FormatUtils.convertToStringRepresentation(m0));
+					long m0 = rt.totalMemory() - rt.freeMemory();
+					event.respond("Used RAM: " + FormatUtils.convertToStringRepresentation(m0));
 				}
 			}
-			
+
 			if (triggerWord.equals(IRCBot.commandprefix + "flushhash")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					IRCBot.messages.clear();
 					event.respond("Hashmap size: " + IRCBot.messages.size());
@@ -285,14 +278,12 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "charset")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					event.respond("Default Charset=" + Charset.defaultCharset());
 				}
 			}
-			
+
 			if (triggerWord.equals(IRCBot.commandprefix + "cycle")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					if (channel.isEmpty()) {
@@ -303,7 +294,6 @@ public class Admin extends ListenerAdapter {
 				}
 			}
 			if (triggerWord.equals(IRCBot.commandprefix + "raw")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					String string = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					event.getBot().sendRaw().rawLine(string);
@@ -311,7 +301,6 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "chgnick")) {
-				String account = Account.getAccount(event.getUser(), event);
 				if (IRCBot.admins.containsKey(account)) {
 					String nick = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					event.getBot().sendRaw().rawLineNow("NICK " + nick);
@@ -319,7 +308,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(IRCBot.commandprefix + "load")) {
-				String account = Account.getAccount(event.getUser(), event);
+
 				if (IRCBot.admins.containsKey(account)) {
 					String module = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					try {
@@ -328,6 +317,30 @@ public class Admin extends ListenerAdapter {
 					} catch( ClassNotFoundException e ) {
 						event.respond("Module " + module + " not loaded " + e.fillInStackTrace());
 					}
+				}
+			}
+
+			if(triggerWord.equals(IRCBot.commandprefix + "ignore")) {
+				if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+					String nick = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
+					IRCBot.ignoredUsers.add(nick);
+					IRCBot.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));		
+					IRCBot.saveProps();
+				}
+			}
+
+			if(triggerWord.equals(IRCBot.commandprefix + "unignore")) {
+				if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+					String nick = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
+					IRCBot.ignoredUsers.remove(nick);
+					IRCBot.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+					IRCBot.saveProps();
+				}
+			}
+			
+			if(triggerWord.equals(IRCBot.commandprefix + "ignorelist")) {
+				if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+					event.respond("Ignored Users: " + IRCBot.ignoredUsers.toString());			
 				}
 			}
 
