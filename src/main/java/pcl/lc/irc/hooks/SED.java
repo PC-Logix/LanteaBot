@@ -2,7 +2,6 @@
  * 
  */
 package pcl.lc.irc.hooks;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,17 +37,17 @@ public class SED extends ListenerAdapter {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 
-			if (!event.getChannel().getName().isEmpty()) {
-				String prefix = IRCBot.commandprefix;
-				String ourinput = event.getMessage().toLowerCase().replaceFirst(Pattern.quote(prefix), "");
-				String trigger = ourinput.replaceAll("[^a-zA-Z0-9 ]", "").trim();
-				String trigger2 = event.getMessage().toLowerCase().trim();
-				if (trigger.length() > 1) {
-					String messageEvent = event.getMessage();
-					String reply = null;
+		if (!event.getChannel().getName().isEmpty()) {
+			String prefix = IRCBot.commandprefix;
+			String ourinput = event.getMessage().toLowerCase().replaceFirst(Pattern.quote(prefix), "");
+			String trigger = ourinput.replaceAll("[^a-zA-Z0-9 ]", "").trim();
+			String trigger2 = event.getMessage().toLowerCase().trim();
+			if (trigger.length() > 1) {
+				String messageEvent = event.getMessage();
+				String reply = null;
 
-					if (event.getMessage().matches("s/(.+)/(.+)")) {
-						if (!IRCBot.isIgnored(event.getUser().getNick())) {
+				if (event.getMessage().matches("s/(.+)/(.+)")) {
+					if (!IRCBot.isIgnored(event.getUser().getNick())) {
 						if (!disabledChannels.contains(event.getChannel().getName().toString())) {
 
 							String s = messageEvent.substring(messageEvent.indexOf("/") + 1);
@@ -84,29 +83,29 @@ public class SED extends ListenerAdapter {
 							}
 							return;
 						}
-					} else {
-						String[] firstWord = StringUtils.split(trigger2);
-						String triggerWord2 = firstWord[0];
-						if (triggerWord2.equals(prefix + "sed")) {
-							String account = Account.getAccount(event.getUser(), event);
-							if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
-								String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
-								if (command.equals("disable")) {
-									disabledChannels.add(event.getChannel().getName().toString());
-									IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
-									event.respond("Disabled SED for this channel");
-									IRCBot.saveProps();
-									return;
-								} else if (command.equals("enable")) {
-									disabledChannels.remove(event.getChannel().getName().toString());
-									IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
-									event.respond("Enabled SED for this channel");
-									IRCBot.saveProps();
-									return;
-								} else if (command.equals("list")) {
-									event.respond("Disabled SED channels: " + disabledChannels);
-									return;
-								}
+					} 
+				}else {
+					String[] firstWord = StringUtils.split(trigger2);
+					String triggerWord2 = firstWord[0];
+					if (triggerWord2.equals(prefix + "sed")) {
+						String account = Account.getAccount(event.getUser(), event);
+						if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
+							if (command.equals("disable")) {
+								disabledChannels.add(event.getChannel().getName().toString());
+								IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
+								event.respond("Disabled SED for this channel");
+								IRCBot.saveProps();
+								return;
+							} else if (command.equals("enable")) {
+								disabledChannels.remove(event.getChannel().getName().toString());
+								IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
+								event.respond("Enabled SED for this channel");
+								IRCBot.saveProps();
+								return;
+							} else if (command.equals("list")) {
+								event.respond("Disabled SED channels: " + disabledChannels);
+								return;
 							}
 						}
 					}
