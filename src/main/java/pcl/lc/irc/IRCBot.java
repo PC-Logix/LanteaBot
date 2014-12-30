@@ -149,7 +149,9 @@ public class IRCBot {
 	}
 
 	public static boolean isIgnored(String nick) {
-		if (authed.containsKey(nick) && ignoredUsers.contains(nick)) {
+		if (IRCBot.admins.containsKey(nick)) {
+			return false;
+		} else if (authed.containsKey(nick) && ignoredUsers.contains(nick)) {
 			return true;
 		} else if (ignoredUsers.contains(nick)){
 			return true;
