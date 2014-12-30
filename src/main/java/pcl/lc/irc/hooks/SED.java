@@ -67,6 +67,7 @@ public class SED extends ListenerAdapter {
 									if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 										try {
 											reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
+											reply = reply.substring(0, 380);
 											event.getChannel().send().message("<" + entry.getValue().get(1) + "> " + reply);
 											List<String> list = new ArrayList<String>();
 											list.add(event.getChannel().getName().toString());
