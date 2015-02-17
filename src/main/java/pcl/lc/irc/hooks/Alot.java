@@ -18,6 +18,7 @@ import com.google.common.base.Joiner;
 
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
+import pcl.lc.utils.Helper;
 import pcl.lc.utils.getVideoInfo;
 
 /**
@@ -46,7 +47,7 @@ public class Alot extends ListenerAdapter {
 				String triggerWord2 = firstWord[0];
 				if (triggerWord2.equals(prefix + "alot")) {
 					String account = Account.getAccount(event.getUser(), event);
-					if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+					if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
 						String command = event.getMessage().substring(event.getMessage().indexOf("alot") + 4).trim();
 						System.out.println(command);
 						if (command.equals("disable")) {

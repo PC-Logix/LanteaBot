@@ -18,6 +18,7 @@ import com.google.common.base.Joiner;
 
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
+import pcl.lc.utils.Helper;
 import pcl.lc.utils.getVideoInfo;
 
 /**
@@ -48,7 +49,7 @@ public class YTInfo extends ListenerAdapter {
 				String triggerWord2 = firstWord[0];
 				if (triggerWord2.equals(prefix + "yt")) {
 					String account = Account.getAccount(event.getUser(), event);
-					if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+					if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
 						String command = event.getMessage().substring(event.getMessage().indexOf("yt") + 2).trim();
 						System.out.println(command);
 						if (command.equals("disable")) {
@@ -94,7 +95,8 @@ public class YTInfo extends ListenerAdapter {
 						if (matcher1.find()) {
 							url = matcher1.group();
 						}
-						String vinfo = getVideoInfo.getVideoSearch(url, true, false);
+						String apiKey = IRCBot.botConfig.get("GoogleAPI").toString();
+						String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
 						if (vinfo != null) {
 							event.respond(vinfo);
 						}

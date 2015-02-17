@@ -4,6 +4,11 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import org.pircbotx.User;
+import org.pircbotx.hooks.events.MessageEvent;
+
+import pcl.lc.irc.IRCBot;
+
 public class Helper {
 	public static final Charset utf8 = Charset.forName("UTF-8");
 	
@@ -48,5 +53,14 @@ public class Helper {
 		try {
 			Thread.sleep(ms);
 		} catch (Exception e) {e.printStackTrace();}
+	}
+	
+	public static Boolean isOp(MessageEvent event) {
+		if (event.getChannel().isOp(event.getUser()) || event.getChannel().isOwner(event.getUser()) || event.getChannel().isSuperOp(event.getUser())) {
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 }

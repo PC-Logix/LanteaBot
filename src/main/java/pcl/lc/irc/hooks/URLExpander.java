@@ -25,6 +25,7 @@ import com.google.common.base.Joiner;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.HTTPQuery;
+import pcl.lc.utils.Helper;
 import pcl.lc.utils.TitleExtractor;
 import pcl.lc.utils.getVideoInfo;
 
@@ -75,7 +76,7 @@ public class URLExpander extends ListenerAdapter {
 				String triggerWord2 = firstWord[0];
 				if (triggerWord2.equals(prefix + "url")) {
 					String account = Account.getAccount(event.getUser(), event);
-					if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+					if (IRCBot.admins.containsKey(account)  || Helper.isOp(event)) {
 						String command = event.getMessage().substring(event.getMessage().indexOf("url") + 3).trim();
 						System.out.println(command);
 						if (command.equals("disable")) {
@@ -131,15 +132,18 @@ public class URLExpander extends ListenerAdapter {
 								String jItem = new JSONObject(json).getString("long-url");
 								System.out.println(jItem);
 								if (jItem.indexOf("youtube") != -1 || jItem.indexOf("youtu.be") != -1) {
-									String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
-									Pattern compiledPattern = Pattern.compile(pattern);
-									Matcher matcher1 = compiledPattern.matcher(jItem);
-									if (matcher1.find()) {
-										url = matcher1.group();
+									if (IRCBot.botConfig.containsKey("GoogleAPI")) {
+										String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+										Pattern compiledPattern = Pattern.compile(pattern);
+										Matcher matcher1 = compiledPattern.matcher(jItem);
+										if (matcher1.find()) {
+											url = matcher1.group();
+										}
+										String apiKey = IRCBot.botConfig.get("GoogleAPI").toString();
+										String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
+										System.out.println(url);
+										event.respond(vinfo);
 									}
-									String vinfo = getVideoInfo.getVideoSearch(url, true, false);
-									System.out.println(url);
-									event.respond(vinfo);
 								} else {
 									String title = TitleExtractor.getPageTitle(jItem);
 									event.respond(jItem + " Page title: " + title);

@@ -4,7 +4,6 @@
 #Any non needed settings can be left blank.
 httpdport=8082
 httpDocRoot=
-
 #IRC Connection Information
 nick=LanteaBot
 server=irc.esper.net
@@ -22,3 +21,14 @@ nspass=
 admins=
 commandprefix=*
 channels=
+ignoredUsers=
+
+ytdisabled-channels=
+urldisabled-channels=
+seddisabled-channels=
+alotdisabled-channels=
+
+WUndergroundAPI=
+GoogleAPI=
+
+wikiWatcherURL=

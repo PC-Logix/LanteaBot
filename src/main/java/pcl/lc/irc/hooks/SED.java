@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -92,7 +93,7 @@ public class SED extends ListenerAdapter {
 					String triggerWord2 = firstWord[0];
 					if (triggerWord2.equals(prefix + "sed")) {
 						String account = Account.getAccount(event.getUser(), event);
-						if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
+						if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {
 								disabledChannels.add(event.getChannel().getName().toString());
