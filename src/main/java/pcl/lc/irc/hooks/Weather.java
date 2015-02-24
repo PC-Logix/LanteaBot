@@ -38,7 +38,7 @@ public class Weather extends ListenerAdapter {
 				String[] firstWord = StringUtils.split(trigger);
 				String triggerWord = firstWord[0];
 				if (triggerWord.equals(prefix + "weather")) {
-					if (IRCBot.botConfig.containsKey("WUndergroundAPI")) {
+					if (IRCBot.botConfig.containsKey("WeatherAPI")) {
 						String loc = event.getMessage().substring(event.getMessage().indexOf("weather") + 7).trim();
 						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 						DocumentBuilder db = dbf.newDocumentBuilder();
