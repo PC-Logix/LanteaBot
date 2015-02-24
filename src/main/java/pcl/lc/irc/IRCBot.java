@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import org.reflections.Reflections;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
+import com.wolfram.alpha.WAEngine;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.job.TaskScheduler;
@@ -55,6 +57,7 @@ public class IRCBot {
             return size() > MAX_MESSAGES;
          }
 	};
+	public static WAEngine engine = new WAEngine();
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
@@ -121,6 +124,7 @@ public class IRCBot {
 			botConfig.put("serverpass", prop.getProperty("serverpass", ""));
 			botConfig.put("WeatherdAPI", prop.getProperty("WeatherAPI", ""));
 			botConfig.put("GoogleAPI", prop.getProperty("GoogleAPI", ""));
+			botConfig.put("WolframAPI", prop.getProperty("WolframAPI", ""));
 			nick = prop.getProperty("nick","LanteaBot");
 			nspass = prop.getProperty("nspass", "");
 			nsaccount = prop.getProperty("nsaccount", "");
@@ -136,6 +140,7 @@ public class IRCBot {
 			adminProps = prop.getProperty("admins", "");
 			enableTLS = prop.getProperty("enableTLS", "");
 			saveProps();
+					
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -265,6 +270,7 @@ public class IRCBot {
 			scheduler.start();
 			bot = new PircBotX(config.buildConfiguration());
 			Thread.sleep(2000);
+			//bot.setInetAddress(InetAddress.getByName("206.255.162.30"));
 			bot.startBot();
 		} catch (Exception ex) {
 			ex.printStackTrace();
