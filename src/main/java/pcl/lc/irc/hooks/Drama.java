@@ -39,7 +39,7 @@ public class Drama extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "drama")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					URL obj = new URL("http://pc-logix.com/drama.php?2&plain");
+					URL obj = new URL("http://pc-logix.com/drama.php?plain");
 					try {
 						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 						con.setRequestMethod("GET");
@@ -51,7 +51,7 @@ public class Drama extends ListenerAdapter {
 							response.append(inputLine);
 						}
 						in.close();
-						event.respond(response.toString().replace("</h1><h3><a href=\"http://pc-logix.com/drama.php?2\">Give it one more try!</a></h3>", ""));
+						event.respond(response.toString());
 					} catch (IOException ex) {
 						event.respond("Server returned an error " + ex);
 					}
