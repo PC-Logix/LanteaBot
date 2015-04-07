@@ -3,7 +3,7 @@ repositories {
 }
 apply plugin: 'java'
 compileJava.options.encoding = 'UTF-8'
-tasks.withType(Compile) {
+tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
 }
 
