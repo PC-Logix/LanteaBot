@@ -39,7 +39,7 @@ public class Drama extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "drama")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					URL obj = new URL("http://pc-logix.com/drama.php?plain");
+					URL obj = new URL("https://pc-logix.com/drama.php?plain");
 					try {
 						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 						con.setRequestMethod("GET");
