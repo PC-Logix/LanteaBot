@@ -295,7 +295,7 @@ public class Admin extends ListenerAdapter {
 			}
 			if (triggerWord.equals(IRCBot.commandprefix + "raw")) {
 				if (IRCBot.admins.containsKey(account)) {
-					String string = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
+					String string = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length());
 					event.getBot().sendRaw().rawLine(string);
 				}
 			}
