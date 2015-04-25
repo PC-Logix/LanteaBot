@@ -3,6 +3,10 @@
  */
 package pcl.lc.irc.hooks;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ActionEvent;
 
