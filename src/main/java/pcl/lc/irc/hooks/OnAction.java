@@ -27,6 +27,12 @@ public class OnAction extends ListenerAdapter {
 				event.getChannel().send().action("Puurs");
 			} else if (event.getAction().contains("glomps " + IRCBot.ournick)) {
 				event.getChannel().send().action("gets out the pepper spray");
+			} else {
+				List<String> list = new ArrayList<String>();
+				list.add(event.getChannel().getName().toString());
+				list.add(event.getUser().getNick().toString());
+				list.add("*** " + event.getMessage());
+				IRCBot.messages.put(UUID.randomUUID(), list);
 			}			
 		}
 	}
