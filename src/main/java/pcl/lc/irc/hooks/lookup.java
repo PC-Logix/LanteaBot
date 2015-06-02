@@ -35,7 +35,7 @@ public class lookup extends ListenerAdapter {
 					//event.respond("Hostname: " + addr.getHostName() + " IP: " + addr.getHostAddress());
 					InetAddress[] inetAddressArray = InetAddress.getAllByName(message[1]);
 					for (int i = 0; i < inetAddressArray.length; i++) {
-						event.respond("Hostname: " + addr.getHostName() + " IP: " + inetAddressArray[i]);
+						event.respond("Hostname: " + message[1] + " IP: " + inetAddressArray[i]);
 					}
 				}
 			}			
