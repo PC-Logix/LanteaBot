@@ -37,6 +37,7 @@ public class lookup extends ListenerAdapter {
 					String output = "DNS Info for " + message[1] + " ";
 					for (int i = 0; i < inetAddressArray.length; i++) {
 						output += inetAddressArray[i];
+						output.replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2");
 					}
 					event.respond(output.replace(message[1] + "/", " "));
 				}
