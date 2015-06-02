@@ -36,7 +36,8 @@ public class lookup extends ListenerAdapter {
 					InetAddress[] inetAddressArray = InetAddress.getAllByName(message[1]);
 					String output = "DNS Info for message[1] ";
 					for (int i = 0; i < inetAddressArray.length; i++) {
-						output += inetAddressArray[i].replaceAll("/*,", "") + " ";
+						output += inetAddressArray[i];
+						output.replaceAll("/*,", " ")
 					}
 					event.respond(output);
 				}
