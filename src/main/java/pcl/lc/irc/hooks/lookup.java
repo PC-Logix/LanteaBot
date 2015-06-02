@@ -33,7 +33,7 @@ public class lookup extends ListenerAdapter {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					//InetAddress addr = InetAddress.getByName(message[1]);
 					//event.respond("Hostname: " + addr.getHostName() + " IP: " + addr.getHostAddress());
-					InetAddress[] inetAddressArray = InetAddress.getAllByName("www.google.com");
+					InetAddress[] inetAddressArray = InetAddress.getAllByName(message[1]);
 					for (int i = 0; i < inetAddressArray.length; i++) {
 						event.respond("Hostname: " + addr.getHostName() + " IP: " + inetAddressArray[i]);
 					}
