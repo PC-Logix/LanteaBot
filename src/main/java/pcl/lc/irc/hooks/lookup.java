@@ -40,8 +40,9 @@ public class lookup extends ListenerAdapter {
 				}
 			} else if (triggerWord.equals(prefix + "rdns")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					InetAddress[] inetAddressArray = InetAddress.getAllByName(message[1]);
-					String output = "Reverse DNS Info for " + message[1] + " " + InetAddress.getCanonicalHostName(message[1]);
+					InetAddress addr = InetAddress.getByName(message[1]);
+					String host = addr.getCanonicalHostName();
+					String output = "Reverse DNS Info for " + message[1] + " " + host);
 					event.respond(output);
 				}
 			}		
