@@ -42,7 +42,7 @@ public class lookup extends ListenerAdapter {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					InetAddress addr = InetAddress.getByName(message[1]);
 					String host = addr.getCanonicalHostName();
-					String output = "Reverse DNS Info for " + message[1] + " " + host);
+					String output = "Reverse DNS Info for " + message[1] + " " + host;
 					event.respond(output);
 				}
 			}		
