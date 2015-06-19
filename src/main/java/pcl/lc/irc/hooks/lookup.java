@@ -31,8 +31,6 @@ public class lookup extends ListenerAdapter {
 			String triggerWord = message[0];
 			if (triggerWord.equals(prefix + "lookup")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					//InetAddress addr = InetAddress.getByName(message[1]);
-					//event.respond("Hostname: " + addr.getHostName() + " IP: " + addr.getHostAddress());
 					InetAddress[] inetAddressArray = InetAddress.getAllByName(message[1]);
 					String output = "DNS Info for " + message[1] + " ";
 					for (int i = 0; i < inetAddressArray.length; i++) {
@@ -40,7 +38,13 @@ public class lookup extends ListenerAdapter {
 					}
 					event.respond(output.replace(message[1] + "/", " ").replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2"));
 				}
-			}			
+			} else if (triggerWord.equals(prefix + "rdns")) {
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					InetAddress[] inetAddressArray = InetAddress.getAllByName(message[1]);
+					String output = "Reverse DNS Info for " + message[1] + " " + message[1].getCanonicalHostName();
+					event.respond(output);
+				}
+			}		
 		}
 	}
 }
