@@ -26,11 +26,11 @@ import pcl.lc.utils.getVideoInfo;
  *
  */
 public class Alot extends ListenerAdapter {
-	List<String> disabledChannels;
+	List<String> enabledChannels;
 	public Alot() throws IOException {
-		disabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("alotdisabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("alotenabled-channels", "").split(",")));
 	}
-	
+
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
@@ -50,35 +50,38 @@ public class Alot extends ListenerAdapter {
 					if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
 						String command = event.getMessage().substring(event.getMessage().indexOf("alot") + 4).trim();
 						System.out.println(command);
-						if (command.equals("disable")) {
-							disabledChannels.add(event.getChannel().getName().toString());
-							IRCBot.prop.setProperty("alotdisabled-channels", Joiner.on(",").join(disabledChannels));
-							event.respond("Disabled Alot for this channel");
-							IRCBot.saveProps();
-							return;
-						} else if (command.equals("enable")) {
-							disabledChannels.remove(event.getChannel().getName().toString());
-							IRCBot.prop.setProperty("alotdisabled-channels", Joiner.on(",").join(disabledChannels));
+						if (command.equals("enable")) {
+							enabledChannels.add(event.getChannel().getName().toString());
+							IRCBot.prop.setProperty("alotenabled-channels", Joiner.on(",").join(enabledChannels));
 							event.respond("Enabled Alot for this channel");
 							IRCBot.saveProps();
 							return;
+						} else if (command.equals("disable")) {
+							if (!enabledChannels.contains(event.getChannel().getName().toString())) {
+								enabledChannels.remove(event.getChannel().getName().toString());
+								IRCBot.prop.setProperty("alotenabled-channels", Joiner.on(",").join(enabledChannels));
+								event.respond("Disabled Alot for this channel");
+								IRCBot.saveProps();
+								return;								
+							}
+
 						} else if (command.equals("list")) {
-							event.respond("Disabled Alot channels: " + disabledChannels);
+							event.respond("Ensabled Alot channels: " + enabledChannels);
 							return;
 						}
 					}
 				}
 			}
 
-			if (!disabledChannels.contains(event.getChannel().getName().toString())) {
+			if (enabledChannels.contains(event.getChannel().getName().toString())) {
 				if (s.length() > 1) {
 					if (s.toLowerCase().contains("alot")){
-						IRCBot.bot.sendIRC().message(event.getChannel().getName().toString(), "ALOT: http://4.bp.blogspot.com/_D_Z-D2tzi14/S8TRIo4br3I/AAAAAAAACv4/Zh7_GcMlRKo/s400/ALOT.png");
+						IRCBot.bot.sendIRC().message(event.getChannel().getName().toString(), "ALOT: http://tinyurl.com/y42zurt");
 					}
 				}
 			}			
 		}
 
 	}
-	
+
 }

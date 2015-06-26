@@ -27,10 +27,10 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class SED extends ListenerAdapter {
-	public List<String> disabledChannels;
+	public List<String> enabledChannels;
 	public List<String> idfk = new ArrayList<String>();
 	public SED() {
-		disabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("seddisabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("sedenabled-channels", "").split(",")));
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -46,10 +46,9 @@ public class SED extends ListenerAdapter {
 			if (trigger.length() > 1) {
 				String messageEvent = event.getMessage();
 				String reply = null;
-
 				if (event.getMessage().matches("s/(.+)/(.+)")) {
 					if (!IRCBot.isIgnored(event.getUser().getNick())) {
-						if (!disabledChannels.contains(event.getChannel().getName().toString())) {
+						if (enabledChannels.contains(event.getChannel().getName().toString())) {
 
 							String s = messageEvent.substring(messageEvent.indexOf("/") + 1);
 							s = s.substring(0, s.indexOf("/"));
@@ -65,7 +64,7 @@ public class SED extends ListenerAdapter {
 							List<Entry<UUID, List<String>>> messageList = new ArrayList<>(IRCBot.messages.entrySet());
 							for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 								if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-									if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
+									//if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 										try {
 											reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
 											if (reply.length() >= 380) {
@@ -83,7 +82,7 @@ public class SED extends ListenerAdapter {
 											return;
 										}
 									}
-								}
+								//}
 							}
 							return;
 						}
@@ -96,19 +95,21 @@ public class SED extends ListenerAdapter {
 						if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {
-								disabledChannels.add(event.getChannel().getName().toString());
-								IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
+								enabledChannels.remove(event.getChannel().getName().toString());
+								IRCBot.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
 								event.respond("Disabled SED for this channel");
 								IRCBot.saveProps();
 								return;
 							} else if (command.equals("enable")) {
-								disabledChannels.remove(event.getChannel().getName().toString());
-								IRCBot.prop.setProperty("seddisabled-channels", Joiner.on(",").join(disabledChannels));
-								event.respond("Enabled SED for this channel");
-								IRCBot.saveProps();
-								return;
+								if (!enabledChannels.contains(event.getChannel().getName().toString())) {
+									enabledChannels.add(event.getChannel().getName().toString());
+									IRCBot.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
+									event.respond("Enabled SED for this channel");
+									IRCBot.saveProps();
+									return;
+								}
 							} else if (command.equals("list")) {
-								event.respond("Disabled SED channels: " + disabledChannels);
+								event.respond("Enabled SED channels: " + enabledChannels);
 								return;
 							}
 						}

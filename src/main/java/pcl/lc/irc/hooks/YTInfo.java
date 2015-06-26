@@ -27,9 +27,9 @@ import pcl.lc.utils.getVideoInfo;
  */
 @SuppressWarnings("rawtypes")
 public class YTInfo extends ListenerAdapter {
-	List<String> disabledChannels;
+	List<String> enabledChannels;
 	public YTInfo() throws IOException {
-		disabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("ytdisabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("ytenabled-channels", "").split(",")));
 	}
 
 
@@ -52,27 +52,30 @@ public class YTInfo extends ListenerAdapter {
 					if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
 						String command = event.getMessage().substring(event.getMessage().indexOf("yt") + 2).trim();
 						System.out.println(command);
-						if (command.equals("disable")) {
-							disabledChannels.add(event.getChannel().getName().toString());
-							IRCBot.prop.setProperty("ytdisabled-channels", Joiner.on(",").join(disabledChannels));
-							event.respond("Disabled YTInfo for this channel");
-							IRCBot.saveProps();
-							return;
-						} else if (command.equals("enable")) {
-							disabledChannels.remove(event.getChannel().getName().toString());
-							IRCBot.prop.setProperty("ytdisabled-channels", Joiner.on(",").join(disabledChannels));
-							event.respond("Enabled YTInfo for this channel");
+						if (command.equals("enable")) {
+							if (!enabledChannels.contains(event.getChannel().getName().toString())) {						
+								enabledChannels.add(event.getChannel().getName().toString());
+								IRCBot.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
+								event.respond("Enabled YTInfo for this channel");
+								IRCBot.saveProps();
+								return;		
+							}
+
+						} else if (command.equals("disable")) {
+							enabledChannels.remove(event.getChannel().getName().toString());
+							IRCBot.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
+							event.respond("Disable YTInfo for this channel");
 							IRCBot.saveProps();
 							return;
 						} else if (command.equals("list")) {
-							event.respond("Disabled YT channels: " + disabledChannels);
+							event.respond("Enabled YT channels: " + enabledChannels);
 							return;
 						}
 					}
 				}
 			}
 
-			if (!disabledChannels.contains(event.getChannel().getName().toString())) {
+			if (!enabledChannels.contains(event.getChannel().getName().toString())) {
 				if (s.length() > 1) {
 
 					int matchStart = 1;
