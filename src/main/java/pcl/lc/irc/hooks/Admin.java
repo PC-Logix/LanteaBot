@@ -200,9 +200,11 @@ public class Admin extends ListenerAdapter {
 					} else {
 						joinChannel(channel, event);
 					}
-					String channels = IRCBot.channels.concat("," + channel);
-					IRCBot.prop.setProperty("channels", channels);
-					IRCBot.saveProps();
+					if (!IRCBot.channels.contains(channel)) {	
+						String channels = IRCBot.channels.concat("," + channel);
+						IRCBot.prop.setProperty("channels", channels);
+						IRCBot.saveProps();
+					}
 				}
 			}
 
