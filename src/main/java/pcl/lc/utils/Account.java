@@ -18,7 +18,6 @@ public class Account {
 
 	public static String getAccount(User u, MessageEvent event) {
 		String user = null;
-		System.out.println(IRCBot.authed.toString());
 		if (IRCBot.authed.containsKey(u.getNick())) {
 			return IRCBot.authed.get(u.getNick());
 		} else {

@@ -34,10 +34,8 @@ public class isup extends ListenerAdapter {
 			connection.setReadTimeout(timeout);
 			connection.setRequestMethod("HEAD");
 			int responseCode = connection.getResponseCode();
-			System.out.println(responseCode);
 			return (200 <= responseCode && responseCode <= 399);
 		} catch (IOException exception) {
-			System.out.println(exception);
 			return false;
 		}
 	}
