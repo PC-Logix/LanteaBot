@@ -64,7 +64,7 @@ public class SED extends ListenerAdapter {
 							List<Entry<UUID, List<String>>> messageList = new ArrayList<>(IRCBot.messages.entrySet());
 							for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 								if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-									//if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
+									if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 										try {
 											reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
 											if (reply.length() >= 380) {
@@ -82,7 +82,7 @@ public class SED extends ListenerAdapter {
 											return;
 										}
 									}
-								//}
+								}
 							}
 							return;
 						}
