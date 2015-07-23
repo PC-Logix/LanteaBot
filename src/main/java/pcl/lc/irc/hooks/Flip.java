@@ -18,6 +18,7 @@ import org.unix4j.Unix4j;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 
@@ -32,8 +33,8 @@ public class Flip extends ListenerAdapter {
 	}
 
 	private static final String
-	flipOriginal =	"!().12345679<>?ABCDEFGJKLMPQRTUVWY[]_abcdefghijklmnpqrtuvwy{},'\"┳",
-	flipReplace =	"¡)(˙⇂ⵒƐㄣϛ9Ɫ6><¿∀ℇƆᗡƎℲפſ丬˥WԀΌᴚ⊥∩ΛMλ][‾ɐqɔpǝɟɓɥıɾʞlɯudbɹʇnʌʍʎ}{',„┻";
+	flipOriginal =	"!().12345679<>?ABCDEFGJKLMPQRTUVWY[]_abcdefghijklmnpqrtuvwy{},'\"â”³",
+	flipReplace =	"Â¡)(Ë™â‡‚âµ’Æ�ã„£Ï›9â±¢6><Â¿âˆ€â„‡Æ†á—¡ÆŽâ„²×¤Å¿ä¸¬Ë¥WÔ€ÎŒá´šâŠ¥âˆ©Î›MÎ»][â€¾É�qÉ”pÇ�ÉŸÉ“É¥Ä±É¾ÊžlÉ¯udbÉ¹Ê‡nÊŒÊ�ÊŽ}{',â€žâ”»";
 
 	private static String mutate(String original, String replacement, CharSequence str) {
 		char[] chars = new char[str.length()];
@@ -62,7 +63,7 @@ public class Flip extends ListenerAdapter {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 
-		String prefix = IRCBot.commandprefix;
+		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {
@@ -75,12 +76,12 @@ public class Flip extends ListenerAdapter {
 						List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for(Entry<UUID, List<String>> entry : Lists.reverse(list)){	
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-								event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
+								event.respond("(â•¯Â°â–¡Â°ï¼‰â•¯ï¸µ" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
 								return;
 							}
 						}
 					} else {
-						event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				
+						event.respond("(â•¯Â°â–¡Â°ï¼‰â•¯ï¸µ" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				
 					}
 				}
 			}			

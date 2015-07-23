@@ -39,6 +39,7 @@ import org.apache.http.protocol.ResponseServer;
 import org.apache.http.protocol.UriHttpRequestHandlerMapper;
 import org.apache.http.util.EntityUtils;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
 import javax.net.ssl.KeyManager;
@@ -194,8 +195,8 @@ public class httpd {
 	public void start() throws Exception {
 		System.out.println("Starting Webserver");
 		// Document root directory
-		String docRoot = IRCBot.botConfig.get("httpDocRoot").toString();
-		int port = Integer.parseInt(IRCBot.httpdport);
+		String docRoot = Config.botConfig.get("httpDocRoot").toString();
+		int port = Integer.parseInt(Config.httpdport);
 
 		// Set up the HTTP protocol processor
 		HttpProcessor httpproc = HttpProcessorBuilder.create()

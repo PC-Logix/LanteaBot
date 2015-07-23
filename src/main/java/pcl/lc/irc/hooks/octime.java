@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
 /**
@@ -28,7 +29,7 @@ public class octime extends ListenerAdapter {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 
-		String prefix = IRCBot.commandprefix;
+		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {

@@ -15,6 +15,7 @@ import org.pircbotx.hooks.events.NoticeEvent;
 
 import com.google.common.base.Joiner;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.TimedHashMap;
@@ -36,7 +37,7 @@ public class Ping extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		String prefix = IRCBot.commandprefix;
+		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {

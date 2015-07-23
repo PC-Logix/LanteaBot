@@ -18,6 +18,7 @@ import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryResult;
 import com.wolfram.alpha.WASubpod;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
 /**
@@ -34,7 +35,7 @@ public class WolframAlpha extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		String prefix = IRCBot.commandprefix;
+		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {
@@ -42,8 +43,8 @@ public class WolframAlpha extends ListenerAdapter {
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "wa")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					if (IRCBot.botConfig.containsKey("WolframAPI")) {
-						String apiKey = IRCBot.botConfig.get("WolframAPI").toString();
+					if (Config.botConfig.containsKey("WolframAPI")) {
+						String apiKey = Config.botConfig.get("WolframAPI").toString();
 						WAEngine engine = IRCBot.engine;
 						engine.setAppID(apiKey);
 				        engine.addFormat("plaintext");

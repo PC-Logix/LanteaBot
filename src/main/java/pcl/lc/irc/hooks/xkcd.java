@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 
@@ -26,7 +27,7 @@ import pcl.lc.utils.Account;
 public class xkcd extends ListenerAdapter {
 	public List<String> enabledChannels;
 	public xkcd() {
-		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("xkcdenabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(Config.prop.getProperty("xkcdenabled-channels", "").split(",")));
 		IRCBot.registerCommand("xkcd");
 	}
 
@@ -62,7 +63,7 @@ public class xkcd extends ListenerAdapter {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 		if (!IRCBot.isIgnored(event.getUser().getNick()) /*&& enabledChannels.contains(event.getChannel().getName().toString())*/) {
-			String prefix = IRCBot.commandprefix;
+			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase();
 			String trigger = ourinput.trim();
 			if (trigger.length() > 1) {

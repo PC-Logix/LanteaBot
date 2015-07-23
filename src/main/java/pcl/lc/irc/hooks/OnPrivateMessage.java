@@ -6,6 +6,7 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 
@@ -22,8 +23,8 @@ public class OnPrivateMessage extends ListenerAdapter {
 	@Override
 	public void onPrivateMessage(final PrivateMessageEvent event) throws Exception {
 		if (event.getUser().equals("NickServ")) {
-			if (!IRCBot.nspass.isEmpty())
-				event.respond("ns identify " + IRCBot.nsaccount + " " + IRCBot.nspass);
+			if (!Config.nspass.isEmpty())
+				event.respond("ns identify " + Config.nsaccount + " " + Config.nspass);
 		}			
 	}
 }

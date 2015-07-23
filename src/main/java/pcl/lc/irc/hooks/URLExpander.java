@@ -22,6 +22,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import com.google.common.base.Joiner;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.HTTPQuery;
@@ -37,7 +38,7 @@ import pcl.lc.utils.getVideoInfo;
 public class URLExpander extends ListenerAdapter {
 	List<String> enabledChannels;
 	public URLExpander() throws IOException {
-		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("urlenabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(Config.prop.getProperty("urlenabled-channels", "").split(",")));
 	}
 
 	public static boolean find(File f, String searchString) {
@@ -68,7 +69,7 @@ public class URLExpander extends ListenerAdapter {
 			String s = ourinput.trim();
 
 			String trigger2 = event.getMessage().toLowerCase().trim();
-			String prefix = IRCBot.commandprefix;
+			String prefix = Config.commandprefix;
 
 			if (s.length() > 1) {
 
@@ -82,17 +83,17 @@ public class URLExpander extends ListenerAdapter {
 						if (command.equals("Enable")) {
 							if (!enabledChannels.contains(event.getChannel().getName().toString())) {
 								enabledChannels.add(event.getChannel().getName().toString());
-								IRCBot.prop.setProperty("urlenabled-channels", Joiner.on(",").join(enabledChannels));
+								Config.prop.setProperty("urlenabled-channels", Joiner.on(",").join(enabledChannels));
 								event.respond("Enabled URLInfo for this channel");
-								IRCBot.saveProps();
+								Config.saveProps();
 								return;								
 							}
 
 						} else if (command.equals("disable")) {
 							enabledChannels.remove(event.getChannel().getName().toString());
-							IRCBot.prop.setProperty("urlenabled-channels", Joiner.on(",").join(enabledChannels));
+							Config.prop.setProperty("urlenabled-channels", Joiner.on(",").join(enabledChannels));
 							event.respond("Disabled URLInfo for this channel");
-							IRCBot.saveProps();
+							Config.saveProps();
 							return;
 						} else if (command.equals("list")) {
 							event.respond("Enabled URL channels: " + enabledChannels);
@@ -135,14 +136,14 @@ public class URLExpander extends ListenerAdapter {
 								String jItem = new JSONObject(json).getString("long-url");
 								System.out.println(jItem);
 								if (jItem.indexOf("youtube") != -1 || jItem.indexOf("youtu.be") != -1) {
-									if (IRCBot.botConfig.containsKey("GoogleAPI")) {
+									if (Config.botConfig.containsKey("GoogleAPI")) {
 										String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 										Pattern compiledPattern = Pattern.compile(pattern);
 										Matcher matcher1 = compiledPattern.matcher(jItem);
 										if (matcher1.find()) {
 											url = matcher1.group();
 										}
-										String apiKey = IRCBot.botConfig.get("GoogleAPI").toString();
+										String apiKey = Config.botConfig.get("GoogleAPI").toString();
 										String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
 										System.out.println(url);
 										event.respond(vinfo);

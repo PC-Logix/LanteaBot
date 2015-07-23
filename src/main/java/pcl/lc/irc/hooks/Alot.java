@@ -16,6 +16,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import com.google.common.base.Joiner;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
@@ -28,7 +29,7 @@ import pcl.lc.utils.getVideoInfo;
 public class Alot extends ListenerAdapter {
 	List<String> enabledChannels;
 	public Alot() throws IOException {
-		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("alotenabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(Config.prop.getProperty("alotenabled-channels", "").split(",")));
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -39,7 +40,7 @@ public class Alot extends ListenerAdapter {
 			String ourinput = event.getMessage();
 			String s = ourinput.trim();
 			String trigger2 = event.getMessage().toLowerCase().trim();
-			String prefix = IRCBot.commandprefix;
+			String prefix = Config.commandprefix;
 
 			if (s.length() > 1) {
 
@@ -52,16 +53,16 @@ public class Alot extends ListenerAdapter {
 						System.out.println(command);
 						if (command.equals("enable")) {
 							enabledChannels.add(event.getChannel().getName().toString());
-							IRCBot.prop.setProperty("alotenabled-channels", Joiner.on(",").join(enabledChannels));
+							Config.prop.setProperty("alotenabled-channels", Joiner.on(",").join(enabledChannels));
 							event.respond("Enabled Alot for this channel");
-							IRCBot.saveProps();
+							Config.saveProps();
 							return;
 						} else if (command.equals("disable")) {
 							if (!enabledChannels.contains(event.getChannel().getName().toString())) {
 								enabledChannels.remove(event.getChannel().getName().toString());
-								IRCBot.prop.setProperty("alotenabled-channels", Joiner.on(",").join(enabledChannels));
+								Config.prop.setProperty("alotenabled-channels", Joiner.on(",").join(enabledChannels));
 								event.respond("Disabled Alot for this channel");
-								IRCBot.saveProps();
+								Config.saveProps();
 								return;								
 							}
 

@@ -17,6 +17,7 @@ import org.unix4j.Unix4j;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
@@ -30,7 +31,7 @@ public class SED extends ListenerAdapter {
 	public List<String> enabledChannels;
 	public List<String> idfk = new ArrayList<String>();
 	public SED() {
-		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("sedenabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(Config.prop.getProperty("sedenabled-channels", "").split(",")));
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -39,7 +40,7 @@ public class SED extends ListenerAdapter {
 		super.onMessage(event);
 
 		if (!event.getChannel().getName().isEmpty()) {
-			String prefix = IRCBot.commandprefix;
+			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase().replaceFirst(Pattern.quote(prefix), "");
 			String trigger = ourinput.replaceAll("[^a-zA-Z0-9 ]", "").trim();
 			String trigger2 = event.getMessage().toLowerCase().trim();
@@ -96,16 +97,16 @@ public class SED extends ListenerAdapter {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {
 								enabledChannels.remove(event.getChannel().getName().toString());
-								IRCBot.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
+								Config.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
 								event.respond("Disabled SED for this channel");
-								IRCBot.saveProps();
+								Config.saveProps();
 								return;
 							} else if (command.equals("enable")) {
 								if (!enabledChannels.contains(event.getChannel().getName().toString())) {
 									enabledChannels.add(event.getChannel().getName().toString());
-									IRCBot.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
+									Config.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
 									event.respond("Enabled SED for this channel");
-									IRCBot.saveProps();
+									Config.saveProps();
 									return;
 								}
 							} else if (command.equals("list")) {

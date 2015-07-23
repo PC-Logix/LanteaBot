@@ -18,6 +18,7 @@ import org.pircbotx.hooks.events.PingEvent;
 import org.pircbotx.hooks.events.ServerResponseEvent;
 import org.pircbotx.hooks.types.GenericCTCPEvent;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 
@@ -44,7 +45,7 @@ public class GenericEventListener extends ListenerAdapter {
 		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			String[] firstWord = StringUtils.split(event.getMessage());
 			String triggerWord = firstWord[0];
-			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(IRCBot.commandprefix) && IRCBot.commands.contains(triggerWord.replace(IRCBot.commandprefix, ""))) {
+			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(Config.commandprefix) && IRCBot.commands.contains(triggerWord.replace(Config.commandprefix, ""))) {
 
 			} else {
 				List<String> list = new ArrayList<String>();
@@ -59,8 +60,8 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onConnect(final ConnectEvent event) {
-		if (!IRCBot.nspass.isEmpty())
-			event.respond("ns identify "+ IRCBot.nsaccount + " " + IRCBot.nspass);
+		if (!Config.nspass.isEmpty())
+			event.respond("ns identify "+ Config.nsaccount + " " + Config.nspass);
 		IRCBot.ournick = event.getBot().getNick();
 	}
 

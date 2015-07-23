@@ -16,6 +16,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import com.google.common.base.Joiner;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
@@ -29,7 +30,7 @@ import pcl.lc.utils.getVideoInfo;
 public class YTInfo extends ListenerAdapter {
 	List<String> enabledChannels;
 	public YTInfo() throws IOException {
-		enabledChannels = new ArrayList<String>(Arrays.asList(IRCBot.prop.getProperty("ytenabled-channels", "").split(",")));
+		enabledChannels = new ArrayList<String>(Arrays.asList(Config.prop.getProperty("ytenabled-channels", "").split(",")));
 	}
 
 
@@ -41,7 +42,7 @@ public class YTInfo extends ListenerAdapter {
 			String ourinput = event.getMessage();
 			String s = ourinput.trim();
 			String trigger2 = event.getMessage().toLowerCase().trim();
-			String prefix = IRCBot.commandprefix;
+			String prefix = Config.commandprefix;
 
 			if (s.length() > 1) {
 
@@ -55,17 +56,17 @@ public class YTInfo extends ListenerAdapter {
 						if (command.equals("enable")) {
 							if (!enabledChannels.contains(event.getChannel().getName().toString())) {						
 								enabledChannels.add(event.getChannel().getName().toString());
-								IRCBot.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
+								Config.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
 								event.respond("Enabled YTInfo for this channel");
-								IRCBot.saveProps();
+								Config.saveProps();
 								return;		
 							}
 
 						} else if (command.equals("disable")) {
 							enabledChannels.remove(event.getChannel().getName().toString());
-							IRCBot.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
+							Config.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
 							event.respond("Disable YTInfo for this channel");
-							IRCBot.saveProps();
+							Config.saveProps();
 							return;
 						} else if (command.equals("list")) {
 							event.respond("Enabled YT channels: " + enabledChannels);
@@ -98,7 +99,7 @@ public class YTInfo extends ListenerAdapter {
 						if (matcher1.find()) {
 							url = matcher1.group();
 						}
-						String apiKey = IRCBot.botConfig.get("GoogleAPI").toString();
+						String apiKey = Config.botConfig.get("GoogleAPI").toString();
 						String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
 						if (vinfo != null) {
 							event.respond(vinfo);
