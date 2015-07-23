@@ -11,7 +11,6 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.AbstractListener;
 
 @SuppressWarnings("rawtypes")
 public class Tell extends ListenerAdapter {
