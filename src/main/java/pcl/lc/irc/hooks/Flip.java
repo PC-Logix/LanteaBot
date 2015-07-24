@@ -33,9 +33,9 @@ public class Flip extends ListenerAdapter {
 	}
 
 	private static final String
-	flipOriginal =	"!().12345679<>?ABCDEFGJKLMPQRTUVWY[]_abcdefghijklmnpqrtuvwy{},'\"â”³",
-	flipReplace =	"Â¡)(Ë™â‡‚âµ’Æ�ã„£Ï›9â±¢6><Â¿âˆ€â„‡Æ†á—¡ÆŽâ„²×¤Å¿ä¸¬Ë¥WÔ€ÎŒá´šâŠ¥âˆ©Î›MÎ»][â€¾É�qÉ”pÇ�ÉŸÉ“É¥Ä±É¾ÊžlÉ¯udbÉ¹Ê‡nÊŒÊ�ÊŽ}{',â€žâ”»";
-
+	flipOriginal =	"!().12345679<>?ABCDEFGJKLMPQRTUVWY[]_abcdefghijklmnpqrtuvwy{},'\"┳",
+	flipReplace =	"¡)(˙⇂ⵒƐㄣϛ9Ɫ6><¿∀ℇƆᗡƎℲפſ丬˥WԀΌᴚ⊥∩ΛMλ][‾ɐqɔpǝɟɓɥıɾʞlɯudbɹʇnʌʍʎ}{',„┻";
+	
 	private static String mutate(String original, String replacement, CharSequence str) {
 		char[] chars = new char[str.length()];
 		for (int i = 0; i < chars.length; ++i) {
@@ -76,12 +76,12 @@ public class Flip extends ListenerAdapter {
 						List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for(Entry<UUID, List<String>> entry : Lists.reverse(list)){	
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-								event.respond("(â•¯Â°â–¡Â°ï¼‰â•¯ï¸µ" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
+								event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
 								return;
 							}
 						}
 					} else {
-						event.respond("(â•¯Â°â–¡Â°ï¼‰â•¯ï¸µ" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());				
+						event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());								
 					}
 				}
 			}			
