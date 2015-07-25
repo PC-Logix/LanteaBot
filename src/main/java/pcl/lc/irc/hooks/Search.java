@@ -49,6 +49,9 @@ public class Search extends ListenerAdapter {
 		} else if(splitMessage[0].equals(prefix + "ann")) {
 			filter = "site:animenewsnetwork.com";
 			doSearch = true;
+		} else if(splitMessage[0].equals(prefix + "yt") || splitMessage[0].equals(prefix + "youtube")) {
+			filter = "site:youtube.com";
+			doSearch = true;
 		}
 		if (doSearch)
 			event.respond(performSearch(filter, StringUtils.join(splitMessage, " ", 1, splitMessage.length)));

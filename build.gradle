@@ -25,7 +25,6 @@ else
 	ext.buildNumber = 0
 
 archivesBaseName = "LanteaBot"
-jar.classifier = "${ext.buildNumber}"
 jar {
    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest {
