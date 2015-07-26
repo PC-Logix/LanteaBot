@@ -79,7 +79,7 @@ public class Search extends ListenerAdapter {
 			JsonObject output = element.getAsJsonObject().getAsJsonObject("responseData").getAsJsonArray("results").get(0).getAsJsonObject();
 			String title = StringEscapeUtils.unescapeJava(StringEscapeUtils.unescapeHtml4(output.get("titleNoFormatting").toString().replaceAll("\"", "")));
 			String content = StringEscapeUtils.unescapeJava(StringEscapeUtils.unescapeHtml4(output.get("content").toString().replaceAll("\\s+", " ").replaceAll("\\<.*?>", "").replaceAll("\"", "")));
-			String url = StringEscapeUtils.unescapeJava(output.get("url").toString().replaceAll("\"", ""));
+			String url = StringEscapeUtils.unescapeJava(output.get("unescapedUrl").toString().replaceAll("\"", ""));
 			return url + " - " + Colors.BOLD + title + Colors.NORMAL + ": \"" + content + "\"";
 		} catch (IOException e) {
 			e.printStackTrace();
