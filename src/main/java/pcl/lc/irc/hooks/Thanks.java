@@ -12,7 +12,7 @@ public class Thanks extends ListenerAdapter {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 		
-		if (event.getMessage().toLowerCase().contains(IRCBot.ournick)) {
+		if (event.getMessage().toLowerCase().contains(IRCBot.ournick.toLowerCase())) {
 			if (event.getMessage().toLowerCase().contains("thanks") || event.getMessage().toLowerCase().contains("thank you")) {
 				event.respond("You're welcome!");
 			}
