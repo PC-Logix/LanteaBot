@@ -14,7 +14,7 @@ public class Thanks extends ListenerAdapter {
 		
 		if (event.getMessage().toLowerCase().contains(IRCBot.ournick)) {
 			if (event.getMessage().toLowerCase().contains("thanks") || event.getMessage().toLowerCase().contains("thank you")) {
-				event.respond("Your welcome!");
+				event.respond("You're welcome!");
 			}
 		}
 	}
