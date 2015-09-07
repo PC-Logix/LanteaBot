@@ -141,7 +141,7 @@ public class Config {
 			}
 
 			Config.config.setEncoding(Charset.forName("UTF-8"));
-			Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString());
+			Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString()).setSocketFactory(new UtilSSLSocketFactory().disableDiffieHellman());
 
 
 		} catch (IOException ex) {
