@@ -62,7 +62,7 @@ public class Tell extends ListenerAdapter {
                 bot.sendIRC().notice(sender.getNick(), results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
             }
             PreparedStatement clearTells = IRCBot.getInstance().getPreparedStatement("removeTells");
-            clearTells.setString(1, IRCBot.authed.get(sender.getNick()));
+            clearTells.setString(1, sender.getNick());
             clearTells.execute();
         } catch (Exception e) {
             e.printStackTrace();
