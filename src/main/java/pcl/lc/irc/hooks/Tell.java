@@ -44,7 +44,7 @@ public class Tell extends ListenerAdapter {
                 String message = StringUtils.join(splitMessage," ", 2, splitMessage.length);
 
                 addTell.setString(1, sender.getNick());
-                addTell.setString(2, IRCBot.authed.get(recipient));
+                addTell.setString(2, recipient);
                 addTell.setString(3, channel);
                 addTell.setString(4, message);
                 addTell.executeUpdate();
