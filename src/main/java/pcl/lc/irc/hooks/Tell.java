@@ -56,7 +56,7 @@ public class Tell extends ListenerAdapter {
         }
         try {
             PreparedStatement checkTells = IRCBot.getInstance().getPreparedStatement("getTells");
-            checkTells.setString(1, IRCBot.authed.get(sender.getNick()));
+            checkTells.setString(1, (sender.getNick());
             ResultSet results = checkTells.executeQuery();
             while (results.next()) {
                 bot.sendIRC().notice(sender.getNick(), results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
