@@ -46,9 +46,9 @@ public class getVideoInfo {
 			int vDislikes = statistics.has("dislikeCount") ? statistics.getInt("dislikeCount") : 0;
 			int vViewCount = statistics.getInt("viewCount");
 			q.close();
-			return (data ? Colors.BOLD+vTitle+Colors.NORMAL+" | length "+Colors.BOLD + vDuration +Colors.NORMAL
+			return (data ? Colors.BOLD+vTitle+Colors.NORMAL+" | length: "+Colors.BOLD + vDuration +Colors.NORMAL
 					+" | Likes: " + Colors.GREEN + vLikes + Colors.NORMAL + " Dislikes: " + Colors.RED + vDislikes + Colors.NORMAL
-					+" View" + Colors.NORMAL + (vViewCount != 1 ? "s: " : ": ") + Colors.BOLD + vViewCount + " | by " + Colors.BOLD + vUploader + Colors.NORMAL : "");
+					+" View" + Colors.NORMAL + (vViewCount != 1 ? "s: " : ": ") + Colors.BOLD + vViewCount + Colors.NORMAL + " | by " + Colors.BOLD + vUploader + Colors.NORMAL : "");
 			
 		} catch (Exception e) {e.printStackTrace();}
 		return null;
