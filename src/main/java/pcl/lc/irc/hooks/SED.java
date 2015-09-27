@@ -79,7 +79,7 @@ public class SED extends ListenerAdapter {
 											IRCBot.messages.put(UUID.randomUUID(), list);
 											return;
 										} catch(IllegalArgumentException e) {
-											event.respond("Invalid regex");
+											event.respond("Invalid regex " + e.getMessage());
 											return;
 										}
 									}
