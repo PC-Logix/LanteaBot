@@ -121,7 +121,7 @@ public class Admin extends ListenerAdapter {
 			String lowerNick = IRCBot.ournick.toLowerCase();
 			String account = Account.getAccount(event.getUser(), event);
 			
-			if (splitMessage[0].equals(Config.commandprefix + "op")) {
+			if (splitMessage[0].equals(Config.commandprefix + "addadmin")) {
 				if (IRCBot.admins.containsKey(account) || isOp) {
 					try {
 						String newOpNick = splitMessage[1];
@@ -173,7 +173,14 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(Config.commandprefix + "listadmins")) {
 				if (IRCBot.admins.containsKey(account)) {
-					event.respond("Current admins: " + IRCBot.admins.toString());
+					event.respond("DEPERECATED! Current admins: " + IRCBot.admins.toString());
+				}
+			}
+			
+			if (splitMessage[0].equals("listadmins")) {
+				bot.sendIRC().notice(sender,"Admin list");
+				for (String entry : IRCBot.getInstance().getOps()) {
+					bot.sendIRC().notice(sender, entry);
 				}
 			}
 
