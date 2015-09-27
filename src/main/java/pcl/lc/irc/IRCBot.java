@@ -108,7 +108,6 @@ public class IRCBot {
 		scanner = new Scanner(System.in);
         instance = this;		
 		Config.setConfig();	
-		loadOps();
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
@@ -119,6 +118,8 @@ public class IRCBot {
             System.err.println("Database Failure!");
             return;
         }
+        
+		loadOps();
         
 		//Load all classes in the pcl.lc.irc.hooks package.
 		Reflections plugins = new Reflections("pcl.lc.irc.hooks");
