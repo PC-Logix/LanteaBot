@@ -57,7 +57,7 @@ public class GenericEventListener extends ListenerAdapter {
 		}
 		
 		if (!event.getUser().getNick().equals(IRCBot.ournick)) {
-			if (IRCBot.authed.containsKey(event.getUser().getNick())) {
+			if (!IRCBot.authed.containsKey(event.getUser().getNick())) {
 				IRCBot.bot.sendRaw().rawLineNow("who " + event.getUser().getNick() + " %an");
 				if (!event.getUser().getNick().equals(IRCBot.ournick) && !event.getUser().getServer().isEmpty()) {
 					IRCBot.users.put(event.getUser().getNick(), event.getUser().getServer());
