@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.User;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.ActionEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
@@ -46,6 +47,35 @@ public class Seen extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onAction(final ActionEvent event) throws Exception {
+        User sender = event.getUser();
+        try {
+            PreparedStatement updateSeen = IRCBot.getInstance().getPreparedStatement("updateLastSeen");
+            updateSeen.setString(1, sender.getNick());
+            updateSeen.setLong(2, System.currentTimeMillis());
+            updateSeen.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (event.getMessage().startsWith(Config.commandprefix + "seen")) {
+            try {
+                PreparedStatement getSeen = IRCBot.getInstance().getPreparedStatement("getLastSeen");
+                String[] splitMessage = event.getMessage().split(" ");
+                String target = splitMessage[1];
+                getSeen.setString(1, target);
+                ResultSet results = getSeen.executeQuery();
+                if (results.next()) {
+                    event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago.");
+                } else {
+                    event.respond(target + " has not been seen.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     private String formatTime(long delta) {
         StringBuilder duration = new StringBuilder();
         if (delta > 86400000L) {
