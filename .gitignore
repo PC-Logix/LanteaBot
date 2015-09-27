@@ -235,3 +235,4 @@ pip-log.txt
 *.lnk
 config.properties
 lanteabot.jar
+*.db
