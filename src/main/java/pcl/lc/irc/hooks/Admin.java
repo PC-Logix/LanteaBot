@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 
@@ -50,6 +52,7 @@ public class Admin extends ListenerAdapter {
 		IRCBot.registerCommand("ignorelist");
 	}
 
+	@SuppressWarnings("unused")
 	private void sendKnock(String channel, MessageEvent event) {
 		event.getBot().sendRaw().rawLineNow("KNOCK " + channel + " :Asked to join by " + event.getUser().getNick());
 		IRCBot.invites.put(channel, channel);
@@ -75,46 +78,6 @@ public class Admin extends ListenerAdapter {
 			System.out.println();
 			Admin.sendKnock(channel.toArray()[1].toString(), event);
 		}
-	}
-
-
-	public int getPull() throws InterruptedException, IOException {
-		File pathToExecutable = new File( "/usr/bin/git" );
-		ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "pull");
-		builder.directory( new File(System.getProperty("user.home") + "/LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
-		builder.redirectErrorStream(true);
-		Process process =  builder.start();
-
-		Scanner s = new Scanner(process.getInputStream());
-		StringBuilder text = new StringBuilder();
-		while (s.hasNextLine()) {
-			text.append(s.nextLine());
-			text.append("\n");
-		}
-		s.close();
-
-		int result = process.waitFor();
-		return result;
-	}
-
-
-	public int gradleBuild() throws InterruptedException, IOException {
-		File pathToExecutable = new File( "/usr/bin/gradle" );
-		ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "build");
-		builder.directory( new File(System.getProperty("user.home") + "/LanteaBot/" ).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
-		builder.redirectErrorStream(true);
-		Process process =  builder.start();
-
-		Scanner s = new Scanner(process.getInputStream());
-		StringBuilder text = new StringBuilder();
-		while (s.hasNextLine()) {
-			text.append(s.nextLine());
-			text.append("\n");
-		}
-		s.close();
-
-		int result = process.waitFor();
-		return result;
 	}
 
 	public void restart() throws URISyntaxException, IOException, Exception {
@@ -143,10 +106,12 @@ public class Admin extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-
+		String[] splitMessage = event.getMessage().split(" ");
 		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
+		String sender = event.getUser().getNick();
+		PircBotX bot = event.getBot();
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
@@ -195,30 +160,37 @@ public class Admin extends ListenerAdapter {
 			if (triggerWord.equals(Config.commandprefix + "join")) {
 				System.out.print(account);
 				if (IRCBot.admins.containsKey(account)) {
-					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
-					if (event.getBot().getUserChannelDao().getChannel(channel).isInviteOnly()) {
-						sendKnock(channel, event);
-					} else {
-						joinChannel(channel, event);
+					try {
+						String newChannel = splitMessage[1];
+						PreparedStatement addChannel = IRCBot.getInstance().getPreparedStatement("addChannel");
+						addChannel.setString(1, newChannel);
+						addChannel.executeUpdate();
+						bot.sendIRC().joinChannel(newChannel);
+						bot.sendIRC().notice(sender, "Joined channel " + newChannel);
+					} catch (Exception e) {
+						e.printStackTrace();
+						bot.sendIRC().notice(sender, "Something went wrong!");
 					}
-					if (!Config.channels.contains(channel)) {	
-						String channels = Config.channels.concat("," + channel);
-						Config.prop.setProperty("channels", channels);
-						Config.saveProps();
-					}
+				} else {
+					bot.sendIRC().notice(sender, "You cannot do that.");
 				}
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "part")) {
 				if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
-					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
-					if (channel.isEmpty()) {
-						channel = event.getChannel().getName();
+					try {
+						String oldChannel = splitMessage[1];
+						PreparedStatement removeChannel = IRCBot.getInstance().getPreparedStatement("removeChannel");
+						removeChannel.setString(1, oldChannel);
+						removeChannel.executeUpdate();
+						bot.getUserChannelDao().getChannel(oldChannel).send().part();
+						bot.sendIRC().notice(sender, "Left channel " + oldChannel);
+					} catch (Exception e) {
+						e.printStackTrace();
+						bot.sendIRC().notice(sender, "Something went wrong!");
 					}
-					partChannel(channel, event);
-					String channels = Config.channels.replace("," + channel, "");
-					Config.prop.setProperty("channels", channels);
-					Config.saveProps();
+				} else {
+					bot.sendIRC().notice(sender, "You cannot do that.");
 				}
 			}
 
@@ -244,16 +216,6 @@ public class Admin extends ListenerAdapter {
 					restart();
 				}
 			}
-
-
-			if (triggerWord.equals(Config.commandprefix + "update")) {			
-				if (IRCBot.admins.containsKey(account)) {
-					getPull();
-					gradleBuild();
-					restart();
-				}
-			}
-
 
 			if (triggerWord.equals(Config.commandprefix + "flushauth")) {
 				if (IRCBot.admins.containsKey(account)) {
@@ -340,7 +302,7 @@ public class Admin extends ListenerAdapter {
 					Config.saveProps();
 				}
 			}
-			
+
 			if(triggerWord.equals(Config.commandprefix + "ignorelist")) {
 				if (IRCBot.admins.containsKey(account) || event.getChannel().isOp(event.getUser())) {
 					event.respond("Ignored Users: " + IRCBot.ignoredUsers.toString());			

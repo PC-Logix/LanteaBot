@@ -55,6 +55,19 @@ public class GenericEventListener extends ListenerAdapter {
 				IRCBot.messages.put(UUID.randomUUID(), list);
 			}			
 		}
+		
+		if (!event.getUser().getNick().equals(IRCBot.ournick)) {
+			IRCBot.bot.sendRaw().rawLineNow("who " + event.getUser().getNick() + " %an");
+			if (!event.getUser().getNick().equals(IRCBot.ournick) && !event.getUser().getServer().isEmpty()) {
+				IRCBot.users.put(event.getUser().getNick(), event.getUser().getServer());
+			}
+			if(IRCBot.authed.containsKey(event.getUser().getNick())) {
+				IRCBot.authed.remove(event.getUser().getNick());
+			}
+		} else {
+			IRCBot.bot.sendRaw().rawLineNow("who " + event.getChannel().getName() + " %an");
+		}
+		
 	}
 
 
@@ -80,17 +93,7 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onJoin(final JoinEvent event) {
-		if (!event.getUser().getNick().equals(IRCBot.ournick)) {
-			IRCBot.bot.sendRaw().rawLineNow("who " + event.getUser().getNick() + " %an");
-			if (!event.getUser().getNick().equals(IRCBot.ournick) && !event.getUser().getServer().isEmpty()) {
-				IRCBot.users.put(event.getUser().getNick(), event.getUser().getServer());
-			}
-			if(IRCBot.authed.containsKey(event.getUser().getNick())) {
-				IRCBot.authed.remove(event.getUser().getNick());
-			}
-		} else {
-			IRCBot.bot.sendRaw().rawLineNow("who " + event.getChannel().getName() + " %an");
-		}
+
 	}
 
 	@Override
