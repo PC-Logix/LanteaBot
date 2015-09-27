@@ -11,8 +11,10 @@ import java.util.Scanner;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
+import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.WaitForQueue;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.Config;
@@ -112,11 +114,39 @@ public class Admin extends ListenerAdapter {
 		String trigger = ourinput.trim();
 		String sender = event.getUser().getNick();
 		PircBotX bot = event.getBot();
+		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			String lowerNick = IRCBot.ournick.toLowerCase();
 			String account = Account.getAccount(event.getUser(), event);
+			
+			if (splitMessage[0].equals(Config.commandprefix + "op")) {
+				if (IRCBot.admins.containsKey(account) || isOp) {
+					try {
+						String newOpNick = splitMessage[1];
+						User newOp = bot.getUserChannelDao().getUser(newOpNick);
+						if (!newOp.isVerified()) {
+							bot.sendIRC().notice(sender, "User " + newOpNick + " is not a registered user.");
+							return;
+						}
+						String nsRegistration;
+						bot.sendRaw().rawLine("WHOIS " + newOpNick + " " + newOpNick);
+						WaitForQueue waitForQueue = new WaitForQueue(bot);
+						WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
+						waitForQueue.close();
+						nsRegistration = whoisEvent.getRegisteredAs();
+						IRCBot.getInstance().getOps().add(nsRegistration);
+						PreparedStatement addOp = IRCBot.getInstance().getPreparedStatement("addOp");
+						addOp.setString(1, nsRegistration);
+						addOp.executeUpdate();
+						bot.sendIRC().notice(sender, "User " + newOpNick + " (" + nsRegistration + ") added to list.");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
 			if (event.getMessage().toLowerCase().startsWith(lowerNick + " prefix")) {
 				event.respond(prefix);
 			} 

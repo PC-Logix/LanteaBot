@@ -1,6 +1,5 @@
 package pcl.lc.irc;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,18 +7,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.pircbotx.PircBotX;
-import org.pircbotx.exception.IrcException;
+import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.WaitForQueue;
+import org.pircbotx.hooks.events.WhoisEvent;
 import org.reflections.Reflections;
 
 import com.wolfram.alpha.WAEngine;
@@ -51,11 +55,13 @@ public class IRCBot {
 	public static HashMap<String, String> users = new HashMap<String, String>();
 	public static HashMap<String, String> authed = new HashMap<String,String>();
 	public static HashMap<String, Integer> admins = new HashMap<String,Integer>();
-
+	private final List<String> ops = new ArrayList<>();
 	public static ArrayList<String> ignoredUsers = new ArrayList<String>();
 	public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 	public static String ournick = null;
-
+	private final Scanner scanner;
+	private Map<UUID,ExpiringToken> userCache = new HashMap<>();
+	
 	public static Logger log = Logger.getLogger("lanteabot");
 	public static PircBotX bot;
 	private TaskScheduler scheduler;
@@ -99,10 +105,10 @@ public class IRCBot {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public IRCBot() {
-		
+		scanner = new Scanner(System.in);
         instance = this;		
 		Config.setConfig();	
-
+		loadOps();
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
@@ -191,6 +197,27 @@ public class IRCBot {
         bot.sendIRC().message(target, message);
     }
 
+    private void loadOps() {
+        try {
+            ResultSet readOps = connection.createStatement().executeQuery("SELECT name FROM ops;");
+            int rowCount = 0;
+            while (readOps.next()) {
+                rowCount++;
+                ops.add(readOps.getString("name"));
+            }
+            if (rowCount == 0) {
+                System.out.print("Please enter the primary nickserv name of the first person with op privileges for the bot:\n> ");
+                String op = scanner.nextLine();
+                ops.add(op);
+                preparedStatements.get("addOp").setString(1, op);
+                preparedStatements.get("addOp").executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+    
     public PreparedStatement getPreparedStatement(String statement) throws Exception {
         if (!preparedStatements.containsKey(statement)) {
             throw new Exception("Invalid statement!");
@@ -201,4 +228,59 @@ public class IRCBot {
     public static IRCBot getInstance() {
         return instance;
     }
+
+    public List<String> getOps() {
+        return ops;
+    }
+
+    public boolean isOp(PircBotX sourceBot, User user) {
+	    String nsRegistration = "";
+	    if (userCache.containsKey(user.getUserId()) && userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
+		    nsRegistration = userCache.get(user.getUserId()).getValue();
+		    System.out.println(user.getNick() + " is cached");
+	    } else {
+		    System.out.println(user.getNick() + " is NOT cached");
+		    user.isVerified();
+		    try {
+			    sourceBot.sendRaw().rawLine("WHOIS " + user.getNick() + " " + user.getNick());
+			    WaitForQueue waitForQueue = new WaitForQueue(sourceBot);
+			    WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
+			    waitForQueue.close();
+			    nsRegistration = whoisEvent.getRegisteredAs();
+		    } catch (Exception e) {
+			    e.printStackTrace();
+		    }
+		    if (!nsRegistration.isEmpty()) {
+			    Calendar future = Calendar.getInstance();
+			    future.add(Calendar.MINUTE,5);
+			    userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
+			    System.out.println(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
+		    }
+	    }
+	    if (getOps().contains(nsRegistration)) {
+		    return true;
+	    } else {
+		    return false;
+	    }
+    }  
+    
+	private class ExpiringToken
+	{
+		private final Date expiration;
+		private final String value;
+
+		private ExpiringToken(Date expiration, String value) {
+			this.expiration = expiration;
+			this.value = value;
+		}
+
+		public Date getExpiration() {
+			return expiration;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+	}
 }
