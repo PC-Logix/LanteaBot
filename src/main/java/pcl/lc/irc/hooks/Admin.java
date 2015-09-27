@@ -177,7 +177,7 @@ public class Admin extends ListenerAdapter {
 				}
 			}
 			
-			if (splitMessage[0].equals("listadmins")) {
+			if (splitMessage[0].equals(Config.commandprefix + "listadmins")) {
 				bot.sendIRC().notice(sender,"Admin list");
 				for (String entry : IRCBot.getInstance().getOps()) {
 					bot.sendIRC().notice(sender, entry);
@@ -256,10 +256,10 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(Config.commandprefix + "flushauth")) {
 				if (IRCBot.admins.containsKey(account)) {
-					//IRCBot.authed.clear();
-					for(Channel chan : event.getBot().getUserBot().getChannels()) {
+					IRCBot.authed.clear();
+					/*for(Channel chan : event.getBot().getUserBot().getChannels()) {
 						IRCBot.bot.sendRaw().rawLineNow("who " + chan.getName() + " %an");
-					}
+					}*/
 					event.respond("Authed hashmap size: " + IRCBot.authed.size());
 				}
 			}
