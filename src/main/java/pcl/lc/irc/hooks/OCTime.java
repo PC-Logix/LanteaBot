@@ -19,8 +19,8 @@ import pcl.lc.irc.IRCBot;
  *
  */
 @SuppressWarnings("rawtypes")
-public class octime extends ListenerAdapter {
-	public octime() {
+public class OCTime extends ListenerAdapter {
+	public OCTime() {
 		IRCBot.registerCommand("octime");
 	}
 

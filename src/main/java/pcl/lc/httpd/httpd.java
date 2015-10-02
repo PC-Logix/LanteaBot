@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.security.KeyStore;
 import java.util.Locale;
 
 import org.apache.http.ConnectionClosedException;
@@ -42,9 +40,6 @@ import org.apache.http.util.EntityUtils;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
 
 /**

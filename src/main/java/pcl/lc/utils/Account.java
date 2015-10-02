@@ -4,7 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pircbotx.User;
-import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.ActionEvent;
 import org.pircbotx.hooks.events.MessageEvent;

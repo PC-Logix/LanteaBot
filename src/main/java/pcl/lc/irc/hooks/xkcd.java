@@ -8,7 +8,6 @@ import java.net.URLConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +80,7 @@ public class xkcd extends ListenerAdapter {
 				String param = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();		
 				if (triggerWord.equals(prefix + "xkcd")) {
 					boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
-					if (isOp || Helper.isOp(event)) {
+					if (isOp || Helper.isChannelOp(event)) {
 						if (param.equals("enable") && !enabledChannels.contains(event.getChannel().getName())) {
 					        try {
 					        	enabledChannels.add(event.getChannel().getName());

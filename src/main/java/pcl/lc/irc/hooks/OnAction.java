@@ -11,7 +11,6 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ActionEvent;
 
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn

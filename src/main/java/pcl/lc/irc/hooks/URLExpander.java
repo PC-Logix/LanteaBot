@@ -11,7 +11,6 @@ import java.net.URLEncoder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -22,11 +21,8 @@ import org.json.JSONObject;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
-import com.google.common.base.Joiner;
-
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 import pcl.lc.utils.HTTPQuery;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TitleExtractor;
@@ -88,7 +84,7 @@ public class URLExpander extends ListenerAdapter {
 				String triggerWord2 = firstWord[0];
 				if (triggerWord2.equals(prefix + "url")) {
 					boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
-					if (isOp  || Helper.isOp(event)) {
+					if (isOp  || Helper.isChannelOp(event)) {
 						String command = event.getMessage().substring(event.getMessage().indexOf("url") + 3).trim();
 						if (command.equals("enable")) {
 							if (!enabledChannels.contains(event.getChannel().getName().toString())) {

@@ -8,7 +8,6 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn

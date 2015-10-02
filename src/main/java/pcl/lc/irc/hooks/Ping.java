@@ -13,11 +13,8 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.NoticeEvent;
 
-import com.google.common.base.Joiner;
-
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 import pcl.lc.utils.TimedHashMap;
 
 /**

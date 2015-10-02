@@ -5,22 +5,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Scanner;
-
 import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.WaitForQueue;
 
-import pcl.lc.httpd.httpd;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.job.WikiChangeWatcher;
-import pcl.lc.utils.Account;
 import pcl.lc.utils.FormatUtils;
 
 import org.pircbotx.hooks.events.*;

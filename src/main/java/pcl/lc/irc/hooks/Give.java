@@ -9,15 +9,14 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
  *
  */
 @SuppressWarnings("rawtypes")
-public class give extends ListenerAdapter {
-	public give() {
+public class Give extends ListenerAdapter {
+	public Give() {
 		IRCBot.registerCommand("give");
 		IRCBot.registerCommand("cookies");
 	}

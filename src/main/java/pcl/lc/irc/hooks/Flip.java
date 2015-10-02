@@ -1,26 +1,17 @@
 package pcl.lc.irc.hooks;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
-import org.unix4j.Unix4j;
-
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn

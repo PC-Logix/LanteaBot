@@ -8,15 +8,14 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
  *
  */
 @SuppressWarnings("rawtypes")
-public class lookup extends ListenerAdapter {
-	public lookup() {
+public class LookUp extends ListenerAdapter {
+	public LookUp() {
 		IRCBot.registerCommand("lookup");
 	}
 

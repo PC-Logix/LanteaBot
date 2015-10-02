@@ -100,7 +100,7 @@ public class SED extends ListenerAdapter {
 					String triggerWord2 = firstWord[0];
 					if (triggerWord2.equals(prefix + "sed")) {
 						boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
-						if (isOp || Helper.isOp(event)) {
+						if (isOp || Helper.isChannelOp(event)) {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {
 								if (enabledChannels.contains(event.getChannel().getName())) {

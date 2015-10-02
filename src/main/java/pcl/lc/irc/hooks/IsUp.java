@@ -13,15 +13,14 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 
 /**
  * @author Caitlyn
  *
  */
 @SuppressWarnings("rawtypes")
-public class isup extends ListenerAdapter {
-	public isup() {
+public class IsUp extends ListenerAdapter {
+	public IsUp() {
 		IRCBot.registerCommand("isup");
 	}
 

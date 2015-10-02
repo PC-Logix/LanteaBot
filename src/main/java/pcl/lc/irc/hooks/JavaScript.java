@@ -6,8 +6,6 @@ import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -28,7 +26,7 @@ public class JavaScript  extends ListenerAdapter {
 
 	String script = null;
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);

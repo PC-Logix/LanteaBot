@@ -9,9 +9,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 import pcl.lc.utils.mcping.MinecraftPing;
-import pcl.lc.utils.mcping.MinecraftPingOptions;
 import pcl.lc.utils.mcping.MinecraftPingReply;
 
 /**

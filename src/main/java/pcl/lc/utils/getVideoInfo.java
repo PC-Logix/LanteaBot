@@ -1,19 +1,10 @@
 package pcl.lc.utils;
 
 import java.net.URLEncoder;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.regex.Pattern;
-
 import org.joda.time.Period;
-import org.joda.time.Seconds;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pircbotx.Colors;
