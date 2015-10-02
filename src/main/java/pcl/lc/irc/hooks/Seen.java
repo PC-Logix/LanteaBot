@@ -3,6 +3,7 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.User;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ActionEvent;
+import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
@@ -11,11 +12,13 @@ import pcl.lc.irc.IRCBot;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+//Author: smbarbour
+
 @SuppressWarnings("rawtypes")
 public class Seen extends ListenerAdapter {
 
 	public Seen() {
-		IRCBot.registerCommand("tell");
+		IRCBot.registerCommand("seen");
 	}
 	
     @Override
@@ -58,21 +61,18 @@ public class Seen extends ListenerAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (event.getMessage().startsWith(Config.commandprefix + "seen")) {
-            try {
-                PreparedStatement getSeen = IRCBot.getInstance().getPreparedStatement("getLastSeen");
-                String[] splitMessage = event.getMessage().split(" ");
-                String target = splitMessage[1];
-                getSeen.setString(1, target);
-                ResultSet results = getSeen.executeQuery();
-                if (results.next()) {
-                    event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago.");
-                } else {
-                    event.respond(target + " has not been seen.");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    }
+    
+    @Override
+    public void onJoin(final JoinEvent event) throws Exception {
+        User sender = event.getUser();
+        try {
+            PreparedStatement updateSeen = IRCBot.getInstance().getPreparedStatement("updateLastSeen");
+            updateSeen.setString(1, sender.getNick());
+            updateSeen.setLong(2, System.currentTimeMillis());
+            updateSeen.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     

@@ -32,10 +32,8 @@ public class Account {
 				Logger.getLogger(MessageEvent.class.getName()).log(Level.SEVERE, null, ex);
 				event.getUser().send().notice("Please enter a valid username!");
 			}
-
 			return user;
 		}
-
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -60,7 +60,7 @@ public class IRCBot {
 	public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 	public static String ournick = null;
 	private final Scanner scanner;
-	private Map<UUID,ExpiringToken> userCache = new HashMap<>();
+	public static Map<UUID,ExpiringToken> userCache = new HashMap<>();
 	
 	public static Logger log = Logger.getLogger("lanteabot");
 	public static PircBotX bot;
@@ -91,7 +91,6 @@ public class IRCBot {
 		if (!commands.contains(command)) {
 			commands.add(command);
 			log.fine("Registering Command: " + command);
-			System.out.println("Registering Command: " + command);
 		}
 	}
 
@@ -99,7 +98,6 @@ public class IRCBot {
 		if (commands.contains(command)) {
 			commands.remove(command);
 			log.fine("Removing Command: " + command);
-			System.out.println("Removing Command: " + command);
 		}
 	}
 
@@ -127,6 +125,7 @@ public class IRCBot {
 		for (Class<? extends Object> s : allClasses) {
 			try {
 				Config.config.addListener((Listener) s.newInstance());
+				log.fine("Loading " + s.getCanonicalName());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -149,7 +148,7 @@ public class IRCBot {
 			scheduler = new TaskScheduler();
 			scheduler.start();
 			bot = new PircBotX(Config.config.buildConfiguration());
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 			//bot.setInetAddress(InetAddress.getByName("206.255.162.30"));
 			bot.startBot();
 		} catch (Exception ex) {
@@ -161,15 +160,21 @@ public class IRCBot {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
             Statement statement = connection.createStatement();
+            statement.setPoolable(true);
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Channels(name)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Ops(name)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Ops(name, level)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Tells(sender, rcpt, channel, message)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Quotes(user, data)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");
             preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
             preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
+            preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
+            preparedStatements.put("disableHook",connection.prepareStatement("DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;"));
+            preparedStatements.put("checkHook",connection.prepareStatement("SELECT hook, channel FROM OptionalHooks WHERE hook = ?;"));
             preparedStatements.put("addOp",connection.prepareStatement("REPLACE INTO Ops (name) VALUES (?);"));
             preparedStatements.put("removeOp",connection.prepareStatement("DELETE FROM Ops WHERE name = ?;"));
             preparedStatements.put("addQuote",connection.prepareStatement("INSERT INTO Quotes(user, data) VALUES (?, ?);"));
@@ -234,7 +239,8 @@ public class IRCBot {
         return ops;
     }
 
-    public boolean isOp(PircBotX sourceBot, User user) {
+    @SuppressWarnings("rawtypes")
+	public boolean isOp(PircBotX sourceBot, User user) {
 	    String nsRegistration = "";
 	    if (userCache.containsKey(user.getUserId()) && userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
 		    nsRegistration = userCache.get(user.getUserId()).getValue();

@@ -2,8 +2,9 @@
  * 
  */
 package pcl.lc.irc.hooks;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -14,12 +15,10 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.unix4j.Unix4j;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 
 /**
@@ -28,17 +27,25 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class SED extends ListenerAdapter {
-	public List<String> enabledChannels;
-	public List<String> idfk = new ArrayList<String>();
+	List<String> enabledChannels = new ArrayList<String>();
 	public SED() {
-		enabledChannels = new ArrayList<String>(Arrays.asList(Config.prop.getProperty("sedenabled-channels", "").split(",")));
+        try {
+            PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
+            checkHook.setString(1, "SED");
+            ResultSet results = checkHook.executeQuery();
+            while (results.next()) {
+            	enabledChannels.add(results.getString("channel"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-
+		
 		if (!event.getChannel().getName().isEmpty()) {
 			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase().replaceFirst(Pattern.quote(prefix), "");
@@ -48,8 +55,8 @@ public class SED extends ListenerAdapter {
 				String messageEvent = event.getMessage();
 				String reply = null;
 				if (event.getMessage().matches("s/(.+)/(.+)")) {
-					if (!IRCBot.isIgnored(event.getUser().getNick())) {
-						if (enabledChannels.contains(event.getChannel().getName().toString())) {
+					if (!IRCBot.isIgnored(event.getUser().getNick())) {					
+						if (enabledChannels.contains(event.getChannel().getName())) {
 
 							String s = messageEvent.substring(messageEvent.indexOf("/") + 1);
 							s = s.substring(0, s.indexOf("/"));
@@ -92,21 +99,35 @@ public class SED extends ListenerAdapter {
 					String[] firstWord = StringUtils.split(trigger2);
 					String triggerWord2 = firstWord[0];
 					if (triggerWord2.equals(prefix + "sed")) {
-						String account = Account.getAccount(event.getUser(), event);
-						if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
+						boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+						if (isOp || Helper.isOp(event)) {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {
-								enabledChannels.remove(event.getChannel().getName().toString());
-								Config.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
-								event.respond("Disabled SED for this channel");
-								Config.saveProps();
-								return;
+								if (enabledChannels.contains(event.getChannel().getName())) {
+									try {
+										enabledChannels.remove(event.getChannel().getName());
+										PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
+										disableHook.setString(1, "SED");
+										disableHook.setString(2, event.getChannel().getName());
+										disableHook.executeUpdate();
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+									event.respond("Disabled SED for this channel");
+									return;
+								}
 							} else if (command.equals("enable")) {
-								if (!enabledChannels.contains(event.getChannel().getName().toString())) {
-									enabledChannels.add(event.getChannel().getName().toString());
-									Config.prop.setProperty("sedenabled-channels", Joiner.on(",").join(enabledChannels));
+								if (!enabledChannels.contains(event.getChannel().getName())) {
+									try {
+										enabledChannels.add(event.getChannel().getName());
+										PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
+										enableHook.setString(1, "SED");
+										enableHook.setString(2, event.getChannel().getName());
+										enableHook.executeUpdate();
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
 									event.respond("Enabled SED for this channel");
-									Config.saveProps();
 									return;
 								}
 							} else if (command.equals("list")) {

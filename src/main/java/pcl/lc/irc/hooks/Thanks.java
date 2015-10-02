@@ -5,6 +5,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
 
+@SuppressWarnings("rawtypes")
 public class Thanks extends ListenerAdapter {
 
 	@SuppressWarnings({ "unchecked" })

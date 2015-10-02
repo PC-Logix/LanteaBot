@@ -4,6 +4,8 @@
 package pcl.lc.irc.hooks;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +30,18 @@ import pcl.lc.utils.getVideoInfo;
  */
 @SuppressWarnings("rawtypes")
 public class YTInfo extends ListenerAdapter {
-	List<String> enabledChannels;
+	List<String> enabledChannels = new ArrayList<String>();
 	public YTInfo() throws IOException {
-		enabledChannels = new ArrayList<String>(Arrays.asList(Config.prop.getProperty("ytenabled-channels", "").split(",")));
+        try {
+            PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
+            checkHook.setString(1, "YouTube");
+            ResultSet results = checkHook.executeQuery();
+            while (results.next()) {
+            	enabledChannels.add(results.getString("channel"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 
 
@@ -43,71 +54,82 @@ public class YTInfo extends ListenerAdapter {
 			String s = ourinput.trim();
 			String trigger2 = event.getMessage().toLowerCase().trim();
 			String prefix = Config.commandprefix;
-
+			
 			if (s.length() > 1) {
-
 				String[] firstWord = StringUtils.split(trigger2);
 				String triggerWord2 = firstWord[0];
-				if (triggerWord2.equals(prefix + "yt")) {
-					String account = Account.getAccount(event.getUser(), event);
-					if (IRCBot.admins.containsKey(account) || Helper.isOp(event)) {
-						String command = event.getMessage().substring(event.getMessage().indexOf("yt") + 2).trim();
-						System.out.println(command);
+				if (triggerWord2.equals(prefix + "ytc")) {
+					boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+					if (isOp || Helper.isOp(event)) {
+						String command = event.getMessage().substring(event.getMessage().indexOf("ytc") + 3).trim();
 						if (command.equals("enable")) {
-							if (!enabledChannels.contains(event.getChannel().getName().toString())) {						
-								enabledChannels.add(event.getChannel().getName().toString());
-								Config.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
+							if (!enabledChannels.contains(event.getChannel().getName())) {
+						        try {
+						        	enabledChannels.add(event.getChannel().getName());
+						            PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
+						            enableHook.setString(1, "YouTube");
+						            enableHook.setString(2, event.getChannel().toString());
+						            enableHook.executeUpdate();
+						        } catch (Exception e) {
+						            e.printStackTrace();
+						        }
 								event.respond("Enabled YTInfo for this channel");
-								Config.saveProps();
 								return;		
 							}
 
 						} else if (command.equals("disable")) {
-							enabledChannels.remove(event.getChannel().getName().toString());
-							Config.prop.setProperty("ytenabled-channels", Joiner.on(",").join(enabledChannels));
-							event.respond("Disable YTInfo for this channel");
-							Config.saveProps();
-							return;
+							if (enabledChannels.contains(event.getChannel().getName())) {
+						        try {
+						        	enabledChannels.remove(event.getChannel().getName());
+						            PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
+						            disableHook.setString(1, "YouTube");
+						            disableHook.setString(2, event.getChannel().toString());
+						            disableHook.executeUpdate();
+						        } catch (Exception e) {
+						            e.printStackTrace();
+						        }
+								event.respond("Disable YTInfo for this channel");
+								return;
+							}
 						} else if (command.equals("list")) {
 							event.respond("Enabled YT channels: " + enabledChannels);
 							return;
 						}
 					}
-				}
-			}
+				} else {
+					if (enabledChannels.contains(event.getChannel().getName().toString())) {
+						if (s.length() > 1) {
 
-			if (!enabledChannels.contains(event.getChannel().getName().toString())) {
-				if (s.length() > 1) {
-
-					int matchStart = 1;
-					int matchEnd = 1;
-					final Pattern urlPattern = Pattern.compile(
-							"(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
-									+ "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
-									+ "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
-									Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-					Matcher matcher = urlPattern.matcher(s);
-					while (matcher.find()) {
-						matchStart = matcher.start(1);
-						matchEnd = matcher.end();
-					}
-					String url = s.substring(matchStart, matchEnd);
-					if (url.indexOf("youtube.com") != -1 || url.indexOf("youtu.be") != -1) {
-						String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
-						Pattern compiledPattern = Pattern.compile(pattern);
-						Matcher matcher1 = compiledPattern.matcher(url);
-						if (matcher1.find()) {
-							url = matcher1.group();
+							int matchStart = 1;
+							int matchEnd = 1;
+							final Pattern urlPattern = Pattern.compile(
+									"(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+											+ "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
+											+ "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+											Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+							Matcher matcher = urlPattern.matcher(s);
+							while (matcher.find()) {
+								matchStart = matcher.start(1);
+								matchEnd = matcher.end();
+							}
+							String url = s.substring(matchStart, matchEnd);
+							if (url.indexOf("youtube.com") != -1 || url.indexOf("youtu.be") != -1) {
+								String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+								Pattern compiledPattern = Pattern.compile(pattern);
+								Matcher matcher1 = compiledPattern.matcher(url);
+								if (matcher1.find()) {
+									url = matcher1.group();
+								}
+								String apiKey = Config.botConfig.get("GoogleAPI").toString();
+								String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
+								if (vinfo != null) {
+									event.respond(vinfo);
+								}
+							}
 						}
-						String apiKey = Config.botConfig.get("GoogleAPI").toString();
-						String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
-						if (vinfo != null) {
-							event.respond(vinfo);
-						}
-					}
+					}	
 				}
-			}			
+			}		
 		}
-
 	}
 }
