@@ -170,6 +170,7 @@ public class IRCBot {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS InternetPoints(nick STRING UNIQUE PRIMARY KEY, points)");
             preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
             preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
             preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
@@ -192,6 +193,8 @@ public class IRCBot {
             preparedStatements.put("addTell",connection.prepareStatement("INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);"));
             preparedStatements.put("getTells",connection.prepareStatement("SELECT rowid, sender, channel, message FROM Tells WHERE rcpt = ?;"));
             preparedStatements.put("removeTells",connection.prepareStatement("DELETE FROM Tells WHERE rcpt = ?;"));
+            preparedStatements.put("getPoints", connection.prepareStatement("SELECT Points FROM InternetPoints WHERE nick = ?;"));
+            preparedStatements.put("addPoints", connection.prepareStatement("INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)"));
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
