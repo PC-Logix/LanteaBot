@@ -67,9 +67,9 @@ public class IPoints extends ListenerAdapter {
 							getPoints2.setString(1, recipient);
 							ResultSet points2 = getPoints2.executeQuery();
 							if(points.next()){
-								event.respond(recipient + " now has " + points2.getInt(1) + " points");
+								event.respond(splitMessage[1] + " now has " + points2.getInt(1) + " points");
 							} else {
-								event.respond("Error getting " + recipient + "'s points");      	
+								event.respond("Error getting " + splitMessage[1] + "'s points");      	
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
