@@ -57,7 +57,7 @@ public class IPoints extends ListenerAdapter {
 							if(points.next()){
 								newPoints = points.getInt(1) + Integer.parseInt(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 							} else {
-								newPoints = 1;
+								newPoints = Integer.parseInt(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 							}
 
 							addPoints.setString(1, recipient);
