@@ -48,8 +48,8 @@ public class IPoints extends ListenerAdapter {
 								return;
 							}
 
-							if (getAccount(event.getUser(), event) != null) {
-								recipient = getAccount(event.getUser(), event);
+							if (getAccount(recipient, event) != null) {
+								recipient = getAccount(recipient, event);
 							}
 							
 							getPoints.setString(1, recipient);
@@ -84,12 +84,12 @@ public class IPoints extends ListenerAdapter {
 		}
 	}
 
-	public static String getAccount(User u, MessageEvent event) {
+	public static String getAccount(String u, MessageEvent event) {
 		String user = null;
-		if (IRCBot.authed.containsKey(u.getNick())) {
-			return IRCBot.authed.get(u.getNick());
+		if (IRCBot.authed.containsKey(u)) {
+			return IRCBot.authed.get(u);
 		} else {
-			event.getBot().sendRaw().rawLineNow("WHOIS " + u.getNick());
+			event.getBot().sendRaw().rawLineNow("WHOIS " + u);
 			WaitForQueue waitForQueue = new WaitForQueue(event.getBot());
 			WhoisEvent test;
 			try {
