@@ -32,6 +32,10 @@ public class Config {
 	public static String proxyhost = null;
 	public static String proxyport = null;
 	public static String enableTLS = null;
+	public static String TwitCKey = null;
+	public static String TwitCSecret = null;
+	public static String TwitToken = null;
+	public static String TwitTSecret = null;
 	static String adminProps = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
@@ -87,6 +91,10 @@ public class Config {
 			proxyport = prop.getProperty("proxyport", "");
 			adminProps = prop.getProperty("admins", "");
 			enableTLS = prop.getProperty("enableTLS", "");
+			TwitCKey = prop.getProperty("TwitCKey");
+			TwitCSecret = prop.getProperty("TwitCSecret");
+			TwitToken = prop.getProperty("TwitToken");
+			TwitTSecret = prop.getProperty("TwitTSecret");
 			saveProps();
 
 
@@ -155,6 +163,26 @@ public class Config {
 				}
 			}
 		}
+	}
+
+	public static String getTwitCKey() {
+		// TODO Auto-generated method stub
+		return TwitCKey;
+	}
+
+	public static String getTwitCSecret() {
+		// TODO Auto-generated method stub
+		return TwitCSecret;
+	}
+
+	public static String getTwitToken() {
+		// TODO Auto-generated method stub
+		return TwitToken;
+	}
+
+	public static String getTwitTSecret() {
+		// TODO Auto-generated method stub
+		return TwitTSecret;
 	}
 
 

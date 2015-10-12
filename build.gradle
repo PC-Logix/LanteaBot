@@ -17,6 +17,7 @@ dependencies {
   compile 'net.objecthunter:exp4j:0.4.0.ALPHA-3'
   compile 'com.google.api-client:google-api-client:1.18.0-rc'
   compile 'org.xerial:sqlite-jdbc:3.8.10.1'
+  compile ''org.twitter4j:twitter4j:4.0.4'
 }
 
 if (System.getenv().BUILD_NUMBER != null)
