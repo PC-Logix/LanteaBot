@@ -51,7 +51,7 @@ public class IPoints extends ListenerAdapter {
 							if (getAccount(recipient, event) != null) {
 								recipient = getAccount(recipient, event);
 							}
-							
+
 							getPoints.setString(1, recipient);
 							ResultSet points = getPoints.executeQuery();
 							if(points.next()){
@@ -78,7 +78,27 @@ public class IPoints extends ListenerAdapter {
 					} else {
 						event.respond("You can not give yourself points.");
 					}
+				}
+			} else if (triggerWord.contains(prefix + "points")) {
+				String[] splitMessage = event.getMessage().split(" ");
+				String user;
+				if (splitMessage.length == 1) {
+					user = event.getUser().getNick();
+				} else {
+					user = splitMessage[1];
+				}
 
+				if (getAccount(user, event) != null) {
+					user = getAccount(user, event);
+				}
+				
+				PreparedStatement getPoints = IRCBot.getInstance().getPreparedStatement("getPoints");
+				getPoints.setString(1, user);
+				ResultSet points = getPoints.executeQuery();
+				if(points.next()){
+					event.respond(user + " has " + points.getInt(1) + " points");
+				} else {
+					event.respond(user + " has 0 points");
 				}
 			}
 		}
