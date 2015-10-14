@@ -96,7 +96,7 @@ public class IPoints extends ListenerAdapter {
 				getPoints.setString(1, user);
 				ResultSet points = getPoints.executeQuery();
 				if(points.next()){
-					event.respond(splitMessage[1] + " has " + points.getInt(1) + " points");
+					event.respond(splitMessage[1] + " has " + points.getLong(1) + " points");
 				} else {
 					event.respond(splitMessage[1] + " has 0 points");
 				}
