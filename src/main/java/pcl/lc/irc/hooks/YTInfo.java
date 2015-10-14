@@ -64,7 +64,7 @@ public class YTInfo extends ListenerAdapter {
 						        	enabledChannels.add(event.getChannel().getName());
 						            PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
 						            enableHook.setString(1, "YouTube");
-						            enableHook.setString(2, event.getChannel().toString());
+						            enableHook.setString(2, event.getChannel().getName());
 						            enableHook.executeUpdate();
 						        } catch (Exception e) {
 						            e.printStackTrace();
@@ -79,7 +79,7 @@ public class YTInfo extends ListenerAdapter {
 						        	enabledChannels.remove(event.getChannel().getName());
 						            PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
 						            disableHook.setString(1, "YouTube");
-						            disableHook.setString(2, event.getChannel().toString());
+						            disableHook.setString(2, event.getChannel().getName());
 						            disableHook.executeUpdate();
 						        } catch (Exception e) {
 						            e.printStackTrace();
