@@ -34,7 +34,7 @@ public class IPoints extends ListenerAdapter {
 			if (triggerWord.contains(prefix + "+")) {
 				Pattern p = Pattern.compile("^\\+?\\d+");
 				Matcher m = p.matcher(event.getMessage().replace(prefix,""));
-				int newPoints = 0;
+				Long newPoints = (long) 0;
 				if (m.find()) {
 					String[] splitMessage = event.getMessage().split(" ");
 					String recipient = splitMessage[1];
@@ -55,9 +55,9 @@ public class IPoints extends ListenerAdapter {
 							getPoints.setString(1, recipient);
 							ResultSet points = getPoints.executeQuery();
 							if(points.next()){
-								newPoints = points.getInt(1) + Integer.parseInt(splitMessage[0].replaceAll("[^\\.0123456789]",""));
+								newPoints = points.getLong(1) + Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 							} else {
-								newPoints = Integer.parseInt(splitMessage[0].replaceAll("[^\\.0123456789]",""));
+								newPoints = Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 							}
 
 							addPoints.setString(1, recipient);
