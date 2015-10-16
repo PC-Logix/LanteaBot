@@ -82,7 +82,6 @@ public class DynamicCommands extends ListenerAdapter {
 						event.respond("An error occurred while processing this command");
 					}
 				} else {
-
 					try {
 						PreparedStatement getCommand = IRCBot.getInstance().getPreparedStatement("getCommand");						
 						getCommand.setString(1, triggerWord.replace(prefix, ""));
@@ -93,7 +92,7 @@ public class DynamicCommands extends ListenerAdapter {
 
 					} catch (Exception e) {
 						e.printStackTrace();
-						event.respond("An error occurred while processing this command");
+						System.out.println("An error occurred while processing this command");
 					}
 				}
 			}		

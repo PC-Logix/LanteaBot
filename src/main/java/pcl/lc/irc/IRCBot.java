@@ -265,7 +265,9 @@ public class IRCBot {
 			    WaitForQueue waitForQueue = new WaitForQueue(sourceBot);
 			    WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
 			    waitForQueue.close();
-			    nsRegistration = whoisEvent.getRegisteredAs();
+			    if (whoisEvent.getRegisteredAs() != null) {
+				    nsRegistration = whoisEvent.getRegisteredAs();
+			    }
 		    } catch (Exception e) {
 			    e.printStackTrace();
 		    }
