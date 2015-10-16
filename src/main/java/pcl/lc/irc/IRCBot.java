@@ -94,7 +94,7 @@ public class IRCBot {
 		}
 	}
 
-	public void unregisterCommand(String command) {
+	public static void unregisterCommand(String command) {
 		if (commands.contains(command)) {
 			commands.remove(command);
 			log.fine("Removing Command: " + command);
@@ -149,7 +149,6 @@ public class IRCBot {
 			scheduler.start();
 			bot = new PircBotX(Config.config.buildConfiguration());
 			Thread.sleep(1000);
-			//bot.setInetAddress(InetAddress.getByName("206.255.162.30"));
 			bot.startBot();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -170,7 +169,9 @@ public class IRCBot {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS InternetPoints(nick STRING UNIQUE PRIMARY KEY, points)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
             preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
             preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
             preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
@@ -195,6 +196,14 @@ public class IRCBot {
             preparedStatements.put("removeTells",connection.prepareStatement("DELETE FROM Tells WHERE rcpt = ?;"));
             preparedStatements.put("getPoints", connection.prepareStatement("SELECT Points FROM InternetPoints WHERE nick = ?;"));
             preparedStatements.put("addPoints", connection.prepareStatement("INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)"));
+            preparedStatements.put("addCommand", connection.prepareStatement("INSERT INTO Commands(command, return) VALUES (?, ?);"));
+            preparedStatements.put("searchCommands", connection.prepareStatement("SELECT command FROM Commands"));
+            preparedStatements.put("getCommand", connection.prepareStatement("SELECT return FROM Commands WHERE command = ?"));
+            preparedStatements.put("delCommand",connection.prepareStatement("DELETE FROM Commands WHERE command = ?;"));
+            preparedStatements.put("addAnnounce", connection.prepareStatement("INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);"));
+            preparedStatements.put("getAnnounce", connection.prepareStatement("SELECT schedule, title, message FROM Announcements WHERE channel = ?;"));
+            preparedStatements.put("delAnnounce", connection.prepareStatement("DELETE FROM Announcements WHERE title = ? AND channel = ?;"));
+            
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
