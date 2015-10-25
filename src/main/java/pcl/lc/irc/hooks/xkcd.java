@@ -112,7 +112,7 @@ public class xkcd extends ListenerAdapter {
 							String json = readUrl("http://xkcd.com/" + param + "/info.0.json");
 							final JSONObject obj = new JSONObject(json);
 							String name = obj.get("safe_title").toString();
-							event.respond("XKCD Comic Name:" + name + " URL: https://xkcd.com/" + param);
+							event.respond("XKCD Comic Name: " + name + " URL: https://xkcd.com/" + param);
 						} else {
 							event.respond("Invalid ID");
 						}
