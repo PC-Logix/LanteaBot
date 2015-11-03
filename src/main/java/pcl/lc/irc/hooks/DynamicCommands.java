@@ -52,7 +52,8 @@ public class DynamicCommands extends ListenerAdapter {
 		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 		if (trigger.length() > 1) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
-				if (firstCharacter == prefix) {
+				System.out.println(firstCharacter == prefix);
+				if (firstCharacter.equals(prefix)) {
 					if (triggerWord.equals(prefix + "addcommand") && (isOp || Helper.isChannelOp(event))) {
 						try {
 							PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
