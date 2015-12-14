@@ -5,6 +5,7 @@ package pcl.lc.irc.hooks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,17 +48,22 @@ public class DynamicCommands extends ListenerAdapter {
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		String[] firstWord = StringUtils.split(trigger);
+		String[] splitMessage = event.getMessage().split(" ");
 		String triggerWord = firstWord[0];
 		String firstCharacter = String.valueOf(triggerWord.charAt(0));
 		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 		if (trigger.length() > 1) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
-				System.out.println(firstCharacter == prefix);
-				if (firstCharacter.equals(prefix)) {
+				if (firstCharacter.equals(prefix) || splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") && splitMessage[1].startsWith(prefix)) {
+					String[] message = event.getMessage().split(" ", 3);
+					if (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">")) {
+						triggerWord = splitMessage[1];
+						message = Arrays.copyOfRange(splitMessage,2,splitMessage.length);
+					}
 					if (triggerWord.equals(prefix + "addcommand") && (isOp || Helper.isChannelOp(event))) {
 						try {
 							PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
-							String[] message = event.getMessage().split(" ", 3);
+							
 
 							if (!IRCBot.commands.contains(message[1])) {
 								addCommand.setString(1, message[1]);
@@ -75,7 +81,6 @@ public class DynamicCommands extends ListenerAdapter {
 					} else if (triggerWord.equals(prefix + "delcommand") && (isOp || Helper.isChannelOp(event))) {
 						try {
 							PreparedStatement delCommand = IRCBot.getInstance().getPreparedStatement("delCommand");
-							String[] message = event.getMessage().split(" ", 2);
 							delCommand.setString(1, message[1]);
 							delCommand.execute();
 							event.respond("Command deleted");
