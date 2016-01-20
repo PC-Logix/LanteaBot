@@ -53,9 +53,6 @@ public class IsUp extends ListenerAdapter {
 			if (triggerWord.equals(prefix + "isup")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					String site = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
-					if (!site.startsWith("http://")){
-						site = "http://" + site;
-					}
 					boolean rez = ping(site, 1000);
 					if (rez) {
 						event.respond(site + " Is Up.");
