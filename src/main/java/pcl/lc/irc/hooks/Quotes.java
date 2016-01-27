@@ -31,7 +31,7 @@ public class Quotes extends AbstractListener {
 					PreparedStatement getAnyQuote = IRCBot.getInstance().getPreparedStatement("getAnyQuote");
 					ResultSet results = getAnyQuote.executeQuery();
 					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + results.getString(1) + results.getString(2));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + results.getString(1) + " " + results.getString(2));
 					}
 					return;
 				} catch (Exception e) {
@@ -45,7 +45,7 @@ public class Quotes extends AbstractListener {
 					getQuote.setString(1, key);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + key + results.getString(1));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + key + " " + results.getString(1));
 					} else {
 						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + key);
 					}
