@@ -134,6 +134,21 @@ public class IRCBot {
 				e.printStackTrace();
 			}
 		}
+		
+		Reflections plugins2 = new Reflections("pcl.lc.irc.hooks");
+		Set<Class<? extends AbstractListener>> allClasses2 = plugins2.getSubTypesOf(AbstractListener.class);
+		for (Class<? extends Object> s : allClasses2) {
+			try {
+				Config.config.addListener((Listener) s.newInstance());
+				log.fine("Loading " + s.getCanonicalName());
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		try {
 			if(!Config.httpdport.isEmpty() && !Config.botConfig.get("httpDocRoot").equals("")) {
