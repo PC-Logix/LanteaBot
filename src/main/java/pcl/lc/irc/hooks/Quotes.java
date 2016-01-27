@@ -31,7 +31,7 @@ public class Quotes extends AbstractListener {
 					PreparedStatement getAnyQuote = IRCBot.getInstance().getPreparedStatement("getAnyQuote");
 					ResultSet results = getAnyQuote.executeQuery();
 					if (results.next()) {
-						event.respond("<" + results.getString(1) + "> " + results.getString(2));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + results.getString(1) + results.getString(2));
 					}
 					return;
 				} catch (Exception e) {
@@ -45,9 +45,9 @@ public class Quotes extends AbstractListener {
 					getQuote.setString(1, key);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
-						event.respond("<" + key + "> " + results.getString(1));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + key + results.getString(1));
 					} else {
-						event.respond("No quotes found for " + key);
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + key);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -62,9 +62,9 @@ public class Quotes extends AbstractListener {
 					addQuote.setString(1, key);
 					addQuote.setString(2, data);
 					if (addQuote.executeUpdate() > 0) {
-						event.respond("Quote added.");
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "Quote added.");
 					} else {
-						event.respond("An error occurred while trying to set the value.");
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "An error occurred while trying to set the value.");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
