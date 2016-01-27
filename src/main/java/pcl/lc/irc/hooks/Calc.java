@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -31,12 +32,19 @@ public class Calc extends ListenerAdapter {
 		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
+		String[] splitMessage = event.getMessage().split(" ");
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(prefix + "calc")) {
+			if (triggerWord.equals(prefix + "calc") || splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") && splitMessage[1].equals(prefix + "calc")) {
+				String[] message = event.getMessage().split(" ");
+				String expression;
+				if (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">")) {
+					expression = message[2].trim();
+				} else {
+					expression = message[1].trim();
+				}
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					String expression = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					if (expression.equalsIgnoreCase("the meaning of life")) {
 						event.respond("42");
 					} else {
