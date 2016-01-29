@@ -45,9 +45,9 @@ public class Quotes extends AbstractListener {
 					getQuote.setString(1, key);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + key + " " + results.getString(1));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + pcl.lc.utils.Helper.antiPing(key) + " " + results.getString(1));
 					} else {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + key);
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + pcl.lc.utils.Helper.antiPing(key));
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

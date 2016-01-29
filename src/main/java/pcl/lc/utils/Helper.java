@@ -46,6 +46,17 @@ public class Helper {
 		return "";
 	}
 	
+    private static String addZeroWidthSpace(String s) {
+        if (s.length() > 1) {
+        	s.replace("", "\u200B").trim();
+        }
+        return s;
+    }
+	
+	public static String antiPing(String nick) {
+		return addZeroWidthSpace(nick);
+	}
+	
 	public static void sleep(long ms) {
 		try {
 			Thread.sleep(ms);
