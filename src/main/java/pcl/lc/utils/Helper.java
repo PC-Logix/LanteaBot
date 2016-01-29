@@ -47,10 +47,7 @@ public class Helper {
 	}
 	
     private static String addZeroWidthSpace(String s) {
-        if (s.length() > 1) {
-        	s.replace("", "\u200B").trim();
-        }
-        return s;
+        return s.replaceAll(".(?=.)", "$0" + "\u200B");
     }
 	
 	public static String antiPing(String nick) {

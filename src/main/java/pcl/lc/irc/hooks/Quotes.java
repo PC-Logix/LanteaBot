@@ -31,7 +31,7 @@ public class Quotes extends AbstractListener {
 					PreparedStatement getAnyQuote = IRCBot.getInstance().getPreparedStatement("getAnyQuote");
 					ResultSet results = getAnyQuote.executeQuery();
 					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + results.getString(1) + " " + results.getString(2));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + pcl.lc.utils.Helper.antiPing(results.getString(1)) + " " + results.getString(2));
 					}
 					return;
 				} catch (Exception e) {
