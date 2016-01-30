@@ -45,7 +45,7 @@ public class Quotes extends AbstractListener {
 					getQuote.setString(1, key);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(1));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(2));
 					} else {
 						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + pcl.lc.utils.Helper.antiPing(key));
 					}
@@ -62,7 +62,7 @@ public class Quotes extends AbstractListener {
 					addQuote.setString(1, key);
 					addQuote.setString(2, data);
 					if (addQuote.executeUpdate() > 0) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "Quote added.");
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "Quote added at id: " + addQuote.getGeneratedKeys().getInt(1) );
 					} else {
 						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "An error occurred while trying to set the value.");
 					}
