@@ -180,7 +180,7 @@ public class IRCBot {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Ops(name, level)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Tells(sender, rcpt, channel, message)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Quotes(user, data)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");
@@ -194,12 +194,12 @@ public class IRCBot {
             preparedStatements.put("checkHook",connection.prepareStatement("SELECT hook, channel FROM OptionalHooks WHERE hook = ?;"));
             preparedStatements.put("addOp",connection.prepareStatement("REPLACE INTO Ops (name) VALUES (?);"));
             preparedStatements.put("removeOp",connection.prepareStatement("DELETE FROM Ops WHERE name = ?;"));
-            preparedStatements.put("addQuote",connection.prepareStatement("INSERT INTO Quotes(user, data) VALUES (?, ?);"));
-            preparedStatements.put("getUserQuote",connection.prepareStatement("SELECT data FROM Quotes WHERE user = ? ORDER BY RANDOM () LIMIT 1;"));
-            preparedStatements.put("getUserQuoteAll",connection.prepareStatement("SELECT data FROM Quotes WHERE user = ?;"));
-            preparedStatements.put("getAnyQuote",connection.prepareStatement("SELECT user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;"));
-            preparedStatements.put("getSpecificQuote",connection.prepareStatement("SELECT data FROM Quotes WHERE user = ? AND data = ?;"));
-            preparedStatements.put("removeQuote",connection.prepareStatement("DELETE FROM Quotes WHERE user = ? AND data = ?;"));
+            preparedStatements.put("addQuote",connection.prepareStatement("INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);"));
+            preparedStatements.put("getUserQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? ORDER BY RANDOM () LIMIT 1;"));
+            preparedStatements.put("getUserQuoteAll",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ?;"));
+            preparedStatements.put("getAnyQuote",connection.prepareStatement("SELECT id, user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;"));
+            preparedStatements.put("getSpecificQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? AND data = ?;"));
+            preparedStatements.put("removeQuote",connection.prepareStatement("DELETE FROM Quotes WHERE id = ?;"));
             preparedStatements.put("updateLastSeen",connection.prepareStatement("REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);"));
             preparedStatements.put("getLastSeen",connection.prepareStatement("SELECT timestamp FROM LastSeen WHERE user = ?;"));
             preparedStatements.put("updateInfo",connection.prepareStatement("REPLACE INTO Info(key, data) VALUES (?, ?);"));

@@ -31,7 +31,7 @@ public class Quotes extends AbstractListener {
 					PreparedStatement getAnyQuote = IRCBot.getInstance().getPreparedStatement("getAnyQuote");
 					ResultSet results = getAnyQuote.executeQuery();
 					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + pcl.lc.utils.Helper.antiPing(results.getString(1)) + " " + results.getString(2));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(2)) + "> " + results.getString(3));
 					}
 					return;
 				} catch (Exception e) {
@@ -45,7 +45,7 @@ public class Quotes extends AbstractListener {
 					getQuote.setString(1, key);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + pcl.lc.utils.Helper.antiPing(key) + " " + results.getString(1));
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(1));
 					} else {
 						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + pcl.lc.utils.Helper.antiPing(key));
 					}
@@ -73,14 +73,14 @@ public class Quotes extends AbstractListener {
 		} else if (command.equals(prefix + "delquote")) {
 			boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 			if (isOp || event.getChannel().isOp(event.getUser())) {
-				if (args.length > 1) {
+				if (args.length == 1) {
 					String key = args[0];
-					String data = StringUtils.join(args, " ", 1, args.length);
+					//String data = StringUtils.join(args, " ", 1, args.length);
 					try {
-						PreparedStatement addQuote = IRCBot.getInstance().getPreparedStatement("removeQuote");
-						addQuote.setString(1, key);
-						addQuote.setString(2, data);
-						if (addQuote.executeUpdate() > 0) {
+						PreparedStatement removeQuote = IRCBot.getInstance().getPreparedStatement("removeQuote");
+						removeQuote.setString(1, key);
+						//removeQuote.setString(2, data);
+						if (removeQuote.executeUpdate() > 0) {
 							event.respond("Quote removed.");
 						} else {
 							event.respond("An error occurred while trying to set the value.");
