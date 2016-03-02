@@ -40,16 +40,7 @@ public class YTInfo extends ListenerAdapter {
         }
 	}
 
-private String getYouTubeId (String youTubeUrl) {
-    String pattern = "(?<=youtu.be/|watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
-    Pattern compiledPattern = Pattern.compile(pattern);
-    Matcher matcher = compiledPattern.matcher(youTubeUrl);
-    if(matcher.find()){
-        return matcher.group();
-    } else {
-        return "error";  
-    }
-}
+
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
@@ -119,16 +110,14 @@ private String getYouTubeId (String youTubeUrl) {
 							}
 							String url = s.substring(matchStart, matchEnd);
 							if (url.indexOf("youtube.com") != -1 || url.indexOf("youtu.be") != -1) {
-								String vid = getYouTubeId(url);
-								String pattern = "(?<=watch[\\?\\&]v=|/videos/|embed\\/)[^#\\&\\?]*";
+								String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 								Pattern compiledPattern = Pattern.compile(pattern);
 								Matcher matcher1 = compiledPattern.matcher(url);
 								if (matcher1.find()) {
 									url = matcher1.group();
 								}
 								String apiKey = Config.botConfig.get("GoogleAPI").toString();
-								
-								String vinfo = getVideoInfo.getVideoSearch(vid, true, false, apiKey);
+								String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
 								if (vinfo != null) {
 									event.respond(vinfo);
 								}
