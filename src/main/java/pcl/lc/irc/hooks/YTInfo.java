@@ -110,7 +110,7 @@ public class YTInfo extends ListenerAdapter {
 							}
 							String url = s.substring(matchStart, matchEnd);
 							if (url.indexOf("youtube.com") != -1 || url.indexOf("youtu.be") != -1) {
-								String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+								String pattern = "(?<=watch\\[?&]v=|/videos/|embed\\/)";
 								Pattern compiledPattern = Pattern.compile(pattern);
 								Matcher matcher1 = compiledPattern.matcher(url);
 								if (matcher1.find()) {
