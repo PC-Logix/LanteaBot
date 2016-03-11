@@ -40,6 +40,17 @@ public class YTInfo extends ListenerAdapter {
         }
 	}
 
+	public static String extractYTId(String ytUrl) {
+	    String vId = null;
+	    Pattern pattern = Pattern.compile(
+	                     "^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$", 
+	                     Pattern.CASE_INSENSITIVE);
+	    Matcher matcher = pattern.matcher(ytUrl);
+	    if (matcher.matches()){
+	        vId = matcher.group(1);
+	    }
+	    return vId;
+	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -110,16 +121,17 @@ public class YTInfo extends ListenerAdapter {
 							}
 							String url = s.substring(matchStart, matchEnd);
 							if (url.indexOf("youtube.com") != -1 || url.indexOf("youtu.be") != -1) {
-								String pattern = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
-								Pattern compiledPattern = Pattern.compile(pattern);
-								Matcher matcher1 = compiledPattern.matcher(url);
-								if (matcher1.find()) {
-									url = matcher1.group();
-								}
+							    String vId = null;
+							    String reg = "(?:youtube(?:-nocookie)?\\.com\\/(?:[^\\/\\n\\s]+\\/\\S+\\/|(?:v|e(?:mbed)?)\\/|\\S*?[?&]v=)|youtu\\.be\\/)([a-zA-Z0-9_-]{11})";
+							    Pattern pattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);
+							    Matcher matcher1 = pattern.matcher(url);
+							    if (matcher1.find()) {
+							        vId = matcher1.group(1);
+							    } 
 								String apiKey = Config.botConfig.get("GoogleAPI").toString();
-								String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
+								String vinfo = getVideoInfo.getVideoSearch(vId, true, false, apiKey);
 								if (vinfo != null) {
-									event.respond(vinfo);
+									event.getChannel().send().message(vinfo);
 								}
 							}
 						}

@@ -15,7 +15,8 @@ public class getVideoInfo {
 	public static String getVideoSearch(String query, boolean data, boolean url, String apiKey) {
 		HTTPQuery q = null;
 		try {
-			q = HTTPQuery.create("https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet%2Cstatistics&id=" + URLEncoder.encode(query,"UTF8") + "&key=" + apiKey);
+			System.out.println("https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet%2Cstatistics&id=" + query + "&key=" + apiKey);
+			q = HTTPQuery.create("https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet%2Cstatistics&id=" + query + "&key=" + apiKey);
 			q.connect(true,false);
 						
 			JSONArray jItem = new JSONObject(q.readWhole()).getJSONArray("items");
@@ -37,7 +38,7 @@ public class getVideoInfo {
 			int vDislikes = statistics.has("dislikeCount") ? statistics.getInt("dislikeCount") : 0;
 			int vViewCount = statistics.getInt("viewCount");
 			q.close();
-			return (data ? Colors.BOLD+vTitle+Colors.NORMAL+" | length: "+Colors.BOLD + vDuration +Colors.NORMAL
+			return (data ?Colors.NORMAL + Colors.BOLD+vTitle+Colors.NORMAL+" | length: "+Colors.BOLD + vDuration +Colors.NORMAL
 					+" | Likes: " + Colors.GREEN + vLikes + Colors.NORMAL + " Dislikes: " + Colors.RED + vDislikes + Colors.NORMAL
 					+" View" + Colors.NORMAL + (vViewCount != 1 ? "s: " : ": ") + Colors.BOLD + vViewCount + Colors.NORMAL + " | by " + Colors.BOLD + vUploader + Colors.NORMAL : "");
 			
