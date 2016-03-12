@@ -79,9 +79,10 @@ public class IPoints extends ListenerAdapter {
 						event.respond("You can not give yourself points.");
 					}
 				}
-			} else if (triggerWord.contains(prefix + "points")) {
+			} else if (triggerWord.contains(prefix + "points") || triggerWord.equals(prefix + "points")) {
 				String[] splitMessage = event.getMessage().split(" ");
 				String user;
+				System.out.println(splitMessage.length);
 				if (splitMessage.length == 1) {
 					user = event.getUser().getNick();
 				} else {
@@ -91,14 +92,14 @@ public class IPoints extends ListenerAdapter {
 				if (getAccount(user, event) != null) {
 					user = getAccount(user, event);
 				}
-				
+
 				PreparedStatement getPoints = IRCBot.getInstance().getPreparedStatement("getPoints");
 				getPoints.setString(1, user);
 				ResultSet points = getPoints.executeQuery();
 				if(points.next()){
-					event.respond(splitMessage[1] + " has " + points.getLong(1) + " points");
+					event.respond(user + " has " + points.getLong(1) + " points");
 				} else {
-					event.respond(splitMessage[1] + " has 0 points");
+					event.respond(user + " has 0 points");
 				}
 			}
 		}
@@ -119,9 +120,7 @@ public class IPoints extends ListenerAdapter {
 			} catch (InterruptedException ex) {
 				event.getUser().send().notice("Please enter a valid username!");
 			}
-
 			return user;
 		}
-
 	}
 }

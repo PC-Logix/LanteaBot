@@ -47,8 +47,8 @@ public class IRCBot {
 		private static final long serialVersionUID = 3558133365599892107L;
 		@SuppressWarnings("rawtypes")
 		protected boolean removeEldestEntry(Map.Entry eldest) {
-            return size() > MAX_MESSAGES;
-         }
+			return size() > MAX_MESSAGES;
+		}
 	};
 	public static WAEngine engine = new WAEngine();
 	public static HashMap<String, String> invites = new HashMap<String, String>();
@@ -61,7 +61,7 @@ public class IRCBot {
 	public static String ournick = null;
 	private final Scanner scanner;
 	public static Map<UUID,ExpiringToken> userCache = new HashMap<>();
-	
+
 	public static Logger log = Logger.getLogger("lanteabot");
 	public static PircBotX bot;
 	private TaskScheduler scheduler;
@@ -69,7 +69,7 @@ public class IRCBot {
 
 
 	public static httpd httpServer = new httpd();
-	
+
 
 
 	public static boolean isIgnored(String nick) {
@@ -82,9 +82,9 @@ public class IRCBot {
 		} else {
 			return false;
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static ArrayList<String> commands = new ArrayList();
 	public static void registerCommand(String command) {
@@ -104,21 +104,21 @@ public class IRCBot {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public IRCBot() {
 		scanner = new Scanner(System.in);
-        instance = this;		
+		instance = this;		
 		Config.setConfig();	
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-        if (!initDatabase()) {
-            System.err.println("Database Failure!");
-            return;
-        }
-        
+		try {
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		if (!initDatabase()) {
+			System.err.println("Database Failure!");
+			return;
+		}
+
 		loadOps();
-        
+
 		//Load all classes in the pcl.lc.irc.hooks package.
 		Reflections plugins = new Reflections("pcl.lc.irc.hooks");
 		Set<Class<? extends ListenerAdapter>> allClasses = plugins.getSubTypesOf(ListenerAdapter.class);
@@ -134,7 +134,7 @@ public class IRCBot {
 				e.printStackTrace();
 			}
 		}
-		
+
 		Reflections plugins2 = new Reflections("pcl.lc.irc.hooks");
 		Set<Class<? extends AbstractListener>> allClasses2 = plugins2.getSubTypesOf(AbstractListener.class);
 		for (Class<? extends Object> s : allClasses2) {
@@ -169,137 +169,137 @@ public class IRCBot {
 			ex.printStackTrace();
 		}
 	}
-	
-    private boolean initDatabase() {
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
-            Statement statement = connection.createStatement();
-            statement.setPoolable(true);
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Channels(name)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Ops(name, level)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Tells(sender, rcpt, channel, message)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS InternetPoints(nick STRING UNIQUE PRIMARY KEY, points)");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
-            preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
-            preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
-            preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
-            preparedStatements.put("disableHook",connection.prepareStatement("DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;"));
-            preparedStatements.put("checkHook",connection.prepareStatement("SELECT hook, channel FROM OptionalHooks WHERE hook = ?;"));
-            preparedStatements.put("addOp",connection.prepareStatement("REPLACE INTO Ops (name) VALUES (?);"));
-            preparedStatements.put("removeOp",connection.prepareStatement("DELETE FROM Ops WHERE name = ?;"));
-            preparedStatements.put("addQuote",connection.prepareStatement("INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);"));
-            preparedStatements.put("getUserQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? ORDER BY RANDOM () LIMIT 1;"));
-            preparedStatements.put("getUserQuoteAll",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ?;"));
-            preparedStatements.put("getAnyQuote",connection.prepareStatement("SELECT id, user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;"));
-            preparedStatements.put("getSpecificQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? AND data = ?;"));
-            preparedStatements.put("removeQuote",connection.prepareStatement("DELETE FROM Quotes WHERE id = ?;"));
-            preparedStatements.put("updateLastSeen",connection.prepareStatement("REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);"));
-            preparedStatements.put("getLastSeen",connection.prepareStatement("SELECT timestamp FROM LastSeen WHERE user = ?;"));
-            preparedStatements.put("updateInfo",connection.prepareStatement("REPLACE INTO Info(key, data) VALUES (?, ?);"));
-            preparedStatements.put("getInfo",connection.prepareStatement("SELECT data FROM Info WHERE key = ?;"));
-            preparedStatements.put("getInfoAll",connection.prepareStatement("SELECT key, data FROM Info;"));
-            preparedStatements.put("removeInfo",connection.prepareStatement("DELETE FROM Info WHERE key = ?;"));
-            preparedStatements.put("addTell",connection.prepareStatement("INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);"));
-            preparedStatements.put("getTells",connection.prepareStatement("SELECT rowid, sender, channel, message FROM Tells WHERE rcpt = ?;"));
-            preparedStatements.put("removeTells",connection.prepareStatement("DELETE FROM Tells WHERE rcpt = ?;"));
-            preparedStatements.put("getPoints", connection.prepareStatement("SELECT Points FROM InternetPoints WHERE nick = ?;"));
-            preparedStatements.put("addPoints", connection.prepareStatement("INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)"));
-            preparedStatements.put("addCommand", connection.prepareStatement("INSERT INTO Commands(command, return) VALUES (?, ?);"));
-            preparedStatements.put("searchCommands", connection.prepareStatement("SELECT command FROM Commands"));
-            preparedStatements.put("getCommand", connection.prepareStatement("SELECT return FROM Commands WHERE command = ?"));
-            preparedStatements.put("delCommand",connection.prepareStatement("DELETE FROM Commands WHERE command = ?;"));
-            preparedStatements.put("addAnnounce", connection.prepareStatement("INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);"));
-            preparedStatements.put("getAnnounce", connection.prepareStatement("SELECT schedule, title, message FROM Announcements WHERE channel = ?;"));
-            preparedStatements.put("delAnnounce", connection.prepareStatement("DELETE FROM Announcements WHERE title = ? AND channel = ?;"));
-            
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
-    public void sendMessage(String target, String message) {
-        bot.sendIRC().message(target, message);
-    }
+	private boolean initDatabase() {
+		try {
+			connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
+			Statement statement = connection.createStatement();
+			statement.setPoolable(true);
+			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Channels(name)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Ops(name, level)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Tells(sender, rcpt, channel, message)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS InternetPoints(nick STRING UNIQUE PRIMARY KEY, points)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
+			preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
+			preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
+			preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
+			preparedStatements.put("disableHook",connection.prepareStatement("DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;"));
+			preparedStatements.put("checkHook",connection.prepareStatement("SELECT hook, channel FROM OptionalHooks WHERE hook = ?;"));
+			preparedStatements.put("addOp",connection.prepareStatement("REPLACE INTO Ops (name) VALUES (?);"));
+			preparedStatements.put("removeOp",connection.prepareStatement("DELETE FROM Ops WHERE name = ?;"));
+			preparedStatements.put("addQuote",connection.prepareStatement("INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);"));
+			preparedStatements.put("getUserQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? ORDER BY RANDOM () LIMIT 1;"));
+			preparedStatements.put("getUserQuoteAll",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ?;"));
+			preparedStatements.put("getAnyQuote",connection.prepareStatement("SELECT id, user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;"));
+			preparedStatements.put("getSpecificQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? AND data = ?;"));
+			preparedStatements.put("removeQuote",connection.prepareStatement("DELETE FROM Quotes WHERE id = ?;"));
+			preparedStatements.put("updateLastSeen",connection.prepareStatement("REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);"));
+			preparedStatements.put("getLastSeen",connection.prepareStatement("SELECT timestamp FROM LastSeen WHERE user = ?;"));
+			preparedStatements.put("updateInfo",connection.prepareStatement("REPLACE INTO Info(key, data) VALUES (?, ?);"));
+			preparedStatements.put("getInfo",connection.prepareStatement("SELECT data FROM Info WHERE key = ?;"));
+			preparedStatements.put("getInfoAll",connection.prepareStatement("SELECT key, data FROM Info;"));
+			preparedStatements.put("removeInfo",connection.prepareStatement("DELETE FROM Info WHERE key = ?;"));
+			preparedStatements.put("addTell",connection.prepareStatement("INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);"));
+			preparedStatements.put("getTells",connection.prepareStatement("SELECT rowid, sender, channel, message FROM Tells WHERE rcpt = ?;"));
+			preparedStatements.put("removeTells",connection.prepareStatement("DELETE FROM Tells WHERE rcpt = ?;"));
+			preparedStatements.put("getPoints", connection.prepareStatement("SELECT Points FROM InternetPoints WHERE nick = ?;"));
+			preparedStatements.put("addPoints", connection.prepareStatement("INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)"));
+			preparedStatements.put("addCommand", connection.prepareStatement("INSERT INTO Commands(command, return) VALUES (?, ?);"));
+			preparedStatements.put("searchCommands", connection.prepareStatement("SELECT command FROM Commands"));
+			preparedStatements.put("getCommand", connection.prepareStatement("SELECT return FROM Commands WHERE command = ?"));
+			preparedStatements.put("delCommand",connection.prepareStatement("DELETE FROM Commands WHERE command = ?;"));
+			preparedStatements.put("addAnnounce", connection.prepareStatement("INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);"));
+			preparedStatements.put("getAnnounce", connection.prepareStatement("SELECT schedule, title, message FROM Announcements WHERE channel = ?;"));
+			preparedStatements.put("delAnnounce", connection.prepareStatement("DELETE FROM Announcements WHERE title = ? AND channel = ?;"));
 
-    private void loadOps() {
-        try {
-            ResultSet readOps = connection.createStatement().executeQuery("SELECT name FROM ops;");
-            int rowCount = 0;
-            while (readOps.next()) {
-                rowCount++;
-                ops.add(readOps.getString("name"));
-            }
-            if (rowCount == 0) {
-                System.out.print("Please enter the primary nickserv name of the first person with op privileges for the bot:\n> ");
-                String op = scanner.nextLine();
-                ops.add(op);
-                preparedStatements.get("addOp").setString(1, op);
-                preparedStatements.get("addOp").executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-    }
-    
-    public PreparedStatement getPreparedStatement(String statement) throws Exception {
-        if (!preparedStatements.containsKey(statement)) {
-            throw new Exception("Invalid statement!");
-        }
-        return preparedStatements.get(statement);
-    }
-    
-    public static IRCBot getInstance() {
-        return instance;
-    }
+	public void sendMessage(String target, String message) {
+		bot.sendIRC().message(target, message);
+	}
 
-    public List<String> getOps() {
-        return ops;
-    }
+	private void loadOps() {
+		try {
+			ResultSet readOps = connection.createStatement().executeQuery("SELECT name FROM ops;");
+			int rowCount = 0;
+			while (readOps.next()) {
+				rowCount++;
+				ops.add(readOps.getString("name"));
+			}
+			if (rowCount == 0) {
+				System.out.print("Please enter the primary nickserv name of the first person with op privileges for the bot:\n> ");
+				String op = scanner.nextLine();
+				ops.add(op);
+				preparedStatements.get("addOp").setString(1, op);
+				preparedStatements.get("addOp").executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-    @SuppressWarnings("rawtypes")
+	}
+
+	public PreparedStatement getPreparedStatement(String statement) throws Exception {
+		if (!preparedStatements.containsKey(statement)) {
+			throw new Exception("Invalid statement!");
+		}
+		return preparedStatements.get(statement);
+	}
+
+	public static IRCBot getInstance() {
+		return instance;
+	}
+
+	public List<String> getOps() {
+		return ops;
+	}
+
+	@SuppressWarnings("rawtypes")
 	public boolean isOp(PircBotX sourceBot, User user) {
-	    String nsRegistration = "";
-	    if (userCache.containsKey(user.getUserId()) && userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
-		    nsRegistration = userCache.get(user.getUserId()).getValue();
-		    System.out.println(user.getNick() + " is cached");
-	    } else {
-		    System.out.println(user.getNick() + " is NOT cached");
-		    user.isVerified();
-		    try {
-			    sourceBot.sendRaw().rawLine("WHOIS " + user.getNick() + " " + user.getNick());
-			    WaitForQueue waitForQueue = new WaitForQueue(sourceBot);
-			    WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
-			    waitForQueue.close();
-			    if (whoisEvent.getRegisteredAs() != null) {
-				    nsRegistration = whoisEvent.getRegisteredAs();
-			    }
-		    } catch (Exception e) {
-			    e.printStackTrace();
-		    }
-		    if (!nsRegistration.isEmpty()) {
-			    Calendar future = Calendar.getInstance();
-			    future.add(Calendar.MINUTE,5);
-			    userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
-			    System.out.println(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
-		    }
-	    }
-	    if (getOps().contains(nsRegistration)) {
-		    return true;
-	    } else {
-		    return false;
-	    }
-    }  
-    
+		String nsRegistration = "";
+		if (userCache.containsKey(user.getUserId()) && userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
+			nsRegistration = userCache.get(user.getUserId()).getValue();
+			System.out.println(user.getNick() + " is cached");
+		} else {
+			System.out.println(user.getNick() + " is NOT cached");
+			user.isVerified();
+			try {
+				sourceBot.sendRaw().rawLine("WHOIS " + user.getNick() + " " + user.getNick());
+				WaitForQueue waitForQueue = new WaitForQueue(sourceBot);
+				WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
+				waitForQueue.close();
+				if (whoisEvent.getRegisteredAs() != null) {
+					nsRegistration = whoisEvent.getRegisteredAs();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (!nsRegistration.isEmpty()) {
+				Calendar future = Calendar.getInstance();
+				future.add(Calendar.MINUTE,5);
+				userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
+				System.out.println(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
+			}
+		}
+		if (getOps().contains(nsRegistration)) {
+			return true;
+		} else {
+			return false;
+		}
+	}  
+
 	private class ExpiringToken
 	{
 		private final Date expiration;
