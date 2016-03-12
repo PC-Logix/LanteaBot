@@ -24,8 +24,8 @@ import pcl.lc.utils.Helper;
 public class DynamicCommands extends ListenerAdapter {
 
 	public DynamicCommands() {
-		IRCBot.registerCommand("addcommand");
-		IRCBot.registerCommand("delcommand");
+		IRCBot.registerCommand("addcommand", "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
+		IRCBot.registerCommand("delcommand", "Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		try {
 			PreparedStatement searchCommands = IRCBot.getInstance().getPreparedStatement("searchCommands");
 			ResultSet commands = searchCommands.executeQuery();

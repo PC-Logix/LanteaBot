@@ -39,7 +39,6 @@ public class Admin extends ListenerAdapter {
 		IRCBot.registerCommand("cycle");
 		IRCBot.registerCommand("raw");
 		IRCBot.registerCommand("nick");
-		IRCBot.registerCommand("lctodo");
 		IRCBot.registerCommand("hashcount");
 		IRCBot.registerCommand("flushhash");
 		IRCBot.registerCommand("ignore");
@@ -143,9 +142,6 @@ public class Admin extends ListenerAdapter {
 				event.respond(prefix);
 			} 
 
-			if(triggerWord.equals(Config.commandprefix + "lctodo"))
-				event.respond("https://docs.google.com/spreadsheets/d/1Agsv7aHJ9JGDMnVYOtaoeDmoyKwoVCOppmwQm34fg1c");
-
 			if (triggerWord.equals(Config.commandprefix + "hashcount"))
 				event.respond("Current hashmap size is: " + IRCBot.messages.size());
 
@@ -167,6 +163,17 @@ public class Admin extends ListenerAdapter {
 				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					event.respond("DEPERECATED! Current admins: " + IRCBot.admins.toString());
+				}
+			}
+			
+			if (triggerWord.equals(Config.commandprefix + "help")) {
+				try {
+					String command = splitMessage[1];
+					bot.sendIRC().notice(sender, "help for " + command);
+					bot.sendIRC().notice(sender, IRCBot.helpList.get(command).toString());
+				} catch (Exception e) {
+					e.printStackTrace();
+					bot.sendIRC().notice(sender, "Something went wrong!");
 				}
 			}
 			

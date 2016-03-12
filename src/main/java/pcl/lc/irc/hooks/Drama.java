@@ -23,7 +23,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class Drama extends ListenerAdapter {
 	public Drama() {
-		IRCBot.registerCommand("drama");
+		IRCBot.registerCommand("drama", "Generates random drama using Mod Developers, Projects, and other semi random data.");
 	}
 
 

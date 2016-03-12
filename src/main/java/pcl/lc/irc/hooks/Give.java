@@ -17,7 +17,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class Give extends ListenerAdapter {
 	public Give() {
-		IRCBot.registerCommand("give");
+		IRCBot.registerCommand("give", Config.commandprefix + "give <nick> <item>  ex: " + Config.commandprefix + "give User cake " +IRCBot.ournick + " gives User some cake");
 		IRCBot.registerCommand("cookies");
 	}
 
@@ -35,7 +35,12 @@ public class Give extends ListenerAdapter {
 			if (triggerWord.equals(prefix + "give")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					String[] who = event.getMessage().split(" ");
-					event.getChannel().send().action("gives " + who[1] + " some " + who[2]);
+					StringBuilder strBuilder = new StringBuilder();
+					for (int i = 2; i < who.length; i++) {
+					   strBuilder.append(who[i] + " ");
+					}
+					String newString = strBuilder.toString();
+					event.getChannel().send().action("gives " + who[1] + " some " + newString);
 				}
 			}			
 		}

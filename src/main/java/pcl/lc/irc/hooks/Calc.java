@@ -1,5 +1,6 @@
 package pcl.lc.irc.hooks;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -24,39 +25,26 @@ public class Calc extends AbstractListener {
 	
 	@Override
 	protected void initCommands() {
-		IRCBot.registerCommand("calc");
+		IRCBot.registerCommand("calc", "Does basic math on the expression passed to the command Ex: " + Config.commandprefix + "calc 2+2");
 	}
 
 	@Override
 	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
-		super.onMessage(event);
-
-		String ourinput = event.getMessage().toLowerCase();
-		String trigger = ourinput.trim();
-		String[] splitMessage = event.getMessage().split(" ");
-		if (trigger.length() > 1) {
-			String[] firstWord = StringUtils.split(trigger);
-			String triggerWord = firstWord[0];
-			if (command.equals(prefix + "calc") || splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") && splitMessage[1].equals(prefix + "calc")) {
-				String[] message = event.getMessage().split(" ");
-				String expression;
-				if (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">")) {
-					expression = message[2].trim();
+		if (command.equals(prefix + "calc")) {
+			String expression;
+			expression = StringUtils.join(args," ");
+			if (!IRCBot.isIgnored(event.getUser().getNick())) {
+				if (expression.equalsIgnoreCase("the meaning of life")) {
+					event.respond("42");
 				} else {
-					expression = message[1].trim();
+					Expression e = new ExpressionBuilder(expression).build();
+					double result = e.evaluate();
+					NumberFormat formatter = new DecimalFormat("#,###.##");
+					formatter.setRoundingMode(RoundingMode.DOWN);
+					event.respond(formatter.format(result));
 				}
-				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					if (expression.equalsIgnoreCase("the meaning of life")) {
-						event.respond("42");
-					} else {
-						Expression e = new ExpressionBuilder(expression).build();
-						double result = e.evaluate();
-						NumberFormat formatter = new DecimalFormat("#,###.##");
-						event.respond(formatter.format(result));
-					}
-				}
-			}	
+			}
 		}
 	}
 }

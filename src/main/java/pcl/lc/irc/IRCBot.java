@@ -87,13 +87,22 @@ public class IRCBot {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static ArrayList<String> commands = new ArrayList();
+	public static HashMap<String, String> helpList = new HashMap<String, String>();
+	public static void registerCommand(String command, String help) {
+		if (!commands.contains(command)) {
+			commands.add(command);
+			helpList.put(command, help);	
+			log.fine("Registering Command: " + command);
+		}
+	}
+
 	public static void registerCommand(String command) {
 		if (!commands.contains(command)) {
 			commands.add(command);
 			log.fine("Registering Command: " + command);
 		}
 	}
-
+	
 	public static void unregisterCommand(String command) {
 		if (commands.contains(command)) {
 			commands.remove(command);

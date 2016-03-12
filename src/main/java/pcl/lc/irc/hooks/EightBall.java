@@ -16,7 +16,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings({ "rawtypes" })
 public class EightBall extends ListenerAdapter {
 	public EightBall() {
-		IRCBot.registerCommand("8ball");
+		IRCBot.registerCommand("8ball", "Gives vauge answes to vauge questions.");
 	}
 
 	@SuppressWarnings({ "unchecked" })
