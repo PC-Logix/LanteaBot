@@ -59,6 +59,23 @@ public class Ping extends ListenerAdapter {
 						IRCBot.bot.sendIRC().ctcpCommand(event.getUser().getNick(), "PING " + System.currentTimeMillis());					
 					}
 				}
+			} else if (triggerWord.equals(prefix + "msp") || triggerWord.equals(prefix + "msping")) {
+				if (!IRCBot.isIgnored(event.getUser().getNick())) {
+					List<Object> eventData = new ArrayList<Object>();
+					eventData.add(event.getChannel().getName());
+					eventData.add(System.currentTimeMillis());
+					if (message.length > 1) {
+						for (User u : event.getChannel().getUsers()) {
+							if(u.getNick().toLowerCase().equals(message[1])) {
+								usersMSP.put(message[1].toLowerCase(), eventData);
+								IRCBot.bot.sendIRC().ctcpCommand(message[1].toLowerCase(), "PING " + System.currentTimeMillis());	
+							}
+						}
+					} else {
+						usersMSP.put(event.getUser().getNick().toLowerCase(), eventData);
+						IRCBot.bot.sendIRC().ctcpCommand(event.getUser().getNick(), "PING " + System.currentTimeMillis());					
+					}
+				}
 			}			
 		}
 	}
