@@ -26,9 +26,11 @@ public class Ping extends ListenerAdapter {
 	public Ping() {
 		IRCBot.registerCommand("p");
 		IRCBot.registerCommand("ping");
+		IRCBot.registerCommand("msp");
 	}
 
 	public static TimedHashMap<String, List<Object>> users = new TimedHashMap<String, List<Object>>(60000, null);
+	public static TimedHashMap<String, List<Object>> usersMSP = new TimedHashMap<String, List<Object>>(60000, null);
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -74,6 +76,16 @@ public class Ping extends ListenerAdapter {
 
 				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + event.getUser().getNick() + " " + df.format(time / 1000) + "s");
 				users.remove(event.getUser().getNick().toLowerCase());
+			} else if (usersMSP.containsKey(event.getUser().getNick().toLowerCase())) {
+				long currentTime = System.currentTimeMillis();
+				String channel = (String) usersMSP.get(event.getUser().getNick().toLowerCase()).get(0);
+				Long timeStamp = (Long) usersMSP.get(event.getUser().getNick().toLowerCase()).get(1);
+				float time = currentTime - timeStamp;
+
+				DecimalFormat df = new DecimalFormat("#.##");
+
+				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + event.getUser().getNick() + " " + time + "ms");
+				usersMSP.remove(event.getUser().getNick().toLowerCase());
 			}
 		}
 	}
