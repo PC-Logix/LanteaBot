@@ -127,7 +127,7 @@ public class IRCBot {
 		}
 
 		loadOps();
-
+		loadChannels();
 		//Load all classes in the pcl.lc.irc.hooks package.
 		Reflections plugins = new Reflections("pcl.lc.irc.hooks");
 		Set<Class<? extends ListenerAdapter>> allClasses = plugins.getSubTypesOf(ListenerAdapter.class);
@@ -258,6 +258,20 @@ public class IRCBot {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private void loadChannels() {
+		try {
+			ResultSet readChannels = connection.createStatement().executeQuery("SELECT name FROM channels;");
+			int rowCount = 0;
+			while (readChannels.next()) {
+				rowCount++;
+				IRCBot.log.fine(readChannels.getString("name"));
+				Config.config.addAutoJoinChannel(readChannels.getString("name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public PreparedStatement getPreparedStatement(String statement) throws Exception {

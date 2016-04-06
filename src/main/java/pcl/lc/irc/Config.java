@@ -80,7 +80,6 @@ public class Config {
 			nick = prop.getProperty("nick","LanteaBot");
 			nspass = prop.getProperty("nspass", "");
 			nsaccount = prop.getProperty("nsaccount", "");
-			channels = prop.getProperty("channels", "");
 			ignoredUsersProp = prop.getProperty("ignoredUsers", "");
 			commandprefix = prop.getProperty("commandprefix", "@");
 			enablehttpd = prop.getProperty("enablehttpd", "true");
@@ -111,7 +110,7 @@ public class Config {
 			if (!Config.nspass.isEmpty())
 				Config.config.setNickservPassword(Config.nspass);
 
-			if (!Config.channels.isEmpty()) {
+/*			if (!Config.channels.isEmpty()) {
 				if (Config.channels.contains(",")) {
 					String[] joinChannels = Config.channels.split(",");
 					for (String s: joinChannels)
@@ -123,7 +122,7 @@ public class Config {
 				} else {
 					Config.config.addAutoJoinChannel(Config.channels);
 				}
-			}
+			}*/
 
 			if (!Config.adminProps.isEmpty()) {
 				String[] pairs = Config.adminProps.split(",");
