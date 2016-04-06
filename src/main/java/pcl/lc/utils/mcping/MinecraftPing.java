@@ -58,7 +58,8 @@ public class MinecraftPing {
      * @return {@link MinecraftPingReply} - list of basic server information
      * @throws IOException thrown when failed to receive packet or when incorrect packet is received
      */
-    public MinecraftPingReply getPing(final String hostname, final int port) throws IOException {
+    @SuppressWarnings("resource")
+	public MinecraftPingReply getPing(final String hostname, final int port) throws IOException {
         this.validate(hostname, "Hostname cannot be null.");
         this.validate(port, "Port cannot be null.");
 

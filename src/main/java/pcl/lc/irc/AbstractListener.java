@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("rawtypes")
 public abstract class AbstractListener extends ListenerAdapter
 {
 	// key = command name, value = description

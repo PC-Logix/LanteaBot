@@ -5,11 +5,6 @@ package pcl.lc.irc.hooks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Arrays;
-import java.util.Random;
-
-import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.AbstractListener;

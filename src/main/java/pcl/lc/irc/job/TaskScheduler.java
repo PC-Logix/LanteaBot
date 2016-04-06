@@ -7,8 +7,6 @@ import pcl.lc.irc.IRCBot;
 
 public class TaskScheduler extends Thread {
 
-	private static TaskScheduler INSTANCE;
-
 	public static void queueTask() {
 
 	}
@@ -17,7 +15,6 @@ public class TaskScheduler extends Thread {
 	private boolean abort = false;
 
 	public TaskScheduler() {
-		TaskScheduler.INSTANCE = this;
 		setName("BotTaskScheduler");
 		setDaemon(true);
 	}

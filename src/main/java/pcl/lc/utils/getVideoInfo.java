@@ -1,6 +1,5 @@
 package pcl.lc.utils;
 
-import java.net.URLEncoder;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormat;

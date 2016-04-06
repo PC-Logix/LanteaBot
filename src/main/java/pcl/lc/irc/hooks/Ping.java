@@ -99,9 +99,6 @@ public class Ping extends ListenerAdapter {
 				String channel = (String) usersMSP.get(event.getUser().getNick().toLowerCase()).get(0);
 				Long timeStamp = (Long) usersMSP.get(event.getUser().getNick().toLowerCase()).get(1);
 				float time = currentTime - timeStamp;
-
-				DecimalFormat df = new DecimalFormat("#.##");
-
 				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + Helper.antiPing(event.getUser().getNick()) + " " + time + "ms");
 				usersMSP.remove(event.getUser().getNick().toLowerCase());
 			}
