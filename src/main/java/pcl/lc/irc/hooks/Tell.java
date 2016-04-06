@@ -19,7 +19,7 @@ public class Tell extends ListenerAdapter {
 
 
 	public Tell() {
-		IRCBot.registerCommand("tell");
+		IRCBot.registerCommand("tell", "Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");
 	}
 
 	@Override

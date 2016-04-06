@@ -24,8 +24,8 @@ import pcl.lc.utils.TimedHashMap;
 @SuppressWarnings("rawtypes")
 public class Ping extends ListenerAdapter {
 	public Ping() {
-		IRCBot.registerCommand("p");
-		IRCBot.registerCommand("ping");
+		IRCBot.registerCommand("p", "Sends a CTCP Ping to you, or the user supplied to check latency");
+		IRCBot.registerCommand("ping", "Sends a CTCP Ping to you, or the user supplied to check latency");
 	}
 
 	public static TimedHashMap<String, List<Object>> users = new TimedHashMap<String, List<Object>>(60000, null);

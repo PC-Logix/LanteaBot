@@ -22,11 +22,11 @@ import pcl.lc.irc.IRCBot;
 public class Search extends ListenerAdapter {
 
 	public Search() {
-		IRCBot.registerCommand("g");
-		IRCBot.registerCommand("cf");
-		IRCBot.registerCommand("wiki");
-		IRCBot.registerCommand("urban");
-		IRCBot.registerCommand("ann");
+		IRCBot.registerCommand("g", "Searches google and returns the first result");
+		IRCBot.registerCommand("cf", "Searches CurseForge and returns the first result");
+		IRCBot.registerCommand("wiki", "Searches Wikipedia and returns the first result");
+		IRCBot.registerCommand("urban", "Searches UrbanDictonary and returns the first result");
+		IRCBot.registerCommand("ann", "Searches Anime News Network and returns the first result");
 	}
 	
 	@Override

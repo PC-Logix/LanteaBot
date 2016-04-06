@@ -17,7 +17,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class l33t extends ListenerAdapter {
 	public l33t() {
-		IRCBot.registerCommand("1337");
+		IRCBot.registerCommand("1337", "Returns leetspeak of inputted text");
 	}
 
 	public static String toLeet(String str){

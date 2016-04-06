@@ -20,7 +20,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class Flip extends ListenerAdapter {
 	public Flip() {
-		IRCBot.registerCommand("flip");
+		IRCBot.registerCommand("flip", "Flips the text sent");
 	}
 
 	private static final String

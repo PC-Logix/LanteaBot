@@ -24,7 +24,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class Weather extends ListenerAdapter {
 	public Weather() {
-		IRCBot.registerCommand("weather");
+		IRCBot.registerCommand("weather", "Returns weather data for the supplied postal code, or Place name");
 	}
 	@SuppressWarnings({ "unchecked" })
 	@Override

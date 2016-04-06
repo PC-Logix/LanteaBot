@@ -6,37 +6,33 @@ import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
  *
  */
 @SuppressWarnings({ "rawtypes" })
-public class EightBall extends ListenerAdapter {
-	public EightBall() {
+public class EightBall extends AbstractListener {
+	@Override
+	protected void initCommands() {
 		IRCBot.registerCommand("8ball", "Gives vauge answes to vauge questions.");
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
-		super.onMessage(event);
-
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
-		String ourinput = event.getMessage().toLowerCase();
-		String trigger = ourinput.trim();
-		if (trigger.length() > 1) {
-			String[] firstWord = StringUtils.split(trigger);
-			String triggerWord = firstWord[0];
-			if (triggerWord.equals(prefix + "8ball")) {
+		if (command.length() > 1) {
+			if (command.equals(prefix + "8ball")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					if (ourinput.length() > prefix.length() + "8ball".length()) {
+					if (args.length > prefix.length() + "8ball".length()) {
 						Random generator = new Random();
 						String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
 						int randommessage = generator.nextInt( 4 );
-						event.respond(ballmessages[randommessage]);
+						event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + ballmessages[randommessage]);
 					}
 				}
 			}			

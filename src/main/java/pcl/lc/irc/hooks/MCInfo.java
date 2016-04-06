@@ -19,7 +19,7 @@ import pcl.lc.utils.mcping.MinecraftPingReply;
 @SuppressWarnings("rawtypes")
 public class MCInfo extends ListenerAdapter {
 	public MCInfo() {
-		IRCBot.registerCommand("mcinfo");
+		IRCBot.registerCommand("mcinfo", "Returns information about a MC Server");
 	}
 
 	@SuppressWarnings({ "unchecked" })

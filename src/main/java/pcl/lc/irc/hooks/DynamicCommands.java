@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
@@ -21,9 +22,9 @@ import pcl.lc.utils.Helper;
  *
  */
 @SuppressWarnings("rawtypes")
-public class DynamicCommands extends ListenerAdapter {
-
-	public DynamicCommands() {
+public class DynamicCommands extends AbstractListener {
+	@Override
+	protected void initCommands() {
 		IRCBot.registerCommand("addcommand", "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		IRCBot.registerCommand("delcommand", "Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		try {
@@ -36,35 +37,21 @@ public class DynamicCommands extends ListenerAdapter {
 			e.printStackTrace();
 			IRCBot.log.info("An error occurred while processing this command");
 		}
-
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
-		super.onMessage(event);
-
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
-		String ourinput = event.getMessage().toLowerCase();
-		String trigger = ourinput.trim();
-		String[] firstWord = StringUtils.split(trigger);
-		String[] splitMessage = event.getMessage().split(" ");
-		String triggerWord = firstWord[0];
-		String firstCharacter = String.valueOf(triggerWord.charAt(0));
+		String ourinput = event.getMessage().toLowerCase().trim();
 		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
-		if (trigger.length() > 1) {
+		if (ourinput.length() > 1) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
-				if (firstCharacter.equals(prefix) || splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") && splitMessage[1].startsWith(prefix)) {
+				if (command.startsWith(prefix)) {
 					String[] message = event.getMessage().split(" ", 3);
-					if (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">")) {
-						triggerWord = splitMessage[1];
-						message = Arrays.copyOfRange(splitMessage,2,splitMessage.length);
-					}
-					if (triggerWord.equals(prefix + "addcommand") && (isOp || Helper.isChannelOp(event))) {
+
+					if (command.equals(prefix + "addcommand") && (isOp || Helper.isChannelOp(event))) {
 						try {
 							PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
-							
-
 							if (!IRCBot.commands.contains(message[1])) {
 								addCommand.setString(1, message[1]);
 								addCommand.setString(2, message[2]);
@@ -78,7 +65,7 @@ public class DynamicCommands extends ListenerAdapter {
 							e.printStackTrace();
 							event.respond("An error occurred while processing this command");
 						}
-					} else if (triggerWord.equals(prefix + "delcommand") && (isOp || Helper.isChannelOp(event))) {
+					} else if (command.equals(prefix + "delcommand") && (isOp || Helper.isChannelOp(event))) {
 						try {
 							PreparedStatement delCommand = IRCBot.getInstance().getPreparedStatement("delCommand");
 							delCommand.setString(1, message[1]);
@@ -92,10 +79,10 @@ public class DynamicCommands extends ListenerAdapter {
 					} else {
 						try {
 							PreparedStatement getCommand = IRCBot.getInstance().getPreparedStatement("getCommand");						
-							getCommand.setString(1, triggerWord.replace(prefix, ""));
-							ResultSet command = getCommand.executeQuery();
-							if(command.next()){
-								event.respond(command.getString(1));
+							getCommand.setString(1, command.replace(prefix, ""));
+							ResultSet command1 = getCommand.executeQuery();
+							if(command1.next()){
+								event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + command1.getString(1));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

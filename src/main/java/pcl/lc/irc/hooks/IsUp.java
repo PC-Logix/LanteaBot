@@ -21,7 +21,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class IsUp extends ListenerAdapter {
 	public IsUp() {
-		IRCBot.registerCommand("isup");
+		IRCBot.registerCommand("isup", "Checks is a website is up");
 	}
 
 	public static boolean ping(String url, int timeout) {

@@ -15,6 +15,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -42,7 +43,7 @@ public class Calc extends AbstractListener {
 					double result = e.evaluate();
 					NumberFormat formatter = new DecimalFormat("#,###.##");
 					formatter.setRoundingMode(RoundingMode.DOWN);
-					event.respond(formatter.format(result));
+					event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + formatter.format(result));
 				}
 			}
 		}

@@ -17,7 +17,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class Rot13 extends ListenerAdapter {
 	public Rot13() {
-		IRCBot.registerCommand("rot13");
+		IRCBot.registerCommand("rot13", "Applies the ROT13 cipher to the supplied text");
 	}
 
 	public static String rot13(String input) {

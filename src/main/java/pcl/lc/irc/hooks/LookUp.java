@@ -16,7 +16,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class LookUp extends ListenerAdapter {
 	public LookUp() {
-		IRCBot.registerCommand("lookup");
+		IRCBot.registerCommand("lookup", "Returns DNS information");
 	}
 
 	@SuppressWarnings({ "unchecked" })

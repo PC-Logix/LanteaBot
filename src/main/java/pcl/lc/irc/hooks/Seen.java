@@ -18,7 +18,7 @@ import java.sql.ResultSet;
 public class Seen extends ListenerAdapter {
 
 	public Seen() {
-		IRCBot.registerCommand("seen");
+		IRCBot.registerCommand("seen", "Tells you the last time a user was active.  Active means joined/parted/or sent a message");
 	}
 	
     @Override

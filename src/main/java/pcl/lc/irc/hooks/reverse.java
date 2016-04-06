@@ -18,7 +18,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class reverse extends ListenerAdapter {
 	public reverse() {
-		IRCBot.registerCommand("reverse");
+		IRCBot.registerCommand("reverse", "Reverses the supplied text");
 	}
 
 	@SuppressWarnings({ "unchecked" })

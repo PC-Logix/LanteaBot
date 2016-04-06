@@ -21,7 +21,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class OCTime extends ListenerAdapter {
 	public OCTime() {
-		IRCBot.registerCommand("octime");
+		IRCBot.registerCommand("octime", "Returns the time in GMT");
 	}
 
 	@SuppressWarnings({ "unchecked" })

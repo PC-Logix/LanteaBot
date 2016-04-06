@@ -15,9 +15,9 @@ public class Quotes extends AbstractListener {
 
 	@Override
 	protected void initCommands() {
-		IRCBot.registerCommand("addquote");
-		IRCBot.registerCommand("quote");
-		IRCBot.registerCommand("delquote");
+		IRCBot.registerCommand("addquote", "Adds a quote to the database (Requires BotAdmin, or Channel Op");
+		IRCBot.registerCommand("quote", "Returns quotes from the quote database");
+		IRCBot.registerCommand("delquote", "Removes a quote from the database (Requires BotAdmin, or Channel Op");
 	}
 
 

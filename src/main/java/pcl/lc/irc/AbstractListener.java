@@ -31,7 +31,7 @@ public abstract class AbstractListener extends ListenerAdapter
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				handleCommand(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
-		} else if (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") && splitMessage[1].startsWith(Config.commandprefix)) {
+		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
 			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
 			if (!IRCBot.isIgnored(sender)) {
 				handleCommand(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));

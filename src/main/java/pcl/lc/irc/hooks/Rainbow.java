@@ -18,7 +18,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class Rainbow extends ListenerAdapter {
 	public Rainbow() {
-		IRCBot.registerCommand("rainbow");
+		IRCBot.registerCommand("rainbow", "Replies with a rainbow version of the supplied text");
 	}
 
 	public String makeRainbow(String message) {

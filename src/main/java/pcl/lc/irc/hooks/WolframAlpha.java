@@ -28,7 +28,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class WolframAlpha extends ListenerAdapter {
 	public WolframAlpha() {
-		IRCBot.registerCommand("wa");
+		IRCBot.registerCommand("wa", "Sends the query to Wolfram Alpha, this is a early dev command, and replies via Query");
 	}
 
 	@SuppressWarnings({ "unchecked" })

@@ -17,7 +17,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class MCStatus extends ListenerAdapter {
 	public MCStatus() {
-		IRCBot.registerCommand("mcstatus");
+		IRCBot.registerCommand("mcstatus", "Returns the server status for various Minecraft Services");
 	}
 
 	public String isUp(String input) {
