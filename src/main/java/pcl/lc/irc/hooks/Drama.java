@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
@@ -62,5 +63,13 @@ public class Drama extends AbstractListener {
 				}
 			}			
 		}
+	}
+
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event,
+			String command, String[] copyOfRange) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -102,7 +102,7 @@ public class IRCBot {
 			log.fine("Registering Command: " + command);
 		}
 	}
-	
+
 	public static void unregisterCommand(String command) {
 		if (commands.contains(command)) {
 			commands.remove(command);
@@ -187,7 +187,7 @@ public class IRCBot {
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Channels(name)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Ops(name, level)");
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Tells(sender, rcpt, channel, message)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Tells(id, sender, rcpt, channel, message, time)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
@@ -259,7 +259,7 @@ public class IRCBot {
 		}
 
 	}
-	
+
 	private void loadChannels() {
 		try {
 			ResultSet readChannels = connection.createStatement().executeQuery("SELECT name FROM channels;");

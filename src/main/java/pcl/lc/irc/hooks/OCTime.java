@@ -43,6 +43,7 @@ public class OCTime extends ListenerAdapter {
 					SimpleDateFormat dateFormatLocal = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
 					//Time in GMT
 					Date octime = dateFormatLocal.parse( dateFormatGmt.format(new Date()) );
+					event.respond(dateFormatGmt.format(new Date()));
 					event.respond(octime.toString());
 				} 
 			}			

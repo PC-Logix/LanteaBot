@@ -3,11 +3,13 @@ package pcl.lc.irc.hooks;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
@@ -44,5 +46,12 @@ public class Calc extends AbstractListener {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event,
+			String command, String[] copyOfRange) {
+		// TODO Auto-generated method stub
+		
 	}
 }

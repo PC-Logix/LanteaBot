@@ -3,6 +3,7 @@ package pcl.lc.irc.hooks;
 import java.util.Random;
 
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
@@ -35,5 +36,11 @@ public class EightBall extends AbstractListener {
 				}
 			}			
 		}
+	}
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+		System.out.println(command);
+		
 	}
 }

@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -91,7 +93,7 @@ public class Alot extends ListenerAdapter {
 
 			if (enabledChannels.contains(event.getChannel().getName().toString())) {
 				if (s.length() > 1) {
-					if (s.toLowerCase().contains("alot")){
+					if (s.toLowerCase().matches(".*\\b" + Pattern.quote("alot") + "\\b.*")){
 						IRCBot.bot.sendIRC().message(event.getChannel().getName().toString(), "ALOT: http://tinyurl.com/y42zurt");
 					}
 				}

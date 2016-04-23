@@ -1,6 +1,7 @@
 package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.PreparedStatement;
@@ -91,5 +92,13 @@ public class Quotes extends AbstractListener {
 				}
 			}
 		}
+	}
+
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event,
+			String command, String[] copyOfRange) {
+		// TODO Auto-generated method stub
+		
 	}
 }
