@@ -6,6 +6,7 @@ package pcl.lc.irc.hooks;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
