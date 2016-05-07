@@ -35,7 +35,7 @@ public class DynamicCommands extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, GenericMessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase().trim();
 		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
