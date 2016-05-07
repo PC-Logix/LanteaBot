@@ -6,7 +6,7 @@ package pcl.lc.irc.hooks;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.events.GenericMessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
@@ -36,8 +36,7 @@ public class DynamicCommands extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event,
-			String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		// TODO Auto-generated method stub
 		
 	}
