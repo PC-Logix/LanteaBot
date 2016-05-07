@@ -17,7 +17,7 @@ import pcl.lc.utils.Helper;
  *
  */
 @SuppressWarnings("rawtypes")
-public abstract class DynamicCommands extends AbstractListener {
+public class DynamicCommands extends AbstractListener {
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("addcommand", "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
