@@ -35,6 +35,13 @@ public class DynamicCommands extends AbstractListener {
 	}
 
 	@Override
+	public void handleCommand(String nick, GenericMessageEvent event,
+			String command, String[] copyOfRange) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase().trim();
