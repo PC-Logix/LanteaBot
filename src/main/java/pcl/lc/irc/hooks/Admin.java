@@ -167,13 +167,23 @@ public class Admin extends ListenerAdapter {
 			}
 			
 			if (triggerWord.equals(Config.commandprefix + "help")) {
-				try {
-					String command = splitMessage[1];
-					bot.sendIRC().notice(sender, "help for " + command);
-					bot.sendIRC().notice(sender, IRCBot.helpList.get(command).toString());
-				} catch (Exception e) {
-					e.printStackTrace();
-					bot.sendIRC().notice(sender, "Something went wrong!");
+				
+				if (splitMessage[1] == null) {
+					String listString = "";
+					for (String s : IRCBot.commands)
+					{
+						listString += s + ", ";
+					} 
+					event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
+				} else {
+					try {
+						String command = splitMessage[1];
+						bot.sendIRC().notice(sender, "help for " + command);
+						bot.sendIRC().notice(sender, IRCBot.helpList.get(command).toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+						bot.sendIRC().notice(sender, "Something went wrong!");
+					}					
 				}
 			}
 			
