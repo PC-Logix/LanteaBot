@@ -63,16 +63,19 @@ public class Flip extends ListenerAdapter {
 			if (triggerWord.equals(prefix + "flip")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
-					if (s.equals("^")) {
+					if (s.isEmpty()) {
+						event.respond("(╯°□°）╯┻");
+						return;
+					} else if (s.equals("^")) {
 						List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for(Entry<UUID, List<String>> entry : Lists.reverse(list)){	
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-								event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
+								event.respond("(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
 								return;
 							}
 						}
 					} else {
-						event.respond("(╯°□°）╯︵" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());								
+						event.respond("(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());								
 					}
 				}
 			}			
