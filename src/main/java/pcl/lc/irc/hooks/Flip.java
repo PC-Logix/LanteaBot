@@ -64,7 +64,7 @@ public class Flip extends ListenerAdapter {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
 					if (s.isEmpty()) {
-						event.respond("(╯°□°）╯┻");
+						event.respond("(╯°□°）╯┻┻");
 						return;
 					} else if (s.equals("^")) {
 						List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
