@@ -44,7 +44,7 @@ public class OCTime extends ListenerAdapter {
 					//Time in GMT
 					Date octime = dateFormatLocal.parse( dateFormatGmt.format(new Date()) );
 					event.respond(dateFormatGmt.format(new Date()));
-					event.respond(octime.toString());
+				//	event.respond(octime.toString());
 				} 
 			}			
 		}
