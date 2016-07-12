@@ -47,8 +47,8 @@ public class Helper {
 	}
 	
     private static String addZeroWidthSpace(String s) {
-    	final int mid = s1.length() / 2; //get the middle of the String
-	String[] parts = {s1.substring(0, mid),s1.substring(mid)};
+    	final int mid = s.length() / 2; //get the middle of the String
+	String[] parts = {s.substring(0, mid),s.substring(mid)};
 	return parts[0] + "\u200B" + parts[1];
         //return s.replaceAll(".(?=.)", "$0" + "\u200B");
     }
