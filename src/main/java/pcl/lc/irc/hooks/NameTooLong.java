@@ -71,7 +71,7 @@ public class NameTooLong extends ListenerAdapter {
 		String trigger = ourinput.trim();
 		String[] firstWord = StringUtils.split(trigger);
 		String triggerWord2 = firstWord[0];
-		if (triggerWord2.equals(prefix + "sed")) {
+		if (triggerWord2.equals(prefix + "namelen")) {
 			boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 			if (isOp || Helper.isChannelOp(event)) {
 				String command = event.getMessage().substring(event.getMessage().indexOf("namelen") + 7).trim();
