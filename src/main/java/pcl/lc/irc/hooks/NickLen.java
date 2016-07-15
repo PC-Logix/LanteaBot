@@ -42,7 +42,7 @@ public class NickLen extends ListenerAdapter {
 			for (Iterator<Channel> iter = chans.iterator(); iter.hasNext(); ) {
 				Channel chan = iter.next();
 				if (enabledChannels.contains(chan.getName())) {
-					if (event.getUser().getNick().length() >= 16) {
+					if (event.getUser().getNick().length() >= 18) {
 						event.getUser().send().notice("Your nick is longer than the current allowed limit you have been automatically quieted and will have to part the channel to change your name.");			
 					}
 				}
@@ -56,7 +56,7 @@ public class NickLen extends ListenerAdapter {
 		super.onJoin(event);
 		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			if (enabledChannels.contains(event.getChannel().getName())) {
-				if (event.getUser().getNick().length() >= 16) {
+				if (event.getUser().getNick().length() >= 18) {
 					event.getUser().send().notice("Your nick is longer than the current allowed limit. You have been automatically quieted, and will have to part the channel to change your nickname.");			
 				}
 			}
