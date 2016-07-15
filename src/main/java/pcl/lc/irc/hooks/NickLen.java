@@ -43,7 +43,7 @@ public class NickLen extends ListenerAdapter {
 				Channel chan = iter.next();
 				if (enabledChannels.contains(chan.getName())) {
 					if (event.getUser().getNick().length() >= 18) {
-						event.getUser().send().notice("Your nick is longer than the current allowed limit you have been automatically quieted and will have to part the channel to change your name.");			
+						event.getUser().send().notice("Your nick is longer than the current allowed limit of 18 characters.  You have been automatically quieted, and will have to /part the channel to change your name.");			
 					}
 				}
 			}
