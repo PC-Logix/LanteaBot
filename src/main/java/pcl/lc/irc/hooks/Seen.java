@@ -63,7 +63,7 @@ public class Seen extends ListenerAdapter {
         }
     }
     
-    @Override
+/*    @Override
     public void onJoin(final JoinEvent event) throws Exception {
         User sender = event.getUser();
         try {
@@ -74,7 +74,7 @@ public class Seen extends ListenerAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
     
     private String formatTime(long delta) {
         StringBuilder duration = new StringBuilder();
