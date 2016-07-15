@@ -20,12 +20,12 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
-public class NameTooLong extends ListenerAdapter {
+public class NickLen extends ListenerAdapter {
 	List<String> enabledChannels = new ArrayList<String>();
-	public NameTooLong() {
+	public NickLen() {
 		try {
 			PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
-			checkHook.setString(1, "namelen");
+			checkHook.setString(1, "nicklen");
 			ResultSet results = checkHook.executeQuery();
 			while (results.next()) {
 				enabledChannels.add(results.getString("channel"));
@@ -57,7 +57,7 @@ public class NameTooLong extends ListenerAdapter {
 		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			if (enabledChannels.contains(event.getChannel().getName())) {
 				if (event.getUser().getNick().length() >= 16) {
-					event.getUser().send().notice("Your nick is longer than the current allowed limit you have been automatically quieted and will have to part the channel to change your name.");			
+					event.getUser().send().notice("Your nick is longer than the current allowed limit. You have been automatically quieted, and will have to part the channel to change your nickname.");			
 				}
 			}
 		}
@@ -71,16 +71,16 @@ public class NameTooLong extends ListenerAdapter {
 		String trigger = ourinput.trim();
 		String[] firstWord = StringUtils.split(trigger);
 		String triggerWord2 = firstWord[0];
-		if (triggerWord2.equals(prefix + "namelen")) {
+		if (triggerWord2.equals(prefix + "nicklen")) {
 			boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 			if (isOp || Helper.isChannelOp(event)) {
-				String command = event.getMessage().substring(event.getMessage().indexOf("namelen") + 7).trim();
+				String command = event.getMessage().substring(event.getMessage().indexOf("nicklen") + 7).trim();
 				if (command.equals("disable")) {
 					if (enabledChannels.contains(event.getChannel().getName())) {
 						try {
 							enabledChannels.remove(event.getChannel().getName());
 							PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
-							disableHook.setString(1, "namelen");
+							disableHook.setString(1, "nicklen");
 							disableHook.setString(2, event.getChannel().getName());
 							disableHook.executeUpdate();
 						} catch (Exception e) {
@@ -94,7 +94,7 @@ public class NameTooLong extends ListenerAdapter {
 						try {
 							enabledChannels.add(event.getChannel().getName());
 							PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
-							enableHook.setString(1, "namelen");
+							enableHook.setString(1, "nicklen");
 							enableHook.setString(2, event.getChannel().getName());
 							enableHook.executeUpdate();
 						} catch (Exception e) {
