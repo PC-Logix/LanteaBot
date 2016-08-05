@@ -270,6 +270,13 @@ public class IRCBot {
 				IRCBot.log.fine(readChannels.getString("name"));
 				Config.config.addAutoJoinChannel(readChannels.getString("name"));
 			}
+			if (rowCount == 0) {
+				System.out.print("Please enter the first channel the bot should join eg #channelname:\n> ");
+				String channel = scanner.nextLine();
+				Config.config.addAutoJoinChannel(channel);
+				PreparedStatement.get("addChannel").setString(1, newChannel);
+				PreparedStatement.get("addChannel").executeUpdate();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
