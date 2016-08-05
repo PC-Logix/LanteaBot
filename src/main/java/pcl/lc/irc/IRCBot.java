@@ -274,7 +274,7 @@ public class IRCBot {
 				System.out.print("Please enter the first channel the bot should join eg #channelname:\n> ");
 				String channel = scanner.nextLine();
 				Config.config.addAutoJoinChannel(channel);
-				preparedStatements.get("addChannel").setString(1, newChannel);
+				preparedStatements.get("addChannel").setString(1, channel);
 				preparedStatements.get("addChannel").executeUpdate();
 			}
 		} catch (SQLException e) {
