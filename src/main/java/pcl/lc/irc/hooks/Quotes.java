@@ -4,8 +4,10 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
@@ -19,6 +21,7 @@ public class Quotes extends AbstractListener {
 		IRCBot.registerCommand("addquote", "Adds a quote to the database (Requires BotAdmin, or Channel Op");
 		IRCBot.registerCommand("quote", "Returns quotes from the quote database");
 		IRCBot.registerCommand("delquote", "Removes a quote from the database (Requires BotAdmin, or Channel Op");
+		IRCBot.registerCommand("listquotes", "Returns list of ids for quotes belonging to user as well as their total quote count");
 	}
 
 
@@ -111,6 +114,35 @@ public class Quotes extends AbstractListener {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				}
+			}
+		} else if (command.equals(prefix + "listquotes")) {
+			if (args.length == 1) {
+				String key = args[0];
+				try	{
+					PreparedStatement getUserQuoteAll = IRCBot.getInstance().getPreparedStatement("getUserQuoteAll");
+					getUserQuoteAll.setString(1, key);
+					ResultSet results = getUserQuoteAll.executeQuery();
+
+					ArrayList<String> returnValues = new ArrayList<String>();
+
+					while (results.next())
+						returnValues.add(results.getString(1));
+
+					if (!returnValues.isEmpty()) {
+						String ids = "";
+						for (String value :returnValues) {
+							ids += value + ", ";
+						}
+						ids = ids.replaceAll(", $", "");
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "User <" + pcl.lc.utils.Helper.antiPing(key) + "> has " + returnValues.size() + " quotes: " + ids);
+					}
+					else {
+						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + key);
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
