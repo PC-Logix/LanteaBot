@@ -40,18 +40,40 @@ public class Quotes extends AbstractListener {
 				}
 			}
 			if (args.length == 1) {
+				String idIdentificationCharacter = "#";
 				String key = args[0];
-				try {
-					PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getUserQuote");
-					getQuote.setString(1, key);
-					ResultSet results = getQuote.executeQuery();
-					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(2));
-					} else {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + pcl.lc.utils.Helper.antiPing(key));
+				if (key.substring(0, 1).equals(idIdentificationCharacter)) {
+					String id = key.replace(idIdentificationCharacter, "");
+					try {
+						PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getIdQuote");
+						getQuote.setString(1, id);
+						ResultSet results = getQuote.executeQuery();
+						if (results.next()) {
+							IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + id + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(1)) + "> " + results.getString(2));
+						}
+						else {
+							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for id " + id);
+						}
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				else {
+					try	{
+						PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getUserQuote");
+						getQuote.setString(1, key);
+						ResultSet results = getQuote.executeQuery();
+						if (results.next()) {
+							IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(2));
+						}
+						else {
+							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + pcl.lc.utils.Helper.antiPing(key));
+						}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		} else if (command.equals(prefix + "addquote")) {

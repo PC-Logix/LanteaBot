@@ -205,6 +205,7 @@ public class IRCBot {
 			preparedStatements.put("removeOp",connection.prepareStatement("DELETE FROM Ops WHERE name = ?;"));
 			preparedStatements.put("addQuote",connection.prepareStatement("INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);"));
 			preparedStatements.put("getUserQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? ORDER BY RANDOM () LIMIT 1;"));
+			preparedStatements.put("getIdQuote",connection.prepareStatement("SELECT user, data FROM Quotes WHERE id = ? LIMIT 1;"));
 			preparedStatements.put("getUserQuoteAll",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ?;"));
 			preparedStatements.put("getAnyQuote",connection.prepareStatement("SELECT id, user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;"));
 			preparedStatements.put("getSpecificQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? AND data = ?;"));
