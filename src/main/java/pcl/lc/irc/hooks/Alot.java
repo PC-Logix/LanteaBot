@@ -69,7 +69,7 @@ public class Alot extends ListenerAdapter {
 							}
 							return;
 						} else if (command.equals("disable")) {
-							if (!enabledChannels.contains(event.getChannel().getName().toString())) {
+							if (enabledChannels.contains(event.getChannel().getName().toString())) {
 								enabledChannels.remove(event.getChannel().getName().toString());
 								try {
 									PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
