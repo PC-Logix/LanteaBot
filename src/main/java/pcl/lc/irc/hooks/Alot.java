@@ -84,7 +84,7 @@ public class Alot extends ListenerAdapter {
 							}
 
 						} else if (command.equals("list")) {
-							event.respond("Ensabled Alot channels: " + enabledChannels);
+							event.respond("Enabled Alot channels: " + enabledChannels);
 							return;
 						}
 					}
