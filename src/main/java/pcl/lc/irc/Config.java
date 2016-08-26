@@ -16,6 +16,7 @@ import org.pircbotx.cap.EnableCapHandler;
 import org.pircbotx.cap.TLSCapHandler;
 
 import pcl.lc.utils.CommentedProperties;
+import pcl.lc.utils.GoogleSearch;
 
 public class Config {
 
@@ -36,6 +37,7 @@ public class Config {
 	public static String TwitCSecret = null;
 	public static String TwitToken = null;
 	public static String TwitTSecret = null;
+	public static String googleAPI = null;
 	static String adminProps = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
@@ -94,6 +96,7 @@ public class Config {
 			TwitCSecret = prop.getProperty("TwitCSecret");
 			TwitToken = prop.getProperty("TwitToken");
 			TwitTSecret = prop.getProperty("TwitTSecret");
+			googleAPI = prop.getProperty("GoogleAPI", "");
 			saveProps();
 
 
@@ -110,6 +113,9 @@ public class Config {
 			if (!Config.nspass.isEmpty())
 				Config.config.setNickservPassword(Config.nspass);
 
+			if (!Config.googleAPI.isEmpty())
+				GoogleSearch.setup(Config.googleAPI);
+			
 /*			if (!Config.channels.isEmpty()) {
 				if (Config.channels.contains(",")) {
 					String[] joinChannels = Config.channels.split(",");
