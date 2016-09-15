@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Map.Entry;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
+
 import com.google.common.collect.Lists;
 
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
@@ -18,11 +22,7 @@ import pcl.lc.irc.IRCBot;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Flip extends ListenerAdapter {
-	public Flip() {
-		IRCBot.registerCommand("flip", "Flips the text sent");
-	}
-
+public class Flip extends AbstractListener {
 	private static final String
 	flipOriginal =	"!().12345679<>?ABCDEFGJKLMPQRTUVWY[]_abcdefghijklmnpqrtuvwy{},'\"┳",
 	flipReplace =	"¡)(˙⇂ⵒƐㄣϛ9Ɫ6><¿∀ℇƆᗡƎℲפſ丬˥WԀΌᴚ⊥∩ΛMλ][‾ɐqɔpǝɟɓɥıɾʞlɯudbɹʇnʌʍʎ}{',„┻";
@@ -49,11 +49,13 @@ public class Flip extends ListenerAdapter {
 		return mutate(flipOriginal, flipReplace, str);
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
-		super.onMessage(event);
+	protected void initCommands() {
+		IRCBot.registerCommand("flip", "Flips the text sent");
+	}
 
+	@Override
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
@@ -80,5 +82,12 @@ public class Flip extends ListenerAdapter {
 				}
 			}			
 		}
+	}
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event,
+			String command, String[] copyOfRange) {
+		// TODO Auto-generated method stub
+		
 	}
 }
