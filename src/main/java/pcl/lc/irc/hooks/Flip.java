@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -72,12 +73,12 @@ public class Flip extends AbstractListener {
 						List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for(Entry<UUID, List<String>> entry : Lists.reverse(list)){	
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-								event.respond("(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
+								event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
 								return;
 							}
 						}
 					} else {
-						event.respond("(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());								
+						event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());								
 					}
 				}
 			}			
