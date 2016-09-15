@@ -30,10 +30,14 @@ else
 	ext.buildNumber = 0
 
 archivesBaseName = "LanteaBot"
-jar {
+// copy the main sources and filter any '@buildVersion@' occurences. 
+task processVersion (type: Copy) {
     filter(ReplaceTokens, tokens: [
             BUILD: project.ext.buildNumber
     ])
+}
+compileJava.dependsOn processVersion
+jar {
    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest {
         attributes 'Main-Class': 'AppStub'
