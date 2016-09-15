@@ -1,3 +1,4 @@
+import org.apache.tools.ant.filters.ReplaceTokens
 repositories {
     mavenCentral()
 }
@@ -30,7 +31,9 @@ else
 
 archivesBaseName = "LanteaBot"
 jar {
-   replace "@BUILD@", project.ext.buildNumber
+    filter(ReplaceTokens, tokens: [
+            BUILD: project.ext.buildNumber
+    ])
    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest {
         attributes 'Main-Class': 'AppStub'
