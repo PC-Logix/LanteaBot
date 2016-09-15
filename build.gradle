@@ -73,7 +73,10 @@ task processVersion (type: Copy) {
     from sourceSets.main.java
     into filteredSourceDir
     filter(ReplaceTokens, tokens: [
-            BUILD: project.ext.buildNumber
+            versionMajor: versionObj.getMajor(),
+            versionMinor: versionObj.getMinor(),
+            versionRevision: versionObj.getRevision(),
+            versionBuild: versionObj.getBuild()
     ])
 }
 compileJava.dependsOn processVersion
