@@ -7,7 +7,7 @@ compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
 }
-
+def versionObj = new Version(major: 1, minor: 1, revision: 0)
 dependencies { 
   compile fileTree(dir: 'lib', includes: ['*.jar'])
   compile 'org.unix4j:unix4j-command:0.3'
@@ -30,8 +30,48 @@ else
 	ext.buildNumber = 0
 
 archivesBaseName = "LanteaBot"
+
+class Version {
+    int major, minor, revision
+
+    String getMajor() {
+        "${major}"
+    }
+
+    String getMinor() {
+        "${minor}"
+    }
+
+    String getRevision() {
+        "${revision}"
+    }
+
+    String getBuild() {
+        System.getenv("BUILD_NUMBER") ? System.getenv("BUILD_NUMBER") : "DEV"
+    }
+
+    String toString() {
+        "${getMajor()}.${getMinor()}.${getRevision()}"
+    }
+}
+
+def filteredSourceDir = file("${buildDir}/filtered")
+
+sourceSets {
+    // This source set will contain all sources that we filter
+    filtered {
+        java {
+            srcDirs = [
+                    filteredSourceDir,
+            ]
+        }
+    }
+}
+
 // copy the main sources and filter any '@buildVersion@' occurences. 
 task processVersion (type: Copy) {
+    from sourceSets.main.java
+    into filteredSourceDir
     filter(ReplaceTokens, tokens: [
             BUILD: project.ext.buildNumber
     ])

@@ -69,7 +69,13 @@ public class Config {
 				System.out.println("Config file missing, edit config.default, and rename to config.properties");
 				file.createNewFile();
 			}
-			Config.config.setVersion("MichiBot " + BuildInfo.buildNumber);
+		    final Version VERSION = new Version(
+		            "@versionMajor@",
+		            "@versionMinor@",
+		            "@versionRevision@",
+		            "@versionBuild@"
+		    );
+			Config.config.setVersion("MichiBot Build# " + VERSION);
 			input = new FileInputStream(file);
 			// load a properties file
 			prop.load(input);
