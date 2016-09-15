@@ -62,7 +62,7 @@ public class Flip extends AbstractListener {
 		if (trigger.length() > 1) {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
-			if (triggerWord.equals(prefix + "flip")) {
+			if (command.equals(prefix + "flip")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					String s = event.getMessage().substring(event.getMessage().indexOf("flip") + 4).trim();
 					if (s.isEmpty()) {
