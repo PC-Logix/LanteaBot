@@ -20,7 +20,7 @@ dependencies {
   compile 'org.xerial:sqlite-jdbc:3.8.10.1'
   compile 'org.twitter4j:twitter4j-core:4.0.3'
 }
-
+version = "${versionObj.toString()}"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -79,10 +79,13 @@ task processVersion (type: Copy) {
             versionBuild: versionObj.getBuild()
     ])
 }
+// tell the compileJava task to compile the filtered source 
+compileJava.source = sourceSets.filtered.java
 compileJava.dependsOn processVersion
 jar {
    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest {
+		attributes 'Implementation-Version': version
         attributes 'Main-Class': 'AppStub'
     }
 }
