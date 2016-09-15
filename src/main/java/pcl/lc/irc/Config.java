@@ -69,7 +69,7 @@ public class Config {
 				System.out.println("Config file missing, edit config.default, and rename to config.properties");
 				file.createNewFile();
 			}
-
+			Config.config.setVersion("MichiBot " + BuildInfo.buildNumber);
 			input = new FileInputStream(file);
 			// load a properties file
 			prop.load(input);
@@ -155,7 +155,6 @@ public class Config {
 
 			Config.config.setEncoding(Charset.forName("UTF-8"));
 			Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString()).setSocketFactory(new UtilSSLSocketFactory().disableDiffieHellman().trustAllCertificates());
-
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
