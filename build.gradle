@@ -19,6 +19,8 @@ dependencies {
   compile 'com.google.api-client:google-api-client:1.18.0-rc'
   compile 'org.xerial:sqlite-jdbc:3.8.10.1'
   compile 'org.twitter4j:twitter4j-core:4.0.3'
+  // https://mvnrepository.com/artifact/joda-time/joda-time
+  compile group: 'joda-time', name: 'joda-time', version: '2.9.4'
 }
 version = "${versionObj.toString()}"
 sourceCompatibility = 1.8
