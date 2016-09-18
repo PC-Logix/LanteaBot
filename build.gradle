@@ -21,6 +21,9 @@ dependencies {
   compile 'org.twitter4j:twitter4j-core:4.0.3'
   // https://mvnrepository.com/artifact/joda-time/joda-time
   compile group: 'joda-time', name: 'joda-time', version: '2.9.4'
+  // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+  compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+
 }
 version = "${versionObj.toString()}"
 sourceCompatibility = 1.8

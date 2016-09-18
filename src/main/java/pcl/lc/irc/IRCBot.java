@@ -209,6 +209,7 @@ public class IRCBot {
 			preparedStatements.put("getIdQuote",connection.prepareStatement("SELECT user, data FROM Quotes WHERE id = ? LIMIT 1;"));
 			preparedStatements.put("getUserQuoteAll",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ?;"));
 			preparedStatements.put("getAnyQuote",connection.prepareStatement("SELECT id, user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;"));
+			preparedStatements.put("getAllQuotes",connection.prepareStatement("SELECT id, user, data FROM Quotes;"));
 			preparedStatements.put("getSpecificQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? AND data = ?;"));
 			preparedStatements.put("removeQuote",connection.prepareStatement("DELETE FROM Quotes WHERE id = ?;"));
 			preparedStatements.put("updateLastSeen",connection.prepareStatement("REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);"));
