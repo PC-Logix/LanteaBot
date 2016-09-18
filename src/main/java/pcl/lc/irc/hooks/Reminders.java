@@ -40,7 +40,7 @@ public class Reminders extends AbstractListener {
 						if (results.getString(1).equals("query")) {
 							IRCBot.getInstance().sendMessage(results.getString(2), results.getString(4));
 						} else {
-							IRCBot.getInstance().sendMessage(results.getString(1), results.getString(4));
+							IRCBot.getInstance().sendMessage(results.getString(1), "REMINDER" + results.getString(1) + " " + results.getString(4));
 						}
 						PreparedStatement delReminder = IRCBot.getInstance().getPreparedStatement("delReminder");
 						delReminder.setLong(1, results.getLong(3));
@@ -52,7 +52,7 @@ public class Reminders extends AbstractListener {
 					e.printStackTrace();
 				}
 		    }
-		}, 0, 30, TimeUnit.SECONDS);
+		}, 0, 10, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class Reminders extends AbstractListener {
 			}
 
 			long time = addReminder(dest, copyOfRange[0], message);
-			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 			String newTime = sdf.format(new Date(time));
 			try {
 				PreparedStatement addReminder = IRCBot.getInstance().getPreparedStatement("addReminder");
