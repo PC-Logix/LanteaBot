@@ -5,8 +5,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -31,38 +37,51 @@ public class httpd {
         	
 			String target = t.getRequestURI().toString();
         	String response = "";
+
         	String quoteList = "";
+        	List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
+        	String qid = "0";
+        	if (paramsList.size() >= 1) {
+            	for (NameValuePair parameter : paramsList)
+            	    if (parameter.getName().equals("id"))
+            	        qid = parameter.getValue();
+				try {
+					PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getIdQuote");
+					getQuote.setString(1, qid);
+					ResultSet results = getQuote.executeQuery();
+					if (results.next()) {
+						quoteList = "Quote #" + qid + ": &lt;" + results.getString(1) + "&gt; " + results.getString(2);
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+        	} else {
     			try {
     				PreparedStatement getAllQuotes = IRCBot.getInstance().getPreparedStatement("getAllQuotes");
     				ResultSet results = getAllQuotes.executeQuery();
+    				System.out.println(results.next());
     				while (results.next()) {
-    					try {
-    						PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getIdQuote");
-    						getQuote.setString(1, results.getString(1));
-    						ResultSet results2 = getQuote.executeQuery();
-    						if (results2.next()) {
-    							quoteList = quoteList + "#" + results.getString(1) + ": &lt;" + results2.getString(1) + "&gt; " + results2.getString(2) + "<br>\n";
-    						}
-    					}
-    					catch (Exception e) {
-    						e.printStackTrace();
-    					}
-    					//quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
+    					quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
+    				}
+    				if (results.next()) {
+    					//IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + id + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(1)) + "> " + results.getString(2));
+    				}
+    				else {
+    					//IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for id " + id);
     				}
     			}
     			catch (Exception e) {
     				e.printStackTrace();
     			}
+        	}
         	try (BufferedReader br = new BufferedReader(new FileReader("webroot/quotes.html"))) {
      		   String line = null;
      		   while ((line = br.readLine()) != null) {
-     		       response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getInstance().ournick)+"\n";
+     		       response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getInstance().ournick).replace("#QUOTEDATA#", quoteList)+"\n";
      		   }
-     		} catch (Exception e) {
-				e.printStackTrace();
-			}
+     		}
             //String response = "This is the response";
-        	System.out.println(response.length());
             t.sendResponseHeaders(200, response.length());
 
 
