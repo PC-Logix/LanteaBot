@@ -50,7 +50,7 @@ public class httpd {
 					getQuote.setString(1, qid);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
-						quoteList = "Quote #" + qid + ": &lt;" + results.getString(1) + "&gt; " + escapeHtml4(results.getString(2));
+						quoteList = "Quote #" + qid + ": &lt;" + escapeHtml4(results.getString(1)) + "&gt; " + escapeHtml4(results.getString(2));
 					}
 				}
 				catch (Exception e) {
