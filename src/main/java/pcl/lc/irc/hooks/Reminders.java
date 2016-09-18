@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
@@ -40,7 +41,7 @@ public class Reminders extends AbstractListener {
 						if (results.getString(1).equals("query")) {
 							IRCBot.getInstance().sendMessage(results.getString(2), results.getString(4));
 						} else {
-							IRCBot.getInstance().sendMessage(results.getString(1), "REMINDER" + results.getString(1) + " " + results.getString(4));
+							IRCBot.getInstance().sendMessage(results.getString(1), Colors.RED + "REMINDER " + Colors.NORMAL + results.getString(2) + " " + results.getString(4));
 						}
 						PreparedStatement delReminder = IRCBot.getInstance().getPreparedStatement("delReminder");
 						delReminder.setLong(1, results.getLong(3));
