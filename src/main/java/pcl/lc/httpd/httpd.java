@@ -5,14 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -37,7 +31,6 @@ public class httpd {
         	
 			String target = t.getRequestURI().toString();
         	String response = "";
-
         	String quoteList = "";
     			try {
     				PreparedStatement getAllQuotes = IRCBot.getInstance().getPreparedStatement("getAllQuotes");
@@ -69,6 +62,7 @@ public class httpd {
 				e.printStackTrace();
 			}
             //String response = "This is the response";
+        	System.out.println(response.length());
             t.sendResponseHeaders(200, response.length());
 
 
