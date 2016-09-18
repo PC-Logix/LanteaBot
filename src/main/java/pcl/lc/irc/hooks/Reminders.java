@@ -92,6 +92,9 @@ public class Reminders extends AbstractListener {
 			try {
 				PreparedStatement addReminder = IRCBot.getInstance().getPreparedStatement("addReminder");
 				addReminder.setString(1, dest);
+				if (event.getUser().getNick().equals("Corded")){
+					nick = "@" + nick;
+				}
 				addReminder.setString(2, nick);
 				addReminder.setLong(3, time);
 				addReminder.setString(4, message.trim());
