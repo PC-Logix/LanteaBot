@@ -39,7 +39,7 @@ public class Reminders extends AbstractListener {
 					ResultSet results = getReminder.executeQuery();
 					if (results.next()) {
 						if (results.getString(1).equals("query")) {
-							IRCBot.getInstance().sendMessage(results.getString(2), results.getString(4));
+							IRCBot.getInstance().sendMessage(results.getString(2), "REMINDER " + results.getString(4));
 						} else {
 							IRCBot.getInstance().sendMessage(results.getString(1), "REMINDER " + results.getString(2) + " " + results.getString(4));
 						}
@@ -95,7 +95,7 @@ public class Reminders extends AbstractListener {
 				if (event.getUser().getNick().equals("Corded")){
 					nick = "@" + nick;
 				}
-				addReminder.setString(2, nick);
+				addReminder.setString(2, nick.replaceAll("​", ""));
 				addReminder.setLong(3, time);
 				addReminder.setString(4, message.trim());
 				if (addReminder.executeUpdate() > 0) {
