@@ -5,13 +5,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -50,7 +50,7 @@ public class httpd {
 					getQuote.setString(1, qid);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
-						quoteList = "Quote #" + qid + ": &lt;" + results.getString(1) + "&gt; " + results.getString(2);
+						quoteList = "Quote #" + qid + ": &lt;" + results.getString(1) + "&gt; " + escapeHtml4(results.getString(2));
 					}
 				}
 				catch (Exception e) {
