@@ -60,15 +60,8 @@ public class httpd {
     			try {
     				PreparedStatement getAllQuotes = IRCBot.getInstance().getPreparedStatement("getAllQuotes");
     				ResultSet results = getAllQuotes.executeQuery();
-    				System.out.println(results.next());
     				while (results.next()) {
     					quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
-    				}
-    				if (results.next()) {
-    					//IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + id + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(1)) + "> " + results.getString(2));
-    				}
-    				else {
-    					//IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for id " + id);
     				}
     			}
     			catch (Exception e) {
