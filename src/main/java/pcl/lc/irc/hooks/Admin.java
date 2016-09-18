@@ -76,7 +76,8 @@ public class Admin extends ListenerAdapter {
 	public void restart() throws URISyntaxException, IOException, Exception {
 
 		if(!Config.httpdport.isEmpty() && !Config.botConfig.get("httpDocRoot").equals("")) {
-			IRCBot.httpServer.stop();
+			//TODO: Fix httpd stop
+			//IRCBot.httpServer.stop();
 		}
 
 		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
@@ -168,7 +169,7 @@ public class Admin extends ListenerAdapter {
 			
 			if (triggerWord.equals(Config.commandprefix + "help")) {
 				
-				if (splitMessage[1] == null) {
+				if (splitMessage.length == 1) {
 					String listString = "";
 					for (String s : IRCBot.commands)
 					{
@@ -247,7 +248,8 @@ public class Admin extends ListenerAdapter {
 				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					if(!Config.httpdport.isEmpty()) {
-						IRCBot.httpServer.stop();
+						//TODO: Fix httpd stop
+						//IRCBot.httpServer.stop();
 					}
 					//WikiChangeWatcher.stop();
 					event.respond("Exiting");

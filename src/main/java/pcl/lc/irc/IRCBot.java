@@ -160,7 +160,7 @@ public class IRCBot {
 		}
 
 		try {
-			if(!Config.httpdport.isEmpty() && !Config.botConfig.get("httpDocRoot").equals("")) {
+			if(!Config.httpdport.isEmpty()) {
 				httpServer.start();
 			}
 
@@ -196,6 +196,7 @@ public class IRCBot {
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS InternetPoints(nick STRING UNIQUE PRIMARY KEY, points)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Reminders(dest, nick, time, message)");
 			preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
 			preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
 			preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
@@ -228,6 +229,9 @@ public class IRCBot {
 			preparedStatements.put("addAnnounce", connection.prepareStatement("INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);"));
 			preparedStatements.put("getAnnounce", connection.prepareStatement("SELECT schedule, title, message FROM Announcements WHERE channel = ?;"));
 			preparedStatements.put("delAnnounce", connection.prepareStatement("DELETE FROM Announcements WHERE title = ? AND channel = ?;"));
+			preparedStatements.put("addReminder", connection.prepareStatement("INSERT INTO Reminders(dest, nick, time, message) VALUES (?,?,?,?);"));
+			preparedStatements.put("getReminder", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE time <= ?;"));
+			preparedStatements.put("delReminder", connection.prepareStatement("DELETE FROM Reminders WHERE time = ? AND nick = ?;"));
 
 			return true;
 		} catch (SQLException e) {
