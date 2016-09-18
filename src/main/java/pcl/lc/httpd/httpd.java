@@ -56,7 +56,7 @@ public class httpd {
         	try (BufferedReader br = new BufferedReader(new FileReader("webroot/quotes.html"))) {
      		   String line = null;
      		   while ((line = br.readLine()) != null) {
-     		       response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getInstance().ournick).replace("#QUOTEDATA#", quoteList)+"\n";
+     		       response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getInstance().ournick)+"\n";
      		   }
      		} catch (Exception e) {
 				e.printStackTrace();
