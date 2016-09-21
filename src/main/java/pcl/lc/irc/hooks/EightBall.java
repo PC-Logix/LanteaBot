@@ -18,29 +18,31 @@ import pcl.lc.utils.Helper;
 public class EightBall extends AbstractListener {
 	@Override
 	protected void initCommands() {
-		IRCBot.registerCommand("8ball", "Gives vauge answes to vauge questions.");
+		IRCBot.registerCommand("8ball", "Gives vauge answers to vauge questions.");
 	}
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		String prefix = Config.commandprefix;
-		if (command.length() > 1) {
-			if (command.equals(prefix + "8ball")) {
-				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					if (args.length > prefix.length() + "8ball".length()) {
-						Random generator = new Random();
-						String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
-						int randommessage = generator.nextInt( 4 );
-						event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + ballmessages[randommessage]);
-					}
-				}
-			}			
-		}
+
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		System.out.println(command);
-		
+		String prefix = Config.commandprefix;
+		if (command.equals(prefix + "8ball")) {
+			if (!IRCBot.isIgnored(nick)) {
+				String message = "";
+				for( int i = 0; i < copyOfRange.length; i++)
+				{
+					message = message + " " + copyOfRange[i];
+				}
+				if (message.length() > prefix.length() + "8ball".length()) {
+					Random generator = new Random();
+					String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
+					int randommessage = generator.nextInt( 4 );
+					event.respond(ballmessages[randommessage]);
+				}
+			}
+		}
 	}
 }

@@ -6,7 +6,9 @@ package pcl.lc.irc.hooks;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
@@ -15,11 +17,7 @@ import pcl.lc.irc.IRCBot;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Rot13 extends ListenerAdapter {
-	public Rot13() {
-		IRCBot.registerCommand("rot13", "Applies the ROT13 cipher to the supplied text");
-	}
-
+public class Rot13 extends AbstractListener {
 	public static String rot13(String input) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
@@ -32,23 +30,25 @@ public class Rot13 extends ListenerAdapter {
 		}
 		return sb.toString();
 	}
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
-		super.onMessage(event);
 
-			String prefix = Config.commandprefix;
-			String ourinput = event.getMessage().toLowerCase();
-			String trigger = ourinput.trim();
-			if (trigger.length() > 1) {
-				String[] firstWord = StringUtils.split(trigger);
-				String triggerWord = firstWord[0];
-				if (triggerWord.equals(prefix + "rot13")) {
-					if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
-					event.respond(rot13(s));
-				} 
-			}			
+	@Override
+	protected void initCommands() {
+		IRCBot.registerCommand("rot13", "Applies the ROT13 cipher to the supplied text");
+	}
+
+	@Override
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+		if (command.equals(Config.commandprefix + "rot13")) {
+			if (!IRCBot.isIgnored(nick)) {
+				String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
+				event.respond(rot13(s));
+			} 
 		}
 	}
 }

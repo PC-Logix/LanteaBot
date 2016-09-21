@@ -55,7 +55,7 @@ public class GenericEventListener extends ListenerAdapter {
 			}			
 		}
 		
-		if (!event.getUser().getNick().equals(IRCBot.ournick)) {
+/*		if (!event.getUser().getNick().equals(IRCBot.ournick)) {
 			if (!IRCBot.authed.containsKey(event.getUser().getNick())) {
 				IRCBot.bot.sendRaw().rawLineNow("who " + event.getUser().getNick() + " %an");
 				if (!event.getUser().getNick().equals(IRCBot.ournick) && !event.getUser().getServer().isEmpty()) {
@@ -65,14 +65,14 @@ public class GenericEventListener extends ListenerAdapter {
 					IRCBot.authed.remove(event.getUser().getNick());
 				}
 			}
-		}
+		}*/
 	}
 
 
 	@Override
 	public void onConnect(final ConnectEvent event) {
-		if (!Config.nspass.isEmpty())
-			event.respond("ns identify "+ Config.nsaccount + " " + Config.nspass);
+		//if (!Config.nspass.isEmpty())
+		//	event.respond("ns identify "+ Config.nsaccount + " " + Config.nspass);
 		IRCBot.ournick = event.getBot().getNick();
 	}
 

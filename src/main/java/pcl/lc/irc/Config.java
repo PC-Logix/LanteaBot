@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import org.pircbotx.Configuration;
 import org.pircbotx.UtilSSLSocketFactory;
 import org.pircbotx.Configuration.Builder;
@@ -33,15 +35,19 @@ public class Config {
 	public static String proxyhost = null;
 	public static String proxyport = null;
 	public static String enableTLS = null;
+	public static String enableSSL = null;
 	public static String TwitCKey = null;
 	public static String TwitCSecret = null;
 	public static String TwitToken = null;
 	public static String TwitTSecret = null;
 	public static String googleAPI = null;
 	static String adminProps = null;
+	public static String weatherAPI = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
+
+	
 
 	public static void saveProps() {
 		FileOutputStream output = null;
@@ -97,12 +103,14 @@ public class Config {
 			proxyhost = prop.getProperty("proxyhost", "");
 			proxyport = prop.getProperty("proxyport", "");
 			adminProps = prop.getProperty("admins", "");
-			enableTLS = prop.getProperty("enableTLS", "");
+			enableTLS = prop.getProperty("enableTLS", "false");
+			enableSSL = prop.getProperty("enableSSL", "false");
 			TwitCKey = prop.getProperty("TwitCKey");
 			TwitCSecret = prop.getProperty("TwitCSecret");
 			TwitToken = prop.getProperty("TwitToken");
 			TwitTSecret = prop.getProperty("TwitTSecret");
 			googleAPI = prop.getProperty("GoogleAPI", "");
+			weatherAPI = prop.getProperty("WeatherAPI", "");
 			saveProps();
 
 
@@ -116,6 +124,7 @@ public class Config {
 			Config.config.setCapEnabled(true);
 			Config.config.setAutoReconnect(true);
 			Config.config.setAutoNickChange(true);
+			Config.config.setAutoSplitMessage(true);
 			if (!Config.nspass.isEmpty())
 				Config.config.setNickservPassword(Config.nspass);
 
@@ -155,13 +164,19 @@ public class Config {
 
 			Config.config.addCapHandler(new EnableCapHandler("extended-join", true));
 			Config.config.addCapHandler(new EnableCapHandler("account-notify", true));
+			Config.config.setEncoding(Charset.forName("UTF-8"));
 			if (Config.enableTLS.equals("true")) {
 				Config.config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
+			} 
+			if (Config.enableSSL.equals("true")) {
+				Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString()).setSocketFactory(new UtilSSLSocketFactory().disableDiffieHellman().trustAllCertificates());
+			} else {
+				Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString());
 			}
 
-			Config.config.setEncoding(Charset.forName("UTF-8"));
-			Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString()).setSocketFactory(new UtilSSLSocketFactory().disableDiffieHellman().trustAllCertificates());
 
+
+			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {

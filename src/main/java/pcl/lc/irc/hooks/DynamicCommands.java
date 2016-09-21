@@ -38,45 +38,50 @@ public class DynamicCommands extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase().trim();
-		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 		if (ourinput.length() > 1) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				if (command.startsWith(prefix)) {
 					String[] message = event.getMessage().split(" ", 3);
 
-					if (command.equals(prefix + "addcommand") && (isOp || Helper.isChannelOp(event))) {
-						try {
-							PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
-							if (!IRCBot.commands.contains(message[1])) {
-								addCommand.setString(1, message[1]);
-								addCommand.setString(2, message[2]);
-								addCommand.executeUpdate();
-								event.respond("Command Added");
-								IRCBot.registerCommand(message[1]);
-							} else {
-								event.respond("Can't override existing commands.");
+					if (command.equals(prefix + "addcommand")) {
+						boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+						if (isOp || Helper.isChannelOp(event)) {
+							try {
+								PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
+								if (!IRCBot.commands.contains(message[1])) {
+									addCommand.setString(1, message[1]);
+									addCommand.setString(2, message[2]);
+									addCommand.executeUpdate();
+									event.respond("Command Added");
+									IRCBot.registerCommand(message[1]);
+								} else {
+									event.respond("Can't override existing commands.");
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+								event.respond("An error occurred while processing this command");
 							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							event.respond("An error occurred while processing this command");
 						}
-					} else if (command.equals(prefix + "delcommand") && (isOp || Helper.isChannelOp(event))) {
-						try {
-							PreparedStatement delCommand = IRCBot.getInstance().getPreparedStatement("delCommand");
-							delCommand.setString(1, message[1]);
-							delCommand.execute();
-							event.respond("Command deleted");
-							IRCBot.unregisterCommand(message[1]);
-						} catch (Exception e) {
-							e.printStackTrace();
-							event.respond("An error occurred while processing this command");
+					} else if (command.equals(prefix + "delcommand")) {
+						boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+						if (isOp || Helper.isChannelOp(event)) {
+							try {
+								PreparedStatement delCommand = IRCBot.getInstance().getPreparedStatement("delCommand");
+								delCommand.setString(1, message[1]);
+								delCommand.execute();
+								event.respond("Command deleted");
+								IRCBot.unregisterCommand(message[1]);
+							} catch (Exception e) {
+								e.printStackTrace();
+								event.respond("An error occurred while processing this command");
+							}
 						}
 					} else {
 						try {
