@@ -18,6 +18,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 @SuppressWarnings("rawtypes")
 public class IPoints extends AbstractListener {
@@ -103,7 +104,7 @@ public class IPoints extends AbstractListener {
 						PreparedStatement getPoints = IRCBot.getInstance().getPreparedStatement("getPoints");
 						PreparedStatement getPoints2 = IRCBot.getInstance().getPreparedStatement("getPoints");
 						if (splitMessage.length == 1) {
-							IRCBot.getInstance().sendMessage(target, "Who did you want give points to?");
+							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  "Who did you want give points to?");
 							return;
 						}
 
@@ -126,16 +127,16 @@ public class IPoints extends AbstractListener {
 						getPoints2.setString(1, recipient);
 						ResultSet points2 = getPoints2.executeQuery();
 						if(points.next()){
-							IRCBot.getInstance().sendMessage(target, splitMessage[1] + " now has " + points2.getLong(1) + " points");
+							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  splitMessage[1] + " now has " + points2.getLong(1) + " points");
 						} else {
-							IRCBot.getInstance().sendMessage(target, "Error getting " + splitMessage[1] + "'s points");      	
+							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  "Error getting " + splitMessage[1] + "'s points");      	
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-						IRCBot.getInstance().sendMessage(target, "An error occurred while processing this command");
+						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  "An error occurred while processing this command");
 					}
 				} else {
-					IRCBot.getInstance().sendMessage(target, "You can not give yourself points.");
+					IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  "You can not give yourself points.");
 				}
 			}
 		} else if (command.contains(prefix + "points") || command.equals(prefix + "points")) {
@@ -174,13 +175,13 @@ public class IPoints extends AbstractListener {
 			try {
 				if(points.next()){
 					try {
-						IRCBot.getInstance().sendMessage(target, user + " has " + points.getLong(1) + " points");
+						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has " + points.getLong(1) + " points");
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
-					IRCBot.getInstance().sendMessage(target, user + " has 0 points");
+					IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has 0 points");
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

@@ -11,6 +11,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -57,7 +58,7 @@ public class Rot13 extends AbstractListener {
 				target = chan;
 			}
 			String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
-			IRCBot.getInstance().sendMessage(target, rot13(s));
+			IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + rot13(s));
 		}
 	}
 }

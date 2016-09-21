@@ -15,6 +15,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -66,9 +67,9 @@ public class IsUp extends AbstractListener {
 			String site = copyOfRange[0].trim();
 			boolean rez = ping(site, 1000);
 			if (rez) {
-				IRCBot.getInstance().sendMessage(target, site + " Is Up.");
+				IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + site + " Is Up.");
 			} else {
-				IRCBot.getInstance().sendMessage(target, site + " Is Down.");
+				IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + site + " Is Down.");
 			}
 		}
 	}

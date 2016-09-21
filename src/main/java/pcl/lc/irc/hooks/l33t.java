@@ -11,6 +11,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -93,7 +94,7 @@ public class l33t extends AbstractListener {
 				message = message + " " + copyOfRange[i];
 			}
 			String s = message.trim();
-			IRCBot.getInstance().sendMessage(target , toLeet(s));
+			IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + toLeet(s));
 		}	
 	}
 }
