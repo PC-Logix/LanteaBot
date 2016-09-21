@@ -1,34 +1,27 @@
-#Thu Jul 17 17:29:37 CDT 2014
-#Edit this file, and rename to config.properties.
-#Do not remove any keys from this file
-#Any non needed settings can be left blank.
-httpdport=8082
-httpDocRoot=
-#IRC Connection Information
-nick=LanteaBot
+#Fri Jul 18 04:44:18 EDT 2014
 server=irc.esper.net
-serverport=6667
-serverpass=
+serverport=6697
 proxyhost=
 proxyport=
+nick=LanteaBot
+enableTLS=false
+enableSSL=true
 
-#NickServ account information.
+httpdport=8082
+
+commandprefix=^
 nsaccount=
 nspass=
 
-#list of Admins format is nsaccount:accesslevel,nsaccount:accesslevel eg: user:9, user2:3
-#Make sure you use nickserv accounts, and not nicknames.
-admins=
-commandprefix=*
-channels=
-ignoredUsers=
-
-ytdisabled-channels=
-urldisabled-channels=
-seddisabled-channels=
-alotdisabled-channels=
-
-WUndergroundAPI=
+#worldweatheronline.com API Key
+WeatherAPI=
+#Google API Key
 GoogleAPI=
+#WolframAlpha API
+WolframAPI=
 
-wikiWatcherURL=
+#Twitter API
+TwitCKey=
+TwitCSecret=
+TwitToken=
+TwitTSecret=
