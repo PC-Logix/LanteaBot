@@ -23,9 +23,12 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.GoogleSearch;
+import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;
 @SuppressWarnings("rawtypes")
 public class Search extends AbstractListener {
+
+	private String chan;
 
 	private List<SearchResult> performSearch(String filter, String terms) throws JSONException {
 		StringBuilder searchURLString = new StringBuilder();
@@ -53,16 +56,20 @@ public class Search extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		chan = event.getChannel().getName();
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		String filter = null;
-		String[] splitMessage = event.getMessage().split(" ");
 		String prefix = Config.commandprefix;
 		boolean doSearch = false;
+		String target;
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
+		}
 		if(command.equals(prefix + "g") || command.equals(prefix + "google")) {
 			doSearch = true;
 		} else if(command.equals(prefix + "curseforge") || command.equals(prefix + "cf")) {
@@ -83,7 +90,7 @@ public class Search extends AbstractListener {
 		}
 		if (doSearch)
 			try {
-				event.respond(performSearch(filter, StringUtils.join(splitMessage, " ", 1, splitMessage.length)).get(0).getSuggestedReturn());
+				IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + performSearch(filter, StringUtils.join(copyOfRange, " ", 0, copyOfRange.length)).get(0).getSuggestedReturn());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

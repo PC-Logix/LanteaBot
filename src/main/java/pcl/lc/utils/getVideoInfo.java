@@ -1,5 +1,7 @@
 package pcl.lc.utils;
 
+import java.text.NumberFormat;
+
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormat;
@@ -38,8 +40,8 @@ public class getVideoInfo {
 			int vViewCount = statistics.getInt("viewCount");
 			q.close();
 			return (data ?Colors.NORMAL + Colors.BOLD+vTitle+Colors.NORMAL+" | length: "+Colors.BOLD + vDuration +Colors.NORMAL
-					+" | Likes: " + Colors.GREEN + vLikes + Colors.NORMAL + " Dislikes: " + Colors.RED + vDislikes + Colors.NORMAL
-					+" View" + Colors.NORMAL + (vViewCount != 1 ? "s: " : ": ") + Colors.BOLD + vViewCount + Colors.NORMAL + " | by " + Colors.BOLD + vUploader + Colors.NORMAL : "");
+					+" | Likes: " + Colors.GREEN + NumberFormat.getIntegerInstance().format(vLikes) + Colors.NORMAL + " Dislikes: " + Colors.RED + NumberFormat.getIntegerInstance().format(vDislikes) + Colors.NORMAL
+					+" View" + Colors.NORMAL + (vViewCount != 1 ? "s: " : ": ") + Colors.BOLD + NumberFormat.getIntegerInstance().format(vViewCount) + Colors.NORMAL + " | by " + Colors.BOLD + vUploader + Colors.NORMAL : "");
 			
 		} catch (Exception e) {e.printStackTrace();}
 		return null;

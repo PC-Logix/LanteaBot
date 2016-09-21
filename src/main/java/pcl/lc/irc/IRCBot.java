@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
@@ -25,7 +24,8 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.WhoisEvent;
 import org.reflections.Reflections;
-
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import com.wolfram.alpha.WAEngine;
 
 import pcl.lc.httpd.httpd;
@@ -36,9 +36,9 @@ public class IRCBot {
 
 	private Connection connection = null;
 	private final Map<String, PreparedStatement> preparedStatements = new HashMap<>();
-	public static Logger getLog() {
-		return IRCBot.log;
-	}
+	//public static Logger getLog() {
+	//	return IRCBot.log;
+	//}
 	public static IRCBot instance;
 
 	//public static TimedHashMap messages = new TimedHashMap(600000, null );
@@ -62,7 +62,9 @@ public class IRCBot {
 	private final Scanner scanner;
 	public static Map<UUID,ExpiringToken> userCache = new HashMap<>();
 
-	public static Logger log = Logger.getLogger("lanteabot");
+	//public static Logger log = Logger.getLogger("lanteabot");
+	public static final Logger log = LoggerFactory.getLogger(IRCBot.class);
+
 	public static PircBotX bot;
 	private TaskScheduler scheduler;
 
@@ -92,21 +94,21 @@ public class IRCBot {
 		if (!commands.contains(command)) {
 			commands.add(command);
 			helpList.put(command, help);	
-			log.fine("Registering Command: " + command);
+			log.info("Registering Command: " + command);
 		}
 	}
 
 	public static void registerCommand(String command) {
 		if (!commands.contains(command)) {
 			commands.add(command);
-			log.fine("Registering Command: " + command);
+			log.info("Registering Command: " + command);
 		}
 	}
 
 	public static void unregisterCommand(String command) {
 		if (commands.contains(command)) {
 			commands.remove(command);
-			log.fine("Removing Command: " + command);
+			log.info("Removing Command: " + command);
 		}
 	}
 
@@ -134,7 +136,7 @@ public class IRCBot {
 		for (Class<? extends Object> s : allClasses) {
 			try {
 				Config.config.addListener((Listener) s.newInstance());
-				log.fine("Loading " + s.getCanonicalName());
+				log.info("Loading " + s.getCanonicalName());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -149,7 +151,7 @@ public class IRCBot {
 		for (Class<? extends Object> s : allClasses2) {
 			try {
 				Config.config.addListener((Listener) s.newInstance());
-				log.fine("Loading " + s.getCanonicalName());
+				log.info("Loading " + s.getCanonicalName());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -272,7 +274,7 @@ public class IRCBot {
 			int rowCount = 0;
 			while (readChannels.next()) {
 				rowCount++;
-				IRCBot.log.fine(readChannels.getString("name"));
+				log.info(readChannels.getString("name"));
 				Config.config.addAutoJoinChannel(readChannels.getString("name"));
 			}
 			if (rowCount == 0) {

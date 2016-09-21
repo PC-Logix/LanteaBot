@@ -34,7 +34,7 @@ public class TaskScheduler extends Thread {
 					} catch (Throwable err) {
 						if (err instanceof InterruptedException)
 							throw err;
-						IRCBot.getLog().log(Level.WARNING, "Task failed!", err);
+						IRCBot.log.info("Task failed!", err);
 					}
 				}
 			}
