@@ -74,7 +74,7 @@ public class Announcements extends ListenerAdapter implements Runnable {
 				  eventData.add("Message");
 				  Announcements.put(key, eventData);
 				}
-			IRCBot.log.fine(Announcements.toString());
+			IRCBot.log.info(Announcements.toString());
 			System.out.println(Announcements.toString());
 			
 		} catch (IOException ex) {
