@@ -61,6 +61,8 @@ public class IPoints extends AbstractListener {
 		}
 	}
 
+	private String chan;
+
 	@Override
 	protected void initCommands() {
 		// TODO Auto-generated method stub
@@ -69,27 +71,39 @@ public class IPoints extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-
+		if (command.contains(Config.commandprefix + "+") || command.contains(Config.commandprefix + "points") || command.equals(Config.commandprefix + "points")) {
+			chan = event.getChannel().getName();
+		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		String prefix = Config.commandprefix;
+		String target;
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
+		}
 		if (command.contains(prefix + "+")) {
 			Pattern p = Pattern.compile("^\\+?\\d+");
 			Matcher m = p.matcher(event.getMessage().replace(prefix,""));
 			Long newPoints = 0L;
+			String message = "";
+			for( int i = 0; i < copyOfRange.length; i++)
+			{
+				message = message + " " + copyOfRange[i];
+			}
 			if (m.find()) {
 				String[] splitMessage = event.getMessage().split(" ");
-				String recipient = splitMessage[1];
+				String recipient = copyOfRange[0];
 				if (!nick.equals(recipient)) {
 					try {
 						PreparedStatement addPoints = IRCBot.getInstance().getPreparedStatement("addPoints");
 						PreparedStatement getPoints = IRCBot.getInstance().getPreparedStatement("getPoints");
 						PreparedStatement getPoints2 = IRCBot.getInstance().getPreparedStatement("getPoints");
 						if (splitMessage.length == 1) {
-							event.respond("Who did you want give points to?");
+							IRCBot.getInstance().sendMessage(target, "Who did you want give points to?");
 							return;
 						}
 
@@ -112,16 +126,16 @@ public class IPoints extends AbstractListener {
 						getPoints2.setString(1, recipient);
 						ResultSet points2 = getPoints2.executeQuery();
 						if(points.next()){
-							event.respond(splitMessage[1] + " now has " + points2.getLong(1) + " points");
+							IRCBot.getInstance().sendMessage(target, splitMessage[1] + " now has " + points2.getLong(1) + " points");
 						} else {
-							event.respond("Error getting " + splitMessage[1] + "'s points");      	
+							IRCBot.getInstance().sendMessage(target, "Error getting " + splitMessage[1] + "'s points");      	
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-						event.respond("An error occurred while processing this command");
+						IRCBot.getInstance().sendMessage(target, "An error occurred while processing this command");
 					}
 				} else {
-					event.respond("You can not give yourself points.");
+					IRCBot.getInstance().sendMessage(target, "You can not give yourself points.");
 				}
 			}
 		} else if (command.contains(prefix + "points") || command.equals(prefix + "points")) {
@@ -160,13 +174,13 @@ public class IPoints extends AbstractListener {
 			try {
 				if(points.next()){
 					try {
-						event.respond(user + " has " + points.getLong(1) + " points");
+						IRCBot.getInstance().sendMessage(target, user + " has " + points.getLong(1) + " points");
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
-					event.respond(user + " has 0 points");
+					IRCBot.getInstance().sendMessage(target, user + " has 0 points");
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

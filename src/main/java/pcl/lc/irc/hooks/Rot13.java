@@ -31,6 +31,11 @@ public class Rot13 extends AbstractListener {
 		return sb.toString();
 	}
 
+	public String dest;
+
+	public String chan;
+	public String target = null;
+
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("rot13", "Applies the ROT13 cipher to the supplied text");
@@ -38,17 +43,21 @@ public class Rot13 extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-
+		if (command.equals(Config.commandprefix + "rot13")) {
+			chan = event.getChannel().getName();
+		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix + "rot13")) {
-			if (!IRCBot.isIgnored(nick)) {
-				String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
-				event.respond(rot13(s));
-			} 
+			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+				target = nick;
+			} else {
+				target = chan;
+			}
+			String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
+			IRCBot.getInstance().sendMessage(target, rot13(s));
 		}
 	}
 }

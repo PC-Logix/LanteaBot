@@ -39,6 +39,8 @@ public class IsUp extends AbstractListener {
 		}
 	}
 
+	private String chan;
+
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("isup", "Checks is a website is up");
@@ -46,21 +48,27 @@ public class IsUp extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		if (command.equals(Config.commandprefix + "isup")) {
+			chan = event.getChannel().getName();
+		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix+ "isup")) {
-			if (!IRCBot.isIgnored(nick)) {
-				String site = copyOfRange[0].trim();
-				boolean rez = ping(site, 1000);
-				if (rez) {
-					event.respond(site + " Is Up.");
-				} else {
-					event.respond(site + " Is Down.");
-				}
+			String target;
+			String dest = null;
+			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+				target = nick;
+			} else {
+				target = chan;
+			}
+			String site = copyOfRange[0].trim();
+			boolean rez = ping(site, 1000);
+			if (rez) {
+				IRCBot.getInstance().sendMessage(target, site + " Is Up.");
+			} else {
+				IRCBot.getInstance().sendMessage(target, site + " Is Down.");
 			}
 		}
 	}

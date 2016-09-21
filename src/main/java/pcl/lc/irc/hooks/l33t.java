@@ -68,24 +68,32 @@ public class l33t extends AbstractListener {
 		IRCBot.registerCommand("1337", "Returns leetspeak of inputted text");
 	}
 
+	public String dest;
+
+	public String chan;
+	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		if (command.equals(Config.commandprefix + "1337")) {
+			chan = event.getChannel().getName();
+		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix + "1337")) {
-			if (!IRCBot.isIgnored(nick)) {
-				String message = "";
-				for( int i = 0; i < copyOfRange.length; i++)
-				{
-					message = message + " " + copyOfRange[i];
-				}
-				String s = message.trim();
-				event.respond(toLeet(s));
+			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+				target = nick;
+			} else {
+				target = chan;
 			}
+			String message = "";
+			for( int i = 0; i < copyOfRange.length; i++)
+			{
+				message = message + " " + copyOfRange[i];
+			}
+			String s = message.trim();
+			IRCBot.getInstance().sendMessage(target , toLeet(s));
 		}	
 	}
 }

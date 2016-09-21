@@ -16,6 +16,8 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings({ "rawtypes" })
 public class EightBall extends AbstractListener {
+	private String chan;
+
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("8ball", "Gives vauge answers to vauge questions.");
@@ -23,7 +25,9 @@ public class EightBall extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-
+		if (command.equals(Config.commandprefix + "rot13")) {
+			chan = event.getChannel().getName();
+		}
 	}
 
 	@Override
@@ -36,11 +40,17 @@ public class EightBall extends AbstractListener {
 				{
 					message = message + " " + copyOfRange[i];
 				}
+				String target;
+				if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+					target = nick;
+				} else {
+					target = chan;
+				}
 				if (message.length() > prefix.length() + "8ball".length()) {
 					Random generator = new Random();
 					String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
 					int randommessage = generator.nextInt( 4 );
-					event.respond(ballmessages[randommessage]);
+					IRCBot.getInstance().sendMessage(target, ballmessages[randommessage]);
 				}
 			}
 		}

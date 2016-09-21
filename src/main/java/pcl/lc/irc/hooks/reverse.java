@@ -20,6 +20,8 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class reverse extends AbstractListener {
 
+	private String chan;
+
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("reverse", "Reverses the supplied text");
@@ -27,17 +29,22 @@ public class reverse extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		if (command.equals(Config.commandprefix + "reverse")) {
+			chan = event.getChannel().getName();
+		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix + "reverse")) {
-			if (!IRCBot.isIgnored(nick)) {
-				String s = event.getMessage().substring(event.getMessage().indexOf("reverse") + 7).trim();
-				event.respond(new StringBuffer(Colors.removeFormattingAndColors(s)).reverse().toString());
+			String target;
+			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+				target = nick;
+			} else {
+				target = chan;
 			}
-		}	
+			String s = event.getMessage().substring(event.getMessage().indexOf("reverse") + 7).trim();
+			IRCBot.getInstance().sendMessage(target, new StringBuffer(Colors.removeFormattingAndColors(s)).reverse().toString());
+		}
 	}
 }

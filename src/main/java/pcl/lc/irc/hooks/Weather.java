@@ -33,6 +33,7 @@ import pcl.lc.irc.IRCBot;
 public class Weather extends AbstractListener {
 
 	String prefix = Config.commandprefix;
+	private String chan;
 
 	@Override
 	protected void initCommands() {
@@ -40,9 +41,9 @@ public class Weather extends AbstractListener {
 	}
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		//if (!IRCBot.isIgnored(sender) && (command.equalsIgnoreCase(prefix + "weather") || command.equalsIgnoreCase(prefix + "w"))) {
-
-		//}
+		if (command.equals(Config.commandprefix + "weather") || command.equals(Config.commandprefix + "w")) {
+			chan = event.getChannel().getName();
+		}
 	}
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
@@ -52,8 +53,14 @@ public class Weather extends AbstractListener {
 			{
 				location = location + " " + copyOfRange[i];
 			}
+			String target;
+			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+				target = nick;
+			} else {
+				target = chan;
+			}			
 			try {
-				event.respond(getWeather(location));
+				IRCBot.getInstance().sendMessage(target, getWeather(location));
 			} catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -81,7 +88,7 @@ public class Weather extends AbstractListener {
 			String winddir16Point = (String) xpath.evaluate("/data/current_condition/winddir16Point", doc, XPathConstants.STRING);
 
 			if (weather.length() > 0) {
-				return ("Current weather for " + location_name + " Current Temp: " + temp_F + "캟/" + temp_C + "캜 Feels Like: " + FeelsLikeF + "캟/" + FeelsLikeC + "캜 Current Humidity: " + humidity + " Wind: From the " + winddir16Point + " " + windspeedMiles + " Mph/" + windspeedKmph + " Km/h Conditions: " + weather);					
+				return ("Current weather for " + location_name + " Current Temp: " + temp_F + "째F/" + temp_C + "째C Feels Like: " + FeelsLikeF + "째F/" + FeelsLikeC + "째C Current Humidity: " + humidity + " Wind: From the " + winddir16Point + " " + windspeedMiles + " Mph/" + windspeedKmph + " Km/h Conditions: " + weather);					
 			} else {
 				return ("No data returned");
 			}

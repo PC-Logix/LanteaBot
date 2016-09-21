@@ -19,6 +19,8 @@ import pcl.lc.irc.IRCBot;
  */
 @SuppressWarnings("rawtypes")
 public class Rainbow extends AbstractListener {
+	private String chan;
+
 	public String makeRainbow(String message) {
 
 		Integer rainbow = 0;
@@ -55,17 +57,22 @@ public class Rainbow extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		if (command.equals(Config.commandprefix + "reverse")) {
+			chan = event.getChannel().getName();
+		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix + "rainbow")) {
-			if (!IRCBot.isIgnored(nick)) {
-				String s = event.getMessage().substring(event.getMessage().indexOf("rainbow") + 7).trim();
-				event.respond(makeRainbow(s));
+			String target;
+			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+				target = nick;
+			} else {
+				target = chan;
 			}
+			String s = event.getMessage().substring(event.getMessage().indexOf("rainbow") + 7).trim();
+			IRCBot.getInstance().sendMessage(target, makeRainbow(s));
 		}
 	}
 }
