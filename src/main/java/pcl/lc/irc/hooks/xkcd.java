@@ -1,6 +1,7 @@
 package pcl.lc.irc.hooks;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -21,7 +23,9 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.SearchResult;
 
 /**
  * @author Caitlyn
@@ -86,6 +90,7 @@ public class xkcd extends AbstractListener {
 
 	@Override
 	public void onMessage(final MessageEvent event) {
+		chan = event.getChannel().getName();
 		if (event.getMessage().contains("xkcd.com") && enabledChannels.contains(event.getChannel().getName())) {
 			Pattern pattern = Pattern.compile(
 					"https?://.*(?:xkcd.com/)([0-9]+)", 
@@ -119,21 +124,34 @@ public class xkcd extends AbstractListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else {
-				event.respond("meh");
-			}
+			} 
 		}
 	}
+	
+	private List<SearchResult> performSearch(String filter, String terms) throws JSONException {
+		StringBuilder searchURLString = new StringBuilder();
+		//searchURLString.append("https://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=");
+		if (filter != null) {
+			searchURLString.append(filter).append("+");
+		}
+		searchURLString.append(terms.replace(" ", "+"));
+		List<SearchResult> results = GoogleSearch.performSearch(
+				"018291224751151548851%3Ajzifriqvl1o",
+				searchURLString.toString());
 
+		//return url + " - " + Colors.BOLD + title + Colors.NORMAL + ": \"" + content + "\"";
+		return results;
+	}
+	
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) throws Exception {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		String target;
 		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 			target = nick;
 		} else {
 			target = chan;
 		}
-		System.out.println(enabledChannels.contains(target));
+		System.out.println("WAT" + chan);
 		if (command.equalsIgnoreCase(Config.commandprefix + "xkcd")) {
 			boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 			if (isOp || chanOp) {
@@ -165,19 +183,65 @@ public class xkcd extends AbstractListener {
 			}
 			if(copyOfRange.length > 0) {
 				if (isNumeric(copyOfRange[0])) {
-					String json = readUrl("http://xkcd.com/" + copyOfRange[0] + "/info.0.json");
-					final JSONObject obj = new JSONObject(json);
-					String name = obj.get("safe_title").toString();
+					String json = null;
+					try {
+						json = readUrl("http://xkcd.com/" + copyOfRange[0] + "/info.0.json");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					JSONObject obj = null;
+					try {
+						obj = new JSONObject(json);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					String name = null;
+					try {
+						name = obj.get("safe_title").toString();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					IRCBot.getInstance().sendMessage(target, "XKCD Comic Name: " + name + " URL: https://xkcd.com/" + copyOfRange[0]);
 				} else {
-					IRCBot.getInstance().sendMessage(target, "Invalid ID");
+					String filter = "site:xkcd.com";
+						try {
+							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + performSearch(filter, StringUtils.join(copyOfRange, " ", 0, copyOfRange.length)).get(0).getSuggestedReturn());
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 				}
 			} else if (command.equals(Config.commandprefix + "xkcd")) {
-				URLConnection con = new URL( "http://dynamic.xkcd.com/random/comic/" ).openConnection();
-				con.connect();
-				InputStream is = con.getInputStream();
+				URLConnection con = null;
+				try {
+					con = new URL( "http://dynamic.xkcd.com/random/comic/" ).openConnection();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					con.connect();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				InputStream is = null;
+				try {
+					is = con.getInputStream();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				String newurl = con.getURL().toString();
-				is.close();
+				try {
+					is.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				IRCBot.getInstance().sendMessage(target, "Random XKCD Comic: " + newurl);
 			}
 		}
