@@ -135,8 +135,8 @@ public class IRCBot {
 		Set<Class<? extends ListenerAdapter>> allClasses = plugins.getSubTypesOf(ListenerAdapter.class);
 		for (Class<? extends Object> s : allClasses) {
 			try {
+				log.info("[DEPRECIATED] Loading " + s.getCanonicalName());
 				Config.config.addListener((Listener) s.newInstance());
-				log.info("Loading " + s.getCanonicalName());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -150,8 +150,8 @@ public class IRCBot {
 		Set<Class<? extends AbstractListener>> allClasses2 = plugins2.getSubTypesOf(AbstractListener.class);
 		for (Class<? extends Object> s : allClasses2) {
 			try {
-				Config.config.addListener((Listener) s.newInstance());
 				log.info("Loading " + s.getCanonicalName());
+				Config.config.addListener((Listener) s.newInstance());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -174,7 +174,6 @@ public class IRCBot {
 			scheduler = new TaskScheduler();
 			scheduler.start();
 			bot = new PircBotX(Config.config.buildConfiguration());
-			Thread.sleep(1000);
 			bot.startBot();
 		} catch (Exception ex) {
 			ex.printStackTrace();

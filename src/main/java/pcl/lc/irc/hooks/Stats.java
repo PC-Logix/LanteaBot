@@ -2,11 +2,6 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import org.apache.commons.lang3.StringUtils;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;

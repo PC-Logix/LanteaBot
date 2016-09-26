@@ -5,6 +5,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	}
 
 	public abstract void handleCommand(String sender, MessageEvent event, String command, String[] args);
-	public abstract void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
+	public abstract void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) throws Exception;
 
 	@Override
 	public void onMessage(final MessageEvent event) {
@@ -44,7 +45,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	}
 	
 	@Override
-	public void onGenericMessage(final GenericMessageEvent event) {
+	public void onGenericMessage(final GenericMessageEvent event) throws Exception {
 		String[] splitMessage = event.getMessage().split(" ");
 		if (splitMessage[0].startsWith(Config.commandprefix)) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
