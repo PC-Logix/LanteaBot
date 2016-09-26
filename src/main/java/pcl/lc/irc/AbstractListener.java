@@ -27,7 +27,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	}
 
 	public abstract void handleCommand(String sender, MessageEvent event, String command, String[] args);
-	public abstract void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) throws Exception;
+	public abstract void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
 
 	@Override
 	public void onMessage(final MessageEvent event) {
@@ -45,7 +45,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	}
 	
 	@Override
-	public void onGenericMessage(final GenericMessageEvent event) throws Exception {
+	public void onGenericMessage(final GenericMessageEvent event) {
 		String[] splitMessage = event.getMessage().split(" ");
 		if (splitMessage[0].startsWith(Config.commandprefix)) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
