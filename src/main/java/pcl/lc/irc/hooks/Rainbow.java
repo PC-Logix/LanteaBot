@@ -58,7 +58,7 @@ public class Rainbow extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "reverse")) {
+		if (command.equals(Config.commandprefix + "rainbow")) {
 			chan = event.getChannel().getName();
 		}
 	}

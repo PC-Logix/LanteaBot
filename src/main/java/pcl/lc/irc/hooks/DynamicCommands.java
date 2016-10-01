@@ -27,7 +27,7 @@ public class DynamicCommands extends AbstractListener {
 			PreparedStatement searchCommands = IRCBot.getInstance().getPreparedStatement("searchCommands");
 			ResultSet commands = searchCommands.executeQuery();
 			while (commands.next()) {
-				IRCBot.registerCommand(commands.getString(1));
+				IRCBot.registerCommand(commands.getString(1), "Dynamic commands module, who knows what it does?!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -56,11 +56,11 @@ public class DynamicCommands extends AbstractListener {
 							try {
 								PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
 								if (!IRCBot.commands.contains(message[1])) {
-									addCommand.setString(1, message[1]);
+									addCommand.setString(1, message[1].toLowerCase());
 									addCommand.setString(2, message[2]);
 									addCommand.executeUpdate();
 									event.respond("Command Added");
-									IRCBot.registerCommand(message[1]);
+									IRCBot.registerCommand(message[1].toLowerCase(), "Dynamic commands module, who knows what it does?!");
 								} else {
 									event.respond("Can't override existing commands.");
 								}
@@ -74,10 +74,10 @@ public class DynamicCommands extends AbstractListener {
 						if (isOp || Helper.isChannelOp(event)) {
 							try {
 								PreparedStatement delCommand = IRCBot.getInstance().getPreparedStatement("delCommand");
-								delCommand.setString(1, message[1]);
+								delCommand.setString(1, message[1].toLowerCase());
 								delCommand.execute();
 								event.respond("Command deleted");
-								IRCBot.unregisterCommand(message[1]);
+								IRCBot.unregisterCommand(message[1].toLowerCase());
 							} catch (Exception e) {
 								e.printStackTrace();
 								event.respond("An error occurred while processing this command");
@@ -86,7 +86,7 @@ public class DynamicCommands extends AbstractListener {
 					} else {
 						try {
 							PreparedStatement getCommand = IRCBot.getInstance().getPreparedStatement("getCommand");						
-							getCommand.setString(1, command.replace(prefix, ""));
+							getCommand.setString(1, command.replace(prefix, "").toLowerCase());
 							ResultSet command1 = getCommand.executeQuery();
 							if(command1.next()){
 								event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + command1.getString(1));

@@ -151,7 +151,6 @@ public class xkcd extends AbstractListener {
 		} else {
 			target = chan;
 		}
-		System.out.println("WAT" + chan);
 		if (command.equalsIgnoreCase(Config.commandprefix + "xkcd")) {
 			boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
 			if (isOp || chanOp) {
