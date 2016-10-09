@@ -159,7 +159,7 @@ public class URLExpander extends ListenerAdapter {
 											url = matcher1.group();
 										}
 										String apiKey = Config.botConfig.get("GoogleAPI").toString();
-										String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey);
+										String vinfo = getVideoInfo.getVideoSearch(url, true, false, apiKey, event.getUser().getHostmask());
 										event.respond(vinfo);
 									}
 								} else {

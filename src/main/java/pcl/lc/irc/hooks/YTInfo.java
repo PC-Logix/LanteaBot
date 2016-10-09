@@ -129,7 +129,7 @@ public class YTInfo extends ListenerAdapter {
 							        vId = matcher1.group(1);
 							    } 
 								String apiKey = Config.botConfig.get("GoogleAPI").toString();
-								String vinfo = getVideoInfo.getVideoSearch(vId, true, false, apiKey);
+								String vinfo = getVideoInfo.getVideoSearch(vId, true, false, apiKey, event.getUser().getHostmask());
 								if (vinfo != null) {
 									event.getChannel().send().message(vinfo);
 								}

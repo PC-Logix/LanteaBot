@@ -1,5 +1,6 @@
 package pcl.lc.utils;
 
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 
 import org.joda.time.Period;
@@ -13,11 +14,11 @@ import org.pircbotx.Colors;
 public class getVideoInfo { 
 	
 	
-	public static String getVideoSearch(String query, boolean data, boolean url, String apiKey) {
+	public static String getVideoSearch(String query, boolean data, boolean url, String apiKey, String userHost) {
 		HTTPQuery q = null;
 		try {
-			System.out.println("https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet%2Cstatistics&id=" + query + "&key=" + apiKey);
-			q = HTTPQuery.create("https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet%2Cstatistics&id=" + query + "&key=" + apiKey);
+			System.out.println("https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet%2Cstatistics&id=" + query + "&key=" + apiKey + "&quotaUser=" + URLEncoder.encode(userHost,"UTF8"));
+			q = HTTPQuery.create("https://www.googleapis.com/youtube/v3/videos?part=contentDetails%2Csnippet%2Cstatistics&id=" + query + "&key=" + apiKey + "&quotaUser=" + URLEncoder.encode(userHost,"UTF8"));
 			q.connect(true,false);
 						
 			JSONArray jItem = new JSONObject(q.readWhole()).getJSONArray("items");
