@@ -5,6 +5,8 @@ package pcl.lc.irc.hooks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.MessageFormat;
+
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
@@ -89,7 +91,8 @@ public class DynamicCommands extends AbstractListener {
 							getCommand.setString(1, command.replace(prefix, "").toLowerCase());
 							ResultSet command1 = getCommand.executeQuery();
 							if(command1.next()){
-								event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + command1.getString(1));
+								String msg = MessageFormat.format(command1.getString(1), args);
+								event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + msg);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
