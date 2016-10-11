@@ -92,7 +92,7 @@ public class DynamicCommands extends AbstractListener {
 							ResultSet command1 = getCommand.executeQuery();
 							if(command1.next()){
 								String msg = MessageFormat.format(command1.getString(1), args);
-								event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + msg);
+								event.getBot().sendIRC().message(event.getChannel().getName(), msg);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
