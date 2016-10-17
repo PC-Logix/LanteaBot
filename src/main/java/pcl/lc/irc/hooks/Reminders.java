@@ -107,20 +107,7 @@ public class Reminders extends AbstractListener {
 				IRCBot.getInstance().sendMessage(target, e.getMessage());
 				e.printStackTrace();
 			}
-		} else if (command.equals(Config.commandprefix + "reminders")) {
-			String message = "";
-			if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				dest = chan;
-			} else {
-				dest = "query";
-			}
-			String target = null;
-			if (dest.equals("query")) {
-				target = nick;
-			} else {
-				target = dest;
-			}
-			
+		} else if (command.equals(Config.commandprefix + "reminders")) {	
 			try {
 				PreparedStatement listReminders = IRCBot.getInstance().getPreparedStatement("listReminders");
 				listReminders.setString(1, nick);
@@ -129,7 +116,7 @@ public class Reminders extends AbstractListener {
 					long millis = results.getLong(3);
 					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 					String newTime = sdf.format(new Date(millis));
-					if (dest.equals("query")) {
+					if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 						IRCBot.getInstance().sendMessage(results.getString(2), "Upcoming reminders");
 						IRCBot.getInstance().sendMessage(results.getString(2), results.getString(4) + " At " + newTime);
 					} else {
