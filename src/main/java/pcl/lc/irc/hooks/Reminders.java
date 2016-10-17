@@ -27,6 +27,7 @@ public class Reminders extends AbstractListener {
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("remindme", "Syntax: " + Config.commandprefix + "remindme [time] [message] Ex: \"" + Config.commandprefix + "remindme 1h20m check your food!\" Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
+		IRCBot.registerCommand("reminders", "Gives you a list of your reminders");
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 		ses.scheduleAtFixedRate(new Runnable() {
 		    @Override
@@ -106,6 +107,41 @@ public class Reminders extends AbstractListener {
 				IRCBot.getInstance().sendMessage(target, e.getMessage());
 				e.printStackTrace();
 			}
+		} else if (command.equals(Config.commandprefix + "reminders")) {
+			String message = "";
+			if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+				dest = chan;
+			} else {
+				dest = "query";
+			}
+			String target = null;
+			if (dest.equals("query")) {
+				target = nick;
+			} else {
+				target = dest;
+			}
+			
+			try {
+				PreparedStatement listReminders = IRCBot.getInstance().getPreparedStatement("listReminders");
+				listReminders.setString(1, nick);
+				ResultSet results = listReminders.executeQuery();
+				if (results.next()) {
+					long millis = results.getLong(3);
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+					String newTime = sdf.format(new Date(millis));
+					if (dest.equals("query")) {
+						IRCBot.getInstance().sendMessage(results.getString(2), "Upcoming reminders");
+						IRCBot.getInstance().sendMessage(results.getString(2), results.getString(4) + " At " + newTime);
+					} else {
+						IRCBot.getInstance().sendMessage(chan, "Upcoming reminders");
+						IRCBot.getInstance().sendMessage(chan, results.getString(4) + " At " + newTime);
+					}
+				}
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 

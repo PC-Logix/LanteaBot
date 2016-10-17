@@ -233,6 +233,7 @@ public class IRCBot {
 			preparedStatements.put("delAnnounce", connection.prepareStatement("DELETE FROM Announcements WHERE title = ? AND channel = ?;"));
 			preparedStatements.put("addReminder", connection.prepareStatement("INSERT INTO Reminders(dest, nick, time, message) VALUES (?,?,?,?);"));
 			preparedStatements.put("getReminder", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE time <= ?;"));
+			preparedStatements.put("listReminders", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE nick = ?;"));
 			preparedStatements.put("delReminder", connection.prepareStatement("DELETE FROM Reminders WHERE time = ? AND nick = ?;"));
 
 			return true;
