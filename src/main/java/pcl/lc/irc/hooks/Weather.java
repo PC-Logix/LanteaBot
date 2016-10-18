@@ -149,7 +149,7 @@ public class Weather extends AbstractListener {
 		if (Config.botConfig.containsKey("WeatherAPI")) {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			location = location.replace("+", "%20").replace(" ",  "%20");
+			location = location.trim().replace("+", "%20").replace(" ",  "%20");
 			System.out.println("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions/q/" + location + ".xml");
 			Document doc = db.parse(new URL("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions/q/" + location + ".xml").openStream());
 			XPathFactory xPathfactory = XPathFactory.newInstance();
