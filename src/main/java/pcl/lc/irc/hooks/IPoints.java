@@ -2,6 +2,7 @@
  * 
  */
 package pcl.lc.irc.hooks;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -89,7 +90,7 @@ public class IPoints extends AbstractListener {
 		if (command.contains(prefix + "+")) {
 			Pattern p = Pattern.compile("^\\+?\\d+");
 			Matcher m = p.matcher(event.getMessage().replace(prefix,""));
-			Long newPoints = 0L;
+			BigDecimal newPoints = BigDecimal.ZERO;
 			String message = "";
 			for( int i = 0; i < copyOfRange.length; i++)
 			{
@@ -115,19 +116,22 @@ public class IPoints extends AbstractListener {
 						getPoints.setString(1, recipient);
 						ResultSet points = getPoints.executeQuery();
 						if(points.next()){
-							newPoints = points.getLong(1) + Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
+							//newPoints = points.getLong(1) + Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
+							newPoints = points.getBigDecimal(1).add(new BigDecimal(splitMessage[0].replaceAll("[^\\.0123456789]","")));
 						} else {
-							newPoints = Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
+							//newPoints = Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
+							newPoints = new BigDecimal(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 						}
 
 						addPoints.setString(1, recipient);
-						addPoints.setDouble(2, newPoints);
+						//addPoints.setDouble(2, newPoints);
+						addPoints.setBigDecimal(2, newPoints);
 						addPoints.executeUpdate();
 
 						getPoints2.setString(1, recipient);
 						ResultSet points2 = getPoints2.executeQuery();
 						if(points.next()){
-							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  splitMessage[1] + " now has " + points2.getLong(1) + " points");
+							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  splitMessage[1] + " now has " + points2.getBigDecimal(1) + " points");
 						} else {
 							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  "Error getting " + splitMessage[1] + "'s points");      	
 						}
@@ -175,7 +179,7 @@ public class IPoints extends AbstractListener {
 			try {
 				if(points.next()){
 					try {
-						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has " + points.getLong(1) + " points");
+						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has " + points.getBigDecimal(1) + " points");
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
