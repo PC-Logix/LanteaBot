@@ -26,6 +26,7 @@ public class Reminders extends AbstractListener {
 
 	@Override
 	protected void initCommands() {
+		IRCBot.registerCommand("remind", "Syntax: " + Config.commandprefix + "remind [time] [message] Ex: \"" + Config.commandprefix + "remindme 1h20m check your food!\" Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 		IRCBot.registerCommand("remindme", "Syntax: " + Config.commandprefix + "remindme [time] [message] Ex: \"" + Config.commandprefix + "remindme 1h20m check your food!\" Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 		IRCBot.registerCommand("reminders", "Gives you a list of your reminders");
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
@@ -60,14 +61,14 @@ public class Reminders extends AbstractListener {
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		// TODO Auto-generated method stub
 		//event.respond("ME" + event.getClass().getName() + " " + event.getMessage());
-		if (command.equals(Config.commandprefix + "remindme")) {
+		if (command.equals(Config.commandprefix + "remindme") || command.equals(Config.commandprefix + "remind")) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (command.equals(Config.commandprefix + "remindme")) {
+		if (command.equals(Config.commandprefix + "remindme") || command.equals(Config.commandprefix + "remind")) {
 			String message = "";
 			if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 				dest = chan;
