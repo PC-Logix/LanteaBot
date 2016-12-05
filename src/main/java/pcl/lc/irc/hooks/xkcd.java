@@ -93,7 +93,7 @@ public class xkcd extends AbstractListener {
 		chan = event.getChannel().getName();
 		if (event.getMessage().contains("xkcd.com") && enabledChannels.contains(event.getChannel().getName())) {
 			Pattern pattern = Pattern.compile(
-					"https?://.*(?:xkcd.com/)([0-9]+)", 
+					"^(?:https?:\\/\\/)?(?:www\\.)?xkcd\\.com\\/([0-9]+)", 
 					Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(event.getMessage());
 			if (matcher.find()){
