@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
@@ -22,6 +23,24 @@ public class Tell extends ListenerAdapter {
 		IRCBot.registerCommand("tell", "Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");
 	}
 
+	@Override
+	public void onJoin(final JoinEvent event) {
+		int numTells = 0;
+        try {
+            PreparedStatement checkTells = IRCBot.getInstance().getPreparedStatement("getTells");
+            checkTells.setString(1, event.getUser().getNick());
+            ResultSet results = checkTells.executeQuery();
+            while (results.next()) {
+            	numTells++;
+                //bot.sendIRC().notice(sender.getNick(), results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
+            }
+            if (numTells > 0)
+            	event.getUser().send().notice("You have " + numTells + " tell(s) currently waiting for you.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+	
 	@Override
     public void onMessage(final MessageEvent event) {
         PircBotX bot = event.getBot();

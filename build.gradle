@@ -1,6 +1,9 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 repositories {
     mavenCentral()
+    maven {
+    	url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 apply plugin: 'java'
 compileJava.options.encoding = 'UTF-8'
@@ -28,6 +31,7 @@ dependencies {
   // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
   compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
   compile 'com.google.apis:google-api-services-youtube:v3-rev178-1.22.0'
+  compile 'com.sangupta:imgur-client:0.2.0'
 }
 version = "${versionObj.toString()}"
 sourceCompatibility = 1.8
