@@ -75,10 +75,10 @@ public class httpd {
      		   }
      		}
             //String response = "This is the response";
-            t.sendResponseHeaders(200, response.length());
+            t.sendResponseHeaders(200, response.getBytes().length);
 
 
-			IRCBot.bot.sendIRC().message("#MichiBot", target + " from ip: " + t.getRemoteAddress());
+			//IRCBot.bot.sendIRC().message("#MichiBot", target + " from ip: " + t.getRemoteAddress());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
             os.close();
