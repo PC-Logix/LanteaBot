@@ -90,7 +90,6 @@ public class Tell extends AbstractListener {
                 String channel = dest;
                 SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
                 f.setTimeZone(TimeZone.getTimeZone("UTC"));
-                System.out.println(f.format(new Date()));
                 String messageOut = StringUtils.join(splitMessage," ", 2, splitMessage.length) + " on " + f.format(new Date()) + " UTC";
                 addTell.setString(1, sender);
                 addTell.setString(2, recipient);
