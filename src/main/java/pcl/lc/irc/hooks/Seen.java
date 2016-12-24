@@ -25,7 +25,7 @@ public class Seen extends ListenerAdapter {
         User sender = event.getUser();
         try {
             PreparedStatement updateSeen = IRCBot.getInstance().getPreparedStatement("updateLastSeen");
-            updateSeen.setString(1, sender.getNick());
+            updateSeen.setString(1, sender.getNick().toLowerCase());
             updateSeen.setLong(2, System.currentTimeMillis());
             updateSeen.execute();
         } catch (Exception e) {
@@ -36,7 +36,7 @@ public class Seen extends ListenerAdapter {
                 PreparedStatement getSeen = IRCBot.getInstance().getPreparedStatement("getLastSeen");
                 String[] splitMessage = event.getMessage().split(" ");
                 String target = splitMessage[1];
-                getSeen.setString(1, target);
+                getSeen.setString(1, target.toLowerCase());
                 ResultSet results = getSeen.executeQuery();
                 if (results.next()) {
                     event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago.");
@@ -54,7 +54,7 @@ public class Seen extends ListenerAdapter {
         User sender = event.getUser();
         try {
             PreparedStatement updateSeen = IRCBot.getInstance().getPreparedStatement("updateLastSeen");
-            updateSeen.setString(1, sender.getNick());
+            updateSeen.setString(1, sender.getNick().toLowerCase());
             updateSeen.setLong(2, System.currentTimeMillis());
             updateSeen.execute();
         } catch (Exception e) {
