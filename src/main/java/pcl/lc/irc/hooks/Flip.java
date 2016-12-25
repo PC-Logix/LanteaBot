@@ -1,4 +1,4 @@
-package pcl.lc.irc.hooks;
+ package pcl.lc.irc.hooks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +88,18 @@ public class Flip extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event,
 			String command, String[] copyOfRange) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		// TODO Auto-generated method stub
 		
 	}

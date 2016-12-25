@@ -97,4 +97,16 @@ public class l33t extends AbstractListener {
 			IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + toLeet(s));
 		}	
 	}
+
+	@Override
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+		// TODO Auto-generated method stub
+		
+	}
 }

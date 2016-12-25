@@ -28,6 +28,8 @@ public abstract class AbstractListener extends ListenerAdapter
 
 	public abstract void handleCommand(String sender, MessageEvent event, String command, String[] args);
 	public abstract void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
+	public abstract void handleMessage(String sender, MessageEvent event, String command, String[] args);
+	public abstract void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
 
 	@Override
 	public void onMessage(final MessageEvent event) {
@@ -39,8 +41,11 @@ public abstract class AbstractListener extends ListenerAdapter
 		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
 			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
 			if (!IRCBot.isIgnored(sender)) {
+				handleMessage(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 				handleCommand(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 			}
+		} else {
+			handleMessage(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 		}
 	}
 	
@@ -54,8 +59,11 @@ public abstract class AbstractListener extends ListenerAdapter
 		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
 			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
 			if (!IRCBot.isIgnored(sender)) {
+				handleMessage(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 				handleCommand(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 			}
+		} else {
+			handleMessage(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 		}
 	}
 }

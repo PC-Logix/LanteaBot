@@ -33,7 +33,7 @@ public class Tell extends AbstractListener {
 		int numTells = 0;
         try {
             PreparedStatement checkTells = IRCBot.getInstance().getPreparedStatement("getTells");
-            checkTells.setString(1, event.getUser().getNick());
+            checkTells.setString(1, event.getUser().getNick().toLowerCase());
             ResultSet results = checkTells.executeQuery();
             while (results.next()) {
             	numTells++;
@@ -61,7 +61,7 @@ public class Tell extends AbstractListener {
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
         PircBotX bot = event.getBot();
         String sender = nick;
-        if (event.getMessage().startsWith(Config.commandprefix + "tell")) {
+        if (command.equals(Config.commandprefix + "tell")) {
 			if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 				dest = chan;
 			} else {
@@ -69,54 +69,62 @@ public class Tell extends AbstractListener {
 			}
 			String message = "";
         	try {
-        		
     			for( int i = 0; i < copyOfRange.length; i++)
     			{
     				message = message + " " + copyOfRange[i];
     			}
-        		
+        		message = message.trim();
                 PreparedStatement addTell = IRCBot.getInstance().getPreparedStatement("addTell");
                 String[] splitMessage = message.split(" ");
-                if (splitMessage.length == 1) {
-                    event.respond("Who did you want to tell?");
+                if (copyOfRange.length == 0) {
+                	event.getBot().sendIRC().message(dest, sender + ": " + "Who did you want to tell?");
                     return;
                 }
-                String recipient = splitMessage[1];
-                if (splitMessage.length == 2) {
-                    event.respond("What did you want to say to " + recipient + "?");
+                String recipient = copyOfRange[0];
+                if (copyOfRange.length == 1) {
+                	event.getBot().sendIRC().message(dest, sender + ": " + "What did you want to say to " + recipient + "?");
                     return;
                 }
 
                 String channel = dest;
                 SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
                 f.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String messageOut = StringUtils.join(splitMessage," ", 2, splitMessage.length) + " on " + f.format(new Date()) + " UTC";
+                String messageOut = StringUtils.join(copyOfRange," ", 1, copyOfRange.length) + " on " + f.format(new Date()) + " UTC";
+                System.out.println(messageOut);
                 addTell.setString(1, sender);
-                addTell.setString(2, recipient);
+                addTell.setString(2, recipient.toLowerCase());
                 addTell.setString(3, channel);
                 addTell.setString(4, messageOut);
                 addTell.executeUpdate();
-                event.respond(recipient + " will be notified of this message when next seen.");
+            	event.getBot().sendIRC().message(dest, sender + ": " + recipient + " will be notified of this message when next seen.");
             } catch (Exception e) {
                 e.printStackTrace();
-                event.respond("An error occurred while processing this command (" + Config.commandprefix + "tell)");
+            	event.getBot().sendIRC().message(dest, sender + ": " + "An error occurred while processing this command (" + Config.commandprefix + "tell)");
             }
         }
 
 	}
-    public void onMessage(final MessageEvent event) {
+
+	@Override
+    public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
         try {
             PreparedStatement checkTells = IRCBot.getInstance().getPreparedStatement("getTells");
-            checkTells.setString(1, event.getUser().getNick());
+            checkTells.setString(1, sender.toLowerCase());
             ResultSet results = checkTells.executeQuery();
             while (results.next()) {
-                event.getBot().sendIRC().notice(event.getUser().getNick(), results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
+                event.getBot().sendIRC().notice(sender, results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
             }
             PreparedStatement clearTells = IRCBot.getInstance().getPreparedStatement("removeTells");
-            clearTells.setString(1, event.getUser().getNick());
+            clearTells.setString(1, sender.toLowerCase());
             clearTells.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+    	// TODO Auto-generated method stub
+    	
     }
 }
