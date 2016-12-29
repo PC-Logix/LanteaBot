@@ -134,7 +134,7 @@ public class Quotes extends AbstractListener {
 				else {
 					try	{
 						PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getUserQuote");
-						getQuote.setString(1, key);
+						getQuote.setString(1, key.toLowerCase());
 						ResultSet results = getQuote.executeQuery();
 						if (results.next()) {
 							IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(2));
@@ -190,7 +190,7 @@ public class Quotes extends AbstractListener {
 				String key = args[0];
 				try	{
 					PreparedStatement getUserQuoteAll = IRCBot.getInstance().getPreparedStatement("getUserQuoteAll");
-					getUserQuoteAll.setString(1, key);
+					getUserQuoteAll.setString(1, key.toLowerCase());
 					ResultSet results = getUserQuoteAll.executeQuery();
 
 					ArrayList<String> returnValues = new ArrayList<String>();
