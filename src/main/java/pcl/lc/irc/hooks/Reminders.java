@@ -145,8 +145,8 @@ public class Reminders extends AbstractListener {
 				.toFormatter();
 
 		Period p = formatter.parsePeriod(time);
-		//long millis = p.toStandardDuration().getMillis();
-		long millis = p.normalizedStandard(p.getPeriodType()).getMillis();
+		long millis = p.toStandardDuration().getMillis();
+		//long millis = p.normalizedStandard(p.getPeriodType()).getMillis();
 		long epoch = System.currentTimeMillis();
 		return(millis + epoch);
 	}
