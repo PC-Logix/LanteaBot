@@ -99,7 +99,7 @@ public class xkcd extends AbstractListener {
 			if (matcher.find()){
 				String json = null;
 				try {
-					json = readUrl("http://xkcd.com/" + matcher.group(1) + "/info.0.json");
+					json = readUrl("https://xkcd.com/" + matcher.group(1) + "/info.0.json");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -111,6 +111,7 @@ public class xkcd extends AbstractListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 				String name = null;
 				try {
 					name = obj.get("safe_title").toString();
@@ -184,7 +185,7 @@ public class xkcd extends AbstractListener {
 				if (isNumeric(copyOfRange[0])) {
 					String json = null;
 					try {
-						json = readUrl("http://xkcd.com/" + copyOfRange[0] + "/info.0.json");
+						json = readUrl("https://xkcd.com/" + copyOfRange[0] + "/info.0.json");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -216,7 +217,7 @@ public class xkcd extends AbstractListener {
 			} else if (command.equals(Config.commandprefix + "xkcd")) {
 				URLConnection con = null;
 				try {
-					con = new URL( "http://dynamic.xkcd.com/random/comic/" ).openConnection();
+					con = new URL( "https://dynamic.xkcd.com/random/comic/" ).openConnection();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
