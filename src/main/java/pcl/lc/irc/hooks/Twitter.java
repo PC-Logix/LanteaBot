@@ -29,7 +29,7 @@ public class Twitter extends ListenerAdapter {
 	private final twitter4j.Twitter twitter;
 	List<String> enabledChannels = new ArrayList<String>();
 	public Twitter() {
-		if(!Config.getTwitCKey().isEmpty()) {
+		if(Config.getTwitCKey() != null || Config.getTwitCSecret() != null || Config.getTwitToken() != null || Config.getTwitTSecret() != null) {
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 
 			cb.setDebugEnabled(true)
@@ -57,6 +57,7 @@ public class Twitter extends ListenerAdapter {
 				e.printStackTrace();
 			}
 		} else {
+			System.out.println("Please make sure the twitter API settings are set in your config.  Disabling Twitter Hook");
 			twitter = null;
 		}
 	}
