@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  *
  */
 @SuppressWarnings("rawtypes")
-public class dice extends AbstractListener {
+public class Dice extends AbstractListener {
 
 	/**
 	 * Returns a random number between min (inclusive) and max (exclusive)
