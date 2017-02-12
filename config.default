@@ -1,11 +1,11 @@
 #Fri Jul 18 04:44:18 EDT 2014
 server=irc.esper.net
-serverport=6697
+serverport=6667
 proxyhost=
 proxyport=
-nick=LanteaBot
+nick=
 enableTLS=false
-enableSSL=true
+enableSSL=false
 
 httpdport=8082
 
@@ -13,15 +13,18 @@ commandprefix=^
 nsaccount=
 nspass=
 
-#worldweatheronline.com API Key
+#External website API keys:
+#wunderground.com API key
 WeatherAPI=
-#Google API Key
+#Youtube V3 API:
 GoogleAPI=
-#WolframAlpha API
+#Wolfram Alpha:
 WolframAPI=
-
-#Twitter API
+#Twitter API Keys:
 TwitCKey=
 TwitCSecret=
 TwitToken=
 TwitTSecret=
+#Imgur API Keys:
+ImgurClientID=
+ImgurClientSec=
