@@ -108,7 +108,7 @@ public class Twitter extends ListenerAdapter {
 					}
 				}
 
-				if(enabledChannels.contains(event.getChannel().getName())) {
+				if(enabledChannels.contains(event.getChannel().getName()) && twitter != null) {
 					String[] splitMessage = event.getMessage().split(" ");
 					for (String aSplitMessage : splitMessage) {
 						if (aSplitMessage.contains("twitter.com") && aSplitMessage.contains("/status/")) {
