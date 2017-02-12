@@ -198,6 +198,7 @@ public class IRCBot {
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS InternetPoints(nick STRING UNIQUE PRIMARY KEY, points)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Reminders(dest, nick, time, message)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name)");
 			preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
 			preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
 			preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
@@ -235,6 +236,12 @@ public class IRCBot {
 			preparedStatements.put("getReminder", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE time <= ?;"));
 			preparedStatements.put("listReminders", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE nick = ?;"));
 			preparedStatements.put("delReminder", connection.prepareStatement("DELETE FROM Reminders WHERE time = ? AND nick = ?;"));
+			preparedStatements.put("getItems", connection.prepareStatement("SELECT id, item_name FROM Inventory;"));
+			preparedStatements.put("getItem", connection.prepareStatement("SELECT id, item_name FROM Inventory WHERE id = ?;"));
+			preparedStatements.put("getRandomItem", connection.prepareStatement("SELECT item_name FROM Inventory ORDER BY Random() LIMIT 1"));
+			preparedStatements.put("addItem", connection.prepareStatement("INSERT INTO Inventory (id, item_name) VALUES (NULL, ?)"));
+			preparedStatements.put("removeItemId", connection.prepareStatement("DELETE FROM Inventory WHERE id = ?"));
+			preparedStatements.put("removeItemName", connection.prepareStatement("DELETE FROM Inventory WHERE item_name = ?"));
 
 			return true;
 		} catch (SQLException e) {
