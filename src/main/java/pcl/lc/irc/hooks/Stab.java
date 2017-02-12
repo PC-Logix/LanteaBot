@@ -8,6 +8,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,7 +68,10 @@ public class Stab extends AbstractListener {
 				}
 
 				String s = message.trim();
-				IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION stabs " + s + item + "\u0001");
+				if (!s.equals(IRCBot.ournick))
+					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION stabs " + s + item + "\u0001");
+				else
+					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION stabs " + Helper.antiPing(nick) + item + "\u0001");
 			}
 			catch (Exception e)
 			{
