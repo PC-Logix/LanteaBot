@@ -11,7 +11,6 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Dice extends AbstractListener {
+public class dice extends AbstractListener {
 
 	/**
 	 * Returns a random number between min (inclusive) and max (exclusive)
