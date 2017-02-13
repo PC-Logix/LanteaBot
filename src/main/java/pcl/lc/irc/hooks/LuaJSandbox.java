@@ -1,5 +1,20 @@
 package pcl.lc.irc.hooks;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.luaj.vm2.*;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.*;
@@ -29,9 +44,10 @@ import pcl.lc.irc.IRCBot;
  * @see LuaValue
  */
 public class LuaJSandbox extends AbstractListener {
+	private final static String NON_THIN = "[^iIl1\\.,']";
 	// These globals are used by the server to compile scripts.
 	static Globals server_globals;
-	static Globals user_globals = new Globals();
+	static Globals user_globals;
 	public String dest;
 
 	public String chan;
@@ -42,11 +58,6 @@ public class LuaJSandbox extends AbstractListener {
 	// Give each script its own copy of globals, but leave out libraries
 	// that contain functions that can be abused.
 	static String runScriptInSandbox(String script) {
-
-		// Each script will have it's own set of globals, which should 
-		// prevent leakage between scripts running on the same server.
-
-
 		// This library is dangerous as it gives unfettered access to the
 		// entire Java VM, so it's not suitable within this lightweight sandbox. 
 		// user_globals.load(new LuajavaLib());
@@ -121,21 +132,20 @@ public class LuaJSandbox extends AbstractListener {
 		public LuaValue remove(int pos) { return error("table is read-only"); }
 	}
 
-	@Override
-	protected void initCommands() {
+	protected void initLua() {
 		// Create server globals with just enough library support to compile user scripts.
 		server_globals = new Globals();
 		server_globals.load(new JseBaseLib());
 		server_globals.load(new PackageLib());
 		server_globals.load(new StringLib());
 
+		user_globals = new Globals();
 		user_globals.load(new JseBaseLib());
 		user_globals.load(new PackageLib());
 		user_globals.load(new Bit32Lib());
 		user_globals.load(new TableLib());
 		user_globals.load(new StringLib());
 		user_globals.load(new JseMathLib());
-
 		// To load scripts, we occasionally need a math library in addition to compiler support.
 		// To limit scripts using the debug library, they must be closures, so we only install LuaC.
 		server_globals.load(new JseMathLib());
@@ -146,13 +156,67 @@ public class LuaJSandbox extends AbstractListener {
 			public Varargs invoke(Varargs args) {
 				String outp = args.tojstring();
 				if (!"".equals(outp)) {
-					IRCBot.getInstance().sendMessage(target , outp);
+					IRCBot.getInstance().sendMessage(target , ellipsize(outp,400));
 				}
 				return LuaValue.varargsOf(new LuaValue[0]);
 			}
 		});
 		// Set up the LuaString metatable to be read-only since it is shared across all scripts.
 		LuaString.s_metatable = new ReadOnlyLuaTable(LuaString.s_metatable);
+	}
+
+	private static int textWidth(String str) {
+		return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
+	}
+
+	public static String ellipsize(String text, int max) {
+
+		if (textWidth(text) <= max)
+			return text;
+
+		// Start by chopping off at the word before max
+		// This is an over-approximation due to thin-characters...
+		int end = text.lastIndexOf(' ', max - 1);
+
+		// Just one long word. Chop it off.
+		if (end == -1)
+			return text.substring(0, max-1) + "…";
+
+		// Step forward as long as textWidth allows.
+		int newEnd = end;
+		do {
+			end = newEnd;
+			newEnd = text.indexOf(' ', end + 1);
+
+			// No more spaces.
+			if (newEnd == -1)
+				newEnd = text.length();
+
+		} while (textWidth(text.substring(0, newEnd) + "…") < max);
+
+		return text.substring(0, end) + "…";
+	}
+
+	String readFile(String fileName) throws IOException {
+	    BufferedReader br = new BufferedReader(new FileReader(fileName));
+	    try {
+	        StringBuilder sb = new StringBuilder();
+	        String line = br.readLine();
+
+	        while (line != null) {
+	            sb.append(line);
+	            sb.append(" ");
+	            line = br.readLine();
+	        }
+	        return sb.toString();
+	    } finally {
+	        br.close();
+	    }
+	}
+
+	@Override
+	protected void initCommands() {
+		initLua();
 		IRCBot.registerCommand("lua", "LuaJ sandbox");
 		IRCBot.registerCommand("resetlua", "Resets the lua sandbox");
 	}
@@ -179,7 +243,11 @@ public class LuaJSandbox extends AbstractListener {
 			{
 				message = message + " " + aCopyOfRange;
 			}
-			IRCBot.getInstance().sendMessage(target ,  runScriptInSandbox( message ));
+			//Screw it I don't care, someone else can clean this up.
+			String output = ellipsize(runScriptInSandbox( message ), 400);
+			if (output.length() > 0) 
+				IRCBot.getInstance().sendMessage(target , output);
+
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
 			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 				target = nick;
@@ -192,27 +260,7 @@ public class LuaJSandbox extends AbstractListener {
 				message = message + " " + aCopyOfRange;
 			}
 
-			user_globals = new Globals();
-			user_globals.load(new JseBaseLib());
-			user_globals.load(new PackageLib());
-			user_globals.load(new Bit32Lib());
-			user_globals.load(new TableLib());
-			user_globals.load(new StringLib());
-			user_globals.load(new JseMathLib());
-			LoadState.install(server_globals);
-			LuaC.install(server_globals);
-			user_globals.set(LuaValue.valueOf("print"), new VarArgFunction() {
-				@Override
-				public Varargs invoke(Varargs args) {
-					String outp = args.tojstring();
-					if (!"".equals(outp)) {
-						IRCBot.getInstance().sendMessage(target , outp);
-					}
-					return LuaValue.varargsOf(new LuaValue[0]);
-				}
-			});
-			// Set up the LuaString metatable to be read-only since it is shared across all scripts.
-			LuaString.s_metatable = new ReadOnlyLuaTable(LuaString.s_metatable);
+			initLua();
 			IRCBot.getInstance().sendMessage(target ,  "Sandbox reset");
 		}
 	}
