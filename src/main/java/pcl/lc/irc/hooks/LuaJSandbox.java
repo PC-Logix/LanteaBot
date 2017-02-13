@@ -243,7 +243,7 @@ public class LuaJSandbox extends AbstractListener {
 			//Screw it I don't care, someone else can clean this up.
 			String luaOut = ellipsize(runScriptInSandbox( message ), 400);
 			if (getOutput().length() > 0) {
-				IRCBot.getInstance().sendMessage(target , ellipsize(getOutput(),400));
+				IRCBot.getInstance().sendMessage(target , ellipsize(getOutput().trim(),400));
 				setOutput("");
 				return;
 			}
