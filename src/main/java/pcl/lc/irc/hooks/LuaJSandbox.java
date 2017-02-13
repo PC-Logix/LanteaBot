@@ -97,7 +97,7 @@ public class LuaJSandbox extends AbstractListener {
 		// then call the hook function which will error out and stop the script.
 		Varargs result = thread.resume(LuaValue.NIL);
 		try {
-			return result.checknotnil(2).tojstring();
+			return result.arg(2).toString().replace("nil", "");
 		} catch (Exception e) {
 			return e.getMessage();
 		}
