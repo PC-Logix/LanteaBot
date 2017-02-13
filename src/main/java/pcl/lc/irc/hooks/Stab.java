@@ -88,7 +88,7 @@ public class Stab extends AbstractListener {
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
-					dust = ", the " + item.replace("a ", "") + " crumbles to dust.";
+					dust = ", the " + item.replace("a ", "").replace("an ", "").replace("the ", "") + " crumbles to dust.";
 				}
 
 				ArrayList<String> actions = new ArrayList<>();
