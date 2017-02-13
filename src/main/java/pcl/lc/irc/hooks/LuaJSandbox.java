@@ -41,11 +41,11 @@ public class LuaJSandbox extends AbstractListener {
 	public String chan;
 	public String target = null;
 	private String output = "";
-	
+
 	void setOutput(String in) {
 		this.output = in;
 	}
-	
+
 	String getOutput() {
 		return this.output;
 	}
@@ -105,7 +105,7 @@ public class LuaJSandbox extends AbstractListener {
 		// then call the hook function which will error out and stop the script.
 		Varargs result = thread.resume(LuaValue.NIL);
 		try {
-			return result.arg(2).toString().replace("nil", "");
+			return result.checknotnil(2).tojstring();
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -177,7 +177,7 @@ public class LuaJSandbox extends AbstractListener {
 
 		// Just one long word. Chop it off.
 		if (end == -1)
-			return text.substring(0, max-1) + "…";
+			return text.substring(0, max-1) + "â€¦";
 
 		// Step forward as long as textWidth allows.
 		int newEnd = end;
@@ -189,26 +189,26 @@ public class LuaJSandbox extends AbstractListener {
 			if (newEnd == -1)
 				newEnd = text.length();
 
-		} while (textWidth(text.substring(0, newEnd) + "…") < max);
+		} while (textWidth(text.substring(0, newEnd) + "â€¦") < max);
 
-		return text.substring(0, end) + "…";
+		return text.substring(0, end) + "â€¦";
 	}
 
 	String readFile(String fileName) throws IOException {
-	    BufferedReader br = new BufferedReader(new FileReader(fileName));
-	    try {
-	        StringBuilder sb = new StringBuilder();
-	        String line = br.readLine();
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
 
-	        while (line != null) {
-	            sb.append(line);
-	            sb.append(" ");
-	            line = br.readLine();
-	        }
-	        return sb.toString();
-	    } finally {
-	        br.close();
-	    }
+			while (line != null) {
+				sb.append(line);
+				sb.append(" ");
+				line = br.readLine();
+			}
+			return sb.toString();
+		} finally {
+			br.close();
+		}
 	}
 
 	@Override
@@ -243,13 +243,13 @@ public class LuaJSandbox extends AbstractListener {
 			//Screw it I don't care, someone else can clean this up.
 			String luaOut = ellipsize(runScriptInSandbox( message ), 400);
 			if (getOutput().length() > 0) {
-				IRCBot.getInstance().sendMessage(target , ellipsize(getOutput().trim(),400));
+				IRCBot.getInstance().sendMessage(target , ellipsize(getOutput().replace("nil", "").trim(),400));
 				setOutput("");
-				return;
+				//return;
 			}
 
 			if (luaOut.length() > 0) 
-				IRCBot.getInstance().sendMessage(target , output);
+				IRCBot.getInstance().sendMessage(target , luaOut);
 
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
 			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
