@@ -36,17 +36,13 @@ public class LuaJSandbox extends AbstractListener {
 
 	public String chan;
 	public String target = null;
-	
-	String merp(String meh) {
-		return meh;
-	}
-	
+
 	// Run a script in a lua thread and limit it to a certain number
 	// of instructions by setting a hook function.
 	// Give each script its own copy of globals, but leave out libraries
 	// that contain functions that can be abused.
 	static String runScriptInSandbox(String script) {
-		
+
 		// Each script will have it's own set of globals, which should 
 		// prevent leakage between scripts running on the same server.
 
@@ -54,7 +50,7 @@ public class LuaJSandbox extends AbstractListener {
 		// This library is dangerous as it gives unfettered access to the
 		// entire Java VM, so it's not suitable within this lightweight sandbox. 
 		// user_globals.load(new LuajavaLib());
-		
+
 		// Starting coroutines in scripts will result in threads that are 
 		// not under the server control, so this libary should probably remain out.
 		// user_globals.load(new CoroutineLib());
@@ -62,7 +58,7 @@ public class LuaJSandbox extends AbstractListener {
 		// These are probably unwise and unnecessary for scripts on servers,
 		// although some date and time functions may be useful.
 		// user_globals.load(new JseIoLib());
-		user_globals.load(new JseOsLib());
+		// user_globals.load(new JseOsLib());
 
 		// Loading and compiling scripts from within scripts may also be 
 		// prohibited, though in theory it should be fairly safe.
@@ -95,7 +91,7 @@ public class LuaJSandbox extends AbstractListener {
 		};
 		final int instruction_count = 200;
 		sethook.invoke(LuaValue.varargsOf(new LuaValue[] { thread, hookfunc,
-						LuaValue.EMPTYSTRING, LuaValue.valueOf(instruction_count) }));
+				LuaValue.EMPTYSTRING, LuaValue.valueOf(instruction_count) }));
 
 		// When we resume the thread, it will run up to 'instruction_count' instructions
 		// then call the hook function which will error out and stop the script.
@@ -139,16 +135,24 @@ public class LuaJSandbox extends AbstractListener {
 		user_globals.load(new TableLib());
 		user_globals.load(new StringLib());
 		user_globals.load(new JseMathLib());
-		
+
 		// To load scripts, we occasionally need a math library in addition to compiler support.
 		// To limit scripts using the debug library, they must be closures, so we only install LuaC.
 		server_globals.load(new JseMathLib());
 		LoadState.install(server_globals);
 		LuaC.install(server_globals);
-
+		user_globals.set(LuaValue.valueOf("print"), new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				String outp = args.tojstring();
+				if (!"".equals(outp)) {
+					IRCBot.getInstance().sendMessage(target , outp);
+				}
+				return LuaValue.varargsOf(LuaValue.NIL, null);
+			}
+		});
 		// Set up the LuaString metatable to be read-only since it is shared across all scripts.
 		LuaString.s_metatable = new ReadOnlyLuaTable(LuaString.s_metatable);
-		//user_globals.set(LuaValue.valueOf("print"), LuaValue.valueOf("print = function(...) return(...) end"));
 		IRCBot.registerCommand("lua", "LuaJ sandbox");
 		IRCBot.registerCommand("resetlua", "Resets the lua sandbox");
 	}
@@ -187,7 +191,7 @@ public class LuaJSandbox extends AbstractListener {
 			{
 				message = message + " " + aCopyOfRange;
 			}
-			
+
 			user_globals = new Globals();
 			user_globals.load(new JseBaseLib());
 			user_globals.load(new PackageLib());
@@ -197,10 +201,18 @@ public class LuaJSandbox extends AbstractListener {
 			user_globals.load(new JseMathLib());
 			LoadState.install(server_globals);
 			LuaC.install(server_globals);
-
+			user_globals.set(LuaValue.valueOf("print"), new VarArgFunction() {
+				@Override
+				public Varargs invoke(Varargs args) {
+					String outp = args.tojstring();
+					if (!"".equals(outp)) {
+						IRCBot.getInstance().sendMessage(target , outp);
+					}
+					return LuaValue.varargsOf(LuaValue.NIL, args);
+				}
+			});
 			// Set up the LuaString metatable to be read-only since it is shared across all scripts.
 			LuaString.s_metatable = new ReadOnlyLuaTable(LuaString.s_metatable);
-			//user_globals.set(LuaValue.valueOf("print"), LuaValue.valueOf("print = function(...) return(...) end"));
 			IRCBot.getInstance().sendMessage(target ,  "Sandbox reset");
 		}
 	}
@@ -208,12 +220,12 @@ public class LuaJSandbox extends AbstractListener {
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
