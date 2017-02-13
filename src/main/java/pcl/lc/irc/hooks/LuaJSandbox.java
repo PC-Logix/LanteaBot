@@ -148,7 +148,7 @@ public class LuaJSandbox extends AbstractListener {
 				if (!"".equals(outp)) {
 					IRCBot.getInstance().sendMessage(target , outp);
 				}
-				return LuaValue.varargsOf(LuaValue.NIL, null);
+				return LuaValue.varargsOf(new LuaValue[0]);
 			}
 		});
 		// Set up the LuaString metatable to be read-only since it is shared across all scripts.
@@ -208,7 +208,7 @@ public class LuaJSandbox extends AbstractListener {
 					if (!"".equals(outp)) {
 						IRCBot.getInstance().sendMessage(target , outp);
 					}
-					return LuaValue.varargsOf(LuaValue.NIL, args);
+					return LuaValue.varargsOf(new LuaValue[0]);
 				}
 			});
 			// Set up the LuaString metatable to be read-only since it is shared across all scripts.
