@@ -66,8 +66,7 @@ public class Twitter extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		PircBotX bot = event.getBot();
-		if(!Config.getTwitCKey().isEmpty()) {
-
+		if(Config.getTwitCKey() != null || Config.getTwitCSecret() != null || Config.getTwitToken() != null || Config.getTwitTSecret() != null) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				String prefix = Config.commandprefix;
 				String ourinput = event.getMessage().toLowerCase();
