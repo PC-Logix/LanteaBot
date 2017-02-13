@@ -13,6 +13,7 @@ import pcl.lc.utils.Helper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * @author Caitlyn
@@ -53,25 +54,56 @@ public class Stab extends AbstractListener {
 			}
 			try
 			{
-				PreparedStatement statement = IRCBot.getInstance().getPreparedStatement("getItems");
+				PreparedStatement statement = IRCBot.getInstance().getPreparedStatement("getRandomItem");
 				ResultSet resultSet = statement.executeQuery();
 
 				String item = "";
+				Integer id = null;
+				Integer uses = null;
 				try
 				{
 					if (resultSet.next())
-						item = " with " + resultSet.getString(2);
+					{
+						id = resultSet.getInt(1);
+						item = resultSet.getString(2);
+						uses = resultSet.getInt(3);
+					}
 				}
 				catch (SQLException e)
 				{
 					e.printStackTrace();
 				}
 
+				String dust = "";
+				if (uses != null && uses > 1)
+				{
+					statement = IRCBot.getInstance().getPreparedStatement("decrementUses");
+					statement.setInt(1, id);
+					statement.executeUpdate();
+					System.out.println("Decrement uses for item " + id);
+				}
+				else if (uses != null)
+				{
+					statement = IRCBot.getInstance().getPreparedStatement("removeItemId");
+					statement.setInt(1, id);
+					statement.executeUpdate();
+					System.out.println("Remove item " + id);
+					dust = ", the " + item.replace("a ", "") + " crumbles to dust.";
+				}
+
+				ArrayList<String> actions = new ArrayList<>();
+				actions.add("stabs");
+				actions.add("hits");
+				actions.add("slaps");
+
+				int action = Helper.getRandomInt(0, actions.size() - 1);
+				System.out.println("Action: " + action);
+
 				String s = message.trim();
 				if (!s.equals(IRCBot.ournick))
-					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION stabs " + s + item + "\u0001");
+					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION " + actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + dust + "\u0001");
 				else
-					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION stabs " + Helper.antiPing(nick) + item + "\u0001");
+					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust + "\u0001");
 			}
 			catch (Exception e)
 			{

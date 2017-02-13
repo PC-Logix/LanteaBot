@@ -72,4 +72,21 @@ public class Helper {
 		}
 		
 	}
+
+	/**
+	 * Returns a random number between min (inclusive) and max (exclusive)
+	 * http://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range#1527820
+	 */
+	public static double getRandomArbitrary(Integer min, Integer max) {
+		return Math.random() * (max - min) + min;
+	}
+
+	/**
+	 * Returns a random integer between min (inclusive) and max (inclusive)
+	 * Using Math.round() will give you a non-uniform distribution!
+	 * http://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range#1527820
+	 */
+	public static Integer getRandomInt(Integer min, Integer max) {
+		return (int) (Math.floor(Math.random() * (max - min + 1)) + min);
+	}
 }

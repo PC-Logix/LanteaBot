@@ -22,23 +22,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("rawtypes")
 public class dice extends AbstractListener {
 
-	/**
-	 * Returns a random number between min (inclusive) and max (exclusive)
-	 * http://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range#1527820
-	 */
-	public double getRandomArbitrary(Integer min, Integer max) {
-		return Math.random() * (max - min) + min;
-	}
-
-	/**
-	 * Returns a random integer between min (inclusive) and max (inclusive)
-	 * Using Math.round() will give you a non-uniform distribution!
-	 * http://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range#1527820
-	 */
-	public Integer getRandomInt(Integer min, Integer max) {
-		return (int) (Math.floor(Math.random() * (max - min + 1)) + min);
-	}
-
 	public String rollDice(String dice) {
 		final String regex = "(\\d\\d?\\d?)d(\\d\\d?\\d?)";
 
@@ -52,7 +35,7 @@ public class dice extends AbstractListener {
 			ArrayList<Integer> results = new ArrayList<>(100);
 			for (Integer i = 0; i < num_dice; i++)
 			{
-				Integer steps = getRandomInt(1, 12);
+				Integer steps = Helper.getRandomInt(1, 12);
 				Integer gone = 0;
 				Integer result = 1;
 				for (result = 1; gone < steps; gone++)
