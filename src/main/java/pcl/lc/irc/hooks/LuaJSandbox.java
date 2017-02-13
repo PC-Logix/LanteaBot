@@ -52,6 +52,15 @@ public class LuaJSandbox extends AbstractListener {
 
 	public String chan;
 	public String target = null;
+	private String output = "";
+	
+	void setOutput(String in) {
+		this.output = in;
+	}
+	
+	String getOutput() {
+		return this.output;
+	}
 
 	// Run a script in a lua thread and limit it to a certain number
 	// of instructions by setting a hook function.
@@ -156,7 +165,7 @@ public class LuaJSandbox extends AbstractListener {
 			public Varargs invoke(Varargs args) {
 				String outp = args.tojstring();
 				if (!"".equals(outp)) {
-					IRCBot.getInstance().sendMessage(target , ellipsize(outp,400));
+					setOutput(getOutput() + " " + outp);
 				}
 				return LuaValue.varargsOf(new LuaValue[0]);
 			}
@@ -244,8 +253,14 @@ public class LuaJSandbox extends AbstractListener {
 				message = message + " " + aCopyOfRange;
 			}
 			//Screw it I don't care, someone else can clean this up.
-			String output = ellipsize(runScriptInSandbox( message ), 400);
-			if (output.length() > 0) 
+			String luaOut = ellipsize(runScriptInSandbox( message ), 400);
+			if (getOutput().length() > 0) {
+				IRCBot.getInstance().sendMessage(target , ellipsize(getOutput(),400));
+				setOutput("");
+				return;
+			}
+
+			if (luaOut.length() > 0) 
 				IRCBot.getInstance().sendMessage(target , output);
 
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
