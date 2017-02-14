@@ -32,6 +32,7 @@ public class dice extends AbstractListener {
 			Integer num_dice = Math.min(100, Integer.valueOf(matcher.group(1)));
 			Integer dice_size = Integer.valueOf(matcher.group(2));
 
+			Integer sum = 0;
 			ArrayList<Integer> results = new ArrayList<>(100);
 			for (Integer i = 0; i < num_dice; i++)
 			{
@@ -45,8 +46,9 @@ public class dice extends AbstractListener {
 					result++;
 				}
 				results.add(result);
+				sum += result;
 			}
-			return results.toString();
+			return results.toString() + " = " + sum;
 		}
 		else {
 			return "Invalid dice format (Eg 1d6)";
