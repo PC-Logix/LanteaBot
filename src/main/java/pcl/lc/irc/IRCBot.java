@@ -120,11 +120,11 @@ public class IRCBot {
 		try {
 			Class.forName("org.sqlite.JDBC");
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return;
 		}
 		if (!initDatabase()) {
-			System.err.println("Database Failure!");
+			log.error("Database Failure!");
 			return;
 		}
 
@@ -264,7 +264,7 @@ public class IRCBot {
 				ops.add(readOps.getString("name"));
 			}
 			if (rowCount == 0) {
-				System.out.print("Please enter the primary nickserv name of the first person with op privileges for the bot:\n> ");
+				log.info("Please enter the primary nickserv name of the first person with op privileges for the bot:\n> ");
 				String op = scanner.nextLine();
 				ops.add(op);
 				preparedStatements.get("addOp").setString(1, op);
@@ -286,7 +286,7 @@ public class IRCBot {
 				Config.config.addAutoJoinChannel(readChannels.getString("name"));
 			}
 			if (rowCount == 0) {
-				System.out.print("Please enter the first channel the bot should join eg #channelname:\n> ");
+				log.info("Please enter the first channel the bot should join eg #channelname:\n> ");
 				String channel = scanner.nextLine();
 				Config.config.addAutoJoinChannel(channel);
 				preparedStatements.get("addChannel").setString(1, channel);
@@ -317,9 +317,9 @@ public class IRCBot {
 		String nsRegistration = "";
 		if (userCache.containsKey(user.getUserId()) && userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
 			nsRegistration = userCache.get(user.getUserId()).getValue();
-			System.out.println(user.getNick() + " is cached");
+			log.debug(user.getNick() + " is cached");
 		} else {
-			System.out.println(user.getNick() + " is NOT cached");
+			log.debug(user.getNick() + " is NOT cached");
 			user.isVerified();
 			try {
 				sourceBot.sendRaw().rawLine("WHOIS " + user.getNick() + " " + user.getNick());
@@ -336,7 +336,7 @@ public class IRCBot {
 				Calendar future = Calendar.getInstance();
 				future.add(Calendar.MINUTE,5);
 				userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
-				System.out.println(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
+				log.debug(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
 			}
 		}
 		if (getOps().contains(nsRegistration)) {
