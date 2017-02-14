@@ -239,14 +239,16 @@ public class LuaJSandbox extends AbstractListener {
 				message = message + " " + aCopyOfRange;
 			}
 			//Screw it I don't care, someone else can clean this up.
+			Boolean iPrinted = false;
 			String luaOut = ellipsize(runScriptInSandbox( message ), 400);
 			if (getOutput().length() > 0) {
 				IRCBot.getInstance().sendMessage(target , ellipsize(getOutput().replace("nil", "").trim(),400));
 				setOutput("");
+				iPrinted = true;
 				//return;
 			}
 
-			if (luaOut.length() > 0) 
+			if (luaOut.length() > 0 && iPrinted == false) 
 				IRCBot.getInstance().sendMessage(target , luaOut);
 
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
