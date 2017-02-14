@@ -177,7 +177,7 @@ public class LuaJSandbox extends AbstractListener {
 
 		// Just one long word. Chop it off.
 		if (end == -1)
-			return text.substring(0, max-1) + "â€¦";
+			return text.substring(0, max-1) + "…";
 
 		// Step forward as long as textWidth allows.
 		int newEnd = end;
@@ -189,9 +189,9 @@ public class LuaJSandbox extends AbstractListener {
 			if (newEnd == -1)
 				newEnd = text.length();
 
-		} while (textWidth(text.substring(0, newEnd) + "â€¦") < max);
+		} while (textWidth(text.substring(0, newEnd) + "…") < max);
 
-		return text.substring(0, end) + "â€¦";
+		return text.substring(0, end) + "…";
 	}
 
 	String readFile(String fileName) throws IOException {
@@ -220,9 +220,7 @@ public class LuaJSandbox extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "lua")) {
-			chan = event.getChannel().getName();
-		} else if (command.equals(Config.commandprefix + "resetlua")) {
+		if (command.equals(Config.commandprefix + "lua") || command.equals(Config.commandprefix + "resetlua")) {
 			chan = event.getChannel().getName();
 		}
 	}
