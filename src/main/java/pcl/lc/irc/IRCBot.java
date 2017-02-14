@@ -68,11 +68,7 @@ public class IRCBot {
 	public static PircBotX bot;
 	private TaskScheduler scheduler;
 
-
-
 	public static httpd httpServer = new httpd();
-
-
 
 	public static boolean isIgnored(String nick) {
 		if (IRCBot.admins.containsKey(nick)) {
@@ -94,14 +90,18 @@ public class IRCBot {
 		if (!commands.contains(command)) {
 			commands.add(command);
 			helpList.put(command, help);	
-			log.info("Registering Command: " + command);
+			log.info("Registering Command: " + command + "From: " + Thread.currentThread().getStackTrace()[1].getClassName());
+		} else {
+			log.info("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[1].getClassName());
 		}
 	}
 
 	public static void registerCommand(String command) {
 		if (!commands.contains(command)) {
 			commands.add(command);
-			log.info("Registering Command: " + command);
+			log.info("Registering Command: " + command + "From: " + Thread.currentThread().getStackTrace()[1].getClassName());
+		} else {
+			log.info("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[1].getClassName());
 		}
 	}
 
