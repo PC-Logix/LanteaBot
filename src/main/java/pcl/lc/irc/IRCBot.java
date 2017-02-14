@@ -90,7 +90,7 @@ public class IRCBot {
 		if (!commands.contains(command)) {
 			commands.add(command);
 			helpList.put(command, help);	
-			log.info("Registering Command: " + command + "From: " + Thread.currentThread().getStackTrace()[1].getClassName());
+			log.info("Registering Command: " + command + " From: " + Thread.currentThread().getStackTrace()[1].getClassName());
 		} else {
 			log.info("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[1].getClassName());
 		}
@@ -99,7 +99,7 @@ public class IRCBot {
 	public static void registerCommand(String command) {
 		if (!commands.contains(command)) {
 			commands.add(command);
-			log.info("Registering Command: " + command + "From: " + Thread.currentThread().getStackTrace()[1].getClassName());
+			log.info("Registering Command: " + command + " From: " + Thread.currentThread().getStackTrace()[1].getClassName());
 		} else {
 			log.info("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[1].getClassName());
 		}
