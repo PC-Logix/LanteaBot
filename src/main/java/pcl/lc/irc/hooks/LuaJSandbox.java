@@ -13,6 +13,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /** Simple program that illustrates basic sand-boxing of client scripts
  * in a server environment.
