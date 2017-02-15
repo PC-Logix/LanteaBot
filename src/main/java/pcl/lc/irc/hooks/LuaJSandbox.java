@@ -32,7 +32,6 @@ import pcl.lc.irc.IRCBot;
  * @see LuaValue
  */
 public class LuaJSandbox extends AbstractListener {
-	private final static String NON_THIN = "[^iIl1\\.,']";
 	// These globals are used by the server to compile scripts.
 	static Globals server_globals;
 	static Globals user_globals;
@@ -162,55 +161,6 @@ public class LuaJSandbox extends AbstractListener {
 		LuaString.s_metatable = new ReadOnlyLuaTable(LuaString.s_metatable);
 	}
 
-	private static int textWidth(String str) {
-		return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
-	}
-
-	public static String ellipsize(String text, int max) {
-
-		if (textWidth(text) <= max)
-			return text;
-
-		// Start by chopping off at the word before max
-		// This is an over-approximation due to thin-characters...
-		int end = text.lastIndexOf(' ', max - 1);
-
-		// Just one long word. Chop it off.
-		if (end == -1)
-			return text.substring(0, max-1) + "…";
-
-		// Step forward as long as textWidth allows.
-		int newEnd = end;
-		do {
-			end = newEnd;
-			newEnd = text.indexOf(' ', end + 1);
-
-			// No more spaces.
-			if (newEnd == -1)
-				newEnd = text.length();
-
-		} while (textWidth(text.substring(0, newEnd) + "…") < max);
-
-		return text.substring(0, end) + "…";
-	}
-
-	String readFile(String fileName) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(fileName));
-		try {
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
-
-			while (line != null) {
-				sb.append(line);
-				sb.append(" ");
-				line = br.readLine();
-			}
-			return sb.toString();
-		} finally {
-			br.close();
-		}
-	}
-
 	@Override
 	protected void initCommands() {
 		initLua();
@@ -240,9 +190,9 @@ public class LuaJSandbox extends AbstractListener {
 			}
 			//Screw it I don't care, someone else can clean this up.
 			Boolean iPrinted = false;
-			String luaOut = ellipsize(runScriptInSandbox( message ), 400);
+			String luaOut = Helper.ellipsize(runScriptInSandbox( message ), 400);
 			if (getOutput().length() > 0) {
-				IRCBot.getInstance().sendMessage(target , ellipsize(getOutput().replace("nil", "").trim(),400));
+				IRCBot.getInstance().sendMessage(target , Helper.ellipsize(getOutput().replace("nil", "").trim(),400));
 				setOutput("");
 				iPrinted = true;
 				//return;
