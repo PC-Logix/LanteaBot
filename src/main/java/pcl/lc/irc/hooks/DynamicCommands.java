@@ -57,7 +57,7 @@ public class DynamicCommands extends AbstractListener {
 						if (isOp || Helper.isChannelOp(event)) {
 							try {
 								PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
-								if (!IRCBot.commands.contains(message[1])) {
+								if (!IRCBot.commands.containsKey(message[1])) {
 									addCommand.setString(1, message[1].toLowerCase());
 									addCommand.setString(2, message[2]);
 									addCommand.executeUpdate();

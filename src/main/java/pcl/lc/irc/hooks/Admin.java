@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
@@ -171,10 +174,11 @@ public class Admin extends ListenerAdapter {
 				
 				if (splitMessage.length == 1) {
 					String listString = "";
-					for (String s : IRCBot.commands)
-					{
-						listString += s + ", ";
-					} 
+				    Iterator it = IRCBot.commands.entrySet().iterator();
+				    while (it.hasNext()) {
+				        Map.Entry pair = (Map.Entry)it.next();
+				        listString += pair.getKey() + ", ";
+				    }
 					event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
 				} else {
 					try {
@@ -377,11 +381,11 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(Config.commandprefix + "commands")) {
 				String listString = "";
-
-				for (String s : IRCBot.commands)
-				{
-					listString += s + ", ";
-				} 
+			    Iterator it = IRCBot.commands.entrySet().iterator();
+			    while (it.hasNext()) {
+			        Map.Entry pair = (Map.Entry)it.next();
+			        listString += pair.getKey() + ", ";
+			    }
 				event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
 			}
 		}

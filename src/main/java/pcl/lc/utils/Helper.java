@@ -2,9 +2,12 @@ package pcl.lc.utils;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 import org.pircbotx.hooks.events.MessageEvent;
+
+import pcl.lc.irc.IRCBot;
 
 public class Helper {
 	public static final Charset utf8 = Charset.forName("UTF-8");
@@ -88,5 +91,34 @@ public class Helper {
 	 */
 	public static Integer getRandomInt(Integer min, Integer max) {
 		return (int) (Math.floor(Math.random() * (max - min + 1)) + min);
+	}
+	
+	public static Boolean toggleCommand(String command, String channel, String action) {
+		if (action.equals("enable")) {
+			try {
+				//enabledChannels.add(chan);
+				PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
+				enableHook.setString(1, command);
+				enableHook.setString(2, channel);
+				enableHook.executeUpdate();
+				IRCBot.getInstance().sendMessage(channel, "Enabled " + command);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return true;
+		} else if (action.equals("disable") ) {
+			try {
+				//enabledChannels.remove(chan);
+				PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
+				disableHook.setString(1, command);
+				disableHook.setString(2, channel);
+				disableHook.executeUpdate();
+				IRCBot.getInstance().sendMessage(channel, "Disabled " + command);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+		return true;
 	}
 }

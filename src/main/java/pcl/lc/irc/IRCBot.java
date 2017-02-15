@@ -36,9 +36,6 @@ public class IRCBot {
 
 	private Connection connection = null;
 	private final Map<String, PreparedStatement> preparedStatements = new HashMap<>();
-	//public static Logger getLog() {
-	//	return IRCBot.log;
-	//}
 	public static IRCBot instance;
 
 	//public static TimedHashMap messages = new TimedHashMap(600000, null );
@@ -80,33 +77,45 @@ public class IRCBot {
 		} else {
 			return false;
 		}
-
 	}
 
+	public static String getOurNick() {
+		return ournick;
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ArrayList<String> commands = new ArrayList();
+	public static HashMap<String, String> commands = new HashMap<String, String>();
 	public static HashMap<String, String> helpList = new HashMap<String, String>();
+	/**
+	 * Registers a command for output in %help
+	 * @param command
+	 * @param help 
+	 */
 	public static void registerCommand(String command, String help) {
-		if (!commands.contains(command)) {
-			commands.add(command);
+		if (!commands.containsKey(command)) {
+			commands.put(command, Thread.currentThread().getStackTrace()[2].getClassName());
 			helpList.put(command, help);	
-			log.info("Registering Command: " + command + " From: " + Thread.currentThread().getStackTrace()[1].getClassName());
+			log.info("Registering Command: " + command);
 		} else {
-			log.info("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[1].getClassName());
+			log.error("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[2].getClassName() + " Owning class " + commands.get(command));
 		}
 	}
-
+	/**
+	 * Registers a command for output in %help, doesn't include any actual help
+	 * @param command
+	 */
+	@Deprecated
 	public static void registerCommand(String command) {
-		if (!commands.contains(command)) {
-			commands.add(command);
-			log.info("Registering Command: " + command + " From: " + Thread.currentThread().getStackTrace()[1].getClassName());
+		if (!commands.containsKey(command)) {
+			commands.put(command, Thread.currentThread().getStackTrace()[2].getClassName());
+			log.info("Registering Command: " + command);
 		} else {
-			log.info("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[1].getClassName());
+			log.error("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[2].getClassName() + " Owning class " + commands.get(command));
 		}
 	}
 
 	public static void unregisterCommand(String command) {
-		if (commands.contains(command)) {
+		if (commands.containsKey(command)) {
 			commands.remove(command);
 			log.info("Removing Command: " + command);
 		}
@@ -126,6 +135,15 @@ public class IRCBot {
 		if (!initDatabase()) {
 			log.error("Database Failure!");
 			return;
+		}
+
+		if(!Config.httpdport.isEmpty()) {
+			try {
+				httpServer.setup();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		loadOps();
@@ -162,15 +180,13 @@ public class IRCBot {
 		}
 
 		try {
-			if(!Config.httpdport.isEmpty()) {
-				httpServer.start();
-			}
-
 			if(!Config.botConfig.get("wikiWatcherURL").equals("")) {
 				WikiChangeWatcher WikiChange = new WikiChangeWatcher();
 				WikiChange.start();
 			}
-
+			if(!Config.httpdport.isEmpty()) {
+				httpd.start();
+			}
 			scheduler = new TaskScheduler();
 			scheduler.start();
 			bot = new PircBotX(Config.config.buildConfiguration());
