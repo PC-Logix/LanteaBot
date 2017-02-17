@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.pircbotx.hooks.events.MessageEvent;
 
@@ -14,7 +17,7 @@ import pcl.lc.irc.IRCBot;
 
 public class Helper {
 	public static final Charset utf8 = Charset.forName("UTF-8");
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> boolean equalsOR(T instance, T... compareWith) {
 		for (T t : compareWith) if (instance.equals(t)) return true;
@@ -25,7 +28,7 @@ public class Helper {
 		for (T t : compareWith) if (!instance.equals(t)) return false;
 		return true;
 	}
-	
+
 	@SuppressWarnings("unchecked") public static <T, S extends T> ArrayList<S> getAllOfType(ArrayList<T> list, Class<S> type) {
 		ArrayList<S> newList = new ArrayList<S>();
 		for (T object : list) if (type.isInstance(object)) newList.add((S)object);
@@ -36,13 +39,13 @@ public class Helper {
 		for (T object : list) if (!type.isInstance(object)) newList.add(object);
 		return newList;
 	}
-	
+
 	public static int countCharOccurences(String string, char needle) {
 		int count = 0;
 		for (int i = 0; i < string.length(); i++) if (string.charAt(i) == needle) count++;
 		return count;
 	}
-	
+
 	public static String getFilenameExt(File file) {
 		String name = file.getName();
 		if (name.contains(".")) {
@@ -51,24 +54,24 @@ public class Helper {
 		}
 		return "";
 	}
-	
-    private static String addZeroWidthSpace(String s) {
-    	final int mid = s.length() / 2; //get the middle of the String
-	String[] parts = {s.substring(0, mid),s.substring(mid)};
-	return parts[0] + "\u200B" + parts[1];
-        //return s.replaceAll(".(?=.)", "$0" + "\u200B");
-    }
-	
+
+	private static String addZeroWidthSpace(String s) {
+		final int mid = s.length() / 2; //get the middle of the String
+		String[] parts = {s.substring(0, mid),s.substring(mid)};
+		return parts[0] + "\u200B" + parts[1];
+		//return s.replaceAll(".(?=.)", "$0" + "\u200B");
+	}
+
 	public static String antiPing(String nick) {
 		return addZeroWidthSpace(nick);
 	}
-	
+
 	public static void sleep(long ms) {
 		try {
 			Thread.sleep(ms);
 		} catch (Exception e) {e.printStackTrace();}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Boolean isChannelOp(MessageEvent event) {
 		if (event.getChannel().isOp(event.getUser()) || event.getChannel().isOwner(event.getUser()) || event.getChannel().isSuperOp(event.getUser())) {
@@ -76,7 +79,7 @@ public class Helper {
 		} else {
 			return false;
 		}
-		
+
 	}
 
 	/**
@@ -95,10 +98,41 @@ public class Helper {
 	public static Integer getRandomInt(Integer min, Integer max) {
 		return (int) (Math.floor(Math.random() * (max - min + 1)) + min);
 	}
-	
-		private static int textWidth(String str) {
+
+	private static int textWidth(String str) {
 		String NON_THIN = "[^iIl1\\.,']";
 		return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
+	}
+
+	public static String rollDice(String dice) {
+		final String regex = "(\\d\\d?\\d?)d(\\d\\d?\\d?)";
+
+		final Pattern pattern = Pattern.compile(regex);
+		final Matcher matcher = pattern.matcher(dice);
+
+		if (matcher.matches()) {
+			Integer num_dice = Math.min(100, Integer.valueOf(matcher.group(1)));
+			Integer dice_size = Integer.valueOf(matcher.group(2));
+
+			ArrayList<Integer> results = new ArrayList<>(100);
+			for (Integer i = 0; i < num_dice; i++)
+			{
+				Integer steps = Helper.getRandomInt(1, 12);
+				Integer gone = 0;
+				Integer result = 1;
+				for (result = 1; gone < steps; gone++)
+				{
+					if (Objects.equals(result, dice_size))
+						result = 0;
+					result++;
+				}
+				results.add(result);
+			}
+			return results.toString();
+		}
+		else {
+			return "Invalid dice format (Eg 1d6)";
+		}
 	}
 
 	public static String ellipsize(String text, int max) {

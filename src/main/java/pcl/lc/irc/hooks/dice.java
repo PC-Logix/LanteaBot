@@ -22,37 +22,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("rawtypes")
 public class dice extends AbstractListener {
 
-	public String rollDice(String dice) {
-		final String regex = "(\\d\\d?\\d?)d(\\d\\d?\\d?)";
-
-		final Pattern pattern = Pattern.compile(regex);
-		final Matcher matcher = pattern.matcher(dice);
-
-		if (matcher.matches()) {
-			Integer num_dice = Math.min(100, Integer.valueOf(matcher.group(1)));
-			Integer dice_size = Integer.valueOf(matcher.group(2));
-
-			ArrayList<Integer> results = new ArrayList<>(100);
-			for (Integer i = 0; i < num_dice; i++)
-			{
-				Integer steps = Helper.getRandomInt(1, 12);
-				Integer gone = 0;
-				Integer result = 1;
-				for (result = 1; gone < steps; gone++)
-				{
-					if (Objects.equals(result, dice_size))
-						result = 0;
-					result++;
-				}
-				results.add(result);
-			}
-			return results.toString();
-		}
-		else {
-			return "Invalid dice format (Eg 1d6)";
-		}
-	}
-
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("roll", "Rolls dice");
@@ -84,7 +53,7 @@ public class dice extends AbstractListener {
 				message = message + " " + aCopyOfRange;
 			}
 			String s = message.trim();
-			IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + rollDice(s));
+			IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + Helper.rollDice(s));
 		}
 	}
 
