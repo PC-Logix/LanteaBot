@@ -31,6 +31,7 @@ public class Config {
 	public static String ignoredUsersProp = null;
 	public static String commandprefix = null;
 	public static String httpdport = null;
+	public static String httpdEnable = "false";
 	public static String enablehttpd = null;
 	public static String proxyhost = null;
 	public static String proxyport = null;
@@ -98,6 +99,7 @@ public class Config {
 			commandprefix = prop.getProperty("commandprefix", "@");
 			enablehttpd = prop.getProperty("enablehttpd", "true");
 			httpdport = prop.getProperty("httpdport", "8081");
+			httpdEnable = prop.getProperty("httpdEnable", "false");
 			botConfig.put("httpDocRoot", prop.getProperty("httpDocRoot", ""));
 			botConfig.put("wikiWatcherURL", prop.getProperty("wikiWatcherURL", ""));
 			proxyhost = prop.getProperty("proxyhost", "");

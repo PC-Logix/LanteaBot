@@ -137,7 +137,7 @@ public class IRCBot {
 			return;
 		}
 
-		if(!Config.httpdport.isEmpty()) {
+		if(Config.httpdEnable.equals("true")) {
 			try {
 				httpServer.setup();
 			} catch (Exception e) {
@@ -184,7 +184,7 @@ public class IRCBot {
 				WikiChangeWatcher WikiChange = new WikiChangeWatcher();
 				WikiChange.start();
 			}
-			if(!Config.httpdport.isEmpty()) {
+			if(Config.httpdEnable.equals("true")) {
 				httpd.start();
 			}
 			scheduler = new TaskScheduler();
