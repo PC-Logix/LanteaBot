@@ -139,7 +139,7 @@ public class IRCBot {
 
 		if(Config.httpdEnable.equals("true")) {
 			try {
-				httpServer.setup();
+				httpd.setup();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
