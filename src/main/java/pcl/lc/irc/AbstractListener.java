@@ -26,9 +26,44 @@ public abstract class AbstractListener extends ListenerAdapter
 		return commands;
 	}
 
+	/**
+	 * Called only on channel messages. Checks if the command is prefixed with the current command prefix
+	 * @param sender
+	 * @param event
+	 * @param command
+	 * @param args
+	 */
 	public abstract void handleCommand(String sender, MessageEvent event, String command, String[] args);
+	
+	/**
+	 * Called on channel messages, and queries, the event does NOT have any channel information regardless of the origin.
+	 * Checks if the command is prefixed with the current command prefix
+	 * @param nick
+	 * @param event
+	 * @param command
+	 * @param copyOfRange
+	 */
 	public abstract void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
+	
+	/**
+	 * Called only on channel messages.  Unlike handleCommand this does NOT check if the command is prefixed by the command prefix.
+	 * This is useful for triggering on random words said in a message.
+	 * @param sender
+	 * @param event
+	 * @param command
+	 * @param args
+	 */
 	public abstract void handleMessage(String sender, MessageEvent event, String command, String[] args);
+	
+	/**
+	 * Called on channel messages, and queries, the event does NOT have any channel information regardless of the origin.
+	 * Does NOT check if the command is prefixed with the current command prefix
+	 * This is useful for triggering on random words said in a message.
+	 * @param nick
+	 * @param event
+	 * @param command
+	 * @param copyOfRange
+	 */
 	public abstract void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
 
 	@Override

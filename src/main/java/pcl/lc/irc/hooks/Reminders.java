@@ -135,8 +135,6 @@ public class Reminders extends AbstractListener {
 
 	public long addReminder(String dest, String time, String message) {
 		PeriodFormatter formatter = new PeriodFormatterBuilder()
-				.appendYears().appendSuffix("y")
-				.appendMonths().appendSuffix("mo")
 				.appendWeeks().appendSuffix("w")
 				.appendDays().appendSuffix("d")
 				.appendHours().appendSuffix("h")

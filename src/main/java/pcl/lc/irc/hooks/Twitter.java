@@ -29,7 +29,7 @@ public class Twitter extends ListenerAdapter {
 	private final twitter4j.Twitter twitter;
 	List<String> enabledChannels = new ArrayList<String>();
 	public Twitter() {
-		if(!Config.getTwitCKey().isEmpty()) {
+		if(Config.getTwitCKey() != null || Config.getTwitCSecret() != null || Config.getTwitToken() != null || Config.getTwitTSecret() != null) {
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 
 			cb.setDebugEnabled(true)
@@ -57,6 +57,7 @@ public class Twitter extends ListenerAdapter {
 				e.printStackTrace();
 			}
 		} else {
+			System.out.println("Please make sure the twitter API settings are set in your config.  Disabling Twitter Hook");
 			twitter = null;
 		}
 	}
@@ -65,8 +66,7 @@ public class Twitter extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		PircBotX bot = event.getBot();
-		if(!Config.getTwitCKey().isEmpty()) {
-
+		if(Config.getTwitCKey() != null || Config.getTwitCSecret() != null || Config.getTwitToken() != null || Config.getTwitTSecret() != null) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				String prefix = Config.commandprefix;
 				String ourinput = event.getMessage().toLowerCase();
@@ -107,7 +107,7 @@ public class Twitter extends ListenerAdapter {
 					}
 				}
 
-				if(enabledChannels.contains(event.getChannel().getName())) {
+				if(enabledChannels.contains(event.getChannel().getName()) && twitter != null) {
 					String[] splitMessage = event.getMessage().split(" ");
 					for (String aSplitMessage : splitMessage) {
 						if (aSplitMessage.contains("twitter.com") && aSplitMessage.contains("/status/")) {

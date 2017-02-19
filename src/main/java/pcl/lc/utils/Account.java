@@ -29,7 +29,8 @@ public class Account {
 				user = test.getRegisteredAs();
 			} catch (InterruptedException ex) {
 				Logger.getLogger(MessageEvent.class.getName()).log(Level.SEVERE, null, ex);
-				event.getUser().send().notice("Please enter a valid username!");
+				waitForQueue.close();
+				return null;
 			}
 			return user;
 		}
@@ -38,7 +39,6 @@ public class Account {
 	@SuppressWarnings("rawtypes")
 	public static String getAccount(User u, PrivateMessageEvent event) {
 		String user = null;
-		
 		if (IRCBot.authed.containsKey(u.getNick())) {
 			return IRCBot.authed.get(u.getNick());
 		} else {
@@ -51,7 +51,8 @@ public class Account {
 				user = test.getRegisteredAs();
 			} catch (InterruptedException ex) {
 				Logger.getLogger(MessageEvent.class.getName()).log(Level.SEVERE, null, ex);
-				event.getUser().send().notice("Please enter a valid username!");
+				waitForQueue.close();
+				return null;
 			}
 
 			return user;
@@ -74,7 +75,8 @@ public class Account {
 				user = test.getRegisteredAs();
 			} catch (InterruptedException ex) {
 				Logger.getLogger(MessageEvent.class.getName()).log(Level.SEVERE, null, ex);
-				event.getUser().send().notice("Please enter a valid username!");
+				waitForQueue.close();
+				return null;
 			}
 
 			return user;

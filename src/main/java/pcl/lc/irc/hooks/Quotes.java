@@ -16,13 +16,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import pcl.lc.httpd.httpd;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
@@ -30,31 +28,29 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class Quotes extends AbstractListener {
 
-	@SuppressWarnings("restriction")
 	@Override
 	protected void initCommands() {
-		//IRCBot.httpServer.createContext("/quotes", new QuoteHandler());
+		IRCBot.httpServer.registerContext("/quotes", new QuoteHandler());
 		IRCBot.registerCommand("addquote", "Adds a quote to the database (Requires BotAdmin, or Channel Op");
 		IRCBot.registerCommand("quote", "Returns quotes from the quote database");
 		IRCBot.registerCommand("delquote", "Removes a quote from the database (Requires BotAdmin, or Channel Op");
 		IRCBot.registerCommand("listquotes", "Returns list of ids for quotes belonging to user as well as their total quote count");
 	}
 
-    public class QuoteHandler implements HttpHandler {
-        @SuppressWarnings("restriction")
+	static class QuoteHandler implements HttpHandler {
 		@Override
-        public void handle(HttpExchange t) throws IOException {
-        	
-			String target = t.getRequestURI().toString();
-        	String response = "";
+		public void handle(HttpExchange t) throws IOException {
 
-        	String quoteList = "";
-        	List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
-        	String qid = "0";
-        	if (paramsList.size() >= 1) {
-            	for (NameValuePair parameter : paramsList)
-            	    if (parameter.getName().equals("id"))
-            	        qid = parameter.getValue();
+			String target = t.getRequestURI().toString();
+			String response = "";
+
+			String quoteList = "";
+			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
+			String qid = "0";
+			if (paramsList.size() >= 1) {
+				for (NameValuePair parameter : paramsList)
+					if (parameter.getName().equals("id"))
+						qid = parameter.getValue();
 				try {
 					PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getIdQuote");
 					getQuote.setString(1, qid);
@@ -66,35 +62,31 @@ public class Quotes extends AbstractListener {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-        	} else {
-    			try {
-    				PreparedStatement getAllQuotes = IRCBot.getInstance().getPreparedStatement("getAllQuotes");
-    				ResultSet results = getAllQuotes.executeQuery();
-    				while (results.next()) {
-    					quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
-    				}
-    			}
-    			catch (Exception e) {
-    				e.printStackTrace();
-    			}
-        	}
-        	try (BufferedReader br = new BufferedReader(new FileReader("webroot/quotes.html"))) {
-     		   String line = null;
-     		   while ((line = br.readLine()) != null) {
-     		       response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getInstance().ournick).replace("#QUOTEDATA#", quoteList)+"\n";
-     		   }
-     		}
-            //String response = "This is the response";
-            t.sendResponseHeaders(200, response.length());
+			} else {
+				try {
+					PreparedStatement getAllQuotes = IRCBot.getInstance().getPreparedStatement("getAllQuotes");
+					ResultSet results = getAllQuotes.executeQuery();
+					while (results.next()) {
+						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			try (BufferedReader br = new BufferedReader(new FileReader("webroot/quotes.html"))) {
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#QUOTEDATA#", quoteList)+"\n";
+				}
+			}
+			t.sendResponseHeaders(200, response.getBytes().length);
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+		}
+	}
 
-
-			IRCBot.bot.sendIRC().message("#MichiBot", target + " from ip: " + t.getRemoteAddress());
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-        }
-    }
-	
 	@Override
 	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
@@ -222,17 +214,17 @@ public class Quotes extends AbstractListener {
 	public void handleCommand(String nick, GenericMessageEvent event,
 			String command, String[] copyOfRange) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

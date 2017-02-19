@@ -101,7 +101,7 @@ public class Stab extends AbstractListener {
 
 				String s = message.trim();
 				if (!s.equals(IRCBot.ournick))
-					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION " + actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + dust + "\u0001");
+					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION " + actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust + "\u0001");
 				else
 					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust + "\u0001");
 			}

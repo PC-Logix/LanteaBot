@@ -44,7 +44,7 @@ public class GenericEventListener extends ListenerAdapter {
 		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			String[] firstWord = StringUtils.split(event.getMessage());
 			String triggerWord = firstWord[0];
-			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(Config.commandprefix) && IRCBot.commands.contains(triggerWord.replace(Config.commandprefix, ""))) {
+			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(Config.commandprefix) && IRCBot.commands.containsKey(triggerWord.replace(Config.commandprefix, ""))) {
 
 			} else {
 				List<String> list = new ArrayList<String>();
@@ -71,8 +71,6 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onConnect(final ConnectEvent event) {
-		//if (!Config.nspass.isEmpty())
-		//	event.respond("ns identify "+ Config.nsaccount + " " + Config.nspass);
 		IRCBot.ournick = event.getBot().getNick();
 	}
 
