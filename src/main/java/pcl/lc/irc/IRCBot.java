@@ -266,17 +266,20 @@ public class IRCBot {
 			//Inventory
 			preparedStatements.put("getItems", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory;"));
 			preparedStatements.put("getItem", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory WHERE id = ?;"));
-			preparedStatements.put("getRandomItem", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory ORDER BY Random() LIMIT 1"));
-			preparedStatements.put("addItem", connection.prepareStatement("INSERT INTO Inventory (id, item_name) VALUES (NULL, ?)"));
+			preparedStatements.put("getItemByName", connection.prepareStatement("SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;"));
+			preparedStatements.put("getRandomItem", connection.prepareStatement("SELECT id, item_name, uses_left, is_favourite FROM Inventory ORDER BY Random() LIMIT 1"));
+			preparedStatements.put("getRandomItemNonFavourite", connection.prepareStatement("SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1"));
+			preparedStatements.put("addItem", connection.prepareStatement("INSERT INTO Inventory (id, item_name, is_favourite) VALUES (NULL, ?, ?)"));
 			preparedStatements.put("removeItemId", connection.prepareStatement("DELETE FROM Inventory WHERE id = ?"));
 			preparedStatements.put("removeItemName", connection.prepareStatement("DELETE FROM Inventory WHERE item_name = ?"));
 			preparedStatements.put("decrementUses", connection.prepareStatement("UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?"));
+			preparedStatements.put("clearFavourite", connection.prepareStatement("UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1"));
 			//Permissions
 			preparedStatements.put("setPermLevel", connection.prepareStatement("INSERT INTO Permissions VALUES(?, ?, ?, ?, ?)"));
 			preparedStatements.put("getUserPerms", connection.prepareStatement("SELECT level FROM Permissions WHERE username = ? AND channel = ?"));
 			preparedStatements.put("getAllUserPerms", connection.prepareStatement("SELECT * FROM Permissions"));
 			preparedStatements.put("deleteUserPerm", connection.prepareStatement("DELETE FROM Permissions WHERE username = ?"));
-			
+
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

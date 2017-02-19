@@ -236,3 +236,5 @@ pip-log.txt
 config.properties
 lanteabot.jar
 *.db
+.idea/
+*.iml

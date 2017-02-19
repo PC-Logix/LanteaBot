@@ -54,7 +54,7 @@ public class Stab extends AbstractListener {
 			}
 			try
 			{
-				PreparedStatement statement = IRCBot.getInstance().getPreparedStatement("getRandomItem");
+				PreparedStatement statement = IRCBot.getInstance().getPreparedStatement("getRandomItemNonFavourite");
 				ResultSet resultSet = statement.executeQuery();
 
 				String item = "";
@@ -88,7 +88,7 @@ public class Stab extends AbstractListener {
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
-					dust = ", the " + item.replace("a ", "").replace("an ", "").replace("the ", "") + " crumbles to dust.";
+					dust = ", the " + item.replace("a ", "").replace("A", "").replace("an ", "").replace("the ", "") + " crumbles to dust.";
 				}
 
 				ArrayList<String> actions = new ArrayList<>();
