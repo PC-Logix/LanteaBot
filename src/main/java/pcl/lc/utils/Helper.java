@@ -104,7 +104,7 @@ public class Helper {
 		return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
 	}
 
-	public String rollDice(String dice) {
+	public static String rollDice(String dice) {
 		final String regex = "(\\d\\d?\\d?)d(\\d\\d?\\d?)";
 
 		final Pattern pattern = Pattern.compile(regex);
