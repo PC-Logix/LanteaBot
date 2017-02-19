@@ -28,11 +28,12 @@ public class PermissionsHook extends AbstractListener {
 		boolean chanOp = Helper.isChannelOp(event);
 		if (command.equals(prefix + "addperm")) {
 			if (isOp || chanOp) {
-				if (event.getChannel().getUsers().contains(args[0])) {
+				if (event.getChannel().getUsers().contains(Permissions.getUserFromString(args[0], event))) {
 					Boolean addPerm = Permissions.setPermLevel(args[0], event, Integer.parseInt(args[1]));
 					event.respond(addPerm.toString());
+				} else {
+					event.respond("User is not in this channel");
 				}
-				event.respond("User is not in this channel");
 			}
 		} else if (command.equals(prefix + "listperms")) {
 			if (isOp || chanOp) {
