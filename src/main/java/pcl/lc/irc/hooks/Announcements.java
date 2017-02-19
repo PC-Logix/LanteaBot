@@ -21,6 +21,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.utils.CommentedProperties;
 
 
@@ -34,6 +35,9 @@ public class Announcements extends ListenerAdapter implements Runnable {
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
 	public static HashMap<String, List<Object>> Announcements = new HashMap<String, List<Object>>();
+	private Boolean chanOp = false;
+	private int permLevel = 0;
+	private int requiredPermLevel = 5;
 	XStream xstream = new XStream(new DomDriver());
 	
 	public static void saveProps() {
@@ -102,20 +106,24 @@ public class Announcements extends ListenerAdapter implements Runnable {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		String prefix = Config.commandprefix;
-		String ourinput = event.getMessage().toLowerCase();
-		String trigger = ourinput.trim();
-		if (trigger.length() > 1) {
-			String[] firstWord = StringUtils.split(trigger);
-			String triggerWord = firstWord[0];
-			if (triggerWord.equals(prefix + "addannounce")) {
-				
-			} else if (triggerWord.equals(prefix + "listannounce")) {
-				
-			} else if (triggerWord.equals(prefix + "removeannounce")) {
-				
-			} else if (triggerWord.equals(prefix + "reloadannounce")) {
-				setConfig();
+		permLevel = Permissions.getPermLevel(event.getUser() ,event);
+		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+		if (isOp || chanOp || permLevel >= requiredPermLevel) {
+			String prefix = Config.commandprefix;
+			String ourinput = event.getMessage().toLowerCase();
+			String trigger = ourinput.trim();
+			if (trigger.length() > 1) {
+				String[] firstWord = StringUtils.split(trigger);
+				String triggerWord = firstWord[0];
+				if (triggerWord.equals(prefix + "addannounce")) {
+					event.respond("Merp");
+				} else if (triggerWord.equals(prefix + "listannounce")) {
+					
+				} else if (triggerWord.equals(prefix + "removeannounce")) {
+					
+				} else if (triggerWord.equals(prefix + "reloadannounce")) {
+					setConfig();
+				}
 			}
 		}
 	}

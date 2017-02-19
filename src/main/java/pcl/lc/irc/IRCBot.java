@@ -215,13 +215,18 @@ public class IRCBot {
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Reminders(dest, nick, time, message)");
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Permissions(username, channel, level, addedby, addedon)");
+			//Channels
 			preparedStatements.put("addChannel", connection.prepareStatement("REPLACE INTO Channels (name) VALUES (?);"));
 			preparedStatements.put("removeChannel",connection.prepareStatement("DELETE FROM Channels WHERE name = ?;"));
+			//Hooks
 			preparedStatements.put("enableHook", connection.prepareStatement("INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);"));
 			preparedStatements.put("disableHook",connection.prepareStatement("DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;"));
 			preparedStatements.put("checkHook",connection.prepareStatement("SELECT hook, channel FROM OptionalHooks WHERE hook = ?;"));
+			//BotAdmin Bypasses permission checks
 			preparedStatements.put("addOp",connection.prepareStatement("REPLACE INTO Ops (name) VALUES (?);"));
 			preparedStatements.put("removeOp",connection.prepareStatement("DELETE FROM Ops WHERE name = ?;"));
+			//Quotes
 			preparedStatements.put("addQuote",connection.prepareStatement("INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);", Statement.RETURN_GENERATED_KEYS));
 			preparedStatements.put("getUserQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE LOWER(user) = ? ORDER BY RANDOM () LIMIT 1;"));
 			preparedStatements.put("getIdQuote",connection.prepareStatement("SELECT user, data FROM Quotes WHERE id = ? LIMIT 1;"));
@@ -230,28 +235,35 @@ public class IRCBot {
 			preparedStatements.put("getAllQuotes",connection.prepareStatement("SELECT id, user, data FROM Quotes;"));
 			preparedStatements.put("getSpecificQuote",connection.prepareStatement("SELECT id, data FROM Quotes WHERE user = ? AND data = ?;"));
 			preparedStatements.put("removeQuote",connection.prepareStatement("DELETE FROM Quotes WHERE id = ?;"));
+			//Last Seen
 			preparedStatements.put("updateLastSeen",connection.prepareStatement("REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);"));
 			preparedStatements.put("getLastSeen",connection.prepareStatement("SELECT timestamp FROM LastSeen WHERE LOWER(user) = ? GROUP BY LOWER(user) ORDER BY timestamp desc"));
 			preparedStatements.put("updateInfo",connection.prepareStatement("REPLACE INTO Info(key, data) VALUES (?, ?);"));
 			preparedStatements.put("getInfo",connection.prepareStatement("SELECT data FROM Info WHERE key = ?;"));
 			preparedStatements.put("getInfoAll",connection.prepareStatement("SELECT key, data FROM Info;"));
 			preparedStatements.put("removeInfo",connection.prepareStatement("DELETE FROM Info WHERE key = ?;"));
+			//Tells
 			preparedStatements.put("addTell",connection.prepareStatement("INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);"));
 			preparedStatements.put("getTells",connection.prepareStatement("SELECT rowid, sender, channel, message FROM Tells WHERE LOWER(rcpt) = ?;"));
 			preparedStatements.put("removeTells",connection.prepareStatement("DELETE FROM Tells WHERE LOWER(rcpt) = ?;"));
+			//IPoints
 			preparedStatements.put("getPoints", connection.prepareStatement("SELECT Points FROM InternetPoints WHERE nick = ?;"));
 			preparedStatements.put("addPoints", connection.prepareStatement("INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)"));
+			//Dyanmic Commands
 			preparedStatements.put("addCommand", connection.prepareStatement("INSERT INTO Commands(command, return) VALUES (?, ?);"));
 			preparedStatements.put("searchCommands", connection.prepareStatement("SELECT command FROM Commands"));
 			preparedStatements.put("getCommand", connection.prepareStatement("SELECT return FROM Commands WHERE command = ?"));
 			preparedStatements.put("delCommand",connection.prepareStatement("DELETE FROM Commands WHERE command = ?;"));
+			//Announcements
 			preparedStatements.put("addAnnounce", connection.prepareStatement("INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);"));
 			preparedStatements.put("getAnnounce", connection.prepareStatement("SELECT schedule, title, message FROM Announcements WHERE channel = ?;"));
 			preparedStatements.put("delAnnounce", connection.prepareStatement("DELETE FROM Announcements WHERE title = ? AND channel = ?;"));
+			//Reminders
 			preparedStatements.put("addReminder", connection.prepareStatement("INSERT INTO Reminders(dest, nick, time, message) VALUES (?,?,?,?);"));
 			preparedStatements.put("getReminder", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE time <= ?;"));
 			preparedStatements.put("listReminders", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE nick = ?;"));
 			preparedStatements.put("delReminder", connection.prepareStatement("DELETE FROM Reminders WHERE time = ? AND nick = ?;"));
+			//Inventory
 			preparedStatements.put("getItems", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory;"));
 			preparedStatements.put("getItem", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory WHERE id = ?;"));
 			preparedStatements.put("getRandomItem", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory ORDER BY Random() LIMIT 1"));
@@ -259,7 +271,12 @@ public class IRCBot {
 			preparedStatements.put("removeItemId", connection.prepareStatement("DELETE FROM Inventory WHERE id = ?"));
 			preparedStatements.put("removeItemName", connection.prepareStatement("DELETE FROM Inventory WHERE item_name = ?"));
 			preparedStatements.put("decrementUses", connection.prepareStatement("UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?"));
-
+			//Permissions
+			preparedStatements.put("setPermLevel", connection.prepareStatement("INSERT INTO Permissions VALUES(?, ?, ?, ?, ?)"));
+			preparedStatements.put("getUserPerms", connection.prepareStatement("SELECT level FROM Permissions WHERE username = ? AND channel = ?"));
+			preparedStatements.put("getAllUserPerms", connection.prepareStatement("SELECT * FROM Permissions"));
+			preparedStatements.put("deleteUserPerm", connection.prepareStatement("DELETE FROM Permissions WHERE username = ?"));
+			
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

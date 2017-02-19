@@ -35,18 +35,18 @@ import com.google.common.collect.ImmutableList;
 public class Admin extends ListenerAdapter {
 
 	public Admin() {
-		IRCBot.registerCommand("prefix");
-		IRCBot.registerCommand("join");
-		IRCBot.registerCommand("part");
-		IRCBot.registerCommand("shutdown");
-		IRCBot.registerCommand("cycle");
-		IRCBot.registerCommand("raw");
-		IRCBot.registerCommand("nick");
-		IRCBot.registerCommand("hashcount");
-		IRCBot.registerCommand("flushhash");
-		IRCBot.registerCommand("ignore");
-		IRCBot.registerCommand("unignore");
-		IRCBot.registerCommand("ignorelist");
+		IRCBot.registerCommand("prefix", "Changes the prefix that the bot responds to, requires Bot Admin");
+		IRCBot.registerCommand("join", "Joins the channel supplied in the first arg, requires Bot Admin");
+		IRCBot.registerCommand("part", "Parts the channel supplied in the first arg, requires Bot Admin, or Channel Op");
+		IRCBot.registerCommand("shutdown", "Stops the bot, requires Bot Admin");
+		IRCBot.registerCommand("cycle", "Quickly parts and rejoins the current channel, requires Bot Admin");
+		IRCBot.registerCommand("raw", "Sends RAW IRC commands to the server, this can break stuff, requires Bot Admin");
+		IRCBot.registerCommand("nick", "Changes the bots nick to the supplied nick, requires Bot Admin");
+		IRCBot.registerCommand("hashcount", "Gets the current size of the hash table for various things, Requires Bot Admin");
+		IRCBot.registerCommand("flushhash", "Flushes the hash table used for various things, requires Bot Admin");
+		IRCBot.registerCommand("ignore", "Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
+		IRCBot.registerCommand("unignore", "Unignores a user, requires Bot Admin, or Channel Op");
+		IRCBot.registerCommand("ignorelist", "Prints the current ignore list, requires Bot Admin, or Channel Op");
 	}
 
 	@SuppressWarnings("unused")
