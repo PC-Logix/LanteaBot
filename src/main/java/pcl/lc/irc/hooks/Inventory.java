@@ -21,7 +21,7 @@ import java.sql.SQLException;
  */
 @SuppressWarnings("rawtypes")
 public class Inventory extends AbstractListener {
-	private static double favourite_chance = 0.5;
+	private static double favourite_chance = 0.01;
 
 	static int ERROR_ITEM_IS_FAVOURITE = 1;
 	static int ERROR_INVALID_STATEMENT = 2;
