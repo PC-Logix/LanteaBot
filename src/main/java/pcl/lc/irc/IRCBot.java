@@ -264,7 +264,7 @@ public class IRCBot {
 			preparedStatements.put("listReminders", connection.prepareStatement("SELECT dest, nick, time, message FROM Reminders WHERE nick = ?;"));
 			preparedStatements.put("delReminder", connection.prepareStatement("DELETE FROM Reminders WHERE time = ? AND nick = ?;"));
 			//Inventory
-			preparedStatements.put("getItems", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory;"));
+			preparedStatements.put("getItems", connection.prepareStatement("SELECT id, item_name, uses_left, is_favourite FROM Inventory;"));
 			preparedStatements.put("getItem", connection.prepareStatement("SELECT id, item_name, uses_left FROM Inventory WHERE id = ?;"));
 			preparedStatements.put("getItemByName", connection.prepareStatement("SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;"));
 			preparedStatements.put("getRandomItem", connection.prepareStatement("SELECT id, item_name, uses_left, is_favourite FROM Inventory ORDER BY Random() LIMIT 1"));
@@ -279,7 +279,6 @@ public class IRCBot {
 			preparedStatements.put("getUserPerms", connection.prepareStatement("SELECT level FROM Permissions WHERE username = ? AND channel = ?"));
 			preparedStatements.put("getAllUserPerms", connection.prepareStatement("SELECT * FROM Permissions"));
 			preparedStatements.put("deleteUserPerm", connection.prepareStatement("DELETE FROM Permissions WHERE username = ?"));
-
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
