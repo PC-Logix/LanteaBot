@@ -1,8 +1,6 @@
 package pcl.lc.irc.job;
 
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.logging.Level;
-
 import pcl.lc.irc.IRCBot;
 
 public class TaskScheduler extends Thread {

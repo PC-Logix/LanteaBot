@@ -9,60 +9,17 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.hooks.ListenerAdapter;
-import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.events.WhoisEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 
 @SuppressWarnings("rawtypes")
 public class IPoints extends AbstractListener {
-
-
-	public static String getAccount(String u, MessageEvent event) {
-		String user = null;
-		if (IRCBot.authed.containsKey(u)) {
-			return IRCBot.authed.get(u);
-		} else {
-			event.getBot().sendRaw().rawLineNow("WHOIS " + u);
-			WaitForQueue waitForQueue = new WaitForQueue(event.getBot());
-			WhoisEvent test;
-			try {
-				test = waitForQueue.waitFor(WhoisEvent.class);
-				waitForQueue.close();
-				user = test.getRegisteredAs();
-			} catch (InterruptedException ex) {
-				event.getUser().send().notice("Please enter a valid username!");
-			}
-			return user;
-		}
-	}
-
-	public static String getAccount(String u, GenericMessageEvent event) {
-		String user = null;
-		if (IRCBot.authed.containsKey(u)) {
-			return IRCBot.authed.get(u);
-		} else {
-			event.getBot().sendRaw().rawLineNow("WHOIS " + u);
-			WaitForQueue waitForQueue = new WaitForQueue(event.getBot());
-			WhoisEvent test;
-			try {
-				test = waitForQueue.waitFor(WhoisEvent.class);
-				waitForQueue.close();
-				user = test.getRegisteredAs();
-			} catch (InterruptedException ex) {
-				event.getUser().send().notice("Please enter a valid username!");
-			}
-			return user;
-		}
-	}
-
 	private String chan;
 
 	@Override
@@ -109,22 +66,19 @@ public class IPoints extends AbstractListener {
 							return;
 						}
 
-						if (getAccount(recipient, event) != null) {
-							recipient = getAccount(recipient, event);
+						if (Account.getAccount(recipient, event) != null) {
+							recipient = Account.getAccount(recipient, event);
 						}
 
 						getPoints.setString(1, recipient);
 						ResultSet points = getPoints.executeQuery();
 						if(points.next()){
-							//newPoints = points.getLong(1) + Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 							newPoints = points.getBigDecimal(1).add(new BigDecimal(splitMessage[0].replaceAll("[^\\.0123456789]","")));
 						} else {
-							//newPoints = Long.parseLong(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 							newPoints = new BigDecimal(splitMessage[0].replaceAll("[^\\.0123456789]",""));
 						}
 
 						addPoints.setString(1, recipient);
-						//addPoints.setDouble(2, newPoints);
 						addPoints.setBigDecimal(2, newPoints);
 						addPoints.executeUpdate();
 
@@ -152,8 +106,8 @@ public class IPoints extends AbstractListener {
 				user = splitMessage[1];
 			}
 
-			if (getAccount(user, event) != null) {
-				user = getAccount(user, event);
+			if (Account.getAccount(user, event) != null) {
+				user = Account.getAccount(user, event);
 			}
 
 			PreparedStatement getPoints = null;

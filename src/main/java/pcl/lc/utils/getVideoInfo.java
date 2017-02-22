@@ -1,19 +1,13 @@
 package pcl.lc.utils;
 
-import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.time.ZonedDateTime;
 
-import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.pircbotx.Colors;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.google.api.client.http.HttpRequest;

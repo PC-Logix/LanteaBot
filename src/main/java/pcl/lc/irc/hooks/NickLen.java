@@ -5,8 +5,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
-
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -18,6 +16,7 @@ import com.google.common.collect.ImmutableSortedSet;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 
 public class NickLen extends ListenerAdapter {
@@ -72,7 +71,7 @@ public class NickLen extends ListenerAdapter {
 		String[] firstWord = StringUtils.split(trigger);
 		String triggerWord2 = firstWord[0];
 		if (triggerWord2.equals(prefix + "nicklen")) {
-			boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+			boolean isOp = Account.isOp(event.getBot(), event.getUser());
 			if (isOp || Helper.isChannelOp(event)) {
 				String command = event.getMessage().substring(event.getMessage().indexOf("nicklen") + 7).trim();
 				if (command.equals("disable")) {

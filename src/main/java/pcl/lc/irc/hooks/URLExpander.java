@@ -23,6 +23,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.HTTPQuery;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TitleExtractor;
@@ -83,7 +84,7 @@ public class URLExpander extends ListenerAdapter {
 				String[] firstWord = StringUtils.split(trigger2);
 				String triggerWord2 = firstWord[0];
 				if (triggerWord2.equals(prefix + "url")) {
-					boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+					boolean isOp = Account.isOp(event.getBot(), event.getUser());
 					if (isOp  || Helper.isChannelOp(event)) {
 						String command = event.getMessage().substring(event.getMessage().indexOf("url") + 3).trim();
 						if (command.equals("enable")) {

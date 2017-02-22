@@ -4,13 +4,9 @@ import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.PircBotX;
-import org.pircbotx.User;
-import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
@@ -59,7 +55,6 @@ public class Tell extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-        PircBotX bot = event.getBot();
         String sender = nick;
         if (command.equals(Config.commandprefix + "tell")) {
 			if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
@@ -75,7 +70,6 @@ public class Tell extends AbstractListener {
     			}
         		message = message.trim();
                 PreparedStatement addTell = IRCBot.getInstance().getPreparedStatement("addTell");
-                String[] splitMessage = message.split(" ");
                 if (copyOfRange.length == 0) {
                 	event.getBot().sendIRC().message(dest, sender + ": " + "Who did you want to tell?");
                     return;

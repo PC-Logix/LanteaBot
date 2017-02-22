@@ -1,7 +1,9 @@
 package pcl.lc.irc.hooks;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import org.pircbotx.User;
-import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ActionEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
@@ -9,9 +11,6 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 //Author: smbarbour
 

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.PreparedStatement;
@@ -24,6 +23,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;
@@ -158,7 +158,7 @@ public class xkcd extends AbstractListener {
 				target = chan;
 			}
 			if (command.equalsIgnoreCase(Config.commandprefix + "xkcd")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp || chanOp) {
 					Boolean action = Helper.toggleCommand("XKCD", chan, copyOfRange[0]);
 					if (action) {

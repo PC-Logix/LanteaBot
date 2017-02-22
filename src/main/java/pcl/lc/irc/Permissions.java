@@ -2,32 +2,17 @@ package pcl.lc.irc;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.TimeZone;
 
-import org.pircbotx.Channel;
 import org.pircbotx.User;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.utils.Account;
 
 public class Permissions {
-	public static User getUserFromString(String user, MessageEvent event){
-		Channel chan = event.getChannel();
-		Iterator<User> it = chan.getUsers().iterator();
-		while (it.hasNext()) {
-			User userInfo = it.next();
-			String userName = userInfo.getNick();
-			if (userName.equals(user)) {
-				return userInfo;
-			}
-		}
-		return null;
-	}
+
 
 	public static int getPermLevel(User u, MessageEvent event) {
 		String NSAccount = Account.getAccount(u, event);
@@ -49,7 +34,7 @@ public class Permissions {
 	}
 
 	public static boolean setPermLevel(String user, MessageEvent event, int level) {
-		User u = getUserFromString(user, event);
+		User u = Account.getUserFromString(user, event);
 		if (u == null) {
 			return false;
 		}

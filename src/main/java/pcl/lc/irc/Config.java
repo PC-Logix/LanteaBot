@@ -9,8 +9,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import org.pircbotx.Configuration;
 import org.pircbotx.UtilSSLSocketFactory;
 import org.pircbotx.Configuration.Builder;
@@ -74,7 +72,7 @@ public class Config {
 			File file = new File("config.properties");
 			if (!file.exists()) {
 				System.out.println("Config file missing, edit config.default, and rename to config.properties");
-				file.createNewFile();
+				System.exit(1);
 			}
 		    final Version VERSION = new Version(
 		            "@versionMajor@",
@@ -132,37 +130,6 @@ public class Config {
 
 			if (!Config.googleAPI.isEmpty())
 				GoogleSearch.setup(Config.googleAPI);
-			
-/*			if (!Config.channels.isEmpty()) {
-				if (Config.channels.contains(",")) {
-					String[] joinChannels = Config.channels.split(",");
-					for (String s: joinChannels)
-					{
-						Config.config.addAutoJoinChannel(s);
-						IRCBot.log.fine(s);
-						System.out.println(s);
-					}
-				} else {
-					Config.config.addAutoJoinChannel(Config.channels);
-				}
-			}*/
-
-			if (!Config.adminProps.isEmpty()) {
-				String[] pairs = Config.adminProps.split(",");
-				for (int i=0;i<pairs.length;i++) {
-					String pair = pairs[i];
-					String[] keyValue = pair.split(":");
-					IRCBot.admins.put(keyValue[0], Integer.valueOf(keyValue[1]));
-				}
-			}
-
-			if (!Config.ignoredUsersProp.isEmpty()) {
-				String[] pairs = Config.ignoredUsersProp.split(",");
-				for (int i=0;i<pairs.length;i++) {
-					String pair = pairs[i];
-					IRCBot.ignoredUsers.add(pair);
-				}
-			}
 
 			Config.config.addCapHandler(new EnableCapHandler("extended-join", true));
 			Config.config.addCapHandler(new EnableCapHandler("account-notify", true));
@@ -176,9 +143,6 @@ public class Config {
 				Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString());
 			}
 
-
-
-			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -193,22 +157,18 @@ public class Config {
 	}
 
 	public static String getTwitCKey() {
-		// TODO Auto-generated method stub
 		return TwitCKey;
 	}
 
 	public static String getTwitCSecret() {
-		// TODO Auto-generated method stub
 		return TwitCSecret;
 	}
 
 	public static String getTwitToken() {
-		// TODO Auto-generated method stub
 		return TwitToken;
 	}
 
 	public static String getTwitTSecret() {
-		// TODO Auto-generated method stub
 		return TwitTSecret;
 	}
 

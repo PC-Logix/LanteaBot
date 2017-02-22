@@ -10,6 +10,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 
 public class PermissionsHook extends AbstractListener {
@@ -24,11 +25,11 @@ public class PermissionsHook extends AbstractListener {
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
-		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+		boolean isOp = Account.isOp(event.getBot(), event.getUser());
 		boolean chanOp = Helper.isChannelOp(event);
 		if (command.equals(prefix + "addperm")) {
 			if (isOp || chanOp) {
-				if (event.getChannel().getUsers().contains(Permissions.getUserFromString(args[0], event))) {
+				if (event.getChannel().getUsers().contains(Account.getUserFromString(args[0], event))) {
 					Boolean addPerm = Permissions.setPermLevel(args[0], event, Integer.parseInt(args[1]));
 					event.respond(addPerm.toString());
 				} else {

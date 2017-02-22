@@ -7,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,11 +16,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.pircbotx.PircBotX;
-import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
-import org.pircbotx.hooks.WaitForQueue;
-import org.pircbotx.hooks.events.WhoisEvent;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -37,7 +32,7 @@ public class IRCBot {
 	private Connection connection = null;
 	private final Map<String, PreparedStatement> preparedStatements = new HashMap<>();
 	public static IRCBot instance;
-
+	public static boolean isDebug;
 	//public static TimedHashMap messages = new TimedHashMap(600000, null );
 	private static final int MAX_MESSAGES = 150;
 	public static LinkedHashMap<UUID, List<String>> messages = new LinkedHashMap<UUID, List<String>>(MAX_MESSAGES + 1, .75F, false) {
@@ -57,9 +52,7 @@ public class IRCBot {
 	public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 	public static String ournick = null;
 	private final Scanner scanner;
-	public static Map<UUID,ExpiringToken> userCache = new HashMap<>();
 
-	//public static Logger log = Logger.getLogger("lanteabot");
 	public static final Logger log = LoggerFactory.getLogger(IRCBot.class);
 
 	public static PircBotX bot;
@@ -83,7 +76,6 @@ public class IRCBot {
 		return ournick;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static HashMap<String, String> commands = new HashMap<String, String>();
 	public static HashMap<String, String> helpList = new HashMap<String, String>();
 	/**
@@ -347,57 +339,8 @@ public class IRCBot {
 		return ops;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public boolean isOp(PircBotX sourceBot, User user) {
-		String nsRegistration = "";
-		if (userCache.containsKey(user.getUserId()) && userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
-			nsRegistration = userCache.get(user.getUserId()).getValue();
-			log.debug(user.getNick() + " is cached");
-		} else {
-			log.debug(user.getNick() + " is NOT cached");
-			user.isVerified();
-			try {
-				sourceBot.sendRaw().rawLine("WHOIS " + user.getNick() + " " + user.getNick());
-				WaitForQueue waitForQueue = new WaitForQueue(sourceBot);
-				WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
-				waitForQueue.close();
-				if (whoisEvent.getRegisteredAs() != null) {
-					nsRegistration = whoisEvent.getRegisteredAs();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			if (!nsRegistration.isEmpty()) {
-				Calendar future = Calendar.getInstance();
-				future.add(Calendar.MINUTE,5);
-				userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
-				log.debug(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
-			}
-		}
-		if (getOps().contains(nsRegistration)) {
-			return true;
-		} else {
-			return false;
-		}
-	}  
-
-	private class ExpiringToken
-	{
-		private final Date expiration;
-		private final String value;
-
-		private ExpiringToken(Date expiration, String value) {
-			this.expiration = expiration;
-			this.value = value;
-		}
-
-		public Date getExpiration() {
-			return expiration;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
+	public static void setDebug(boolean b) {
+		isDebug = b;
 	}
+
 }

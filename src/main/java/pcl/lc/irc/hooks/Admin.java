@@ -13,10 +13,9 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
-import org.pircbotx.hooks.WaitForQueue;
-
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.FormatUtils;
 
 import org.pircbotx.hooks.events.*;
@@ -116,7 +115,7 @@ public class Admin extends ListenerAdapter {
 			String lowerNick = IRCBot.ournick.toLowerCase();
 			
 			if (splitMessage[0].equals(Config.commandprefix + "addadmin")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					try {
 						String newOpNick = splitMessage[1];
@@ -125,12 +124,7 @@ public class Admin extends ListenerAdapter {
 							bot.sendIRC().notice(sender, "User " + newOpNick + " is not a registered user.");
 							return;
 						}
-						String nsRegistration;
-						bot.sendRaw().rawLine("WHOIS " + newOpNick + " " + newOpNick);
-						WaitForQueue waitForQueue = new WaitForQueue(bot);
-						WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
-						waitForQueue.close();
-						nsRegistration = whoisEvent.getRegisteredAs();
+						String nsRegistration = Account.getAccount(newOpNick, event);
 						IRCBot.getInstance().getOps().add(nsRegistration);
 						PreparedStatement addOp = IRCBot.getInstance().getPreparedStatement("addOp");
 						addOp.setString(1, nsRegistration);
@@ -164,7 +158,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "listadmins")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					event.respond("DEPERECATED! Current admins: " + IRCBot.admins.toString());
 				}
@@ -200,7 +194,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "prefix")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					String newPrefix = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					Config.prop.setProperty("commandprefix", newPrefix);
@@ -211,7 +205,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "join")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					try {
 						String newChannel = splitMessage[1];
@@ -230,7 +224,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "part")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp || event.getChannel().isOp(event.getUser())) {
 					try {
 						String oldChannel = splitMessage[1];
@@ -249,7 +243,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "shutdown")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					if(!Config.httpdport.isEmpty()) {
 						//TODO: Fix httpd stop
@@ -262,24 +256,24 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "test")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					event.respond("Success");
 				}
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "restart")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					restart();
 				}
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "flushauth")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					IRCBot.authed.clear();
-					IRCBot.userCache.clear();
+					Account.userCache.clear();
 					/*for(Channel chan : event.getBot().getUserBot().getChannels()) {
 						IRCBot.bot.sendRaw().rawLineNow("who " + chan.getName() + " %an");
 					}*/
@@ -288,7 +282,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "ram")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					Runtime rt = Runtime.getRuntime();
 					long m0 = rt.totalMemory() - rt.freeMemory();
@@ -297,7 +291,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "flushhash")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					IRCBot.messages.clear();
 					event.respond("Hashmap size: " + IRCBot.messages.size());
@@ -305,14 +299,14 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "charset")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					event.respond("Default Charset=" + Charset.defaultCharset());
 				}
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "cycle")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					String channel = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					if (channel.isEmpty()) {
@@ -323,7 +317,7 @@ public class Admin extends ListenerAdapter {
 				}
 			}
 			if (triggerWord.equals(Config.commandprefix + "raw")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					String string = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length());
 					event.getBot().sendRaw().rawLine(string);
@@ -331,7 +325,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if (triggerWord.equals(Config.commandprefix + "chgnick")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					String nick = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					event.getBot().sendRaw().rawLineNow("NICK " + nick);
@@ -340,7 +334,7 @@ public class Admin extends ListenerAdapter {
 
 			if (triggerWord.equals(Config.commandprefix + "load")) {
 
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp) {
 					String module = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					try {
@@ -353,7 +347,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if(triggerWord.equals(Config.commandprefix + "ignore")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp || event.getChannel().isOp(event.getUser())) {
 					String nick = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					IRCBot.ignoredUsers.add(nick);
@@ -363,7 +357,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if(triggerWord.equals(Config.commandprefix + "unignore")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp || event.getChannel().isOp(event.getUser())) {
 					String nick = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();
 					IRCBot.ignoredUsers.remove(nick);
@@ -373,7 +367,7 @@ public class Admin extends ListenerAdapter {
 			}
 
 			if(triggerWord.equals(Config.commandprefix + "ignorelist")) {
-				boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+				boolean isOp = Account.isOp(event.getBot(), event.getUser());
 				if (isOp || event.getChannel().isOp(event.getUser())) {
 					event.respond("Ignored Users: " + IRCBot.ignoredUsers.toString());			
 				}

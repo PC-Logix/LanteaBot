@@ -22,6 +22,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.utils.Account;
 import pcl.lc.utils.CommentedProperties;
 
 
@@ -107,7 +108,7 @@ public class Announcements extends ListenerAdapter implements Runnable {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 		permLevel = Permissions.getPermLevel(event.getUser() ,event);
-		boolean isOp = IRCBot.getInstance().isOp(event.getBot(), event.getUser());
+		boolean isOp = Account.isOp(event.getBot(), event.getUser());
 		if (isOp || chanOp || permLevel >= requiredPermLevel) {
 			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase();
