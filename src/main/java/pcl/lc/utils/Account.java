@@ -1,6 +1,5 @@
 package pcl.lc.utils;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -167,7 +166,6 @@ public class Account {
 	}
 	
 	@Deprecated
-	@SuppressWarnings("rawtypes")
 	public static boolean isOp(PircBotX sourceBot, User user) {
 		return Permissions.isOp(sourceBot, user);
 	}  

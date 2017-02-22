@@ -33,7 +33,6 @@ public class dice extends AbstractListener {
 		}
 	}
 
-	@SuppressWarnings("Duplicates")
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix + "roll")) {

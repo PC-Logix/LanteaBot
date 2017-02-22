@@ -185,7 +185,6 @@ public class Inventory extends AbstractListener {
 		}
 	}
 
-	@SuppressWarnings("Duplicates")
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix + "inventory") || command.equals(Config.commandprefix + "inv")) {

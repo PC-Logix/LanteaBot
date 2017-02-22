@@ -345,7 +345,6 @@ public class IRCBot {
 	}
 
 	@Deprecated
-	@SuppressWarnings("rawtypes")
 	public static boolean isOp(PircBotX sourceBot, User user) {
 		return Permissions.isOp(sourceBot, user);
 	}  
