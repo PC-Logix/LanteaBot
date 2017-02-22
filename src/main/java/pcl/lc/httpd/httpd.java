@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import pcl.lc.irc.Config;
+import pcl.lc.irc.IRCBot;
 
 @SuppressWarnings("restriction")
 public class httpd {
@@ -24,8 +25,11 @@ public class httpd {
     
 	public static void start() throws Exception {
 		if(server != null) {
+			IRCBot.log.info("Starting HTTPD On port " + Config.httpdport);
 			server.setExecutor(null); // creates a default executor
 	        server.start();
+		} else {
+			IRCBot.log.error("httpd server was null!");
 		}
     }
 }
