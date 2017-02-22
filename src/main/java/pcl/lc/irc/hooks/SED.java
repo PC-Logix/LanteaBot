@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 
@@ -100,7 +101,7 @@ public class SED extends ListenerAdapter {
 					String[] firstWord = StringUtils.split(trigger2);
 					String triggerWord2 = firstWord[0];
 					if (triggerWord2.equals(prefix + "sed")) {
-						boolean isOp = Account.isOp(event.getBot(), event.getUser());
+						boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 						if (isOp || Helper.isChannelOp(event)) {
 							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {

@@ -15,6 +15,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 import twitter4j.Status;
@@ -77,7 +78,7 @@ public class Twitter extends ListenerAdapter {
 					String triggerWord = firstWord[0];
 					String param = event.getMessage().substring(event.getMessage().indexOf(triggerWord) + triggerWord.length()).trim();		
 					if (triggerWord.equals(prefix + "twitter")) {
-						boolean isOp = Account.isOp(event.getBot(), event.getUser());
+						boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 						if (isOp || Helper.isChannelOp(event)) {
 							if (param.equals("enable") && !enabledChannels.contains(event.getChannel().getName())) {
 								try {

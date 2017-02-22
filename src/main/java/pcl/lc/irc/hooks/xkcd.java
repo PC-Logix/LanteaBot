@@ -158,7 +158,7 @@ public class xkcd extends AbstractListener {
 				target = chan;
 			}
 			if (command.equalsIgnoreCase(Config.commandprefix + "xkcd")) {
-				boolean isOp = Account.isOp(event.getBot(), event.getUser());
+				boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 				if (isOp || chanOp) {
 					Boolean action = Helper.toggleCommand("XKCD", chan, copyOfRange[0]);
 					if (action) {

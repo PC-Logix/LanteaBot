@@ -3,13 +3,18 @@ package pcl.lc.irc;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
+import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.WhoisEvent;
 
 import pcl.lc.utils.Account;
+import pcl.lc.utils.Account.ExpiringToken;
 
 public class Permissions {
 
@@ -55,6 +60,39 @@ public class Permissions {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static boolean isOp(PircBotX sourceBot, User user) {
+		String nsRegistration = "";
+		if (Account.userCache.containsKey(user.getUserId()) && Account.userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
+			nsRegistration = Account.userCache.get(user.getUserId()).getValue();
+			IRCBot.log.debug(user.getNick() + " is cached");
+		} else {
+			IRCBot.log.debug(user.getNick() + " is NOT cached");
+			user.isVerified();
+			try {
+				sourceBot.sendRaw().rawLine("WHOIS " + user.getNick() + " " + user.getNick());
+				WaitForQueue waitForQueue = new WaitForQueue(sourceBot);
+				WhoisEvent whoisEvent = waitForQueue.waitFor(WhoisEvent.class);
+				waitForQueue.close();
+				if (whoisEvent.getRegisteredAs() != null) {
+					nsRegistration = whoisEvent.getRegisteredAs();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (!nsRegistration.isEmpty()) {
+				Calendar future = Calendar.getInstance();
+				future.add(Calendar.MINUTE,10);
+				Account.userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
+				IRCBot.log.debug(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
+			}
+		}
+		if (IRCBot.instance.getOps().contains(nsRegistration)) {
+			return true;
+		} else {
 			return false;
 		}
 	}

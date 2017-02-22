@@ -13,6 +13,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 
@@ -54,7 +55,7 @@ public class DynamicCommands extends AbstractListener {
 					String[] message = event.getMessage().split(" ", 3);
 
 					if (command.equals(prefix + "addcommand")) {
-						boolean isOp = Account.isOp(event.getBot(), event.getUser());
+						boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 						if (isOp || Helper.isChannelOp(event)) {
 							try {
 								PreparedStatement addCommand = IRCBot.getInstance().getPreparedStatement("addCommand");
@@ -73,7 +74,7 @@ public class DynamicCommands extends AbstractListener {
 							}
 						}
 					} else if (command.equals(prefix + "delcommand")) {
-						boolean isOp = Account.isOp(event.getBot(), event.getUser());
+						boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 						if (isOp || Helper.isChannelOp(event)) {
 							try {
 								PreparedStatement delCommand = IRCBot.getInstance().getPreparedStatement("delCommand");

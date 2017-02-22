@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.pircbotx.PircBotX;
+import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.reflections.Reflections;
@@ -343,4 +344,10 @@ public class IRCBot {
 		isDebug = b;
 	}
 
+	@Deprecated
+	@SuppressWarnings("rawtypes")
+	public static boolean isOp(PircBotX sourceBot, User user) {
+		return Permissions.isOp(sourceBot, user);
+	}  
+	
 }

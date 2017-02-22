@@ -25,7 +25,7 @@ public class PermissionsHook extends AbstractListener {
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		String prefix = Config.commandprefix;
-		boolean isOp = Account.isOp(event.getBot(), event.getUser());
+		boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 		boolean chanOp = Helper.isChannelOp(event);
 		if (command.equals(prefix + "addperm")) {
 			if (isOp || chanOp) {

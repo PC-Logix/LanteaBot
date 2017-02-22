@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableSortedSet;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Helper;
 
@@ -71,7 +72,7 @@ public class NickLen extends ListenerAdapter {
 		String[] firstWord = StringUtils.split(trigger);
 		String triggerWord2 = firstWord[0];
 		if (triggerWord2.equals(prefix + "nicklen")) {
-			boolean isOp = Account.isOp(event.getBot(), event.getUser());
+			boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 			if (isOp || Helper.isChannelOp(event)) {
 				String command = event.getMessage().substring(event.getMessage().indexOf("nicklen") + 7).trim();
 				if (command.equals("disable")) {
