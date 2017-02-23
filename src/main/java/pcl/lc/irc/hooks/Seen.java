@@ -10,6 +10,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 
 //Author: smbarbour
@@ -58,6 +59,13 @@ public class Seen extends AbstractListener {
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("seen", "Tells you the last time a user was active.  Active means they sent a message");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
+		Database.addPreparedStatement("updateLastSeen","REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);");
+		Database.addPreparedStatement("getLastSeen","SELECT timestamp FROM LastSeen WHERE LOWER(user) = ? GROUP BY LOWER(user) ORDER BY timestamp desc");
+		Database.addPreparedStatement("updateInfo","REPLACE INTO Info(key, data) VALUES (?, ?);");
+		Database.addPreparedStatement("getInfo","SELECT data FROM Info WHERE key = ?;");
+		Database.addPreparedStatement("getInfoAll","SELECT key, data FROM Info;");
+		Database.addPreparedStatement("removeInfo","DELETE FROM Info WHERE key = ?;");
 	}
 
 	@Override

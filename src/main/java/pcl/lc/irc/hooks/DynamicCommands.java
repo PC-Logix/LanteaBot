@@ -12,6 +12,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Helper;
@@ -26,6 +27,11 @@ public class DynamicCommands extends AbstractListener {
 	protected void initCommands() {
 		IRCBot.registerCommand("addcommand", "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		IRCBot.registerCommand("delcommand", "Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return)");
+		Database.addPreparedStatement("addCommand", "INSERT INTO Commands(command, return) VALUES (?, ?);");
+		Database.addPreparedStatement("searchCommands", "SELECT command FROM Commands");
+		Database.addPreparedStatement("getCommand", "SELECT return FROM Commands WHERE command = ?");
+		Database.addPreparedStatement("delCommand","DELETE FROM Commands WHERE command = ?;");
 		try {
 			PreparedStatement searchCommands = IRCBot.getInstance().getPreparedStatement("searchCommands");
 			ResultSet commands = searchCommands.executeQuery();

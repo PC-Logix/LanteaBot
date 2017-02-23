@@ -18,11 +18,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 
@@ -36,6 +38,16 @@ public class Quotes extends AbstractListener {
 		IRCBot.registerCommand("quote", "Returns quotes from the quote database");
 		IRCBot.registerCommand("delquote", "Removes a quote from the database (Requires BotAdmin, or Channel Op");
 		IRCBot.registerCommand("listquotes", "Returns list of ids for quotes belonging to user as well as their total quote count");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
+		Database.addPreparedStatement("addQuote","INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+		Database.addPreparedStatement("getUserQuote","SELECT id, data FROM Quotes WHERE LOWER(user) = ? ORDER BY RANDOM () LIMIT 1;");
+		Database.addPreparedStatement("getIdQuote","SELECT user, data FROM Quotes WHERE id = ? LIMIT 1;");
+		Database.addPreparedStatement("getUserQuoteAll","SELECT id, data FROM Quotes WHERE LOWER(user) = ?;");
+		Database.addPreparedStatement("getAnyQuote","SELECT id, user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;");
+		Database.addPreparedStatement("getAllQuotes","SELECT id, user, data FROM Quotes;");
+		Database.addPreparedStatement("getSpecificQuote","SELECT id, data FROM Quotes WHERE user = ? AND data = ?;");
+		Database.addPreparedStatement("removeQuote","DELETE FROM Quotes WHERE id = ?;");
+
 	}
 
 	static class QuoteHandler implements HttpHandler {

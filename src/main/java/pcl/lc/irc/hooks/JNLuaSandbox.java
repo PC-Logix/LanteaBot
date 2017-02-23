@@ -27,11 +27,15 @@ public class JNLuaSandbox extends AbstractListener {
 	private StringBuilder output;
 
 	private String luasb;
+	private String selene;
 
 	public JNLuaSandbox() throws IOException {
 		super();
 		InputStream luain = getClass().getResourceAsStream("/jnlua/luasb.lua");
 		luasb = CharStreams.toString(new InputStreamReader(luain, Charsets.UTF_8));
+
+		InputStream selenein = getClass().getResourceAsStream("/jnlua/selene/init.lua");
+		selene = CharStreams.toString(new InputStreamReader(selenein, Charsets.UTF_8));
 
 		initLua();
 		IRCBot.registerCommand("lua", "Lua sandbox");
@@ -74,6 +78,7 @@ public class JNLuaSandbox extends AbstractListener {
 		luaState.openLib(Library.BIT32);
 		luaState.openLib(Library.MATH);
 		luaState.openLib(Library.OS);
+		luaState.openLib(Library.PACKAGE);
 		luaState.openLib(Library.DEBUG);
 		luaState.setTop(0); // Remove tables from loaded libraries
 		luaState.pushJavaFunction(new JavaFunction() {
@@ -85,7 +90,9 @@ public class JNLuaSandbox extends AbstractListener {
 			}
 		});
 		luaState.setGlobal("print");
-
+		
+		//THIS LINE DIES
+		luaState.load(selene, "=selene");
 		luaState.load(luasb, "=luasb");
 		luaState.call(0, 0);
 	}

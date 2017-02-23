@@ -13,6 +13,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 
 //Author: smbarbour
@@ -44,6 +45,10 @@ public class Tell extends AbstractListener {
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("tell", "Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Tells(id, sender, rcpt, channel, message, time)");
+		Database.addPreparedStatement("addTell","INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);");
+		Database.addPreparedStatement("getTells","SELECT rowid, sender, channel, message FROM Tells WHERE LOWER(rcpt) = ?;");
+		Database.addPreparedStatement("removeTells","DELETE FROM Tells WHERE LOWER(rcpt) = ?;");
 	}
 
 	@Override

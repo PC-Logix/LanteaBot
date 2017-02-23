@@ -16,6 +16,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 
 public class Reminders extends AbstractListener {
@@ -29,6 +30,11 @@ public class Reminders extends AbstractListener {
 		IRCBot.registerCommand("remind", "Syntax: " + Config.commandprefix + "remind [time] [message] Ex: \"" + Config.commandprefix + "remindme 1h20m check your food!\" Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 		IRCBot.registerCommand("remindme", "Syntax: " + Config.commandprefix + "remindme [time] [message] Ex: \"" + Config.commandprefix + "remindme 1h20m check your food!\" Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 		IRCBot.registerCommand("reminders", "Gives you a list of your reminders");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Reminders(dest, nick, time, message)");
+		Database.addPreparedStatement("addReminder", "INSERT INTO Reminders(dest, nick, time, message) VALUES (?,?,?,?);");
+		Database.addPreparedStatement("getReminder", "SELECT dest, nick, time, message FROM Reminders WHERE time <= ?;");
+		Database.addPreparedStatement("listReminders", "SELECT dest, nick, time, message FROM Reminders WHERE nick = ?;");
+		Database.addPreparedStatement("delReminder", "DELETE FROM Reminders WHERE time = ? AND nick = ?;");
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 		ses.scheduleAtFixedRate(new Runnable() {
 		    @Override

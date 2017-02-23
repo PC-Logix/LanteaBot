@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
@@ -53,7 +54,7 @@ public class Stab extends AbstractListener {
 			}
 			try
 			{
-				PreparedStatement statement = IRCBot.getInstance().getPreparedStatement("getRandomItemNonFavourite");
+				PreparedStatement statement = Database.getPreparedStatement("getRandomItemNonFavourite");
 				ResultSet resultSet = statement.executeQuery();
 
 				String item = "";
@@ -78,14 +79,14 @@ public class Stab extends AbstractListener {
 				String dust = "";
 				if (s != "" && uses != null && uses > 1)
 				{
-					statement = IRCBot.getInstance().getPreparedStatement("decrementUses");
+					statement = Database.getPreparedStatement("decrementUses");
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Decrement uses for item " + id);
 				}
 				else if (s != "" && uses != null)
 				{
-					statement = IRCBot.getInstance().getPreparedStatement("removeItemId");
+					statement = Database.getPreparedStatement("removeItemId");
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
@@ -95,7 +96,7 @@ public class Stab extends AbstractListener {
 				ArrayList<String> actions = new ArrayList<>();
 				actions.add("stabs");
 				actions.add("hits");
-				actions.add("slaps");
+				actions.add(Helper.antiPing("slaps"));
 
 				int action = Helper.getRandomInt(0, actions.size() - 1);
 				System.out.println("Action: " + action);

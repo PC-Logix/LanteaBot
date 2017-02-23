@@ -8,6 +8,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
@@ -172,6 +173,17 @@ public class Inventory extends AbstractListener {
 	@Override
 	protected void initCommands() {
 		IRCBot.registerCommand("inventory", "Interact with the bots inventory");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
+		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite FROM Inventory;");
+		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left FROM Inventory WHERE id = ?;");
+		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;");
+		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite FROM Inventory ORDER BY Random() LIMIT 1");
+		Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
+		Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, is_favourite) VALUES (NULL, ?, ?)");
+		Database.addPreparedStatement("removeItemId", "DELETE FROM Inventory WHERE id = ?");
+		Database.addPreparedStatement("removeItemName", "DELETE FROM Inventory WHERE item_name = ?");
+		Database.addPreparedStatement("decrementUses", "UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?");
+		Database.addPreparedStatement("clearFavourite", "UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1");
 	}
 
 	public String dest;

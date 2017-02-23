@@ -2,12 +2,14 @@ package pcl.lc.irc.hooks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Account;
@@ -20,6 +22,14 @@ public class PermissionsHook extends AbstractListener {
 		IRCBot.registerCommand("addperm", "Adds a permission level to the given user for the current channel");
 		IRCBot.registerCommand("delperm", "Removes the permission level from a user for the current channel");
 		IRCBot.registerCommand("listperms", "");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Ops(name, level)");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Permissions(username, channel, level, addedby, addedon)");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");		Database.addPreparedStatement("removeOp","DELETE FROM Ops WHERE name = ?;");
+		Database.addPreparedStatement("addOp","REPLACE INTO Ops (name) VALUES (?);");
+		Database.addPreparedStatement("setPermLevel", "INSERT INTO Permissions VALUES(?, ?, ?, ?, ?)");
+		Database.addPreparedStatement("getUserPerms", "SELECT level FROM Permissions WHERE username = ? AND channel = ?");
+		Database.addPreparedStatement("getAllUserPerms", "SELECT * FROM Permissions");
+		Database.addPreparedStatement("deleteUserPerm", "DELETE FROM Permissions WHERE username = ?");
 	}
 
 	@Override
