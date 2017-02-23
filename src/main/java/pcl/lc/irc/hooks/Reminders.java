@@ -18,6 +18,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 public class Reminders extends AbstractListener {
 
@@ -41,7 +42,7 @@ public class Reminders extends AbstractListener {
 		    public void run() {
 				try {
 					long epoch = System.currentTimeMillis();
-					PreparedStatement getReminder = IRCBot.getInstance().getPreparedStatement("getReminder");
+					PreparedStatement getReminder = Database.getPreparedStatement("getReminder");
 					getReminder.setLong(1, epoch);
 					ResultSet results = getReminder.executeQuery();
 					if (results.next()) {
@@ -50,7 +51,7 @@ public class Reminders extends AbstractListener {
 						} else {
 							IRCBot.getInstance().sendMessage(results.getString(1), "REMINDER " + results.getString(2) + " " + results.getString(4));
 						}
-						PreparedStatement delReminder = IRCBot.getInstance().getPreparedStatement("delReminder");
+						PreparedStatement delReminder = Database.getPreparedStatement("delReminder");
 						delReminder.setLong(1, results.getLong(3));
 						delReminder.setString(2, results.getString(2));
 						delReminder.execute();
@@ -87,7 +88,7 @@ public class Reminders extends AbstractListener {
 				message = message + " " + copyOfRange[i];
 			}
 
-			long time = addReminder(dest, copyOfRange[0], message);
+			long time = Helper.getFutureTime(copyOfRange[0]);
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 			String newTime = sdf.format(new Date(time));
 			String target = null;
@@ -139,21 +140,6 @@ public class Reminders extends AbstractListener {
 		}
 	}
 
-	public long addReminder(String dest, String time, String message) {
-		PeriodFormatter formatter = new PeriodFormatterBuilder()
-				.appendWeeks().appendSuffix("w")
-				.appendDays().appendSuffix("d")
-				.appendHours().appendSuffix("h")
-				.appendMinutes().appendSuffix("m")
-				.appendSeconds().appendSuffix("s")
-				.toFormatter();
-
-		Period p = formatter.parsePeriod(time);
-		long millis = p.toStandardDuration().getMillis();
-		//long millis = p.normalizedStandard(p.getPeriodType()).getMillis();
-		long epoch = System.currentTimeMillis();
-		return(millis + epoch);
-	}
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
 		// TODO Auto-generated method stub

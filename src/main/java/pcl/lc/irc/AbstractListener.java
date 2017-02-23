@@ -18,6 +18,9 @@ public abstract class AbstractListener extends ListenerAdapter
 		initCommands();
 	}
 
+	/**
+	 * Called when the class is loaded, initialize your commands and any Database stuff here
+	 */
 	protected abstract void initCommands();
 
 	public Map<String, String> getCommands() {

@@ -124,9 +124,14 @@ public class IRCBot {
 			log.error(e.getMessage());
 			return;
 		}
-		if (!initDatabase()) {
-			log.error("Database Failure!");
-			return;
+		try {
+			if (!initDatabase()) {
+				log.error("Database Failure!");
+				return;
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 		if(Config.httpdEnable.equals("true")) {
@@ -137,9 +142,6 @@ public class IRCBot {
 				e.printStackTrace();
 			}
 		}
-
-		loadOps();
-		loadChannels();
 		//Load all classes in the pcl.lc.irc.hooks package.
 		Reflections plugins = new Reflections("pcl.lc.irc.hooks");
 		Set<Class<? extends ListenerAdapter>> allClasses = plugins.getSubTypesOf(ListenerAdapter.class);
@@ -170,7 +172,8 @@ public class IRCBot {
 				e.printStackTrace();
 			}
 		}
-
+		loadOps();
+		loadChannels();
 		try {
 			if(!Config.botConfig.get("wikiWatcherURL").equals("")) {
 				WikiChangeWatcher WikiChange = new WikiChangeWatcher();
@@ -188,11 +191,11 @@ public class IRCBot {
 		}
 	}
 
-	private boolean initDatabase() {
+	private boolean initDatabase() throws SQLException {
+			Database.init();
 			Database.addStatement("CREATE TABLE IF NOT EXISTS Channels(name)");
 			Database.addStatement("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
 			Database.addStatement("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
-			Database.addStatement("CREATE TABLE IF NOT EXISTS TimedBans(username, hostmask, expires, placedby, reason)");
 			//Channels
 			Database.addPreparedStatement("addChannel", "REPLACE INTO Channels (name) VALUES (?);");
 			Database.addPreparedStatement("removeChannel","DELETE FROM Channels WHERE name = ?;");
@@ -209,7 +212,7 @@ public class IRCBot {
 
 	private void loadOps() {
 		try {
-			ResultSet readOps = connection.createStatement().executeQuery("SELECT name FROM ops;");
+			ResultSet readOps = Database.getConnection().createStatement().executeQuery("SELECT name FROM ops;");
 			int rowCount = 0;
 			while (readOps.next()) {
 				rowCount++;
@@ -230,7 +233,7 @@ public class IRCBot {
 
 	private void loadChannels() {
 		try {
-			ResultSet readChannels = connection.createStatement().executeQuery("SELECT name FROM channels;");
+			ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
 			int rowCount = 0;
 			while (readChannels.next()) {
 				rowCount++;

@@ -74,7 +74,7 @@ public class Tell extends AbstractListener {
     				message = message + " " + copyOfRange[i];
     			}
         		message = message.trim();
-                PreparedStatement addTell = IRCBot.getInstance().getPreparedStatement("addTell");
+                PreparedStatement addTell = Database.getPreparedStatement("addTell");
                 if (copyOfRange.length == 0) {
                 	event.getBot().sendIRC().message(dest, sender + ": " + "Who did you want to tell?");
                     return;

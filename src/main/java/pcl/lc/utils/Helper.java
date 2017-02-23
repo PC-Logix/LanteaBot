@@ -11,6 +11,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.IRCBot;
@@ -208,5 +211,22 @@ public class Helper {
 			return false;
 		}
 		return true;
+	}
+	
+
+	public static long getFutureTime(String time) {
+		PeriodFormatter formatter = new PeriodFormatterBuilder()
+				.appendWeeks().appendSuffix("w")
+				.appendDays().appendSuffix("d")
+				.appendHours().appendSuffix("h")
+				.appendMinutes().appendSuffix("m")
+				.appendSeconds().appendSuffix("s")
+				.toFormatter();
+
+		Period p = formatter.parsePeriod(time);
+		long millis = p.toStandardDuration().getMillis();
+		//long millis = p.normalizedStandard(p.getPeriodType()).getMillis();
+		long epoch = System.currentTimeMillis();
+		return(millis + epoch);
 	}
 }
