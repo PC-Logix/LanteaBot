@@ -74,21 +74,23 @@ public class Stab extends AbstractListener {
 					e.printStackTrace();
 				}
 
+				String s = message.trim();
+
 				String dust = "";
-				if (uses != null && uses > 1)
+				if (s != "" && uses != null && uses > 1)
 				{
 					statement = IRCBot.getInstance().getPreparedStatement("decrementUses");
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Decrement uses for item " + id);
 				}
-				else if (uses != null)
+				else if (s != "" && uses != null)
 				{
 					statement = IRCBot.getInstance().getPreparedStatement("removeItemId");
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
-					dust = ", the " + item.replace("a ", "").replace("A", "").replace("an ", "").replace("the ", "") + " crumbles to dust.";
+					dust = ", the " + item.replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " crumbles to dust.";
 				}
 
 				ArrayList<String> actions = new ArrayList<>();
@@ -99,8 +101,9 @@ public class Stab extends AbstractListener {
 				int action = Helper.getRandomInt(0, actions.size() - 1);
 				System.out.println("Action: " + action);
 
-				String s = message.trim();
-				if (!s.equals(IRCBot.ournick))
+				if (s == "")
+					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION flails at nothingness" + (!item.equals("") ? " with " : "") + item + "\u0001");
+				else if (!s.equals(IRCBot.ournick))
 					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION " + actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust + "\u0001");
 				else
 					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust + "\u0001");
