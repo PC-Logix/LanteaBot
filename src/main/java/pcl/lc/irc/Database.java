@@ -6,17 +6,39 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+class UpdateQuery {
+	private int minVersion;
+	private String updateQuery;
+
+	UpdateQuery(int minVersion, String updateQuery) {
+		this.minVersion = minVersion;
+		this.updateQuery = updateQuery;
+	}
+
+	int getMinVersion() {
+		return this.minVersion;
+	}
+
+	String getUpdateQuery() {
+		return updateQuery;
+	}
+}
 
 public class Database {
 	private static Connection connection;
 	/**
-	 * This is the database version that the bot expects the database to be at.
+	 * This is the highest value used in a Database.addUpdateQuery.
+	 * Update when adding new queries to make finding the highest value easier!
 	 */
-	public static int DB_VER = 1;
+	public static int DB_VER = 2;
 	public final static Map<String, PreparedStatement> preparedStatements = new HashMap<>();
 	static Statement statement;
+	public static List<UpdateQuery> updateQueries = new ArrayList<>();
 	
 	public static void init() throws SQLException {
 		connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
@@ -77,12 +99,42 @@ public class Database {
 	}
 	
 	public static int setDBVer(int dbVer) {
-		try {
-			int dbVerQuery = Database.getConnection().createStatement().executeUpdate("PRAGMA user_version = "+dbVer+";");
-			return dbVerQuery;
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (getDBVer() < dbVer) {
+			try {
+				return Database.getConnection().createStatement().executeUpdate("PRAGMA user_version = " + dbVer + ";");
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return 0;
+	}
+
+	/**
+	 * Remember to update Database.DB_VER to the highest version value! Refer to this when adding new calls to this method
+	 * @param minVersion int
+	 * @param sql String
+	 */
+	public static void addUpdateQuery(int minVersion, String sql) {
+		updateQueries.add(new UpdateQuery(minVersion, sql));
+	}
+
+	static void updateDatabase() {
+		int counter = 0;
+		int currentVer = getDBVer();
+		System.out.println("Updating database! Current version: " + currentVer);
+		for (UpdateQuery query : updateQueries) {
+			if (currentVer < query.getMinVersion()) {
+				try {
+					Database.getConnection().createStatement().executeUpdate(query.getUpdateQuery());
+					setDBVer(query.getMinVersion());
+					counter++;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println("Database update complete! New version: " + getDBVer());
+		System.out.println("Database update ran " + counter + " queries");
 	}
 }

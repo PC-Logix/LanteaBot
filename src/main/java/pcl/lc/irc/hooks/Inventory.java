@@ -54,7 +54,7 @@ public class Inventory extends AbstractListener {
 
 			try
 			{
-				removeItem = IRCBot.getInstance().getPreparedStatement("removeItemId");
+				removeItem = Database.getPreparedStatement("removeItemId");
 				removeItem.setString(1, id.toString());
 			}
 			catch (Exception e)
@@ -67,7 +67,7 @@ public class Inventory extends AbstractListener {
 		{
 			try
 			{
-				removeItem = IRCBot.getInstance().getPreparedStatement("removeItemName");
+				removeItem = Database.getPreparedStatement("removeItemName");
 				removeItem.setString(1, id_or_name);
 			}
 			catch (Exception ex)
@@ -87,12 +87,12 @@ public class Inventory extends AbstractListener {
 			{
 				if (id_is_string)
 				{
-					getItem = IRCBot.getInstance().getPreparedStatement("getItemByName");
+					getItem = Database.getPreparedStatement("getItemByName");
 					getItem.setString(1, id_or_name);
 				}
 				else if (id != null)
 				{
-					getItem = IRCBot.getInstance().getPreparedStatement("getItem");
+					getItem = Database.getPreparedStatement("getItem");
 					getItem.setInt(1, id);
 				}
 				else
@@ -174,6 +174,9 @@ public class Inventory extends AbstractListener {
 	protected void initHook() {
 		IRCBot.registerCommand("inventory", "Interact with the bots inventory");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
+		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
+		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added INT DEFAULT NULL NULL;");
+
 		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite FROM Inventory;");
 		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left FROM Inventory WHERE id = ?;");
 		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;");
@@ -185,8 +188,6 @@ public class Inventory extends AbstractListener {
 		Database.addPreparedStatement("decrementUses", "UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?");
 		Database.addPreparedStatement("clearFavourite", "UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1");
 	}
-
-	public String dest;
 
 	public String chan;
 	public String target = null;
@@ -230,18 +231,20 @@ public class Inventory extends AbstractListener {
 					int removeResult = removeItem(argument, true);
 					if (removeResult == 0)
 						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Removed item from inventory");
+					else if (removeResult == ERROR_NO_ROWS_RETURNED)
+						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "No such item");
 					else
 						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Wrong things happened! (" + removeResult + ")");
 					break;
 				case "list":
 					try
 					{
-						PreparedStatement statement = IRCBot.getInstance().getPreparedStatement("getItems");
+						PreparedStatement statement = Database.getPreparedStatement("getItems");
 						ResultSet resultSet = statement.executeQuery();
 						String items = "";
 						while (resultSet.next())
 						{
-							items += resultSet.getString(2) + ", ";
+							items += "'" + resultSet.getString(2) + "', ";
 						}
 						items = StringUtils.strip(items, ", ");
 						Helper.sendMessage(target, Helper.antiPing(nick) + ": " + items);

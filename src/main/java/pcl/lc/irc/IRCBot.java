@@ -174,7 +174,8 @@ public class IRCBot {
 		}
 		loadOps();
 		loadChannels();
-		Database.setDBVer(Database.DB_VER);
+		//Database.setDBVer(Database.DB_VER);
+		Database.updateDatabase();
 		try {
 			if(!Config.botConfig.get("wikiWatcherURL").equals("")) {
 				WikiChangeWatcher WikiChange = new WikiChangeWatcher();
