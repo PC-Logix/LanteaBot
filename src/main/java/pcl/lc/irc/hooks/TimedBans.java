@@ -15,6 +15,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Helper;
 
 public class TimedBans extends AbstractListener {
@@ -59,7 +60,7 @@ public class TimedBans extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "tban") || command.equals(Config.commandprefix + "timedban")) {
+		if (command.equals(Config.commandprefix + "tban") || command.equals(Config.commandprefix + "timedban") && Permissions.getPermLevel(event.getUser(), event) >= 4) {
 			String reason = "";
 			try {
 				for( int i = 2; i < args.length; i++)
