@@ -146,7 +146,7 @@ public class JNLuaSandbox extends AbstractListener {
 			String luaOut = Helper.ellipsize(output.toString().replace("\n", " | ").replace("\r", ""), 400);
 
 			if (luaOut.length() > 0)
-				IRCBot.getInstance().sendMessage(target , luaOut);
+				Helper.sendMessage(target , luaOut);
 
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
 			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
