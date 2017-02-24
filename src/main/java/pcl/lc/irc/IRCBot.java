@@ -189,6 +189,7 @@ public class IRCBot {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		Database.setDBVer(Database.DB_VER);
 	}
 
 	private boolean initDatabase() throws SQLException {

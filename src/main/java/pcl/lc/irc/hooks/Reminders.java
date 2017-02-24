@@ -98,7 +98,7 @@ public class Reminders extends AbstractListener {
 				target = dest;
 			}
 			try {
-				PreparedStatement addReminder = IRCBot.getInstance().getPreparedStatement("addReminder");
+				PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
 				addReminder.setString(1, dest);
 				if (event.getUser().getNick().equals("Corded")){
 					nick = "@" + nick;
@@ -117,7 +117,7 @@ public class Reminders extends AbstractListener {
 			}
 		} else if (command.equals(Config.commandprefix + "reminders")) {	
 			try {
-				PreparedStatement listReminders = IRCBot.getInstance().getPreparedStatement("listReminders");
+				PreparedStatement listReminders = Database.getPreparedStatement("listReminders");
 				listReminders.setString(1, nick);
 				ResultSet results = listReminders.executeQuery();
 				if (results.next()) {

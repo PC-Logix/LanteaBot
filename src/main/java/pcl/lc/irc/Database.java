@@ -3,6 +3,7 @@ package pcl.lc.irc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -10,6 +11,10 @@ import java.util.Map;
 
 public class Database {
 	private static Connection connection;
+	/**
+	 * This is the database version that the bot expects the database to be at.
+	 */
+	public static int DB_VER = 1;
 	public final static Map<String, PreparedStatement> preparedStatements = new HashMap<>();
 	static Statement statement;
 	
@@ -59,5 +64,25 @@ public class Database {
 			throw new Exception("Invalid statement!");
 		}
 		return preparedStatements.get(statement);
+	}
+	
+	public static int getDBVer() {
+		try {
+			ResultSet dbVerQuery = Database.getConnection().createStatement().executeQuery("PRAGMA user_version;");
+			return dbVerQuery.getInt("user_version");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public static int setDBVer(int dbVer) {
+		try {
+			int dbVerQuery = Database.getConnection().createStatement().executeUpdate("PRAGMA user_version = "+dbVer+";");
+			return dbVerQuery;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

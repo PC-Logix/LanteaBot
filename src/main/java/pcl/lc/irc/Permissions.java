@@ -21,6 +21,9 @@ public class Permissions {
 
 	public static int getPermLevel(User u, MessageEvent event) {
 		String NSAccount = Account.getAccount(u, event);
+		if (NSAccount == null) {
+			return 0;
+		}
 		try {
 			PreparedStatement getPerm = Database.getPreparedStatement("getUserPerms");
 			getPerm.setString(1, NSAccount);
