@@ -63,7 +63,7 @@ public class l33t extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("1337", "Returns leetspeak of inputted text");
 	}
 

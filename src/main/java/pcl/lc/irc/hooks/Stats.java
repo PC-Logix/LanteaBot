@@ -10,7 +10,7 @@ import pcl.lc.irc.IRCBot;
 public class Stats extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("stats", "Get channel stats links");
 	}
 

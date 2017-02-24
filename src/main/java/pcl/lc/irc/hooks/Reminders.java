@@ -27,7 +27,7 @@ public class Reminders extends AbstractListener {
 	public String chan;
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("remind", "Syntax: " + Config.commandprefix + "remind [time] [message] Ex: \"" + Config.commandprefix + "remindme 1h20m check your food!\" Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 		IRCBot.registerCommand("remindme", "Syntax: " + Config.commandprefix + "remindme [time] [message] Ex: \"" + Config.commandprefix + "remindme 1h20m check your food!\" Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 		IRCBot.registerCommand("reminders", "Gives you a list of your reminders");

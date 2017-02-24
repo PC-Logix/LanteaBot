@@ -57,7 +57,7 @@ public class Seen extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("seen", "Tells you the last time a user was active.  Active means they sent a message");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
 		Database.addPreparedStatement("updateLastSeen","REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);");

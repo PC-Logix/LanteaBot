@@ -32,7 +32,7 @@ import pcl.lc.irc.Permissions;
 public class Quotes extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.httpServer.registerContext("/quotes", new QuoteHandler());
 		IRCBot.registerCommand("addquote", "Adds a quote to the database (Requires BotAdmin, or Channel Op");
 		IRCBot.registerCommand("quote", "Returns quotes from the quote database");

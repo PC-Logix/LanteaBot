@@ -18,7 +18,7 @@ import pcl.lc.irc.IRCBot;
 public class LookUp extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("lookup", "Returns DNS information");
 	}
 

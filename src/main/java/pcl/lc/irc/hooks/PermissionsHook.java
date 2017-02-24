@@ -18,7 +18,7 @@ import pcl.lc.utils.Helper;
 public class PermissionsHook extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("addperm", "Adds a permission level to the given user for the current channel");
 		IRCBot.registerCommand("delperm", "Removes the permission level from a user for the current channel");
 		IRCBot.registerCommand("listperms", "");

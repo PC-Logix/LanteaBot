@@ -14,7 +14,7 @@ public class RandomChoice extends AbstractListener {
 	private String chan;
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("choose", "Randomly picks a choice for you.");
 	}
 

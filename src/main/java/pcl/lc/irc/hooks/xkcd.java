@@ -80,7 +80,7 @@ public class xkcd extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("xkcd", "XKCD stuff");
 	}
 

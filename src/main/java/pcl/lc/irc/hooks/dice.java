@@ -18,7 +18,7 @@ import pcl.lc.utils.Helper;
 public class dice extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("roll", "Rolls dice");
 	}
 

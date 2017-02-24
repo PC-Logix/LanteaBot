@@ -15,13 +15,13 @@ public abstract class AbstractListener extends ListenerAdapter
 	private final Map<String, String> commands = new HashMap<>();
 
 	public AbstractListener() {
-		initCommands();
+		initHook();
 	}
 
 	/**
 	 * Called when the class is loaded, initialize your commands and any Database stuff here
 	 */
-	protected abstract void initCommands();
+	protected abstract void initHook();
 
 	public Map<String, String> getCommands() {
 		return commands;

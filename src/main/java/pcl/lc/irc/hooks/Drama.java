@@ -25,7 +25,7 @@ import pcl.lc.utils.Helper;
 @SuppressWarnings("rawtypes")
 public class Drama extends AbstractListener {
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("drama", "Generates random drama using Mod Developers, Projects, and other semi random data.");
 	}
 

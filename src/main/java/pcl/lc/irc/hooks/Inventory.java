@@ -171,7 +171,7 @@ public class Inventory extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("inventory", "Interact with the bots inventory");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
 		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite FROM Inventory;");

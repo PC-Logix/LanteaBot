@@ -50,7 +50,7 @@ public class Rainbow extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("rainbow", "Replies with a rainbow version of the supplied text");
 	}
 

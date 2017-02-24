@@ -50,7 +50,7 @@ public class Flip extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("flip", "Flips the text sent");
 	}
 

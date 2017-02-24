@@ -113,7 +113,7 @@ public class JNLuaSandbox extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		// Commands registered in JNLuaSandbox() constructor
 	}
 

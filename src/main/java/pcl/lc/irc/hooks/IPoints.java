@@ -24,7 +24,7 @@ public class IPoints extends AbstractListener {
 	private String chan;
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS InternetPoints(nick STRING UNIQUE PRIMARY KEY, points)");
 		Database.addPreparedStatement("getPoints", "SELECT Points FROM InternetPoints WHERE nick = ?;");
 		Database.addPreparedStatement("addPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");

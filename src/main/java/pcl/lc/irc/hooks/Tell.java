@@ -43,7 +43,7 @@ public class Tell extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("tell", "Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Tells(id, sender, rcpt, channel, message, time)");
 		Database.addPreparedStatement("addTell","INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);");

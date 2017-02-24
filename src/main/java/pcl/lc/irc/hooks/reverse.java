@@ -22,7 +22,7 @@ public class reverse extends AbstractListener {
 	private String chan;
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("reverse", "Reverses the supplied text");
 	}
 

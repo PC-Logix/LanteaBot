@@ -20,7 +20,7 @@ import pcl.lc.utils.Helper;
 public class TimedBans extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS TimedBans(channel, username, hostmask, expires, placedby, reason)");
 		Database.addPreparedStatement("addTimedBan", "INSERT INTO TimedBans(channel, username, hostmask, expires, placedby, reason) VALUES (?,?,?,?,?,?);");
 		Database.addPreparedStatement("getTimedBans", "SELECT channel, username, hostmask, expires, placedby, reason FROM TimedBans WHERE expires <= ?;");

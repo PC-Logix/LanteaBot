@@ -22,7 +22,7 @@ import java.sql.SQLException;
 public class Give extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("give", "Gives stuff");
 	}
 

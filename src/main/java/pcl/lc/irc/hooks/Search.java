@@ -34,7 +34,7 @@ public class Search extends AbstractListener {
 	}
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("g", "Searches google and returns the first result");
 		IRCBot.registerCommand("cf", "Searches CurseForge and returns the first result");
 		IRCBot.registerCommand("wiki", "Searches Wikipedia and returns the first result");

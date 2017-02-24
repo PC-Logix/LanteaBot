@@ -41,7 +41,7 @@ public class IsUp extends AbstractListener {
 	private String chan;
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("isup", "Checks is a website is up");
 	}
 

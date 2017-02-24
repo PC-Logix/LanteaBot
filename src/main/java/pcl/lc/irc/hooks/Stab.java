@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class Stab extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("stab", "Stab things with things");
 	}
 

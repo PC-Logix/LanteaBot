@@ -23,7 +23,7 @@ import pcl.lc.irc.IRCBot;
 public class OCTime extends AbstractListener {
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("octime", "Returns the time in GMT");
 	}
 

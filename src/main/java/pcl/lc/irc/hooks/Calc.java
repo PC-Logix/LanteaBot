@@ -24,7 +24,7 @@ import pcl.lc.utils.Helper;
 public class Calc extends AbstractListener {
 	
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("calc", "Does basic math on the expression passed to the command Ex: " + Config.commandprefix + "calc 2+2");
 	}
 

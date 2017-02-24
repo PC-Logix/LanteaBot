@@ -36,7 +36,7 @@ public class Rot13 extends AbstractListener {
 	public String target = null;
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("rot13", "Applies the ROT13 cipher to the supplied text");
 	}
 

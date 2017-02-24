@@ -19,7 +19,7 @@ public class EightBall extends AbstractListener {
 	private String chan;
 
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("8ball", "Gives vauge answers to vauge questions.");
 	}
 

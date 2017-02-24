@@ -110,7 +110,7 @@ public class Weather extends AbstractListener {
 	}
 	
 	@Override
-	protected void initCommands() {
+	protected void initHook() {
 		IRCBot.registerCommand("weather", "Returns weather data for the supplied postal code, or Place name");
 	}
 	
