@@ -60,7 +60,11 @@ public class TimedBans extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "tban") || command.equals(Config.commandprefix + "timedban") && Permissions.getPermLevel(event.getUser(), event) >= 4) {
+		if ((command.equals(Config.commandprefix + "tban") || command.equals(Config.commandprefix + "timedban")) && (Permissions.isOp(IRCBot.bot, event.getUser()) || Permissions.getPermLevel(event.getUser(), event) >= 4)) {
+			if (args.length < 3){
+				event.getBot().sendIRC().message(event.getChannel().getName(), "format %tban Username Time Reason: %tban MGR 24h Being MGR");
+				return;
+			}
 			String reason = "";
 			try {
 				for( int i = 2; i < args.length; i++)

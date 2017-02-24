@@ -22,8 +22,8 @@ public class Permissions {
 	public static int getPermLevel(User u, MessageEvent event) {
 		String NSAccount = Account.getAccount(u, event);
 		try {
-			PreparedStatement getPerm = IRCBot.getInstance().getPreparedStatement("getUserPerms");
-			getPerm.setString(1, NSAccount.toLowerCase());
+			PreparedStatement getPerm = Database.getPreparedStatement("getUserPerms");
+			getPerm.setString(1, NSAccount);
 			getPerm.setString(2, event.getChannel().getName());
 
 			ResultSet results = getPerm.executeQuery();
@@ -47,7 +47,7 @@ public class Permissions {
 		try {
 			SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
 			dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-			PreparedStatement addPerm = IRCBot.getInstance().getPreparedStatement("setPermLevel");
+			PreparedStatement addPerm = Database.getPreparedStatement("setPermLevel");
 			addPerm.setString(1, NSAccount);
 			addPerm.setString(2, event.getChannel().getName());
 			addPerm.setInt(3, level);
