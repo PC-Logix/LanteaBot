@@ -143,7 +143,7 @@ public class JNLuaSandbox extends AbstractListener {
 			// Trim last newline
 			if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
 				output.setLength(output.length()-1);
-			String luaOut = Helper.ellipsize(output.toString().replace("\n", " | ").replace("\r", ""), 400);
+			String luaOut = output.toString().replace("\n", " | ").replace("\r", "");
 
 			if (luaOut.length() > 0)
 				Helper.sendMessage(target , luaOut);
