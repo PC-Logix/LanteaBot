@@ -95,6 +95,10 @@ public class TimedBans extends AbstractListener {
 			} else {
 				type = "quiet";
 			}
+			if (args[0].equals(IRCBot.getOurNick())) {
+				event.getBot().sendIRC().message(event.getChannel().getName(),"No");
+				return;
+			}
 			if (args.length < 3){
 				event.getBot().sendIRC().message(event.getChannel().getName(), "format %tban Username Time Reason: %tban MGR 24h Being MGR");
 				return;
