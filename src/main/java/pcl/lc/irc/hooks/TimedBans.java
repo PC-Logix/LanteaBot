@@ -64,10 +64,10 @@ public class TimedBans extends AbstractListener {
 							if (chan.getName().equals(results.getString(1))) {
 								if (results.getString(7).equals("ban")){
 									IRCBot.getInstance().sendMessage(results.getString(1), "Timed ban of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
-									IRCBot.getInstance().sendMessage(results.getString(1), "!unban " + results.getString(2));
+									IRCBot.getInstance().sendMessage("chanserv", "unban " + results.getString(1) + " " + results.getString(2));
 								} else {
 									IRCBot.getInstance().sendMessage(results.getString(1), "Timed quiet of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
-									IRCBot.getInstance().sendMessage(results.getString(1), "!unquiet " + results.getString(2));
+									IRCBot.getInstance().sendMessage("chanserv", "unquiet " + results.getString(1) + " " + results.getString(2));
 								}
 								PreparedStatement delTimedBan = Database.getPreparedStatement("delTimedBan");
 								delTimedBan.setLong(1, results.getLong(4));
@@ -126,9 +126,9 @@ public class TimedBans extends AbstractListener {
 				addTimedBan.setString(7, type);
 				addTimedBan.executeUpdate();
 				if (type.equals("ban")) {
-					event.getBot().sendIRC().message(event.getChannel().getName(), "!kickban " + args[0] + " Reason: " + reason + " | For: " + args[1] + " | Expires: " + expiresTime);
+					event.getBot().sendIRC().message("chanserv", "kickban " + event.getChannel().getName() + " " + args[0] + " Reason: " + reason + " | For: " + args[1] + " | Expires: " + expiresTime);
 				} else {
-					event.getBot().sendIRC().message(event.getChannel().getName(), "!quiet " + args[0]);
+					event.getBot().sendIRC().message("chanserv", "quiet " + event.getChannel().getName() + " " + args[0]);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
