@@ -15,6 +15,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Helper;
@@ -28,7 +29,7 @@ public class Alot extends ListenerAdapter {
 	List<String> enabledChannels = new ArrayList<String>();
 	public Alot() throws IOException {
         try {
-            PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
+            PreparedStatement checkHook = Database.getPreparedStatement("checkHook");
             checkHook.setString(1, "alot");
             ResultSet results = checkHook.executeQuery();
             while (results.next()) {

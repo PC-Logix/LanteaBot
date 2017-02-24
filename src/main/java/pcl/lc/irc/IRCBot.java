@@ -174,6 +174,7 @@ public class IRCBot {
 		}
 		loadOps();
 		loadChannels();
+		Database.setDBVer(Database.DB_VER);
 		try {
 			if(!Config.botConfig.get("wikiWatcherURL").equals("")) {
 				WikiChangeWatcher WikiChange = new WikiChangeWatcher();
@@ -189,7 +190,6 @@ public class IRCBot {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		Database.setDBVer(Database.DB_VER);
 	}
 
 	private boolean initDatabase() throws SQLException {
@@ -253,6 +253,12 @@ public class IRCBot {
 		}
 	}
 
+	/**
+	 * use Database.getPreparedStatement
+	 * @param statement
+	 * @return
+	 * @throws Exception
+	 */
 	@Deprecated
 	public PreparedStatement getPreparedStatement(String statement) throws Exception {
 		return Database.getPreparedStatement(statement);
@@ -270,6 +276,12 @@ public class IRCBot {
 		isDebug = b;
 	}
 
+	/**
+	 * Use Premissions.isOp
+	 * @param sourceBot
+	 * @param user
+	 * @return
+	 */
 	@Deprecated
 	public static boolean isOp(PircBotX sourceBot, User user) {
 		return Permissions.isOp(sourceBot, user);

@@ -77,7 +77,7 @@ public class Flip extends AbstractListener {
 							}
 						}
 					} else {
-						event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());								
+						Helper.sendMessage(event.getChannel().getName(), Helper.antiPing(sender) + ": " + "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString());								
 					}
 				}
 			}			

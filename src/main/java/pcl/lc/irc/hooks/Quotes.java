@@ -65,7 +65,7 @@ public class Quotes extends AbstractListener {
 					if (parameter.getName().equals("id"))
 						qid = parameter.getValue();
 				try {
-					PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getIdQuote");
+					PreparedStatement getQuote = Database.getPreparedStatement("getIdQuote");
 					getQuote.setString(1, qid);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
@@ -77,7 +77,7 @@ public class Quotes extends AbstractListener {
 				}
 			} else {
 				try {
-					PreparedStatement getAllQuotes = IRCBot.getInstance().getPreparedStatement("getAllQuotes");
+					PreparedStatement getAllQuotes = Database.getPreparedStatement("getAllQuotes");
 					ResultSet results = getAllQuotes.executeQuery();
 					while (results.next()) {
 						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";

@@ -144,11 +144,11 @@ public class Inventory extends AbstractListener {
 			{
 				System.out.println("New favourite! Clearing old favourite.");
 				favourite = true;
-				PreparedStatement clearFavourite = IRCBot.getInstance().getPreparedStatement("clearFavourite");
+				PreparedStatement clearFavourite = Database.getPreparedStatement("clearFavourite");
 				clearFavourite.executeUpdate();
 			}
 			System.out.println("Favourites cleared, adding item");
-			PreparedStatement addItem = IRCBot.getInstance().getPreparedStatement("addItem");
+			PreparedStatement addItem = Database.getPreparedStatement("addItem");
 			addItem.setString(1, item);
 			addItem.setInt(2, (favourite) ? 1 : 0);
 			if (addItem.executeUpdate() > 0)
@@ -244,7 +244,7 @@ public class Inventory extends AbstractListener {
 							items += resultSet.getString(2) + ", ";
 						}
 						items = StringUtils.strip(items, ", ");
-						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + items);
+						Helper.sendMessage(target, Helper.antiPing(nick) + ": " + items);
 					}
 					catch (Exception e)
 					{
