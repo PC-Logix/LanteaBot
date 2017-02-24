@@ -135,40 +135,40 @@ public class Inventory extends AbstractListener {
 
 	private static String addItem(String item)
 	{
-		try
-		{
-			boolean favourite = false;
-			int fav_roll = Helper.getRandomInt(0, 100);
-			System.out.println("Favourite roll: " + fav_roll);
-			if (fav_roll < (100 * favourite_chance))
-			{
-				System.out.println("New favourite! Clearing old favourite.");
-				favourite = true;
-				PreparedStatement clearFavourite = Database.getPreparedStatement("clearFavourite");
-				clearFavourite.executeUpdate();
+		if (item.contains(IRCBot.ournick + "'s") || !item.contains(IRCBot.ournick)) {
+			try {
+				boolean favourite = false;
+				int fav_roll = Helper.getRandomInt(0, 100);
+				System.out.println("Favourite roll: " + fav_roll);
+				if (fav_roll < (100 * favourite_chance)) {
+					System.out.println("New favourite! Clearing old favourite.");
+					favourite = true;
+					PreparedStatement clearFavourite = Database.getPreparedStatement("clearFavourite");
+					clearFavourite.executeUpdate();
+				}
+				System.out.println("Favourites cleared, adding item");
+				PreparedStatement addItem = Database.getPreparedStatement("addItem");
+				addItem.setString(1, item);
+				addItem.setInt(2, (favourite) ? 1 : 0);
+				if (addItem.executeUpdate() > 0) {
+					if (favourite)
+						return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
+					else
+						return "Added '" + item + "' to inventory.";
+				}
+				else {
+					return "Wrong things happened! (1)";
+				}
 			}
-			System.out.println("Favourites cleared, adding item");
-			PreparedStatement addItem = Database.getPreparedStatement("addItem");
-			addItem.setString(1, item);
-			addItem.setInt(2, (favourite) ? 1 : 0);
-			if (addItem.executeUpdate() > 0)
-			{
-				if (favourite)
-					return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
-				else
-					return "Added '" + item + "' to inventory.";
-			}
-			else
-			{
-				return "Wrong things happened! (1)";
+			catch (Exception e) {
+				e.printStackTrace();
+				return "Wrong things happened! (2)";
 			}
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			return "Wrong things happened! (2)";
-		}
+		else
+			return "I can't put myself in my inventory silly.";
 	}
+
 
 	@Override
 	protected void initHook() {
