@@ -32,6 +32,14 @@ public class PasteUtils {
      * @return A formatted URL which links to the pasted file
      */
     public synchronized static String paste(String urlParameters) {
+    	
+    	StringBuilder sb = new StringBuilder(urlParameters);
+
+    	int i = 0;
+    	while ((i = sb.indexOf(" ", i + 100)) != -1) {
+    	    sb.replace(i, i + 1, "\n");
+    	}
+    	
         HttpURLConnection connection = null;
         try {
             //Create connection
@@ -43,9 +51,10 @@ public class PasteUtils {
 
             //Send request
             //DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+           
             connection.setRequestProperty("content-type", "application/json;  charset=utf-8");
             Writer writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), "UTF-8"));
-            writer.write(urlParameters);
+            writer.write(sb.toString());
             writer.flush();
             writer.close();
 
