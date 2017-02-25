@@ -15,6 +15,7 @@ import pcl.lc.utils.Helper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * @author Caitlyn
@@ -41,7 +42,7 @@ public class Inventory extends AbstractListener {
     Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;");
     Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite FROM Inventory ORDER BY Random() LIMIT 1");
     Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
-    Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, is_favourite) VALUES (NULL, ?, ?)");
+    Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, is_favourite, added_by, added) VALUES (NULL, ?, ?, ?, ?)");
     Database.addPreparedStatement("removeItemId", "DELETE FROM Inventory WHERE id = ?");
     Database.addPreparedStatement("removeItemName", "DELETE FROM Inventory WHERE item_name = ?");
     Database.addPreparedStatement("decrementUses", "UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?");
@@ -135,6 +136,10 @@ public class Inventory extends AbstractListener {
   }
 
   private static String addItem(String item) {
+    return addItem(item, null);
+  }
+
+  private static String addItem(String item, String added_by) {
     if (item.contains(IRCBot.ournick + "'s") || !item.contains(IRCBot.ournick)) {
       try {
         boolean favourite = false;
@@ -150,6 +155,11 @@ public class Inventory extends AbstractListener {
         PreparedStatement addItem = Database.getPreparedStatement("addItem");
         addItem.setString(1, item);
         addItem.setInt(2, (favourite) ? 1 : 0);
+        if (added_by != null)
+          addItem.setString(3, added_by);
+        else
+          addItem.setString(3, "");
+        addItem.setLong(4, new Timestamp(System.currentTimeMillis()).getTime());
         if (addItem.executeUpdate() > 0) {
           if (favourite)
             return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
@@ -204,7 +214,7 @@ public class Inventory extends AbstractListener {
 
       switch (sub_command) {
         case "add":
-          IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + addItem(argument));
+          IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + addItem(argument, nick));
           break;
         case "remove":
           int removeResult = removeItem(argument, true);
