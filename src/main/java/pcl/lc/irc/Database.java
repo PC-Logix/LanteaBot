@@ -32,10 +32,9 @@ class UpdateQuery {
 public class Database {
 	private static Connection connection;
 	/**
-	 * This is the highest value used in a Database.addUpdateQuery.
-	 * Update when adding new queries to make finding the highest value easier!
+	 * Updated automatically
 	 */
-	public static int DB_VER = 2;
+	public static int DB_VER = 0;
 	public final static Map<String, PreparedStatement> preparedStatements = new HashMap<>();
 	static Statement statement;
 	public static List<UpdateQuery> updateQueries = new ArrayList<>();
@@ -111,12 +110,14 @@ public class Database {
 	}
 
 	/**
-	 * Remember to update Database.DB_VER to the highest version value! Refer to this when adding new calls to this method
 	 * @param minVersion int
 	 * @param sql String
 	 */
 	public static void addUpdateQuery(int minVersion, String sql) {
 		updateQueries.add(new UpdateQuery(minVersion, sql));
+		if (minVersion > DB_VER) {
+			DB_VER = minVersion;
+		}
 	}
 
 	static void updateDatabase() {
