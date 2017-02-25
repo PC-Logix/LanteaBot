@@ -111,9 +111,7 @@ public class Announcements extends ListenerAdapter implements Runnable {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		permLevel = Permissions.getPermLevel(event.getUser() ,event);
-		boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
-		if (isOp || chanOp || permLevel >= requiredPermLevel) {
+		if (Permissions.hasPermission(event.getBot(), event.getUser(), event, requiredPermLevel)) {
 			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase();
 			String trigger = ourinput.trim();

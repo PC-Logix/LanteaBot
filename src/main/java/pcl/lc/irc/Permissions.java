@@ -18,6 +18,17 @@ import pcl.lc.utils.Account.ExpiringToken;
 
 public class Permissions {
 
+	public static boolean hasPermission(PircBotX bot, User u) {
+		return hasPermission(bot, u, null, null);
+	}
+
+	public static boolean hasPermission(PircBotX bot, User u, MessageEvent event, Integer minLevel) {
+		if (isOp(bot, u))
+			return true;
+		if (event != null && minLevel != null && getPermLevel(u, event) >= minLevel)
+			return true;
+		return false;
+	}
 
 	public static int getPermLevel(User u, MessageEvent event) {
 		String NSAccount = Account.getAccount(u, event);
