@@ -18,6 +18,10 @@ import pcl.lc.utils.Account.ExpiringToken;
 
 public class Permissions {
 
+	public static boolean hasPermission(PircBotX bot, MessageEvent event, Integer minLevel) {
+		return hasPermission(bot, event.getUser(), event, minLevel);
+	}
+
 	public static boolean hasPermission(PircBotX bot, User u) {
 		return hasPermission(bot, u, null, null);
 	}
