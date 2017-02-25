@@ -35,7 +35,7 @@ public class Database {
 	 * This is the highest value used in a Database.addUpdateQuery.
 	 * Update when adding new queries to make finding the highest value easier!
 	 */
-	public static int DB_VER = 2;
+	public static int DB_VER = 0;
 	public final static Map<String, PreparedStatement> preparedStatements = new HashMap<>();
 	static Statement statement;
 	public static List<UpdateQuery> updateQueries = new ArrayList<>();
@@ -117,6 +117,9 @@ public class Database {
 	 */
 	public static void addUpdateQuery(int minVersion, String sql) {
 		updateQueries.add(new UpdateQuery(minVersion, sql));
+		if (minVersion > DB_VER) {
+			DB_VER = minVersion;
+		}
 	}
 
 	static void updateDatabase() {
