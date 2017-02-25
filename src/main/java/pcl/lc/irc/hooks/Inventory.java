@@ -54,7 +54,7 @@ public class Inventory extends AbstractListener {
 
 			try
 			{
-				removeItem = IRCBot.getInstance().getPreparedStatement("removeItemId");
+				removeItem = Database.getPreparedStatement("removeItemId");
 				removeItem.setString(1, id.toString());
 			}
 			catch (Exception e)
@@ -67,7 +67,7 @@ public class Inventory extends AbstractListener {
 		{
 			try
 			{
-				removeItem = IRCBot.getInstance().getPreparedStatement("removeItemName");
+				removeItem = Database.getPreparedStatement("removeItemName");
 				removeItem.setString(1, id_or_name);
 			}
 			catch (Exception ex)
@@ -87,12 +87,12 @@ public class Inventory extends AbstractListener {
 			{
 				if (id_is_string)
 				{
-					getItem = IRCBot.getInstance().getPreparedStatement("getItemByName");
+					getItem = Database.getPreparedStatement("getItemByName");
 					getItem.setString(1, id_or_name);
 				}
 				else if (id != null)
 				{
-					getItem = IRCBot.getInstance().getPreparedStatement("getItem");
+					getItem = Database.getPreparedStatement("getItem");
 					getItem.setInt(1, id);
 				}
 				else
@@ -135,45 +135,48 @@ public class Inventory extends AbstractListener {
 
 	private static String addItem(String item)
 	{
-		try
-		{
-			boolean favourite = false;
-			int fav_roll = Helper.getRandomInt(0, 100);
-			System.out.println("Favourite roll: " + fav_roll);
-			if (fav_roll < (100 * favourite_chance))
-			{
-				System.out.println("New favourite! Clearing old favourite.");
-				favourite = true;
-				PreparedStatement clearFavourite = Database.getPreparedStatement("clearFavourite");
-				clearFavourite.executeUpdate();
+		if (item.contains(IRCBot.ournick + "'s") || !item.contains(IRCBot.ournick)) {
+			try {
+				boolean favourite = false;
+				int fav_roll = Helper.getRandomInt(0, 100);
+				System.out.println("Favourite roll: " + fav_roll);
+				if (fav_roll < (100 * favourite_chance)) {
+					System.out.println("New favourite! Clearing old favourite.");
+					favourite = true;
+					PreparedStatement clearFavourite = Database.getPreparedStatement("clearFavourite");
+					clearFavourite.executeUpdate();
+				}
+				System.out.println("Favourites cleared, adding item");
+				PreparedStatement addItem = Database.getPreparedStatement("addItem");
+				addItem.setString(1, item);
+				addItem.setInt(2, (favourite) ? 1 : 0);
+				if (addItem.executeUpdate() > 0) {
+					if (favourite)
+						return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
+					else
+						return "Added '" + item + "' to inventory.";
+				}
+				else {
+					return "Wrong things happened! (1)";
+				}
 			}
-			System.out.println("Favourites cleared, adding item");
-			PreparedStatement addItem = Database.getPreparedStatement("addItem");
-			addItem.setString(1, item);
-			addItem.setInt(2, (favourite) ? 1 : 0);
-			if (addItem.executeUpdate() > 0)
-			{
-				if (favourite)
-					return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
-				else
-					return "Added '" + item + "' to inventory.";
-			}
-			else
-			{
-				return "Wrong things happened! (1)";
+			catch (Exception e) {
+				e.printStackTrace();
+				return "Wrong things happened! (2)";
 			}
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			return "Wrong things happened! (2)";
-		}
+		else
+			return "I can't put myself in my inventory silly.";
 	}
+
 
 	@Override
 	protected void initHook() {
 		IRCBot.registerCommand("inventory", "Interact with the bots inventory");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
+		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
+		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added INT DEFAULT NULL NULL;");
+
 		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite FROM Inventory;");
 		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left FROM Inventory WHERE id = ?;");
 		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;");
@@ -185,8 +188,6 @@ public class Inventory extends AbstractListener {
 		Database.addPreparedStatement("decrementUses", "UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?");
 		Database.addPreparedStatement("clearFavourite", "UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1");
 	}
-
-	public String dest;
 
 	public String chan;
 	public String target = null;
@@ -230,18 +231,20 @@ public class Inventory extends AbstractListener {
 					int removeResult = removeItem(argument, true);
 					if (removeResult == 0)
 						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Removed item from inventory");
+					else if (removeResult == ERROR_NO_ROWS_RETURNED)
+						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "No such item");
 					else
 						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Wrong things happened! (" + removeResult + ")");
 					break;
 				case "list":
 					try
 					{
-						PreparedStatement statement = IRCBot.getInstance().getPreparedStatement("getItems");
+						PreparedStatement statement = Database.getPreparedStatement("getItems");
 						ResultSet resultSet = statement.executeQuery();
 						String items = "";
 						while (resultSet.next())
 						{
-							items += resultSet.getString(2) + ", ";
+							items += "'" + resultSet.getString(2) + "', ";
 						}
 						items = StringUtils.strip(items, ", ");
 						Helper.sendMessage(target, Helper.antiPing(nick) + ": " + items);

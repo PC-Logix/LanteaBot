@@ -22,28 +22,12 @@ import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Helper;
 
 public class TimedBans extends AbstractListener {
-
-	protected void upgradeDB(){
-		int currentVer = Database.getDBVer();
-		//if the bot db version, and the actual db version
-		//are not the same we need to upgrade
-		if (Database.DB_VER != currentVer) {
-			//In version 1 we added a TYPE to the TimedBans so we can time quiet
-			//so if the DB version is 0, we need to upgrade to 1.
-			if (currentVer == 0) {
-				try {
-					Database.getConnection().createStatement().executeQuery("ALTER TABLE TimedBans ADD type");
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 	
 	@Override
 	protected void initHook() {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS TimedBans(channel, username, hostmask, expires, placedby, reason, type)");
-		upgradeDB();
+		Database.addUpdateQuery(1, "ALTER TABLE TimedBans ADD type");
+
 		Database.addPreparedStatement("addTimedBan", "INSERT INTO TimedBans(channel, username, hostmask, expires, placedby, reason, type) VALUES (?,?,?,?,?,?,?);");
 		Database.addPreparedStatement("getTimedBans", "SELECT channel, username, hostmask, expires, placedby, reason, type FROM TimedBans WHERE expires <= ?;");
 		Database.addPreparedStatement("delTimedBan", "DELETE FROM TimedBans WHERE expires = ? AND username = ? AND channel = ? AND type = ?;");
