@@ -136,11 +136,27 @@ public class Inventory extends AbstractListener {
   }
 
   private static String addItem(String item) {
-    return addItem(item, null);
+    return addItem(item, null, false);
   }
 
   private static String addItem(String item, String added_by) {
+    return addItem(item, added_by, false);
+  }
+
+  private static String addItem(String item, String added_by, boolean override_duplicate_check) {
     if (item.contains(IRCBot.ournick + "'s") || !item.contains(IRCBot.ournick)) {
+      try {
+        PreparedStatement getItemByName = Database.getPreparedStatement("getItemByName");
+        getItemByName.setString(1, item);
+
+        ResultSet result = getItemByName.executeQuery();
+        if (!override_duplicate_check && result.next()) {
+          return "I already have one of those.";
+        }
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
       try {
         boolean favourite = false;
         int fav_roll = Helper.getRandomInt(0, 100);
