@@ -6,10 +6,7 @@ package pcl.lc.irc.hooks;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
 
 import java.sql.PreparedStatement;
@@ -136,11 +133,27 @@ public class Inventory extends AbstractListener {
   }
 
   private static String addItem(String item) {
-    return addItem(item, null);
+    return addItem(item, null, false);
   }
 
   private static String addItem(String item, String added_by) {
+    return addItem(item, added_by, false);
+  }
+
+  private static String addItem(String item, String added_by, boolean override_duplicate_check) {
     if (item.contains(IRCBot.ournick + "'s") || !item.contains(IRCBot.ournick)) {
+      try {
+        PreparedStatement getItemByName = Database.getPreparedStatement("getItemByName");
+        getItemByName.setString(1, item);
+
+        ResultSet result = getItemByName.executeQuery();
+        if (!override_duplicate_check && result.next()) {
+          return "I already have one of those.";
+        }
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
       try {
         boolean favourite = false;
         int fav_roll = Helper.getRandomInt(0, 100);
@@ -217,9 +230,11 @@ public class Inventory extends AbstractListener {
           IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + addItem(argument, nick));
           break;
         case "remove":
-          int removeResult = removeItem(argument, true);
+          int removeResult = removeItem(argument, Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4));
           if (removeResult == 0)
             IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Removed item from inventory");
+          else if (removeResult == ERROR_ITEM_IS_FAVOURITE)
+            IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "This is my favourite thing. You can't make me get rid of it.");
           else if (removeResult == ERROR_NO_ROWS_RETURNED)
             IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "No such item");
           else
