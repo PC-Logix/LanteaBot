@@ -96,10 +96,10 @@ public class Announcements extends ListenerAdapter implements Runnable {
 	}
 	
 	public Announcements() {
-		IRCBot.registerCommand("addannounce");
-		IRCBot.registerCommand("listannounce");
-		IRCBot.registerCommand("removeannounce");
-		IRCBot.registerCommand("reloadannounce");
+		IRCBot.registerCommand("addannounce", "Add announce message");
+		IRCBot.registerCommand("listannounce", "List announce messages");
+		IRCBot.registerCommand("removeannounce", "Remove announce message");
+		IRCBot.registerCommand("reloadannounce", "Reload announce messages");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
 		Database.addPreparedStatement("addAnnounce", "INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);");
 		Database.addPreparedStatement("getAnnounce", "SELECT schedule, title, message FROM Announcements WHERE channel = ?;");

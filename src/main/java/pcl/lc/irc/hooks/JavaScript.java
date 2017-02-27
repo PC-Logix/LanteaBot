@@ -21,7 +21,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("rawtypes")
 public class JavaScript  extends ListenerAdapter {
 	public JavaScript() {
-		IRCBot.registerCommand("js");
+		IRCBot.registerCommand("js", "Do the Javascript? I dunno.");
 	}
 
 	String script = null;

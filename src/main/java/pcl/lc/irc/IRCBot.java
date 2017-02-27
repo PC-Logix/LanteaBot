@@ -92,19 +92,6 @@ public class IRCBot {
 			log.error("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[2].getClassName() + " Owning class " + commands.get(command));
 		}
 	}
-	/**
-	 * Registers a command for output in %help, doesn't include any actual help
-	 * @param command
-	 */
-	@Deprecated
-	public static void registerCommand(String command) {
-		if (!commands.containsKey(command)) {
-			commands.put(command, Thread.currentThread().getStackTrace()[2].getClassName());
-			log.info("Registering Command: " + command);
-		} else {
-			log.error("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[2].getClassName() + " Owning class " + commands.get(command));
-		}
-	}
 
 	public static void unregisterCommand(String command) {
 		if (commands.containsKey(command)) {
