@@ -233,7 +233,7 @@ public class Helper {
 	public static void sendMessage(String target, String message){
 		if (message.length() > 200) {
 			String pasteURL = PasteUtils.paste(message);
-			IRCBot.bot.sendIRC().message(target, "Message to long to send to channel " + pasteURL);
+			IRCBot.bot.sendIRC().message(target, "Message too long to send to channel " + pasteURL);
 		} else {
 			IRCBot.bot.sendIRC().message(target, message);
 		}
