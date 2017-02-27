@@ -238,4 +238,106 @@ public class Helper {
 			IRCBot.bot.sendIRC().message(target, message);
 		}
 	}
+
+	public static class TimeObject {
+		public Integer years;
+		public Integer months;
+		public Integer weeks;
+		public Integer days;
+		public Integer hours;
+		public Integer minutes;
+		public Integer seconds;
+		public Integer input;
+
+		public TimeObject(Integer years, Integer months, Integer weeks, Integer days, Integer hours, Integer minutes, Integer seconds, Integer input) {
+			this.years = years;
+			this.months = months;
+			this.weeks = weeks;
+			this.days = days;
+			this.hours = hours;
+			this.minutes = minutes;
+			this.seconds = seconds;
+			this.input = input;
+		}
+	}
+
+	public static TimeObject parse_seconds(int seconds)
+	{
+		int input = seconds;
+		if (seconds < 0)
+			seconds = seconds * -1;
+
+		int years = (int) Math.floor(seconds / 60 / 60 / 24 / 30 / 12);
+
+		seconds = seconds - (years * 12 * 30 * 24 * 60 * 60);
+
+		int months = (int) Math.floor(seconds / 60 / 60 / 24 / 30);
+
+		seconds = seconds - (months * 30 * 24 * 60 * 60);
+
+		int weeks = (int) Math.floor(seconds / 60 / 60 / 24 / 7);
+
+		seconds = seconds - (weeks * 7 * 24 * 60 * 60);
+
+		int days = (int) Math.floor(seconds / 60 / 60 / 24);
+
+		seconds = seconds - (days * 24 * 60 * 60);
+
+		int hours = (int) Math.floor(seconds / 60 / 60);
+
+		seconds = seconds - (hours * 60 * 60);
+
+		int minutes = (int) Math.floor(seconds / 60);
+
+		seconds = seconds - (minutes * 60);
+
+		return new TimeObject(years, months, weeks, days, hours, minutes, (int) Math.floor(seconds), input);
+	}
+
+	public static String timeString(TimeObject timeObject) {
+		return timeString(timeObject, false, 6, false);
+	}
+
+	public static String timeString(TimeObject timeObject, boolean short_labels, int display_highest_x, boolean discard_seconds_unless_only_value)
+	{
+		String time_string = "";
+		ArrayList<String> strings = new ArrayList<>();
+
+		if (short_labels)
+		{
+			if (timeObject.years > 0)   strings.add(timeObject.years + "y, ");
+			if (timeObject.months > 0)  strings.add(timeObject.months + "m, ");
+			if (timeObject.weeks > 0)   strings.add(timeObject.weeks + "w, ");
+			if (timeObject.days > 0)    strings.add(timeObject.days + "d, ");
+			if (timeObject.hours > 0)   strings.add(timeObject.hours + "h, ");
+			if (timeObject.minutes > 0) strings.add(timeObject.minutes + "m, ");
+			if (!discard_seconds_unless_only_value || timeObject.minutes == 0)
+				if (timeObject.seconds > 0) strings.add(timeObject.seconds + "s, ");
+		}
+		else
+		{
+			if (timeObject.years > 0)   strings.add((timeObject.years == 1)    ? timeObject.years + " year, "      : timeObject.years + " years, ");
+			if (timeObject.months > 0)  strings.add((timeObject.months == 1)   ? timeObject.months + " month, "    : timeObject.months + " months, ");
+			if (timeObject.weeks > 0)   strings.add((timeObject.weeks == 1)    ? timeObject.weeks + " week, "      : timeObject.weeks + " weeks, ");
+			if (timeObject.days > 0)    strings.add((timeObject.days == 1)     ? timeObject.days + " day, "        : timeObject.days + " days, ");
+			if (timeObject.hours > 0)   strings.add((timeObject.hours == 1)    ? timeObject.hours + " hour, "      : timeObject.hours + " hours, ");
+			if (timeObject.minutes > 0) strings.add((timeObject.minutes == 1)  ? timeObject.minutes + " minute, "  : timeObject.minutes + " minutes, ");
+			if (!discard_seconds_unless_only_value || timeObject.minutes == 0)
+				if (timeObject.seconds > 0) strings.add((timeObject.seconds == 1)  ? timeObject.seconds + " second, "  : timeObject.seconds + " seconds, ");
+		}
+
+		int counter = 0;
+		for (String string : strings) {
+			if (counter >= display_highest_x)
+				break;
+			time_string += string;
+			counter++;
+		}
+
+		time_string = time_string.replaceAll(", $", "");
+		if (time_string.length() == 0)
+			time_string = "<0";
+
+		return time_string;
+	}
 }
