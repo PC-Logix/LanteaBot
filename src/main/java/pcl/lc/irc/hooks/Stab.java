@@ -5,10 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
 
 import java.sql.PreparedStatement;
@@ -22,31 +19,35 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("rawtypes")
 public class Stab extends AbstractListener {
+	private Command local_command;
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("stab", "Stab things with things");
+		local_command = new Command("stab", 60);
+		System.out.println("Register Stab: '" + local_command.toString() + "'");
+		IRCBot.registerCommand(local_command, "Stab things with things");
 	}
-
-	public String dest;
 
 	public String chan;
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "stab")) {
+		if (local_command.shouldExecute(command) >= 0) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (command.equals(Config.commandprefix + "stab")) {
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}
+		long shouldExecute = local_command.shouldExecute(command);
+		System.out.println("ShouldExecute " + shouldExecute);
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
+		}
+		if (shouldExecute == 0) {
+			local_command.updateLastExecution();
 			String message = "";
 			for (String aCopyOfRange : copyOfRange)
 			{
@@ -102,17 +103,21 @@ public class Stab extends AbstractListener {
 				System.out.println("Action: " + action);
 
 				if (s == "")
-					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION flails at nothingness" + (!item.equals("") ? " with " : "") + item + "\u0001");
+					Helper.sendMessage(target ,  "\u0001ACTION flails at nothingness" + (!item.equals("") ? " with " : "") + item + "\u0001");
 				else if (!s.equals(IRCBot.ournick))
-					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION " + actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust + "\u0001");
+					Helper.sendMessage(target ,  "\u0001ACTION " + actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust + "\u0001");
 				else
-					IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust + "\u0001");
+					Helper.sendMessage(target ,  "\u0001ACTION uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust + "\u0001");
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
 		}
+		else if (shouldExecute > 0)
+			Helper.sendMessage(target ,  Helper.antiPing(nick) + ": " + "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecute)) + ".");
+		else
+			System.out.println("Unable to execute command '" + command + "' does not match '" + local_command.getCommand() + "' shouldExecute: " + local_command.shouldExecute(command));
 	}
 
 	@Override
