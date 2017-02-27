@@ -1,11 +1,6 @@
 package pcl.lc.irc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -76,16 +71,32 @@ public class IRCBot {
 		return ournick;
 	}
 	
-	public static HashMap<String, String> commands = new HashMap<String, String>();
+	public static HashMap<String, Command> commands = new HashMap<>();
 	public static HashMap<String, String> helpList = new HashMap<String, String>();
+
+	public static void registerCommand(Command command, String help) {
+		if (!commands.containsKey(command.getCommand())) {
+			commands.put(command.getCommand(), command);
+			helpList.put(command.getCommand(), help);
+			log.info("Registering Command: " + command.getCommand());
+		} else {
+			log.error("Attempted to register duplicate command! Command: " + command.getCommand() + " Duplicating class: " + command.getClassName() + " Owning class " + commands.get(command.getCommand()).getClassName());
+		}
+	}
+
+	public static void registerCommand(String command, String help) {
+		registerCommand(command, help, 0);
+	}
+
 	/**
 	 * Registers a command for output in %help
-	 * @param command
-	 * @param help 
+	 * @param command String
+	 * @param help String
+	 * @param rateLimit Integer
 	 */
-	public static void registerCommand(String command, String help) {
+	public static void registerCommand(String command, String help, Integer rateLimit) {
 		if (!commands.containsKey(command)) {
-			commands.put(command, Thread.currentThread().getStackTrace()[2].getClassName());
+			commands.put(command, new Command(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit));
 			helpList.put(command, help);	
 			log.info("Registering Command: " + command);
 		} else {
