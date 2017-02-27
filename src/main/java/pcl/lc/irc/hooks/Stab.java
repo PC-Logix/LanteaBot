@@ -103,11 +103,11 @@ public class Stab extends AbstractListener {
 				System.out.println("Action: " + action);
 
 				if (s == "")
-					Helper.sendMessage(target ,  "\u0001ACTION flails at nothingness" + (!item.equals("") ? " with " : "") + item + "\u0001");
+					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + item);
 				else if (!s.equals(IRCBot.ournick))
-					Helper.sendMessage(target ,  "\u0001ACTION " + actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust + "\u0001");
+					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust);
 				else
-					Helper.sendMessage(target ,  "\u0001ACTION uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust + "\u0001");
+					Helper.sendAction(target,(!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
 			}
 			catch (Exception e)
 			{
@@ -115,7 +115,7 @@ public class Stab extends AbstractListener {
 			}
 		}
 		else if (shouldExecute > 0)
-			Helper.sendMessage(target ,  Helper.antiPing(nick) + ": " + "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecute)) + ".");
+			Helper.sendMessage(target ,  "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecute)) + ".", nick);
 		else
 			System.out.println("Unable to execute command '" + command + "' does not match '" + local_command.getCommand() + "' shouldExecute: " + local_command.shouldExecute(command));
 	}

@@ -229,14 +229,26 @@ public class Helper {
 		long epoch = System.currentTimeMillis();
 		return(millis + epoch);
 	}
+
+	public static void sendMessage(String target, String message) {
+		sendMessage(target, message, null);
+	}
 	
-	public static void sendMessage(String target, String message){
+	public static void sendMessage(String target, String message, String targetUser){
+		if (targetUser != null)
+			targetUser = Helper.antiPing(targetUser) + ": ";
+		else
+			targetUser = "";
 		if (message.length() > 200) {
 			String pasteURL = PasteUtils.paste(message);
-			IRCBot.bot.sendIRC().message(target, "Message too long to send to channel " + pasteURL);
+			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);
 		} else {
-			IRCBot.bot.sendIRC().message(target, message);
+			IRCBot.bot.sendIRC().message(target, targetUser + message);
 		}
+	}
+
+	public static void sendAction(String target, String message) {
+		IRCBot.bot.sendIRC().message(target, "\u0001ACTION " + message + "\u0001");
 	}
 
 	public static class TimeObject {
