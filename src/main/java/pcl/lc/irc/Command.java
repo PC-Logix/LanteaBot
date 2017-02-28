@@ -1,12 +1,14 @@
 package pcl.lc.irc;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class Command {
 	String command;
 	String className;
 	Integer rateLimit;
 	long lastExecution;
+	ArrayList<String> aliases;
 
 	public Command(String command, Integer rateLimit) {
 		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit);
@@ -52,7 +54,7 @@ public class Command {
 	}
 
 	public int shouldExecute(String command) {
-		if (!command.equals(Config.commandprefix + this.command))
+		if (!command.equals(Config.commandprefix + this.command) && !hasAlias(command))
 			return -1;
 		if (this.rateLimit == 0)
 			return 0;
@@ -64,5 +66,21 @@ public class Command {
 		if (difference > (this.rateLimit * 1000))
 			return 0;
 		return this.rateLimit - ((int) difference / 1000);
+	}
+
+	public void registerAlias(String alias) {
+		if (!this.aliases.contains(alias)){
+			this.aliases.add(alias);
+		}
+	}
+
+	public void unregisterAlias(String alias) {
+		if (this.aliases.contains(alias)) {
+			this.aliases.remove(alias);
+		}
+	}
+
+	public boolean hasAlias(String alias) {
+		return this.aliases.contains(alias.replace(Config.commandprefix, ""));
 	}
 }
