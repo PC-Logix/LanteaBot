@@ -27,6 +27,7 @@ public class Command {
 		this.className = className;
 		this.rateLimit = rateLimit;
 		this.lastExecution = 0;
+		this.aliases = new ArrayList<>();
 	}
 
 	public String getCommand() {
@@ -57,6 +58,16 @@ public class Command {
 		return shouldExecute(command, null);
 	}
 
+	/**
+	 * Tests if a command should be executed based on a number of factors
+	 * If nick is passed also tests if user is ignored
+	 * Returns 0 if the command should be executed
+	 * Returns non-zero on failure
+	 * If return is greater than 0 it's the number of seconds remaining until the rate limit expires.
+	 * @param command String
+	 * @param nick String Optional
+	 * @return int
+	 */
 	public int shouldExecute(String command, String nick) {
 		if (!command.equals(Config.commandprefix + this.command) && !hasAlias(command))
 			return -1;
