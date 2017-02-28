@@ -54,7 +54,13 @@ public class Command {
 	}
 
 	public int shouldExecute(String command) {
+		return shouldExecute(command, null);
+	}
+
+	public int shouldExecute(String command, String nick) {
 		if (!command.equals(Config.commandprefix + this.command) && !hasAlias(command))
+			return -1;
+		if (nick != null && IRCBot.isIgnored(nick))
 			return -1;
 		if (this.rateLimit == 0)
 			return 0;
