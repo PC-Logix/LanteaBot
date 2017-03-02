@@ -19,6 +19,7 @@ import java.sql.Timestamp;
  */
 @SuppressWarnings("rawtypes")
 public class Inventory extends AbstractListener {
+  private Command local_command;
   private static double favourite_chance = 0.01;
 
   static int ERROR_ITEM_IS_FAVOURITE = 1;
@@ -29,7 +30,9 @@ public class Inventory extends AbstractListener {
 
   @Override
   protected void initHook() {
-    IRCBot.registerCommand("inventory", "Interact with the bots inventory");
+    local_command = new Command("inventory", 0);
+    local_command.registerAlias("inv");
+    IRCBot.registerCommand(local_command, "Interact with the bots inventory");
     Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
     Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
     Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added INT DEFAULT NULL NULL;");
@@ -197,20 +200,20 @@ public class Inventory extends AbstractListener {
 
   @Override
   public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-    if (command.equals(Config.commandprefix + "inventory") || command.equals(Config.commandprefix + "inv")) {
+    if (local_command.shouldExecute(command) >= 0) {
       chan = event.getChannel().getName();
     }
   }
 
   @Override
   public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-    if (command.equals(Config.commandprefix + "inventory") || command.equals(Config.commandprefix + "inv")) {
-      if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-        target = nick;
-      }
-      else {
-        target = chan;
-      }
+    long shouldExecute = local_command.shouldExecute(command);
+    if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+      target = nick;
+    } else {
+      target = chan;
+    }
+    if (shouldExecute == 0) {
       String message = "";
       for (String aCopyOfRange : copyOfRange) {
         message = message + " " + aCopyOfRange;
@@ -232,13 +235,13 @@ public class Inventory extends AbstractListener {
         case "remove":
           int removeResult = removeItem(argument, Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4));
           if (removeResult == 0)
-            IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Removed item from inventory");
+            Helper.sendMessage(target,"Removed item from inventory", nick);
           else if (removeResult == ERROR_ITEM_IS_FAVOURITE)
-            IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "This is my favourite thing. You can't make me get rid of it.");
+            Helper.sendMessage(target,"This is my favourite thing. You can't make me get rid of it.", nick);
           else if (removeResult == ERROR_NO_ROWS_RETURNED)
-            IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "No such item");
+            Helper.sendMessage(target,"No such item", nick);
           else
-            IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Wrong things happened! (" + removeResult + ")");
+            Helper.sendMessage(target,"Wrong things happened! (" + removeResult + ")", nick);
           break;
         case "list":
           try {
@@ -253,11 +256,11 @@ public class Inventory extends AbstractListener {
           }
           catch (Exception e) {
             e.printStackTrace();
-            IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Wrong things happened! (5)");
+            Helper.sendMessage(target,"Wrong things happened! (5)", nick);
           }
           break;
         default:
-          IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + "Unknown sub-command '" + sub_command + "' (Try: add, remove, list)");
+          Helper.sendMessage(target,"Unknown sub-command '" + sub_command + "' (Try: add, remove, list)", nick);
           break;
       }
     }

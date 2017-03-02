@@ -5,10 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
 
 import java.sql.PreparedStatement;
@@ -21,10 +18,12 @@ import java.sql.SQLException;
  */
 @SuppressWarnings("rawtypes")
 public class Give extends AbstractListener {
+	private Command local_command;
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("give", "Gives stuff");
+		local_command = new Command("give");
+		IRCBot.registerCommand(local_command, "Gives stuff");
 	}
 
 	public String dest;
@@ -33,19 +32,20 @@ public class Give extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "give")) {
+		if (local_command.shouldExecute(command) >= 0) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (command.equals(Config.commandprefix + "give")) {
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}
+		long shouldExecute = local_command.shouldExecute(command);
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
+		}
+		if (shouldExecute == 0) {
 			String target_argument = copyOfRange[0];
 			String item = "";
 			for (int i = 1; i < copyOfRange.length; i++)
@@ -65,7 +65,7 @@ public class Give extends AbstractListener {
 				catch (Exception e)
 				{
 					e.printStackTrace();
-					IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + "Something went wrong (1)");
+					Helper.sendMessage(target ,  "Something went wrong (1)", nick);
 					return;
 				}
 				try
@@ -75,7 +75,7 @@ public class Give extends AbstractListener {
 				catch (SQLException e)
 				{
 					e.printStackTrace();
-					IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + "Something went wrong (2)");
+					Helper.sendMessage(target ,  "Something went wrong (2)", nick);
 					return;
 				}
 
@@ -87,7 +87,7 @@ public class Give extends AbstractListener {
 				catch (SQLException e)
 				{
 					e.printStackTrace();
-					IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + "Something went wrong (3)");
+					Helper.sendMessage(target ,  "Something went wrong (3)", nick);
 					return;
 				}
 			}
@@ -95,13 +95,13 @@ public class Give extends AbstractListener {
 			int removeResult = Inventory.removeItem(item);
 
 			if (removeResult == 0)
-				IRCBot.getInstance().sendMessage(target ,  "\u0001ACTION gives " + target_argument + " " + item + " from her inventory\u0001");
+				Helper.sendAction(target ,  "gives " + target_argument + " " + item + " from her inventory");
 			else if (removeResult == Inventory.ERROR_ITEM_IS_FAVOURITE)
-				IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + "No! This is my favourite thing! I wont give it away!");
+				Helper.sendMessage(target ,  "No! This is my favourite thing! I wont give it away!", nick);
 			else if (removeResult == Inventory.ERROR_NO_ROWS_RETURNED)
-				IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + "No item found to give away.");
+				Helper.sendMessage(target ,  "No item found to give away.", nick);
 			else
-				IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + "Something went wrong (" + removeResult + ")");
+				Helper.sendMessage(target ,  "Something went wrong (" + removeResult + ")", nick);
 		}
 	}
 

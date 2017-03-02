@@ -12,6 +12,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
@@ -22,16 +23,18 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class Calc extends AbstractListener {
+	private Command local_command;
 	
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("calc", "Does basic math on the expression passed to the command Ex: " + Config.commandprefix + "calc 2+2");
+		local_command = new Command("calc", 0);
+		IRCBot.registerCommand(local_command, "Does basic math on the expression passed to the command Ex: " + Config.commandprefix + "calc 2+2");
 	}
 
 	@Override
 	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
-		String prefix = Config.commandprefix;
-		if (command.equals(prefix + "calc")) {
+		long shouldExecute = local_command.shouldExecute(command);
+		if (shouldExecute == 0) {
 			String expression;
 			expression = StringUtils.join(args," ");
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {

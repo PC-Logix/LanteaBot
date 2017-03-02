@@ -23,8 +23,7 @@ public class Stab extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("stab", 60);
-		System.out.println("Register Stab: '" + local_command.toString() + "'");
+		local_command = new Command("stab", 0);
 		IRCBot.registerCommand(local_command, "Stab things with things");
 	}
 
@@ -39,8 +38,7 @@ public class Stab extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		long shouldExecute = local_command.shouldExecute(command);
-		System.out.println("ShouldExecute " + shouldExecute);
+		long shouldExecute = local_command.shouldExecute(command, nick);
 		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 			target = nick;
 		} else {
@@ -114,10 +112,6 @@ public class Stab extends AbstractListener {
 				e.printStackTrace();
 			}
 		}
-		else if (shouldExecute > 0)
-			Helper.sendMessage(target ,  "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecute)) + ".", nick);
-		else
-			System.out.println("Unable to execute command '" + command + "' does not match '" + local_command.getCommand() + "' shouldExecute: " + local_command.shouldExecute(command));
 	}
 
 	@Override

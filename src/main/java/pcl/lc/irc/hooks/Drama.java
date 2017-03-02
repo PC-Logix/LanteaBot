@@ -14,6 +14,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
@@ -24,19 +25,21 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class Drama extends AbstractListener {
+	private Command local_command;
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("drama", "Generates random drama using Mod Developers, Projects, and other semi random data.");
+		local_command = new Command("drama", 0);
+		IRCBot.registerCommand(local_command, "Generates random drama using Mod Developers, Projects, and other semi random data.");
 	}
 
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		String prefix = Config.commandprefix;
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {
-			if (command.equals(prefix + "drama")) {
+			long shouldExecute = local_command.shouldExecute(command);
+			if (shouldExecute == 0) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					URL obj = null;
 					try {

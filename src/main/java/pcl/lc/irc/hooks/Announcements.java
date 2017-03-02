@@ -19,10 +19,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Permissions;
+import pcl.lc.irc.*;
 import pcl.lc.utils.CommentedProperties;
 
 
@@ -32,6 +29,10 @@ import pcl.lc.utils.CommentedProperties;
  */
 @SuppressWarnings("rawtypes")
 public class Announcements extends ListenerAdapter implements Runnable {
+	private Command local_command_add;
+	private Command local_command_list;
+	private Command local_command_remove;
+	private Command local_command_reload;
 
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
@@ -96,10 +97,14 @@ public class Announcements extends ListenerAdapter implements Runnable {
 	}
 	
 	public Announcements() {
-		IRCBot.registerCommand("addannounce", "Add announce message");
-		IRCBot.registerCommand("listannounce", "List announce messages");
-		IRCBot.registerCommand("removeannounce", "Remove announce message");
-		IRCBot.registerCommand("reloadannounce", "Reload announce messages");
+		local_command_add = new Command("addannounce", 0);
+		IRCBot.registerCommand(local_command_add, "Add announce message");
+		local_command_list = new Command("listannounce", 0);
+		IRCBot.registerCommand(local_command_list, "List announce messages");
+		local_command_remove = new Command("removeannounce", 0);
+		IRCBot.registerCommand(local_command_remove, "Remove announce message");
+		local_command_reload = new Command("reloadannounce", 0);
+		IRCBot.registerCommand(local_command_reload, "Reload announce messages");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
 		Database.addPreparedStatement("addAnnounce", "INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);");
 		Database.addPreparedStatement("getAnnounce", "SELECT schedule, title, message FROM Announcements WHERE channel = ?;");
@@ -112,19 +117,18 @@ public class Announcements extends ListenerAdapter implements Runnable {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 		if (Permissions.hasPermission(event.getBot(), event, requiredPermLevel)) {
-			String prefix = Config.commandprefix;
-			String ourinput = event.getMessage().toLowerCase();
-			String trigger = ourinput.trim();
+			String ourInput = event.getMessage().toLowerCase();
+			String trigger = ourInput.trim();
 			if (trigger.length() > 1) {
 				String[] firstWord = StringUtils.split(trigger);
-				String triggerWord = firstWord[0];
-				if (triggerWord.equals(prefix + "addannounce")) {
+				String command = firstWord[0];
+				if (local_command_add.shouldExecute(command) == 0) {
 					event.respond("Merp");
-				} else if (triggerWord.equals(prefix + "listannounce")) {
+				} else if (local_command_list.shouldExecute(command) == 0) {
 					
-				} else if (triggerWord.equals(prefix + "removeannounce")) {
+				} else if (local_command_remove.shouldExecute(command) == 0) {
 					
-				} else if (triggerWord.equals(prefix + "reloadannounce")) {
+				} else if (local_command_reload.shouldExecute(command) == 0) {
 					setConfig();
 				}
 			}
