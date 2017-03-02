@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
@@ -77,28 +78,38 @@ public class Admin extends ListenerAdapter {
 	}
 
 	public void restart() throws URISyntaxException, IOException, Exception {
-
-		if(!Config.httpdport.isEmpty() && !Config.botConfig.get("httpDocRoot").equals("")) {
-			//TODO: Fix httpd stop
-			//IRCBot.httpServer.stop();
-		}
-
-		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-		final File currentJar = new File(IRCBot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-
-		/* is it a jar file? */
-		if(!currentJar.getName().endsWith(".jar"))
-			return;
-		try {
-			Runtime.getRuntime().exec(javaBin + " -jar " + currentJar.getPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Finished");
-
-		System.exit(0);
+		relaunch();
 	}
 
+    private static void relaunch() throws InterruptedException, UnsupportedEncodingException
+    {
+        String[] command = new String[] {"java", "-Dfile.encoding=UTF-8", "-jar", IRCBot.getThisJarFile().getAbsolutePath()};
+
+        //Relaunches the bot using UTF-8 mode.
+        ProcessBuilder processBuilder =  new ProcessBuilder(command);
+        processBuilder.inheritIO(); //Tells the new process to use the same command line as this one.
+        try
+        {
+            Process process = processBuilder.start();
+            process.waitFor();  //We wait here until the actual bot stops. We do this so that we can keep using the same command line.
+            System.exit(process.exitValue());
+        }
+        catch (IOException e)
+        {
+            if (e.getMessage().contains("\"java\""))
+            {
+                System.out.println("BotLauncher: There was an error relaunching the bot. We couldn't find Java to launch with.");
+                System.out.println("BotLauncher: Attempted to relaunch using the command:\n   " + StringUtils.join(command, " ", 0, command.length));
+                System.out.println("BotLauncher: Make sure that you have Java properly set in your Operating System's PATH variable.");
+                System.out.println("BotLauncher: Stopping here.");
+            }
+            else
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+	
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
