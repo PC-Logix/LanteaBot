@@ -9,25 +9,37 @@ public class Command {
 	Integer rateLimit;
 	long lastExecution;
 	ArrayList<String> aliases;
+	ArrayList<Command> subCommands;
+	boolean isSubCommand;
 
 	public Command(String command, Integer rateLimit) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false);
+	}
+
+	public Command(String command, Integer rateLimit, boolean isSubCommand) {
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand);
 	}
 
 	public Command(String command) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false);
+	}
+
+	public Command(String command, boolean isSubCommand) {
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand);
 	}
 
 	public Command(String command, String className) {
-		this(command, className, 0);
+		this(command, className, 0, false);
 	}
 
-	public Command(String command, String className, Integer rateLimit) {
+	public Command(String command, String className, Integer rateLimit, boolean isSubCommand) {
 		this.command = command;
 		this.className = className;
 		this.rateLimit = rateLimit;
 		this.lastExecution = 0;
 		this.aliases = new ArrayList<>();
+		this.subCommands = new ArrayList<>();
+		this.isSubCommand = isSubCommand;
 	}
 
 	public String getCommand() {
@@ -69,7 +81,11 @@ public class Command {
 	 * @return int
 	 */
 	public int shouldExecute(String command, String nick) {
-		if (!command.equals(Config.commandprefix + this.command) && !hasAlias(command))
+		String prefix = "";
+		if (!this.isSubCommand)
+			prefix = Config.commandprefix;
+
+		if (!command.equals(prefix + this.command) && !hasAlias(command))
 			return -1;
 		if (nick != null && IRCBot.isIgnored(nick))
 			return -2;
@@ -79,7 +95,6 @@ public class Command {
 			return 0;
 		long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
 		long difference = timestamp - lastExecution;
-		System.out.println(timestamp + " - " + lastExecution + " = " + difference + " > " + (this.rateLimit * 1000));
 		if (difference > (this.rateLimit * 1000))
 			return 0;
 		return this.rateLimit - ((int) difference / 1000);
@@ -99,5 +114,33 @@ public class Command {
 
 	public boolean hasAlias(String alias) {
 		return this.aliases.contains(alias.replace(Config.commandprefix, ""));
+	}
+
+	public void registerSubCommand(Command command) {
+		if (!this.subCommands.contains(command)) {
+			this.subCommands.add(command);
+		}
+	}
+
+	public void unregisterSubCommand(Command command) {
+		if (this.subCommands.contains(command)) {
+			this.subCommands.remove(command);
+		}
+	}
+
+	public boolean hasSubCommand(String subCommand) {
+		for (Command command : this.subCommands) {
+			if (command.getCommand() == subCommand)
+				return true;
+		}
+		return false;
+	}
+
+	public String getSubCommandsAsString() {
+		String list = "";
+		for (Command command : this.subCommands) {
+			list += ", " + command.getCommand();
+		}
+		return list.replaceAll("^, ", "");
 	}
 }
