@@ -20,6 +20,11 @@ import java.sql.Timestamp;
 @SuppressWarnings("rawtypes")
 public class Inventory extends AbstractListener {
   private Command local_command;
+  private Command sub_command_list;
+  private Command sub_command_add;
+  private Command sub_command_remove;
+  private Command sub_command_preserve;
+  private Command sub_command_unpreserve;
   private static double favourite_chance = 0.01;
 
   static int ERROR_ITEM_IS_FAVOURITE = 1;
@@ -27,11 +32,24 @@ public class Inventory extends AbstractListener {
   static int ERROR_SQL_ERROR = 3;
   static int ERROR_NO_ROWS_RETURNED = 4;
   static int ERROR_ID_NOT_SET = 5;
+  static int ERROR_ITEM_IS_PRESERVED = 6;
 
   @Override
   protected void initHook() {
     local_command = new Command("inventory", 0);
     local_command.registerAlias("inv");
+    sub_command_list = new Command("list", 0, true);
+    sub_command_add = new Command("add", 0, true);
+    sub_command_remove = new Command("remove", 0, true);
+    sub_command_preserve = new Command("preserve", 0, true);
+    sub_command_preserve.registerAlias("pre");
+    sub_command_unpreserve = new Command("unpreserve", 0, true);
+    sub_command_unpreserve.registerAlias("unpre");
+    local_command.registerSubCommand(sub_command_list);
+    local_command.registerSubCommand(sub_command_add);
+    local_command.registerSubCommand(sub_command_remove);
+    local_command.registerSubCommand(sub_command_preserve);
+    local_command.registerSubCommand(sub_command_unpreserve);
     IRCBot.registerCommand(local_command, "Interact with the bots inventory");
     Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
     Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
@@ -47,10 +65,12 @@ public class Inventory extends AbstractListener {
     Database.addPreparedStatement("removeItemName", "DELETE FROM Inventory WHERE item_name = ?");
     Database.addPreparedStatement("decrementUses", "UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?");
     Database.addPreparedStatement("clearFavourite", "UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1");
+    Database.addPreparedStatement("preserveItem", "UPDATE Inventory SET uses_left = -1 WHERE item_name = ?");
+    Database.addPreparedStatement("unPreserveItem", "UPDATE Inventory SET uses_left = 5 WHERE item_name = ?");
   }
 
   static int removeItem(String id) {
-    return removeItem(id, false);
+    return removeItem(id, false, false);
   }
 
   /**
@@ -61,7 +81,8 @@ public class Inventory extends AbstractListener {
    * @param override_favourite boolean
    * @return int
    */
-  private static int removeItem(String id_or_name, boolean override_favourite) {
+  @SuppressWarnings("Duplicates")
+  private static int removeItem(String id_or_name, boolean override_favourite, boolean override_preserved) {
     Integer id = null;
     Boolean id_is_string = true;
     PreparedStatement removeItem;
@@ -91,9 +112,6 @@ public class Inventory extends AbstractListener {
 
     if (!override_favourite) {
       PreparedStatement getItem;
-      System.out.println("id_is_string: " + id_is_string);
-      System.out.println("id_or_name: " + id_or_name);
-      System.out.println("id: " + id);
       try {
         if (id_is_string) {
           getItem = Database.getPreparedStatement("getItemByName");
@@ -111,6 +129,33 @@ public class Inventory extends AbstractListener {
         if (result.next()) {
           if (result.getBoolean(4))
             return ERROR_ITEM_IS_FAVOURITE;
+        }
+        else
+          return ERROR_NO_ROWS_RETURNED;
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+        return ERROR_INVALID_STATEMENT;
+      }
+    } else if (!override_preserved) {
+      PreparedStatement getItem;
+      try {
+        if (id_is_string) {
+          getItem = Database.getPreparedStatement("getItemByName");
+          getItem.setString(1, id_or_name);
+        }
+        else if (id != null) {
+          getItem = Database.getPreparedStatement("getItem");
+          getItem.setInt(1, id);
+        }
+        else
+          return ERROR_ID_NOT_SET;
+
+        ResultSet result = getItem.executeQuery();
+
+        if (result.next()) {
+          if (result.getInt(3) == -1)
+            return ERROR_ITEM_IS_PRESERVED;
         }
         else
           return ERROR_NO_ROWS_RETURNED;
@@ -228,40 +273,65 @@ public class Inventory extends AbstractListener {
       }
       argument = argument.trim();
 
-      switch (sub_command) {
-        case "add":
-          IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + addItem(argument, nick));
-          break;
-        case "remove":
-          int removeResult = removeItem(argument, Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4));
-          if (removeResult == 0)
-            Helper.sendMessage(target,"Removed item from inventory", nick);
-          else if (removeResult == ERROR_ITEM_IS_FAVOURITE)
-            Helper.sendMessage(target,"This is my favourite thing. You can't make me get rid of it.", nick);
-          else if (removeResult == ERROR_NO_ROWS_RETURNED)
-            Helper.sendMessage(target,"No such item", nick);
-          else
-            Helper.sendMessage(target,"Wrong things happened! (" + removeResult + ")", nick);
-          break;
-        case "list":
-          try {
-            PreparedStatement statement = Database.getPreparedStatement("getItems");
-            ResultSet resultSet = statement.executeQuery();
-            String items = "";
-            while (resultSet.next()) {
-              items += "'" + resultSet.getString(2) + "', ";
-            }
-            items = StringUtils.strip(items, ", ");
-            Helper.sendMessage(target, Helper.antiPing(nick) + ": " + items);
+
+      System.out.println("sub_command_add: " + sub_command_add.shouldExecute(sub_command));
+      if (sub_command_add.shouldExecute(sub_command) == 0)
+        IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + addItem(argument, nick));
+      else if (sub_command_remove.shouldExecute(sub_command) == 0) {
+        boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4);
+        int removeResult = removeItem(argument, hasPermission, hasPermission);
+        if (removeResult == 0)
+          Helper.sendMessage(target, "Removed item from inventory", nick);
+        else if (removeResult == ERROR_ITEM_IS_FAVOURITE)
+          Helper.sendMessage(target, "This is my favourite thing. You can't make me get rid of it.", nick);
+        else if (removeResult == ERROR_ITEM_IS_PRESERVED)
+          Helper.sendMessage(target, "I've been told to preserve this. You can't remove it.", nick);
+        else if (removeResult == ERROR_NO_ROWS_RETURNED)
+          Helper.sendMessage(target, "No such item", nick);
+        else
+          Helper.sendMessage(target, "Wrong things happened! (" + removeResult + ")", nick);
+      } else if (sub_command_list.shouldExecute(sub_command) == 0) {
+        try {
+          PreparedStatement statement = Database.getPreparedStatement("getItems");
+          ResultSet resultSet = statement.executeQuery();
+          String items = "";
+          while (resultSet.next()) {
+            items += "'" + resultSet.getString(2) + "', ";
           }
-          catch (Exception e) {
-            e.printStackTrace();
-            Helper.sendMessage(target,"Wrong things happened! (5)", nick);
-          }
-          break;
-        default:
-          Helper.sendMessage(target,"Unknown sub-command '" + sub_command + "' (Try: add, remove, list)", nick);
-          break;
+          items = StringUtils.strip(items, ", ");
+          Helper.sendMessage(target, Helper.antiPing(nick) + ": " + items);
+        } catch (Exception e) {
+          e.printStackTrace();
+          Helper.sendMessage(target, "Wrong things happened! (5)", nick);
+        }
+      } else if (sub_command_preserve.shouldExecute(sub_command) == 0) {
+        if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
+        try {
+          PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
+          preserveItem.setString(1, argument);
+          preserveItem.executeUpdate();
+          Helper.sendMessage(target, "Item preserved", nick);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        } else {
+          Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
+        }
+      } else if (sub_command_unpreserve.shouldExecute(sub_command) == 0) {
+        if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
+        try {
+          PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");
+          unPreserveItem.setString(1, argument);
+          unPreserveItem.executeUpdate();
+          Helper.sendMessage(target, "Item un-preserved", nick);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        } else {
+          Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
+        }
+      } else {
+        Helper.sendMessage(target, "Unknown sub-command '" + sub_command + "' (Try: " + local_command.getSubCommandsAsString() + ")", nick);
       }
     }
   }

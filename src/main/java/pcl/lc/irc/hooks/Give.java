@@ -81,8 +81,9 @@ public class Give extends AbstractListener {
 
 				try
 				{
-					if (resultSet != null && resultSet.next())
-            item = resultSet.getString(2);
+					if (resultSet != null && resultSet.next()) {
+						item = resultSet.getString(2);
+					}
 				}
 				catch (SQLException e)
 				{

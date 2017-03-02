@@ -76,6 +76,10 @@ public class Stab extends AbstractListener {
 				String s = message.trim();
 
 				String dust = "";
+				if (s != "" && uses != null && uses == -1)
+				{
+					//Do nothing, item cannot break
+				}
 				if (s != "" && uses != null && uses > 1)
 				{
 					statement = Database.getPreparedStatement("decrementUses");
