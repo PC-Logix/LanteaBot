@@ -110,7 +110,7 @@ public class Inventory extends AbstractListener {
       }
     }
 
-    if (!override_favourite) {
+    if (!override_favourite || !override_preserved) {
       PreparedStatement getItem;
       try {
         if (id_is_string) {
@@ -127,34 +127,9 @@ public class Inventory extends AbstractListener {
         ResultSet result = getItem.executeQuery();
 
         if (result.next()) {
-          if (result.getBoolean(4))
+          if (result.getBoolean(4) && !override_favourite)
             return ERROR_ITEM_IS_FAVOURITE;
-        }
-        else
-          return ERROR_NO_ROWS_RETURNED;
-      }
-      catch (Exception e) {
-        e.printStackTrace();
-        return ERROR_INVALID_STATEMENT;
-      }
-    } else if (!override_preserved) {
-      PreparedStatement getItem;
-      try {
-        if (id_is_string) {
-          getItem = Database.getPreparedStatement("getItemByName");
-          getItem.setString(1, id_or_name);
-        }
-        else if (id != null) {
-          getItem = Database.getPreparedStatement("getItem");
-          getItem.setInt(1, id);
-        }
-        else
-          return ERROR_ID_NOT_SET;
-
-        ResultSet result = getItem.executeQuery();
-
-        if (result.next()) {
-          if (result.getInt(3) == -1)
+          else if (result.getInt(3) == -1 && !override_preserved)
             return ERROR_ITEM_IS_PRESERVED;
         }
         else
@@ -214,6 +189,7 @@ public class Inventory extends AbstractListener {
         }
         System.out.println("Favourites cleared, adding item");
         PreparedStatement addItem = Database.getPreparedStatement("addItem");
+        item = item.replaceAll(" ?\\(\\*\\)", ""); //Replace any (*) to prevent spoofing preserved item marks
         addItem.setString(1, item);
         addItem.setInt(2, (favourite) ? 1 : 0);
         if (added_by != null)
@@ -273,10 +249,8 @@ public class Inventory extends AbstractListener {
       }
       argument = argument.trim();
 
-
-      System.out.println("sub_command_add: " + sub_command_add.shouldExecute(sub_command));
       if (sub_command_add.shouldExecute(sub_command) == 0)
-        IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + addItem(argument, nick));
+        Helper.sendMessage(target, addItem(argument, nick), nick);
       else if (sub_command_remove.shouldExecute(sub_command) == 0) {
         boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4);
         int removeResult = removeItem(argument, hasPermission, hasPermission);
@@ -296,7 +270,7 @@ public class Inventory extends AbstractListener {
           ResultSet resultSet = statement.executeQuery();
           String items = "";
           while (resultSet.next()) {
-            items += "'" + resultSet.getString(2) + "', ";
+            items += "'" + resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "', ";
           }
           items = StringUtils.strip(items, ", ");
           Helper.sendMessage(target, Helper.antiPing(nick) + ": " + items);
@@ -331,7 +305,7 @@ public class Inventory extends AbstractListener {
           Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
         }
       } else {
-        Helper.sendMessage(target, "Unknown sub-command '" + sub_command + "' (Try: " + local_command.getSubCommandsAsString() + ")", nick);
+        Helper.sendMessage(target, "Unknown sub-command '" + sub_command + "' (Try: " + local_command.getSubCommandsAsString(true) + ")", nick);
       }
     }
   }

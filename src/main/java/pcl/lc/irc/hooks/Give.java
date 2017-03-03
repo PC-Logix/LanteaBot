@@ -95,7 +95,7 @@ public class Give extends AbstractListener {
 
 			int removeResult = Inventory.removeItem(item);
 
-			if (removeResult == 0)
+			if (removeResult == 0 || removeResult == Inventory.ERROR_ITEM_IS_PRESERVED)
 				Helper.sendAction(target ,  "gives " + target_argument + " " + item + " from her inventory");
 			else if (removeResult == Inventory.ERROR_ITEM_IS_FAVOURITE)
 				Helper.sendMessage(target ,  "No! This is my favourite thing! I wont give it away!", nick);

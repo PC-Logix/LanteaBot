@@ -145,9 +145,22 @@ public class Command {
 	}
 
 	public String getSubCommandsAsString() {
+		return getSubCommandsAsString(false);
+	}
+
+	public String getSubCommandsAsString(boolean includeAliases) {
 		String list = "";
 		for (Command command : this.subCommands) {
 			list += ", " + command.getCommand();
+			if (includeAliases) {
+				String aliases = "";
+				for (String alias : command.aliases) {
+					aliases += alias + ", ";
+				}
+				aliases = aliases.replaceAll(", $", "");
+				if (aliases != "")
+					list += " (" + aliases + ")";
+			}
 		}
 		return list.replaceAll("^, ", "");
 	}
