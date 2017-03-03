@@ -1,5 +1,0 @@
-<commands>
-	<channel name="#MichiBot">
-		<command name="poke" action="message" output="poke %nick%">
-	</channel>
-</commands>
