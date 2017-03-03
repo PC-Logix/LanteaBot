@@ -273,7 +273,7 @@ public class Inventory extends AbstractListener {
             items += "'" + resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "', ";
           }
           items = StringUtils.strip(items, ", ");
-          Helper.sendMessage(target, Helper.antiPing(nick) + ": " + items);
+          Helper.sendMessage(target, items, nick);
         } catch (Exception e) {
           e.printStackTrace();
           Helper.sendMessage(target, "Wrong things happened! (5)", nick);
