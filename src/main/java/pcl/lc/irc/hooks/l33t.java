@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
@@ -17,6 +18,7 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class l33t extends AbstractListener {
+	private Command local_command;
 
 	public static String toLeet(String str){
 		boolean ck = false;
@@ -64,35 +66,33 @@ public class l33t extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("1337", "Returns leetspeak of inputted text");
+		local_command = new Command("1337", 0);
+		IRCBot.registerCommand(local_command, "Returns leetspeak of inputted text");
 	}
-
-	public String dest;
 
 	public String chan;
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "1337")) {
+		if (local_command.shouldExecuteBool(command)) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (command.equals(Config.commandprefix + "1337")) {
+		if (local_command.shouldExecuteBool(command)) {
 			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 				target = nick;
 			} else {
 				target = chan;
 			}
 			String message = "";
-			for( int i = 0; i < copyOfRange.length; i++)
-			{
-				message = message + " " + copyOfRange[i];
+			for (String aCopyOfRange : copyOfRange) {
+				message = message + " " + aCopyOfRange;
 			}
 			String s = message.trim();
-			IRCBot.getInstance().sendMessage(target ,  Helper.antiPing(nick) + ": " + toLeet(s));
+			Helper.sendMessage(target ,  toLeet(s), nick);
 		}	
 	}
 
