@@ -206,6 +206,7 @@ public class IRCBot {
 			return true;
 	}
 
+	@Deprecated
 	public void sendMessage(String target, String message) {
 		bot.sendIRC().message(target, message);
 	}

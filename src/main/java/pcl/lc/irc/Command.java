@@ -100,6 +100,14 @@ public class Command {
 		return this.rateLimit - ((int) difference / 1000);
 	}
 
+	public boolean shouldExecuteBool(String command) {
+		return shouldExecuteBool(command, null);
+	}
+
+	public boolean shouldExecuteBool(String command, String nick) {
+		return shouldExecute(command, nick) == 0;
+	}
+
 	public void registerAlias(String alias) {
 		if (!this.aliases.contains(alias)){
 			this.aliases.add(alias);
