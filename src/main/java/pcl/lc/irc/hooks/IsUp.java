@@ -3,17 +3,16 @@
  */
 package pcl.lc.irc.hooks;
 
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
+import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
-
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -21,6 +20,7 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class IsUp extends AbstractListener {
+	private Command local_command;
 
 	public static boolean ping(String url, int timeout) {
 
@@ -42,19 +42,20 @@ public class IsUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("isup", "Checks is a website is up");
+		local_command = new Command("isup", 0);
+		IRCBot.registerCommand(local_command, "Checks is a website is up");
 	}
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "isup")) {
+		if (local_command.shouldExecuteBool(command)) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (command.equals(Config.commandprefix+ "isup")) {
+		if (local_command.shouldExecuteBool(command)) {
 			String target;
 			String dest = null;
 			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
@@ -65,9 +66,9 @@ public class IsUp extends AbstractListener {
 			String site = copyOfRange[0].trim();
 			boolean rez = ping(site, 1000);
 			if (rez) {
-				IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + site + " Is Up.");
+				Helper.sendMessage(target, site + " Is Up.", nick);
 			} else {
-				IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + site + " Is Down.");
+				Helper.sendMessage(target, site + " Is Down.", nick);
 			}
 		}
 	}
