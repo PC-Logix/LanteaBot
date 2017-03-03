@@ -1,5 +1,8 @@
 package pcl.lc.irc;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -285,6 +288,20 @@ public class IRCBot {
 	@Deprecated
 	public static boolean isOp(PircBotX sourceBot, User user) {
 		return Permissions.isOp(sourceBot, user);
-	}  
+	}
+
+    public static File getThisJarFile() throws UnsupportedEncodingException
+    {
+      //Gets the path of the currently running Jar file
+        String path = IRCBot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = URLDecoder.decode(path, "UTF-8");
+
+        //This is code especially written for running and testing this program in an IDE that doesn't compile to .jar when running.
+        if (!decodedPath.endsWith(".jar"))
+        {
+            return new File("LanteaBot.jar");
+        }
+        return new File(decodedPath);   //We use File so that when we send the path to the ProcessBuilder, we will be using the proper System path formatting.
+    }
 	
 }
