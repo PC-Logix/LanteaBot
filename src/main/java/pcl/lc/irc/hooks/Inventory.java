@@ -271,10 +271,10 @@ public class Inventory extends AbstractListener {
           ResultSet resultSet = statement.executeQuery();
           String items = "";
           while (resultSet.next()) {
-            items += "'" + resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "', ";
+            items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
           }
-          items = StringUtils.strip(items, ", ");
-          Helper.sendMessage(target, items, nick, PasteUtils.Formats.INVENTORY);
+          items = StringUtils.strip(items, "\n");
+          Helper.sendMessage(target, "Here's my inventory: " + PasteUtils.paste(items), nick);
         } catch (Exception e) {
           e.printStackTrace();
           Helper.sendMessage(target, "Wrong things happened! (5)", nick);

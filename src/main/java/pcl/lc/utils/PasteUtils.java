@@ -3,16 +3,8 @@ package pcl.lc.utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 /**
@@ -42,18 +34,16 @@ public class PasteUtils {
      * @return A formatted URL which links to the pasted file
      */
     public synchronized static String paste(String urlParameters, Enum format) {
-    	
-    	StringBuilder sb = new StringBuilder(urlParameters);
 
-    	if (format.equals(Formats.LENGTH)) {
-        	int i = 0;
-        	while ((i = sb.indexOf(" ", i + 100)) != -1) {
-        	    sb.replace(i, i + 1, "\n");
-        	}
-    	} else if (format.equals(Formats.INVENTORY)) {
-    		sb = new StringBuilder(urlParameters.replace("', ", "'\r\n"));
-    	}
-    	
+        StringBuilder sb = new StringBuilder(urlParameters);
+
+        if (format.equals(Formats.LENGTH)) {
+            int i = 0;
+            while ((i = sb.indexOf(" ", i + 100)) != -1) {
+                sb.replace(i, i + 1, "\n");
+            }
+        }
+
         HttpURLConnection connection = null;
         try {
             //Create connection
@@ -65,7 +55,7 @@ public class PasteUtils {
 
             //Send request
             //DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-           
+
             connection.setRequestProperty("content-type", "application/json;  charset=utf-8");
             Writer writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), "UTF-8"));
             writer.write(sb.toString());
@@ -77,7 +67,7 @@ public class PasteUtils {
             return pasteURL.replace("http", "https") + new JSONObject(rd.readLine()).getString("key");
 
         } catch (IOException | JSONException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             return null;
         } finally {
             if (connection == null) return null;
