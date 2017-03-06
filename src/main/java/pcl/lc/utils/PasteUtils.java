@@ -30,6 +30,10 @@ public class PasteUtils {
 	
     private static String pasteURL = "http://paste.pc-logix.com/";
 
+	  public synchronized static String paste(String urlParameters) {
+	      return paste(urlParameters, Formats.NONE);
+    }
+
     /**
      * A simple implementation of the Hastebin Client API, allowing data to be pasted online for
      * players to access.
