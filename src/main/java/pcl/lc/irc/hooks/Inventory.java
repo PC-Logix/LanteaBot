@@ -8,6 +8,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.PasteUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -273,7 +274,7 @@ public class Inventory extends AbstractListener {
             items += "'" + resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "', ";
           }
           items = StringUtils.strip(items, ", ");
-          Helper.sendMessage(target, items, nick);
+          Helper.sendMessage(target, items, nick, PasteUtils.Formats.INVENTORY);
         } catch (Exception e) {
           e.printStackTrace();
           Helper.sendMessage(target, "Wrong things happened! (5)", nick);

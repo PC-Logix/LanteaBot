@@ -232,12 +232,16 @@ public class Helper {
 	}
 	
 	public static void sendMessage(String target, String message, String targetUser){
+		sendMessage(target, message, targetUser, PasteUtils.Formats.NONE);
+	}
+	
+	public static void sendMessage(String target, String message, String targetUser, Enum format){
 		if (targetUser != null)
 			targetUser = Helper.antiPing(targetUser) + ": ";
 		else
 			targetUser = "";
 		if (message.length() > 200) {
-			String pasteURL = PasteUtils.paste(message);
+			String pasteURL = PasteUtils.paste(message, format);
 			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);
 		} else {
 			IRCBot.bot.sendIRC().message(target, targetUser + message);

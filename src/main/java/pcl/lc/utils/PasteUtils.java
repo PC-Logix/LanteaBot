@@ -22,6 +22,12 @@ import java.net.URL;
  */
 public class PasteUtils {
 
+	public enum Formats {
+	    LENGTH,
+	    INVENTORY,
+	    NONE;
+	}
+	
     private static String pasteURL = "http://paste.pc-logix.com/";
 
     /**
@@ -31,13 +37,17 @@ public class PasteUtils {
      * @param urlParameters The string to be sent in the body of the POST request
      * @return A formatted URL which links to the pasted file
      */
-    public synchronized static String paste(String urlParameters) {
+    public synchronized static String paste(String urlParameters, Enum format) {
     	
     	StringBuilder sb = new StringBuilder(urlParameters);
 
-    	int i = 0;
-    	while ((i = sb.indexOf(" ", i + 100)) != -1) {
-    	    sb.replace(i, i + 1, "\n");
+    	if (format.equals(Formats.LENGTH)) {
+        	int i = 0;
+        	while ((i = sb.indexOf(" ", i + 100)) != -1) {
+        	    sb.replace(i, i + 1, "\n");
+        	}
+    	} else if (format.equals(Formats.INVENTORY)) {
+    		sb = new StringBuilder(urlParameters.replace("', ", "'\r\n"));
     	}
     	
         HttpURLConnection connection = null;
