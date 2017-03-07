@@ -17,11 +17,8 @@ import com.sun.net.httpserver.HttpHandler;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
-import pcl.lc.irc.hooks.Quotes.QuoteHandler;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PasteUtils;
-
-import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -361,7 +358,23 @@ public class Inventory extends AbstractListener {
 					Helper.sendMessage(target, "Wrong things happened! (" + removeResult + ")", nick);
 			} else if (sub_command_list.shouldExecute(sub_command) == 0) {
 				try {
-					Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory");
+					if (Config.httpdEnable.equals("true")){
+						Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory", nick);
+					} else {
+						String items = null;
+						try {
+							PreparedStatement statement = Database.getPreparedStatement("getItems");
+							ResultSet resultSet = statement.executeQuery();
+							while (resultSet.next()) {
+								items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
+							}
+							items = StringUtils.strip(items, "\n");
+							Helper.sendMessage(target, "Here's my inventory: " + PasteUtils.paste(items), nick);
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					Helper.sendMessage(target, "Wrong things happened! (5)", nick);
