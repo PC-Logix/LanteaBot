@@ -3,6 +3,7 @@
  */
 package pcl.lc.irc.hooks;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -265,7 +266,8 @@ public class Inventory extends AbstractListener {
 				System.out.println("Favourites cleared, adding item");
 				PreparedStatement addItem = Database.getPreparedStatement("addItem");
 				item = item.replaceAll(" ?\\(\\*\\)", ""); //Replace any (*) to prevent spoofing preserved item marks
-				addItem.setString(1, item);
+				String itemEscaped = StringEscapeUtils.escapeHtml4(item);
+				addItem.setString(1, itemEscaped);
 				addItem.setInt(2, (favourite) ? 1 : 0);
 				if (added_by != null)
 					addItem.setString(3, added_by);
