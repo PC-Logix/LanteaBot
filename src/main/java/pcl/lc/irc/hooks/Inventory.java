@@ -14,6 +14,7 @@ import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.irc.hooks.Quotes.QuoteHandler;
 import pcl.lc.utils.Helper;
@@ -340,14 +341,7 @@ public class Inventory extends AbstractListener {
 					Helper.sendMessage(target, "Wrong things happened! (" + removeResult + ")", nick);
 			} else if (sub_command_list.shouldExecute(sub_command) == 0) {
 				try {
-					PreparedStatement statement = Database.getPreparedStatement("getItems");
-					ResultSet resultSet = statement.executeQuery();
-					String items = "";
-					while (resultSet.next()) {
-						items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
-					}
-					items = StringUtils.strip(items, "\n");
-					Helper.sendMessage(target, "Here's my inventory: " + PasteUtils.paste(items), nick);
+					Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory");
 				} catch (Exception e) {
 					e.printStackTrace();
 					Helper.sendMessage(target, "Wrong things happened! (5)", nick);

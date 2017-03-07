@@ -27,6 +27,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import pcl.lc.httpd.httpd;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.Database;
@@ -233,6 +234,8 @@ public class Quotes extends AbstractListener {
 					e.printStackTrace();
 				}
 			}
+		} else if (command.equals(prefix + "quotes")) {
+			IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + httpd.getBaseDomain() + "/quotes");
 		}
 	}
 

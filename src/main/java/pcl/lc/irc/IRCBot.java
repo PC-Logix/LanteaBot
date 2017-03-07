@@ -57,7 +57,6 @@ public class IRCBot {
 	private TaskScheduler scheduler;
 
 	public static httpd httpServer = new httpd();
-
 	public static boolean isIgnored(String nick) {
 		if (IRCBot.admins.containsKey(nick)) {
 			return false;
@@ -137,6 +136,7 @@ public class IRCBot {
 
 		if(Config.httpdEnable.equals("true")) {
 			try {
+				httpd.setBaseDomain(Config.httpdBaseDomain);
 				httpd.setup();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

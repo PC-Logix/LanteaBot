@@ -31,6 +31,7 @@ public class Config {
 	public static String httpdport = null;
 	public static String httpdEnable = "false";
 	public static String enablehttpd = null;
+	public static String httpdBaseDomain = null;
 	public static String proxyhost = null;
 	public static String proxyport = null;
 	public static String enableTLS = null;
@@ -45,8 +46,6 @@ public class Config {
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
-
-	
 
 	public static void saveProps() {
 		FileOutputStream output = null;
@@ -98,6 +97,7 @@ public class Config {
 			enablehttpd = prop.getProperty("enablehttpd", "true");
 			httpdport = prop.getProperty("httpdport", "8081");
 			httpdEnable = prop.getProperty("httpdEnable", "false");
+			httpdBaseDomain = prop.getProperty("httpdBaseDomain", "http://localhost");
 			botConfig.put("httpDocRoot", prop.getProperty("httpDocRoot", ""));
 			botConfig.put("wikiWatcherURL", prop.getProperty("wikiWatcherURL", ""));
 			proxyhost = prop.getProperty("proxyhost", "");
@@ -111,6 +111,7 @@ public class Config {
 			TwitTSecret = prop.getProperty("TwitTSecret");
 			googleAPI = prop.getProperty("GoogleAPI", "");
 			weatherAPI = prop.getProperty("WeatherAPI", "");
+			
 			saveProps();
 
 

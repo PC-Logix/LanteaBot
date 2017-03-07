@@ -10,6 +10,7 @@ import pcl.lc.irc.IRCBot;
 @SuppressWarnings("restriction")
 public class httpd {
 	static HttpServer server;
+	static String baseDomain;
 	public static void setup() throws Exception {
         server = HttpServer.create(new InetSocketAddress(Integer.parseInt(Config.httpdport)), 0);
     }
@@ -25,11 +26,18 @@ public class httpd {
     
 	public static void start() throws Exception {
 		if(server != null) {
-			IRCBot.log.info("Starting HTTPD On port " + Config.httpdport);
+			IRCBot.log.info("Starting HTTPD On port " + Config.httpdport + " Base domain: " + Config.httpdBaseDomain);
 			server.setExecutor(null); // creates a default executor
 	        server.start();
 		} else {
 			IRCBot.log.error("httpd server was null!");
 		}
     }
+	public static void setBaseDomain(String httpdBaseDomain) {
+		baseDomain = httpdBaseDomain;
+	}
+	
+	public static String getBaseDomain() {
+		return baseDomain;
+	}
 }
