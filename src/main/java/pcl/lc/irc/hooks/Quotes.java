@@ -72,14 +72,14 @@ public class Quotes extends AbstractListener {
 
 			String quoteList = "";
 			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
-			String qid = "0";
+			int qid = 0;
 			if (paramsList.size() >= 1) {
 				for (NameValuePair parameter : paramsList)
 					if (parameter.getName().equals("id"))
-						qid = parameter.getValue();
+						qid = Integer.valueOf(parameter.getValue());
 				try {
 					PreparedStatement getQuote = Database.getPreparedStatement("getIdQuote");
-					getQuote.setString(1, qid);
+					getQuote.setInt(1, qid);
 					ResultSet results = getQuote.executeQuery();
 					if (results.next()) {
 						quoteList = "Quote #" + qid + ": &lt;" + escapeHtml4(results.getString(1)) + "&gt; " + escapeHtml4(results.getString(2));
