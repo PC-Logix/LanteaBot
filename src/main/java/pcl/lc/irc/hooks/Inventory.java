@@ -232,6 +232,19 @@ public class Inventory extends AbstractListener {
 		}
 	}
 
+	private static String getUsesIndicator(int uses) {
+		switch (uses) {
+			case 1: case 2: case 3:
+				return "This seems rather fragile...";
+			case 4: case 5: case 6: case 7:
+				return "I could get some good swings in with this.";
+			case 8: case 9: case 10:
+				return "This seems very sturdy.";
+			default:
+				return "Is this indestructible?";
+		}
+	}
+
 	private static String addItem(String item) {
 		return addItem(item, null, false);
 	}
@@ -271,9 +284,8 @@ public class Inventory extends AbstractListener {
 				addItem.setString(1, itemEscaped);
 				int length_penalty = item.length() / 20; //this is the length where the bonus turns into a penalty
 				int actual_penalty = (int) ((length_penalty < 1) ? 5 - Math.floor(length_penalty * 5) : -Math.floor(length_penalty));
-				System.out.println("Length penalty: " + length_penalty);
-				System.out.println("Actual penalty: " + actual_penalty);
-				addItem.setInt(2, Math.max(1, (Helper.getRandomInt(1, 4) + actual_penalty)));
+				int uses = Math.max(1, (Helper.getRandomInt(1, 4) + actual_penalty));
+				addItem.setInt(2, uses);
 				addItem.setInt(3, (favourite) ? 1 : 0);
 				if (added_by != null)
 					addItem.setString(4, added_by);
@@ -284,7 +296,7 @@ public class Inventory extends AbstractListener {
 					if (favourite)
 						return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
 					else
-						return "Added '" + item + "' to inventory.";
+						return "Added '" + item + "' to inventory. " + getUsesIndicator(uses);
 				}
 				else {
 					return "Wrong things happened! (1)";
