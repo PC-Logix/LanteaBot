@@ -80,6 +80,7 @@ public class Inventory extends AbstractListener {
 		local_command.registerSubCommand(sub_command_unpreserve);
 		IRCBot.registerCommand(local_command, "Interact with the bots inventory");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
+		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD is_favourite BOOLEAN DEFAULT 0 NULL");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added INT DEFAULT NULL NULL;");
 
@@ -88,7 +89,7 @@ public class Inventory extends AbstractListener {
 		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;");
 		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite FROM Inventory ORDER BY Random() LIMIT 1");
 		Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
-		Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, is_favourite, added_by, added) VALUES (NULL, ?, ?, ?, ?)");
+		Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, uses_left, is_favourite, added_by, added) VALUES (NULL, ?, ?, ?, ?, ?)");
 		Database.addPreparedStatement("removeItemId", "DELETE FROM Inventory WHERE id = ?");
 		Database.addPreparedStatement("removeItemName", "DELETE FROM Inventory WHERE item_name = ?");
 		Database.addPreparedStatement("decrementUses", "UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?");
@@ -268,12 +269,17 @@ public class Inventory extends AbstractListener {
 				item = item.replaceAll(" ?\\(\\*\\)", ""); //Replace any (*) to prevent spoofing preserved item marks
 				String itemEscaped = StringEscapeUtils.escapeHtml4(item);
 				addItem.setString(1, itemEscaped);
-				addItem.setInt(2, (favourite) ? 1 : 0);
+				int length_penalty = item.length() / 20; //this is the length where the bonus turns into a penalty
+				int actual_penalty = (int) ((length_penalty < 1) ? 5 - Math.floor(length_penalty * 5) : -Math.floor(length_penalty));
+				System.out.println("Length penalty: " + length_penalty);
+				System.out.println("Actual penalty: " + actual_penalty);
+				addItem.setInt(2, Math.max(1, (Helper.getRandomInt(1, 4) + actual_penalty)));
+				addItem.setInt(3, (favourite) ? 1 : 0);
 				if (added_by != null)
-					addItem.setString(3, added_by);
+					addItem.setString(4, added_by);
 				else
-					addItem.setString(3, "");
-				addItem.setLong(4, new Timestamp(System.currentTimeMillis()).getTime());
+					addItem.setString(4, "");
+				addItem.setLong(5, new Timestamp(System.currentTimeMillis()).getTime());
 				if (addItem.executeUpdate() > 0) {
 					if (favourite)
 						return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
