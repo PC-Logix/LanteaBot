@@ -52,7 +52,7 @@ public class EightBall extends AbstractListener {
 				Random generator = new Random();
 				String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
 				int randommessage = generator.nextInt( 4 );
-				IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  ballmessages[randommessage]);
+				Helper.sendMessage(target, Helper.antiPing(nick) + ": " +  ballmessages[randommessage]);
 			}
 		}
 	}
