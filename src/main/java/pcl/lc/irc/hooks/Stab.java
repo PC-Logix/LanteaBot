@@ -109,7 +109,7 @@ public class Stab extends AbstractListener {
 				else if (!s.equals(IRCBot.ournick))
 					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust);
 				else
-					Helper.sendAction(target,(!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
+					Helper.sendAction(target,"uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
 			}
 			catch (Exception e)
 			{
