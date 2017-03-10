@@ -3,6 +3,7 @@
  */
 package pcl.lc.irc.hooks;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
@@ -85,7 +86,7 @@ public class Pet extends AbstractListener {
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
-					dust = ", the " + item.replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
+					dust = ", the " + StringEscapeUtils.unescapeHtml4(item).replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
 				}
 
 				ArrayList<String> actions = new ArrayList<>();
@@ -98,9 +99,9 @@ public class Pet extends AbstractListener {
 				System.out.println("Action: " + action);
 
 				if (s == "")
-					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + item);
+					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item));
 				else if (!s.equals(IRCBot.ournick))
-					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + "." + ((roll != null) ? " " + s + " recovers " + roll.getSum() + " health! " : "") + dust);
+					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item) + "." + ((roll != null) ? " " + s + " recovers " + roll.getSum() + " health! " : "") + dust);
 				else
 					Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
 			}

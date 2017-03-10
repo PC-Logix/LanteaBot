@@ -3,6 +3,7 @@
  */
 package pcl.lc.irc.hooks;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
@@ -82,7 +83,7 @@ public class Stab extends AbstractListener {
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
-					dust = ", the " + item.replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
+					dust = ", the " + StringEscapeUtils.unescapeHtml4(item).replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
 				}
 				else if (s != "" && uses != null && uses > 1)
 				{
@@ -101,11 +102,11 @@ public class Stab extends AbstractListener {
 				System.out.println("Action: " + action);
 
 				if (s == "")
-					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + item);
+					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item));
 				else if (!s.equals(IRCBot.ournick))
-					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
+					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item) + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
 				else
-					Helper.sendAction(target,"uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
+					Helper.sendAction(target,"uses " + (!item.equals("") ? StringEscapeUtils.unescapeHtml4(item) : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
 			}
 			catch (Exception e)
 			{
