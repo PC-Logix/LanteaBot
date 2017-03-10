@@ -12,16 +12,19 @@ public class DiceRoll {
     private int sum;
 
     public DiceRoll(ArrayList<Integer> results) {
-        this.results = results;
-        this.sum = 0;
-        for (int roll : results)
-            this.sum += roll;
-        this.resultString = results.toString() + ((results.size() > 1) ? " = " + this.sum : "");
+        this(results, null);
     }
 
-    public DiceRoll(ArrayList<Integer> results, int sum) {
+    public DiceRoll(ArrayList<Integer> results, Integer sum) {
         this.results = results;
-        this.sum = sum;
+
+        if (sum == null) {
+            for (int roll : results)
+                this.sum += roll;
+        }
+        else
+            this.sum = sum;
+        this.resultString = results.toString() + ((results.size() > 1) ? " = " + this.sum : "");
     }
 
     public String getResultString() {
