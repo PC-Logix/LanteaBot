@@ -24,7 +24,7 @@ public class Pet extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("pet", 60 * 5);
+		local_command = new Command("pet", 0);
 		local_command.registerAlias("stroke");
 		IRCBot.registerCommand(local_command, "Give pets");
 	}
@@ -89,11 +89,14 @@ public class Pet extends AbstractListener {
 					dust = ", the " + StringEscapeUtils.unescapeHtml4(item).replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
 				}
 
+				if (uses == null)
+					uses = 1;
+
 				ArrayList<String> actions = new ArrayList<>();
 				actions.add("pets");
 				actions.add("brushes");
 
-				DiceRoll roll = Helper.rollDice(uses + "d4");
+				DiceRoll roll = Helper.rollDice(Math.max(1, uses / 2) + "d4");
 
 				int action = Helper.getRandomInt(0, actions.size() - 1);
 				System.out.println("Action: " + action);
