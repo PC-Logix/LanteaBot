@@ -168,13 +168,12 @@ public class Command {
 	}
 
 	public String getCannotExecuteReason(long shouldExecuteResult) {
-			if (shouldExecuteResult > 0)
-				return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecuteResult)) + ".";
-			else if (shouldExecuteResult == -1)
-				return "";
-			else if (shouldExecuteResult == -2)
-				return "";
-			return null;
-		}
+		if (shouldExecuteResult > 0)
+			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecuteResult)) + ".";
+		else if (shouldExecuteResult == -1)
+			return "";
+		else if (shouldExecuteResult == -2)
+			return "";
+		return null;
 	}
 }
