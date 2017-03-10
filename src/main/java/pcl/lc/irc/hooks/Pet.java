@@ -109,6 +109,10 @@ public class Pet extends AbstractListener {
 			{
 				e.printStackTrace();
 			}
+		} else {
+			String result = local_command.getCannotExecuteReason(shouldExecute);
+			if (result != "")
+				Helper.sendMessage(target, result, nick);
 		}
 	}
 

@@ -1,5 +1,7 @@
 package pcl.lc.irc;
 
+import pcl.lc.utils.Helper;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -163,5 +165,16 @@ public class Command {
 			}
 		}
 		return list.replaceAll("^, ", "");
+	}
+
+	public String getCannotExecuteReason(long shouldExecuteResult) {
+			if (shouldExecuteResult > 0)
+				return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecuteResult)) + ".";
+			else if (shouldExecuteResult == -1)
+				return "";
+			else if (shouldExecuteResult == -2)
+				return "";
+			return null;
+		}
 	}
 }
