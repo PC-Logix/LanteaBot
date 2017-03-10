@@ -315,7 +315,7 @@ public class Inventory extends AbstractListener {
 		strings.add("vanishes into a rift in space");
 		strings.add("phases out of the dimension");
 
-		return strings.get(Helper.getRandomInt(0, strings.size()));
+		return strings.get(Helper.getRandomInt(0, strings.size() - 1));
 	}
 
 	public String chan;

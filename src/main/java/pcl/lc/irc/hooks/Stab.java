@@ -80,7 +80,7 @@ public class Stab extends AbstractListener {
 				{
 					//Do nothing, item cannot break
 				}
-				if (s != "" && uses != null && uses > 1)
+				else if (s != "" && uses != null && uses > 1)
 				{
 					statement = Database.getPreparedStatement("decrementUses");
 					statement.setInt(1, id);
