@@ -54,12 +54,13 @@ public class Pet extends AbstractListener {
 			}
 			try
 			{
-				PreparedStatement statement = Database.getPreparedStatement("getRandomItemNonFavourite");
+				PreparedStatement statement = Database.getPreparedStatement("getRandomItem");
 				ResultSet resultSet = statement.executeQuery();
 
 				String item = "";
 				Integer id = null;
 				Integer uses = null;
+				Boolean is_favourite = false;
 				try
 				{
 					if (resultSet.next())
@@ -67,6 +68,7 @@ public class Pet extends AbstractListener {
 						id = resultSet.getInt(1);
 						item = resultSet.getString(2);
 						uses = resultSet.getInt(3);
+						is_favourite = resultSet.getBoolean(4);
 					}
 				}
 				catch (SQLException e)
@@ -77,11 +79,7 @@ public class Pet extends AbstractListener {
 				String s = message.trim();
 
 				String dust = "";
-				if (s != "" && uses != null && uses == -1)
-				{
-					//Do nothing, item cannot break
-				}
-				else if (s != "" && s != IRCBot.ournick && uses != null)
+				if (uses != null && uses != -1 && s != "" && s != IRCBot.ournick && !is_favourite)
 				{
 					statement = Database.getPreparedStatement("removeItemId");
 					statement.setInt(1, id);
@@ -92,6 +90,7 @@ public class Pet extends AbstractListener {
 
 				ArrayList<String> actions = new ArrayList<>();
 				actions.add("pets");
+				actions.add("brushes");
 
 				DiceRoll roll = Helper.rollDice(uses + "d4");
 

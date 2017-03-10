@@ -76,9 +76,13 @@ public class Stab extends AbstractListener {
 				String s = message.trim();
 
 				String dust = "";
-				if (s != "" && uses != null && uses == -1)
+				if (s != "" && uses != null && uses == 1)
 				{
-					//Do nothing, item cannot break
+					statement = Database.getPreparedStatement("removeItemId");
+					statement.setInt(1, id);
+					statement.executeUpdate();
+					System.out.println("Remove item " + id);
+					dust = ", the " + item.replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
 				}
 				else if (s != "" && uses != null && uses > 1)
 				{
@@ -86,14 +90,6 @@ public class Stab extends AbstractListener {
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Decrement uses for item " + id);
-				}
-				else if (s != "" && uses != null)
-				{
-					statement = Database.getPreparedStatement("removeItemId");
-					statement.setInt(1, id);
-					statement.executeUpdate();
-					System.out.println("Remove item " + id);
-					dust = ", the " + item.replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
 				}
 
 				ArrayList<String> actions = new ArrayList<>();
