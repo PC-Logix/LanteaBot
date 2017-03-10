@@ -93,7 +93,7 @@ public class Stab extends AbstractListener {
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
-					dust = ", the " + item.replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " crumbles to dust.";
+					dust = ", the " + item.replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
 				}
 
 				ArrayList<String> actions = new ArrayList<>();
@@ -107,7 +107,7 @@ public class Stab extends AbstractListener {
 				if (s == "")
 					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + item);
 				else if (!s.equals(IRCBot.ournick))
-					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDice("1d20") + " damage" + dust);
+					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + item + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
 				else
 					Helper.sendAction(target,"uses " + (!item.equals("") ? item : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
 			}

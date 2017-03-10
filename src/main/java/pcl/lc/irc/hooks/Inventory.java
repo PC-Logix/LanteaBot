@@ -30,6 +30,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -306,6 +307,15 @@ public class Inventory extends AbstractListener {
 		}
 		else
 			return "I can't put myself in my inventory silly.";
+	}
+
+	public static String getItemBreakString() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("poofs away in a sparkly cloud");
+		strings.add("vanishes into a rift in space");
+		strings.add("phases out of the dimension");
+
+		return strings.get(Helper.getRandomInt(0, strings.size()));
 	}
 
 	public String chan;

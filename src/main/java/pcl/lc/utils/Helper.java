@@ -13,6 +13,7 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.DiceRoll;
 import pcl.lc.irc.IRCBot;
 
 public class Helper {
@@ -104,7 +105,15 @@ public class Helper {
 		return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
 	}
 
-	public static String rollDice(String dice) {
+	public static String rollDiceString(String dice) {
+		DiceRoll roll =  rollDice(dice);
+		if (roll != null)
+			return roll.getResultString();
+		else
+			return "Invalid dice format (Eg 1d6)";
+	}
+
+	public static DiceRoll rollDice(String dice) {
 		final String regex = "(\\d\\d?\\d?)d(\\d\\d?\\d?)";
 
 		final Pattern pattern = Pattern.compile(regex);
@@ -130,10 +139,10 @@ public class Helper {
 				results.add(result);
 				sum += result;
 			}
-			return results.toString() + ((num_dice > 1) ? " = " + sum : "");
+			return new DiceRoll(results, sum);
 		}
 		else {
-			return "Invalid dice format (Eg 1d6)";
+			return null;
 		}
 	}
 

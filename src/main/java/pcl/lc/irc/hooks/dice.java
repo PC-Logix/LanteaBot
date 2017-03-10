@@ -52,7 +52,7 @@ public class dice extends AbstractListener {
 				message = message + " " + aCopyOfRange;
 			}
 			String s = message.trim();
-			Helper.sendMessage(target, Helper.rollDice(s), nick);
+			Helper.sendMessage(target, Helper.rollDiceString(s), nick);
 		}
 	}
 
