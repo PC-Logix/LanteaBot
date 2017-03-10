@@ -101,7 +101,7 @@ public class Pet extends AbstractListener {
 				if (s == "")
 					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item));
 				else if (!s.equals(IRCBot.ournick))
-					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item) + "." + ((roll != null) ? " " + s + " recovers " + roll.getSum() + " health! " : "") + dust);
+					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item) + "." + ((roll != null) ? " " + s + " recovers " + roll.getSum() + " health!" : "") + dust);
 				else
 					Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
 			}
