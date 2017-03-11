@@ -3,6 +3,7 @@
  */
 package pcl.lc.irc.hooks;
 
+import jdk.nashorn.internal.runtime.regexp.RegExp;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -316,6 +317,24 @@ public class Inventory extends AbstractListener {
 		strings.add("phases out of the dimension");
 
 		return strings.get(Helper.getRandomInt(0, strings.size() - 1));
+	}
+
+	public static String fixItemName(String item) {
+		ArrayList<String> prefixes = new ArrayList<>();
+		prefixes.add("^ ?the ");
+		prefixes.add("^ ?an ");
+		prefixes.add("^ ?a ");
+
+		boolean found_prefix = false;
+		for (String exp : prefixes) {
+			String new_item = item.replaceAll("(?i)"+exp, "");
+			System.out.println("'"+item+"' != '"+new_item+"' (" + exp + ")");
+			if (item != new_item)
+				found_prefix = true;
+			item = new_item;
+		}
+		System.out.println("Found prefix: " + found_prefix);
+		return ((found_prefix) ? "the " : "") + StringEscapeUtils.unescapeHtml4(item);
 	}
 
 	public String chan;

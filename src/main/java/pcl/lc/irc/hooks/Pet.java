@@ -86,7 +86,7 @@ public class Pet extends AbstractListener {
 					statement.setInt(1, id);
 					statement.executeUpdate();
 					System.out.println("Remove item " + id);
-					dust = ", the " + StringEscapeUtils.unescapeHtml4(item).replace("a ", "").replace("A ", "").replace("an ", "").replace("the ", "") + " " + Inventory.getItemBreakString() + ".";
+					dust = ", " + Inventory.fixItemName(item) + " " + Inventory.getItemBreakString() + ".";
 				}
 
 				if (uses == null)
