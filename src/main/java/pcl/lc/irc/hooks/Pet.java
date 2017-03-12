@@ -55,58 +55,29 @@ public class Pet extends AbstractListener {
 			}
 			try
 			{
-				PreparedStatement statement = Database.getPreparedStatement("getRandomItem");
-				ResultSet resultSet = statement.executeQuery();
-
-				String item = "";
-				Integer id = null;
-				Integer uses = null;
-				Boolean is_favourite = false;
-				try
-				{
-					if (resultSet.next())
-					{
-						id = resultSet.getInt(1);
-						item = resultSet.getString(2);
-						uses = resultSet.getInt(3);
-						is_favourite = resultSet.getBoolean(4);
-					}
-				}
-				catch (SQLException e)
-				{
-					e.printStackTrace();
-				}
-
-				String s = message.trim();
-
+				Item item = Inventory.getRandomItem(false);
 				String dust = "";
-				if (uses != null && uses != -1 && s != "" && s != IRCBot.ournick && !is_favourite)
-				{
-					statement = Database.getPreparedStatement("removeItemId");
-					statement.setInt(1, id);
-					statement.executeUpdate();
-					System.out.println("Remove item " + id);
-					dust = ", " + Inventory.fixItemName(item) + " " + Inventory.getItemBreakString() + ".";
+				if (item != null) {
+					dust = item.decrementUses();
 				}
 
-				if (uses == null)
-					uses = 1;
+				String target = message.trim();
 
 				ArrayList<String> actions = new ArrayList<>();
 				actions.add("pets");
 				actions.add("brushes");
 
-				DiceRoll roll = Helper.rollDice(Math.max(1, uses / 2) + "d4");
+				DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4");
 
 				int action = Helper.getRandomInt(0, actions.size() - 1);
 				System.out.println("Action: " + action);
 
-				if (s == "")
-					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item));
-				else if (!s.equals(IRCBot.ournick))
-					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item) + "." + ((roll != null) ? " " + s + " recovers " + roll.getSum() + " health!" : "") + dust);
+				if (target == "")
+					Helper.sendAction(this.target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
+				else if (!target.equals(IRCBot.ournick))
+					Helper.sendAction(this.target,actions.get(action) + " " + target + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + target + " recovers " + roll.getSum() + " health!" : "") + dust);
 				else
-					Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
+					Helper.sendMessage(this.target,"I'm not going to pet myself in public. It'd be rude.", nick);
 			}
 			catch (Exception e)
 			{

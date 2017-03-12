@@ -83,15 +83,18 @@ public class Inventory extends AbstractListener {
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added INT DEFAULT NULL NULL;");
 
-		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite FROM Inventory;");
-		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left FROM Inventory WHERE id = ?;");
-		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE item_name = ?;");
-		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite FROM Inventory ORDER BY Random() LIMIT 1");
-		Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
+		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory;");
+		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE id = ?;");
+		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE item_name = ?;");
+		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory ORDER BY Random() LIMIT 1");
+		Database.addPreparedStatement("getRandomItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory ORDER BY Random() LIMIT ?");
+		Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
+		Database.addPreparedStatement("getRandomItemsNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT ?");
 		Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, uses_left, is_favourite, added_by, added) VALUES (NULL, ?, ?, ?, ?, ?)");
 		Database.addPreparedStatement("removeItemId", "DELETE FROM Inventory WHERE id = ?");
 		Database.addPreparedStatement("removeItemName", "DELETE FROM Inventory WHERE item_name = ?");
 		Database.addPreparedStatement("decrementUses", "UPDATE Inventory SET uses_left = uses_left - 1 WHERE id = ?");
+		Database.addPreparedStatement("setUses", "UPDATE Inventory SET uses_left = ? WHERE id = ?");
 		Database.addPreparedStatement("clearFavourite", "UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1");
 		Database.addPreparedStatement("preserveItem", "UPDATE Inventory SET uses_left = -1 WHERE item_name = ?");
 		Database.addPreparedStatement("unPreserveItem", "UPDATE Inventory SET uses_left = 5 WHERE item_name = ?");
@@ -144,8 +147,40 @@ public class Inventory extends AbstractListener {
 			os.close();
 		}
 	}
+
+	public static Item getRandomItem() {
+		return getRandomItem(true);
+	}
+
+	public static Item getRandomItem(boolean can_be_favourite) {
+		try {
+			PreparedStatement statement;
+			if (can_be_favourite)
+				statement = Database.getPreparedStatement("getRandomItem");
+			else
+				statement = Database.getPreparedStatement("getRandomItemNonFavourite");
+			ResultSet resultSet = statement.executeQuery();
+			if (resultSet.next())
+				return new Item(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getBoolean(4), resultSet.getString(5), resultSet.getInt(6));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static int removeItem(Item item) {
+		return removeItem(item.getId());
+	}
+
+	public static int removeItem(Integer id) {
+		return removeItem(id.toString(), false, false);
+	}
+
+	public static int removeItem(Integer id, boolean override_favourite, boolean override_preserved) {
+		return removeItem(id.toString(), override_favourite, override_preserved);
+	}
 	
-	static int removeItem(String id) {
+	public static int removeItem(String id) {
 		return removeItem(id, false, false);
 	}
 
@@ -158,7 +193,7 @@ public class Inventory extends AbstractListener {
 	 * @return int
 	 */
 	@SuppressWarnings("Duplicates")
-	private static int removeItem(String id_or_name, boolean override_favourite, boolean override_preserved) {
+	public static int removeItem(String id_or_name, boolean override_favourite, boolean override_preserved) {
 		Integer id = null;
 		Boolean id_is_string = true;
 		PreparedStatement removeItem;
@@ -231,7 +266,7 @@ public class Inventory extends AbstractListener {
 		}
 	}
 
-	private static String getUsesIndicator(int uses) {
+	public static String getUsesIndicator(int uses) {
 		switch (uses) {
 			case 1: case 2: case 3:
 				return "This seems rather fragile...";
@@ -242,6 +277,10 @@ public class Inventory extends AbstractListener {
 			default:
 				return "Is this indestructible?";
 		}
+	}
+
+	public static String addItem(Item item) {
+		return addItem(item.getName(), item.getAdded_by());
 	}
 
 	private static String addItem(String item) {
@@ -319,21 +358,22 @@ public class Inventory extends AbstractListener {
 		return strings.get(Helper.getRandomInt(0, strings.size() - 1));
 	}
 
-	public static String fixItemName(String item) {
-		ArrayList<String> prefixes = new ArrayList<>();
-		prefixes.add("^ ?the ");
-		prefixes.add("^ ?an ");
-		prefixes.add("^ ?a ");
-
+	public static String fixItemName(String item, boolean sort_out_prefixes) {
 		boolean found_prefix = false;
-		for (String exp : prefixes) {
-			String new_item = item.replaceAll("(?i)"+exp, "");
-			System.out.println("'"+item+"' != '"+new_item+"' (" + exp + ")");
-			if (item != new_item)
-				found_prefix = true;
-			item = new_item;
+		if (sort_out_prefixes) {
+			ArrayList<String> prefixes = new ArrayList<>();
+			prefixes.add("^ ?the ");
+			prefixes.add("^ ?an ");
+			prefixes.add("^ ?a ");
+
+			for (String exp : prefixes) {
+				String new_item = item.replaceAll("(?i)" + exp, "");
+				System.out.println("'" + item + "' != '" + new_item + "' (" + exp + ")");
+				if (item != new_item)
+					found_prefix = true;
+				item = new_item;
+			}
 		}
-		System.out.println("Found prefix: " + found_prefix);
 		return ((found_prefix) ? "the " : "") + StringEscapeUtils.unescapeHtml4(item);
 	}
 

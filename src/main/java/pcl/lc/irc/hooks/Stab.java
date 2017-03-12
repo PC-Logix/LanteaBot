@@ -54,59 +54,28 @@ public class Stab extends AbstractListener {
 			}
 			try
 			{
-				PreparedStatement statement = Database.getPreparedStatement("getRandomItemNonFavourite");
-				ResultSet resultSet = statement.executeQuery();
-
-				String item = "";
-				Integer id = null;
-				Integer uses = null;
-				try
-				{
-					if (resultSet.next())
-					{
-						id = resultSet.getInt(1);
-						item = resultSet.getString(2);
-						uses = resultSet.getInt(3);
-					}
-				}
-				catch (SQLException e)
-				{
-					e.printStackTrace();
-				}
-
-				String s = message.trim();
-
+				Item item = Inventory.getRandomItem(false);
 				String dust = "";
-				if (s != "" && uses != null && uses == 1)
-				{
-					statement = Database.getPreparedStatement("removeItemId");
-					statement.setInt(1, id);
-					statement.executeUpdate();
-					System.out.println("Remove item " + id);
-					dust = ", " + Inventory.fixItemName(item) + " " + Inventory.getItemBreakString() + ".";
+				if (item != null) {
+					dust = item.decrementUses();
 				}
-				else if (s != "" && uses != null && uses > 1)
-				{
-					statement = Database.getPreparedStatement("decrementUses");
-					statement.setInt(1, id);
-					statement.executeUpdate();
-					System.out.println("Decrement uses for item " + id);
-				}
+
+				String target = message.trim();
 
 				ArrayList<String> actions = new ArrayList<>();
 				actions.add("stabs");
 				actions.add("hits");
+				actions.add("shivs");
+				actions.add("strikes");
 				actions.add(Helper.antiPing("slaps"));
-
 				int action = Helper.getRandomInt(0, actions.size() - 1);
-				System.out.println("Action: " + action);
 
-				if (s == "")
-					Helper.sendAction(target,"flails at nothingness" + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item));
-				else if (!s.equals(IRCBot.ournick))
-					Helper.sendAction(target,actions.get(action) + " " + s + (!item.equals("") ? " with " : "") + StringEscapeUtils.unescapeHtml4(item) + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
+				if (target == "")
+					Helper.sendAction(this.target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
+				else if (!target.equals(IRCBot.ournick))
+					Helper.sendAction(this.target,actions.get(action) + " " + target + (item != null ? " with " + item.getName() : "") + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
 				else
-					Helper.sendAction(target,"uses " + (!item.equals("") ? StringEscapeUtils.unescapeHtml4(item) : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
+					Helper.sendAction(this.target,"uses " + (item != null ? item.getName() : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
 			}
 			catch (Exception e)
 			{

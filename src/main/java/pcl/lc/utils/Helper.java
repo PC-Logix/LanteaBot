@@ -362,4 +362,24 @@ public class Helper {
 
 		return time_string;
 	}
+
+	public static String get_fail_response() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("Oops...");
+		strings.add("ohno");
+		strings.add("Not again...");
+		strings.add("Dammit!");
+		strings.add("#@%&!!");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
+	public static String get_success_response() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("Yes!");
+		strings.add("I did it!");
+		strings.add("Woo!");
+		strings.add("I'm awesome!");
+		strings.add("Take that RNG!");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
 }

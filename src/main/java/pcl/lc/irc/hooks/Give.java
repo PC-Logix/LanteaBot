@@ -47,56 +47,34 @@ public class Give extends AbstractListener {
 		}
 		if (shouldExecute == 0) {
 			String target_argument = copyOfRange[0];
-			String item = "";
+			String item_name = "";
 			for (int i = 1; i < copyOfRange.length; i++)
 			{
-				item += copyOfRange[i] + " ";
+				item_name += copyOfRange[i] + " ";
 			}
-			item = item.trim();
+			item_name = item_name.trim();
 
-			if (item.equals("random"))
-			{
-				PreparedStatement getRandomItemNonFavourite = null;
-				ResultSet resultSet = null;
-				try
-				{
-					getRandomItemNonFavourite = Database.getPreparedStatement("getRandomItemNonFavourite");
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-					Helper.sendMessage(target ,  "Something went wrong (1)", nick);
-					return;
-				}
-				try
-				{
-					resultSet = getRandomItemNonFavourite.executeQuery();
-				}
-				catch (SQLException e)
-				{
-					e.printStackTrace();
-					Helper.sendMessage(target ,  "Something went wrong (2)", nick);
-					return;
+			Item item;
+			if (item_name.equals("random")) {
+				System.out.println("Get random item");
+				item = Inventory.getRandomItem(false);
+			}
+			else
+				try {
+					item = new Item(item_name);
+				} catch (Exception e) {
+					item = null;
 				}
 
-				try
-				{
-					if (resultSet != null && resultSet.next()) {
-						item = resultSet.getString(2);
-					}
-				}
-				catch (SQLException e)
-				{
-					e.printStackTrace();
-					Helper.sendMessage(target ,  "Something went wrong (3)", nick);
-					return;
-				}
+			if (item == null) {
+				Helper.sendMessage(target, "I couldn't find an item.", nick);
+				return;
 			}
 
 			int removeResult = Inventory.removeItem(item);
 
 			if (removeResult == 0 || removeResult == Inventory.ERROR_ITEM_IS_PRESERVED)
-				Helper.sendAction(target ,  "gives " + target_argument + " " + item + " from her inventory");
+				Helper.sendAction(target ,  "gives " + target_argument + " " + item.getName() + " from her inventory");
 			else if (removeResult == Inventory.ERROR_ITEM_IS_FAVOURITE)
 				Helper.sendMessage(target ,  "No! This is my favourite thing! I wont give it away!", nick);
 			else if (removeResult == Inventory.ERROR_NO_ROWS_RETURNED)
