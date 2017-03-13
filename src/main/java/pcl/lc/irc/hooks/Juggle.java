@@ -49,6 +49,8 @@ public class Juggle extends AbstractListener {
 				ex.printStackTrace();
 				System.out.println("No valid amount specified. Defaulting to " + item_amount);
 			}
+			item_amount = Math.min(6, item_amount);
+			item_amount = Math.max(1, item_amount);
 
 			ItemCollection items = new ItemCollection();
 			if (!items.fillWithUniqueItems(item_amount)) {
