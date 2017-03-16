@@ -176,4 +176,19 @@ public class Command {
 			return "";
 		return null;
 	}
+
+	public void tryExecute(String command, String nick, String target, String[] params)
+	{
+		int shouldExecute = this.shouldExecute(command, nick);
+		if (shouldExecute == 0)
+			this.onExecuteSuccess(this, nick, target, params);
+		else
+			this.onExecuteFail(this, nick, target, shouldExecute);
+	}
+
+	public void onExecuteSuccess(Command command, String nick, String target, String[] params) {}
+	public void onExecuteSuccess(Command command, String nick, String target, String params) {}
+	public void onExecuteFail(Command command, String nick, String target, int timeout) {
+		Helper.sendMessage(target, getCannotExecuteReason(timeout), nick);
+	}
 }
