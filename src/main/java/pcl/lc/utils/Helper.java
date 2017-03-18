@@ -333,7 +333,7 @@ public class Helper {
 			if (timeObject.days > 0)    strings.add(timeObject.days + "d, ");
 			if (timeObject.hours > 0)   strings.add(timeObject.hours + "h, ");
 			if (timeObject.minutes > 0) strings.add(timeObject.minutes + "m, ");
-			if (!discard_seconds_unless_only_value || timeObject.minutes == 0)
+			if (!discard_seconds_unless_only_value || (timeObject.minutes == 0 && timeObject.hours == 0 && timeObject.days == 0 && timeObject.weeks == 0 && timeObject.months == 0 && timeObject.years == 0))
 				if (timeObject.seconds > 0) strings.add(timeObject.seconds + "s, ");
 		}
 		else
@@ -344,7 +344,7 @@ public class Helper {
 			if (timeObject.days > 0)    strings.add((timeObject.days == 1)     ? timeObject.days + " day, "        : timeObject.days + " days, ");
 			if (timeObject.hours > 0)   strings.add((timeObject.hours == 1)    ? timeObject.hours + " hour, "      : timeObject.hours + " hours, ");
 			if (timeObject.minutes > 0) strings.add((timeObject.minutes == 1)  ? timeObject.minutes + " minute, "  : timeObject.minutes + " minutes, ");
-			if (!discard_seconds_unless_only_value || timeObject.minutes == 0)
+			if (!discard_seconds_unless_only_value || (timeObject.minutes == 0 && timeObject.hours == 0 && timeObject.days == 0 && timeObject.weeks == 0 && timeObject.months == 0 && timeObject.years == 0))
 				if (timeObject.seconds > 0) strings.add((timeObject.seconds == 1)  ? timeObject.seconds + " second, "  : timeObject.seconds + " seconds, ");
 		}
 
