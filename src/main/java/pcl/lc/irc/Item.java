@@ -2,11 +2,9 @@ package pcl.lc.irc;
 
 import com.google.api.client.util.DateTime;
 import pcl.lc.irc.hooks.Inventory;
-import pcl.lc.utils.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Item class
@@ -25,8 +23,6 @@ public class Item {
 			PreparedStatement statement = Database.getPreparedStatement("getItemByName");
 			statement.setString(1, name);
 			ResultSet resultSet = statement.executeQuery();
-			if (!(resultSet.getFetchSize() > 0))
-				throw new Exception("No item found");
 			if (resultSet.next()) {
 				this.id = resultSet.getInt(1);
 				this.name = resultSet.getString(2);
@@ -34,6 +30,8 @@ public class Item {
 				this.is_favourite = resultSet.getBoolean(4);
 				this.added_by = resultSet.getString(5);
 				this.added = resultSet.getInt(6);
+			} else {
+				throw new Exception("No item '" + name + "' found");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -52,6 +50,8 @@ public class Item {
 				this.is_favourite = resultSet.getBoolean(4);
 				this.added_by = resultSet.getString(5);
 				this.added = resultSet.getInt(6);
+			} else {
+				throw new Exception("No item '" + name + "' found");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
