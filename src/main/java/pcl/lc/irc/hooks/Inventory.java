@@ -68,6 +68,7 @@ public class Inventory extends AbstractListener {
 		sub_command_list = new Command("list", 0, true);
 		sub_command_add = new Command("add", 0, true);
 		sub_command_remove = new Command("remove", 0, true);
+		sub_command_remove.registerAlias("rem");
 		sub_command_preserve = new Command("preserve", 0, true);
 		sub_command_preserve.registerAlias("pre");
 		sub_command_unpreserve = new Command("unpreserve", 0, true);
