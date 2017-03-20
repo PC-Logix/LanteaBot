@@ -430,15 +430,19 @@ public class Inventory extends AbstractListener {
 					if (Config.httpdEnable.equals("true")){
 						Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory", nick);
 					} else {
-						String items = null;
+						String items = "";
 						try {
 							PreparedStatement statement = Database.getPreparedStatement("getItems");
 							ResultSet resultSet = statement.executeQuery();
 							while (resultSet.next()) {
 								items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
 							}
-							items = StringUtils.strip(items, "\n");
-							Helper.sendMessage(target, "Here's my inventory: " + PasteUtils.paste(items), nick);
+							if (items == "") {
+								Helper.sendMessage(target, "There are no items.", nick);
+							} else {
+								items = StringUtils.strip(items, "\n");
+								Helper.sendMessage(target, "Here's my inventory: " + PasteUtils.paste(items), nick);
+							}
 						}
 						catch (Exception e) {
 							e.printStackTrace();

@@ -112,4 +112,4 @@ function lua(code)
 	return select(2, coroutine.resume(cofn))
 end
 
-lua("function uhm(a, r)local b="" for i=1,#a,(r or 0.5)do local c=i+(math.random()>=(i%1)and 1 or 0)b=b..a:sub(c, c)end return b end")
+lua("function uhm(a, r)local b='' for i=1,#a,(r or 0.5)do local c=i+(math.random()>=(i%1)and 1 or 0)b=b..a:sub(c, c)end return b end")
