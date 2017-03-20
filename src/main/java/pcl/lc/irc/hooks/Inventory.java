@@ -356,7 +356,7 @@ public class Inventory extends AbstractListener {
 		strings.add("vanishes into a rift in space");
 		strings.add("phases out of the dimension");
 		strings.add("flickers and pops out of existence");
-		strings.add("suddenly seizes to be");
+		strings.add("suddenly ceases to be");
 		strings.add("ruptures and deflates");
 		strings.add("melts into a puddle of unidentifiable goo");
 		strings.add("rides off into the sunset on a horse with no name");
