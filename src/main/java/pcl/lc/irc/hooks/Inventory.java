@@ -354,6 +354,16 @@ public class Inventory extends AbstractListener {
 		strings.add("poofs away in a sparkly cloud");
 		strings.add("vanishes into a rift in space");
 		strings.add("phases out of the dimension");
+		strings.add("flickers and pops out of existence");
+		strings.add("suddenly seizes to be");
+		strings.add("ruptures and deflates");
+		strings.add("melts into a puddle of unidentifiable goo");
+		strings.add("rides off into the sunset on a horse with no name");
+		strings.add("flies up into space and collides with a satellite");
+		strings.add("falls into a chasm");
+		strings.add("is eaten by a Grue");
+		strings.add("sinks into quicksand");
+		strings.add("vibrates into the ground");
 
 		return strings.get(Helper.getRandomInt(0, strings.size() - 1));
 	}
