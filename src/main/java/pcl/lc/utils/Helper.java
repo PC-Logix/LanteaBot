@@ -370,6 +370,9 @@ public class Helper {
 		strings.add("Not again...");
 		strings.add("Dammit!");
 		strings.add("#@%&!!");
+		strings.add("Fore!");
+		strings.add("I hope nobody saw that...");
+		strings.add("I didn't do it!");
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
@@ -380,6 +383,8 @@ public class Helper {
 		strings.add("Woo!");
 		strings.add("I'm awesome!");
 		strings.add("Take that RNG!");
+		strings.add("In yo face!");
+		strings.add("Exactly as planned.");
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 }
