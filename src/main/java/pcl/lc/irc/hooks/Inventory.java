@@ -3,7 +3,6 @@
  */
 package pcl.lc.irc.hooks;
 
-import jdk.nashorn.internal.runtime.regexp.RegExp;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -45,6 +44,7 @@ public class Inventory extends AbstractListener {
 	private Command sub_command_remove;
 	private Command sub_command_preserve;
 	private Command sub_command_unpreserve;
+	private Command sub_command_count;
 	private static double favourite_chance = 0.01;
 
 	static int ERROR_ITEM_IS_FAVOURITE = 1;
@@ -69,6 +69,7 @@ public class Inventory extends AbstractListener {
 		local_command.registerSubCommand(sub_command_remove);
 		local_command.registerSubCommand(sub_command_preserve);
 		local_command.registerSubCommand(sub_command_unpreserve);
+		local_command.registerSubCommand(sub_command_count);
 		IRCBot.registerCommand(local_command, "Interact with the bots inventory");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD is_favourite BOOLEAN DEFAULT 0 NULL");
@@ -129,6 +130,22 @@ public class Inventory extends AbstractListener {
 				} catch (Exception e) {
 					e.printStackTrace();
 					Helper.sendMessage(target, "Wrong things happened! (5)", nick);
+				}
+			}
+		};
+		sub_command_count = new Command("count", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				try {
+					PreparedStatement getItems = Database.getPreparedStatement("getItems");
+					ResultSet result = getItems.executeQuery();
+					int counter = 0;
+					while (result.next())
+						counter++;
+					Helper.sendMessage(target, "The inventory contains " + counter + " items.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					Helper.sendAction(target, "shrugs");
 				}
 			}
 		};

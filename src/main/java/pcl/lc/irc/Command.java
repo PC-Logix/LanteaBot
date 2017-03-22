@@ -3,6 +3,7 @@ package pcl.lc.irc;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
 
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -197,7 +198,12 @@ public class Command {
 				String firstParam = params.get(0);
 				int executed = 0;
 				for (Command sub : this.subCommands) {
-					executed += sub.tryExecute(firstParam, nick, target, event, new ArrayList<>(params.subList(1, params.size()-1)));
+					ArrayList<String> subParams;
+					if (params.size() > 1)
+						subParams = new ArrayList<>(params.subList(1, params.size()-1));
+					else
+						subParams = params;
+					executed += sub.tryExecute(firstParam, nick, target, event, subParams, false);
 				}
 				if (executed > 0)
 					return 1;
