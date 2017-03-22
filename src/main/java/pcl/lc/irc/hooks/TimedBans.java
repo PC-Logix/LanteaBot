@@ -22,7 +22,7 @@ import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Helper;
 
 public class TimedBans extends AbstractListener {
-	
+
 	@Override
 	protected void initHook() {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS TimedBans(channel, username, hostmask, expires, placedby, reason, type)");
@@ -113,7 +113,10 @@ public class TimedBans extends AbstractListener {
 				addTimedBan.setString(7, type);
 				addTimedBan.executeUpdate();
 				if (type.equals("ban")) {
-					event.getBot().sendIRC().message("chanserv", "kickban " + event.getChannel().getName() + " " + args[0] + " Reason: " + reason + " | For: " + args[1] + " | Expires: " + expiresTime);
+					event.getBot().sendIRC().message("chanserv", "ban " + event.getChannel().getName() + " " + args[0]);
+					if (event.getChannel().getUsers().contains(args[0])){
+						event.getBot().sendIRC().message("chanserv", "kick " + event.getChannel().getName() + " " + " Reason: " + reason + " | For: " + args[1] + " | Expires: " + expiresTime);
+					}
 				} else {
 					event.getBot().sendIRC().message("chanserv", "quiet " + event.getChannel().getName() + " " + args[0]);
 				}
@@ -121,6 +124,8 @@ public class TimedBans extends AbstractListener {
 				e.printStackTrace();
 				event.getBot().sendIRC().message(event.getChannel().getName(), sender + ": " + "An error occurred while processing this command (" + command + ")");
 			}
+		} else if (command.equals(Config.commandprefix + "tlist")) {
+			//TODO: Actually add this!
 		}
 	}
 
