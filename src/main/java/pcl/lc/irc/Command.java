@@ -200,7 +200,7 @@ public class Command {
 				for (Command sub : this.subCommands) {
 					ArrayList<String> subParams;
 					if (params.size() > 1)
-						subParams = new ArrayList<>(params.subList(1, params.size()-1));
+						subParams = new ArrayList<>(params.subList(1, params.size()));
 					else
 						subParams = params;
 					executed += sub.tryExecute(firstParam, nick, target, event, subParams, false);
