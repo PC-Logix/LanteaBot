@@ -1,9 +1,11 @@
 package pcl.lc.irc;
 
+import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Command {
 	String command;
@@ -177,17 +179,46 @@ public class Command {
 		return null;
 	}
 
-	public void tryExecute(String command, String nick, String target, String[] params)
-	{
-		int shouldExecute = this.shouldExecute(command, nick);
-		if (shouldExecute == 0)
-			this.onExecuteSuccess(this, nick, target, params);
-		else
-			this.onExecuteFail(this, nick, target, shouldExecute);
+	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) { return tryExecute(command, nick, target, event, params, false);}
+	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) { return tryExecute(command, nick, target, event, params, false);}
+	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
+		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
+		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
 	}
 
-	public void onExecuteSuccess(Command command, String nick, String target, String[] params) {}
-	public void onExecuteSuccess(Command command, String nick, String target, String params) {}
+	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
+	{
+		int shouldExecute = this.shouldExecute(command, nick);
+		if (shouldExecute == -1) //Command does not match, ignore
+			return 0;
+		else if (shouldExecute == 0) {
+			this.updateLastExecution();
+			if (!ignore_sub_commands && params.size() > 0) {
+				String firstParam = params.get(0);
+				int executed = 0;
+				for (Command sub : this.subCommands) {
+					executed += sub.tryExecute(firstParam, nick, target, event, new ArrayList<>(params.subList(1, params.size()-1)));
+				}
+				if (executed > 0)
+					return 1;
+			}
+			this.onExecuteSuccess(this, nick, target, event, params);
+			String message = "";
+			for (String aCopyOfRange : params)
+			{
+				message = message + " " + aCopyOfRange;
+			}
+			message = message.trim();
+			this.onExecuteSuccess(this, nick, target, event, message);
+			return 1;
+		}
+		else
+			this.onExecuteFail(this, nick, target, shouldExecute);
+		return 0;
+	}
+
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {}
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {}
 	public void onExecuteFail(Command command, String nick, String target, int timeout) {
 		Helper.sendMessage(target, getCannotExecuteReason(timeout), nick);
 	}
