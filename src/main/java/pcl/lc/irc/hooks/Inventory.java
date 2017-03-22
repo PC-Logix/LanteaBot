@@ -63,16 +63,7 @@ public class Inventory extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		local_command = new Command("inventory", 0);
-		local_command.registerAlias("inv");
-		sub_command_list = new Command("list", 0, true);
-		sub_command_add = new Command("add", 0, true);
-		sub_command_remove = new Command("remove", 0, true);
-		sub_command_remove.registerAlias("rem");
-		sub_command_preserve = new Command("preserve", 0, true);
-		sub_command_preserve.registerAlias("pre");
-		sub_command_unpreserve = new Command("unpreserve", 0, true);
-		sub_command_unpreserve.registerAlias("unpre");
+		initCommands();
 		local_command.registerSubCommand(sub_command_list);
 		local_command.registerSubCommand(sub_command_add);
 		local_command.registerSubCommand(sub_command_remove);
@@ -100,6 +91,107 @@ public class Inventory extends AbstractListener {
 		Database.addPreparedStatement("preserveItem", "UPDATE Inventory SET uses_left = -1 WHERE item_name = ?");
 		Database.addPreparedStatement("unPreserveItem", "UPDATE Inventory SET uses_left = 5 WHERE item_name = ?");
 		IRCBot.httpServer.registerContext("/inventory", new InventoryHandler());
+	}
+
+	private void initCommands() {
+		local_command = new Command("inventory", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, "Unknown sub-command '" + params + "' (Try: " + local_command.getSubCommandsAsString(true) + ")", nick);
+			}
+		};
+		local_command.registerAlias("inv");
+		sub_command_list = new Command("list", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try {
+					if (Config.httpdEnable.equals("true")){
+						Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory", nick);
+					} else {
+						String items = "";
+						try {
+							PreparedStatement statement = Database.getPreparedStatement("getItems");
+							ResultSet resultSet = statement.executeQuery();
+							while (resultSet.next()) {
+								items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
+							}
+							if (items == "") {
+								Helper.sendMessage(target, "There are no items.", nick);
+							} else {
+								items = StringUtils.strip(items, "\n");
+								Helper.sendMessage(target, "Here's my inventory: " + PasteUtils.paste(items), nick);
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					Helper.sendMessage(target, "Wrong things happened! (5)", nick);
+				}
+			}
+		};
+		sub_command_add = new Command("add", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, addItem(params, nick), nick);
+			}
+		};
+		sub_command_remove = new Command("remove", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4);
+				int removeResult = removeItem(params, hasPermission, hasPermission);
+				if (removeResult == 0)
+					Helper.sendMessage(target, "Removed item from inventory", nick);
+				else if (removeResult == ERROR_ITEM_IS_FAVOURITE)
+					Helper.sendMessage(target, "This is my favourite thing. You can't make me get rid of it.", nick);
+				else if (removeResult == ERROR_ITEM_IS_PRESERVED)
+					Helper.sendMessage(target, "I've been told to preserve this. You can't remove it.", nick);
+				else if (removeResult == ERROR_NO_ROWS_RETURNED)
+					Helper.sendMessage(target, "No such item", nick);
+				else
+					Helper.sendMessage(target, "Wrong things happened! (" + removeResult + ")", nick);
+			}
+		};
+		sub_command_remove.registerAlias("rem");
+		sub_command_preserve = new Command("preserve", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
+					try {
+						PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
+						preserveItem.setString(1, params);
+						preserveItem.executeUpdate();
+						Helper.sendMessage(target, "Item preserved", nick);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
+				}
+			}
+		};
+		sub_command_preserve.registerAlias("pre");
+		sub_command_unpreserve = new Command("unpreserve", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
+					try {
+						PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");
+						unPreserveItem.setString(1, params);
+						unPreserveItem.executeUpdate();
+						Helper.sendMessage(target, "Item un-preserved", nick);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
+				}
+			}
+		};
+		sub_command_unpreserve.registerAlias("unpre");
 	}
 
 	static class InventoryHandler implements HttpHandler {
@@ -400,99 +492,12 @@ public class Inventory extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		long shouldExecute = local_command.shouldExecute(command);
 		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 			target = nick;
 		} else {
 			target = chan;
 		}
-		if (shouldExecute == 0) {
-			String message = "";
-			for (String aCopyOfRange : copyOfRange) {
-				message = message + " " + aCopyOfRange;
-			}
-			String s = message.trim();
-
-			String[] strings = s.split(" ");
-			String sub_command = strings[0];
-			String argument = "";
-			for (int i = 1; i < strings.length; i++) {
-				argument += strings[i] + " ";
-			}
-			argument = argument.trim();
-
-			if (sub_command_add.shouldExecute(sub_command) == 0)
-				Helper.sendMessage(target, addItem(argument, nick), nick);
-			else if (sub_command_remove.shouldExecute(sub_command) == 0) {
-				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4);
-				int removeResult = removeItem(argument, hasPermission, hasPermission);
-				if (removeResult == 0)
-					Helper.sendMessage(target, "Removed item from inventory", nick);
-				else if (removeResult == ERROR_ITEM_IS_FAVOURITE)
-					Helper.sendMessage(target, "This is my favourite thing. You can't make me get rid of it.", nick);
-				else if (removeResult == ERROR_ITEM_IS_PRESERVED)
-					Helper.sendMessage(target, "I've been told to preserve this. You can't remove it.", nick);
-				else if (removeResult == ERROR_NO_ROWS_RETURNED)
-					Helper.sendMessage(target, "No such item", nick);
-				else
-					Helper.sendMessage(target, "Wrong things happened! (" + removeResult + ")", nick);
-			} else if (sub_command_list.shouldExecute(sub_command) == 0) {
-				try {
-					if (Config.httpdEnable.equals("true")){
-						Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory", nick);
-					} else {
-						String items = "";
-						try {
-							PreparedStatement statement = Database.getPreparedStatement("getItems");
-							ResultSet resultSet = statement.executeQuery();
-							while (resultSet.next()) {
-								items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
-							}
-							if (items == "") {
-								Helper.sendMessage(target, "There are no items.", nick);
-							} else {
-								items = StringUtils.strip(items, "\n");
-								Helper.sendMessage(target, "Here's my inventory: " + PasteUtils.paste(items), nick);
-							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "Wrong things happened! (5)", nick);
-				}
-			} else if (sub_command_preserve.shouldExecute(sub_command) == 0) {
-				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
-					try {
-						PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
-						preserveItem.setString(1, argument);
-						preserveItem.executeUpdate();
-						Helper.sendMessage(target, "Item preserved", nick);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
-				}
-			} else if (sub_command_unpreserve.shouldExecute(sub_command) == 0) {
-				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
-					try {
-						PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");
-						unPreserveItem.setString(1, argument);
-						unPreserveItem.executeUpdate();
-						Helper.sendMessage(target, "Item un-preserved", nick);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
-				}
-			} else {
-				Helper.sendMessage(target, "Unknown sub-command '" + sub_command + "' (Try: " + local_command.getSubCommandsAsString(true) + ")", nick);
-			}
-		}
+		local_command.tryExecute(command, nick, target, event, copyOfRange, false);
 	}
 
 	@Override
