@@ -24,7 +24,41 @@ public class Pet extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("pet", 0);
+		local_command = new Command("pet", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try
+				{
+					Item item = Inventory.getRandomItem(false);
+					String dust = "";
+					if (item != null) {
+						dust = item.decrementUses();
+					}
+
+					params = params.trim();
+
+					ArrayList<String> actions = new ArrayList<>();
+					actions.add("pets");
+					actions.add("brushes");
+
+					DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4");
+
+					int action = Helper.getRandomInt(0, actions.size() - 1);
+					System.out.println("Action: " + action);
+
+					if (params == "")
+						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
+					else if (!params.equals(IRCBot.ournick))
+						Helper.sendAction(target,actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + params + " recovers " + roll.getSum() + " health!" : "") + dust);
+					else
+						Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		};
 		local_command.registerAlias("stroke");
 		IRCBot.registerCommand(local_command, "Give pets");
 	}
@@ -40,54 +74,12 @@ public class Pet extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		long shouldExecute = local_command.shouldExecute(command, nick);
 		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 			target = nick;
 		} else {
 			target = chan;
 		}
-		if (shouldExecute == 0) {
-			local_command.updateLastExecution();
-			String message = "";
-			for (String aCopyOfRange : copyOfRange)
-			{
-				message = message + " " + aCopyOfRange;
-			}
-			try
-			{
-				Item item = Inventory.getRandomItem(false);
-				String dust = "";
-				if (item != null) {
-					dust = item.decrementUses();
-				}
-
-				String target = message.trim();
-
-				ArrayList<String> actions = new ArrayList<>();
-				actions.add("pets");
-				actions.add("brushes");
-
-				DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4");
-
-				int action = Helper.getRandomInt(0, actions.size() - 1);
-				System.out.println("Action: " + action);
-
-				if (target == "")
-					Helper.sendAction(this.target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-				else if (!target.equals(IRCBot.ournick))
-					Helper.sendAction(this.target,actions.get(action) + " " + target + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + target + " recovers " + roll.getSum() + " health!" : "") + dust);
-				else
-					Helper.sendMessage(this.target,"I'm not going to pet myself in public. It'd be rude.", nick);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		} else {
-			String result = local_command.getCannotExecuteReason(shouldExecute);
-			if (result != "")
-				Helper.sendMessage(target, result, nick);
-		}
+		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
