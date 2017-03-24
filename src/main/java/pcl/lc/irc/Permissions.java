@@ -13,12 +13,15 @@ import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.WhoisEvent;
 
+import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Account.ExpiringToken;
 
 public class Permissions {
+	public static int ADMIN = 4;
+	public static int USER = 0;
 
-	public static boolean hasPermission(PircBotX bot, MessageEvent event, Integer minLevel) {
+	public static boolean hasPermission(PircBotX bot, GenericMessageEvent event, Integer minLevel) {
 		return hasPermission(bot, event.getUser(), event, minLevel);
 	}
 
@@ -26,7 +29,7 @@ public class Permissions {
 		return hasPermission(bot, u, null, null);
 	}
 
-	public static boolean hasPermission(PircBotX bot, User u, MessageEvent event, Integer minLevel) {
+	public static boolean hasPermission(PircBotX bot, User u, GenericMessageEvent event, Integer minLevel) {
 		if (isOp(bot, u))
 			return true;
 		if (event != null && minLevel != null && getPermLevel(u, event) >= minLevel)
@@ -34,15 +37,15 @@ public class Permissions {
 		return false;
 	}
 
-	public static int getPermLevel(User u, MessageEvent event) {
-		String NSAccount = Account.getAccount(u, event);
+	public static int getPermLevel(User u, GenericMessageEvent event) {
+		String NSAccount = Account.getAccount(u, (MessageEvent) event);
 		if (NSAccount == null) {
 			return 0;
 		}
 		try {
 			PreparedStatement getPerm = Database.getPreparedStatement("getUserPerms");
 			getPerm.setString(1, NSAccount);
-			getPerm.setString(2, event.getChannel().getName());
+			getPerm.setString(2, ((MessageEvent) event).getChannel().getName());
 
 			ResultSet results = getPerm.executeQuery();
 			if (results.next()) {
@@ -56,18 +59,18 @@ public class Permissions {
 		}
 	}
 
-	public static boolean setPermLevel(String user, MessageEvent event, int level) {
-		User u = Account.getUserFromString(user, event);
+	public static boolean setPermLevel(String user, GenericMessageEvent event, int level) {
+		User u = Account.getUserFromString(user, (MessageEvent) event);
 		if (u == null) {
 			return false;
 		}
-		String NSAccount = Account.getAccount(u, event);
+		String NSAccount = Account.getAccount(u, (MessageEvent) event);
 		try {
 			SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
 			dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 			PreparedStatement addPerm = Database.getPreparedStatement("setPermLevel");
 			addPerm.setString(1, NSAccount);
-			addPerm.setString(2, event.getChannel().getName());
+			addPerm.setString(2, ((MessageEvent) event).getChannel().getName());
 			addPerm.setInt(3, level);
 			addPerm.setString(4, event.getUser().getNick());
 			addPerm.setString(5, dateFormatGmt.format(new Date()));

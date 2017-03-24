@@ -1,14 +1,19 @@
 package pcl.lc.irc;
 
+import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
 
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Command {
+	public static long INVALID_COMMAND = -1;
+	public static long IGNORED = -2;
+	public static long NO_PERMISSION = -3;
+	public static long DISABLED = -4;
+
 	String command;
 	String className;
 	Integer rateLimit;
@@ -16,28 +21,39 @@ public class Command {
 	ArrayList<String> aliases;
 	ArrayList<Command> subCommands;
 	boolean isSubCommand;
+	boolean isEnabled;
+	int minPermissionLevel;
+	String helpText;
+
+	public Command(String command) {
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, 0);
+	}
 
 	public Command(String command, Integer rateLimit) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, 0);
 	}
 
 	public Command(String command, Integer rateLimit, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, true, 0);
 	}
 
-	public Command(String command) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false);
+	public Command(String command, Integer rateLimit, int minPermissionLevel) {
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, minPermissionLevel);
+	}
+
+	public Command(String command, Integer rateLimit, boolean isSubCommand, boolean isEnabled, int minPermissionLevel) {
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, isEnabled, minPermissionLevel);
 	}
 
 	public Command(String command, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand, true, 0);
 	}
 
 	public Command(String command, String className) {
-		this(command, className, 0, false);
+		this(command, className, 0, false, true, 0);
 	}
 
-	public Command(String command, String className, Integer rateLimit, boolean isSubCommand) {
+	public Command(String command, String className, Integer rateLimit, boolean isSubCommand, boolean isEnabled, int minPermissionLevel) {
 		this.command = command;
 		this.className = className;
 		this.rateLimit = rateLimit;
@@ -45,6 +61,29 @@ public class Command {
 		this.aliases = new ArrayList<>();
 		this.subCommands = new ArrayList<>();
 		this.isSubCommand = isSubCommand;
+		this.isEnabled = isEnabled;
+		this.minPermissionLevel = minPermissionLevel;
+		this.helpText = "";
+	}
+
+	public void setHelpText(String helpText) {
+		this.helpText = helpText;
+	}
+
+	public String getHelpText() {
+		return this.helpText;
+	}
+
+	public void disable() {
+		this.isEnabled = false;
+	}
+
+	public void enable() {
+		this.isEnabled = true;
+	}
+
+	public void toggleEnabled() {
+		this.isEnabled = !this.isEnabled;
 	}
 
 	public String getCommand() {
@@ -71,8 +110,8 @@ public class Command {
 		this.lastExecution = new Timestamp(System.currentTimeMillis()).getTime();
 	}
 
-	public int shouldExecute(String command) {
-		return shouldExecute(command, null);
+	public long shouldExecute(String command, GenericMessageEvent event) {
+		return shouldExecute(command, event, null);
 	}
 
 	/**
@@ -85,15 +124,19 @@ public class Command {
 	 * @param nick String Optional
 	 * @return int
 	 */
-	public int shouldExecute(String command, String nick) {
+	public long shouldExecute(String command, GenericMessageEvent event, String nick) {
 		String prefix = "";
 		if (!this.isSubCommand)
 			prefix = Config.commandprefix;
 
+		if (!this.isEnabled)
+			return DISABLED;
 		if (!command.equals(prefix + this.command) && !hasAlias(command))
-			return -1;
+			return INVALID_COMMAND;
+		if (!Permissions.hasPermission(IRCBot.bot, event, this.minPermissionLevel))
+			return NO_PERMISSION;
 		if (nick != null && IRCBot.isIgnored(nick))
-			return -2;
+			return IGNORED;
 		if (this.rateLimit == 0)
 			return 0;
 		if (this.lastExecution == 0)
@@ -105,12 +148,31 @@ public class Command {
 		return this.rateLimit - ((int) difference / 1000);
 	}
 
-	public boolean shouldExecuteBool(String command) {
-		return shouldExecuteBool(command, null);
+	public boolean shouldExecuteBool(String command, GenericMessageEvent event) {
+		return shouldExecuteBool(command, event, null);
 	}
 
-	public boolean shouldExecuteBool(String command, String nick) {
-		return shouldExecute(command, nick) == 0;
+	public boolean shouldExecuteBool(String command, GenericMessageEvent event, String nick) {
+		return shouldExecute(command, event, nick) == 0;
+	}
+
+	/**
+	 * Returns a string containing the reason the command could not be executed based on shouldExecutes return code
+	 * @param shouldExecuteResult long
+	 * @return String
+	 */
+	public String getCannotExecuteReason(long shouldExecuteResult) {
+		if (shouldExecuteResult > 0)
+			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecuteResult)) + ".";
+		else if (shouldExecuteResult == -1)
+			return "";
+		else if (shouldExecuteResult == -2)
+			return "";
+		else if (shouldExecuteResult == -3)
+			return "You do not have sufficient privileges to use this command.";
+		else if (shouldExecuteResult == -4)
+			return "This command is not enabled.";
+		return "";
 	}
 
 	public void registerAlias(String alias) {
@@ -170,26 +232,16 @@ public class Command {
 		return list.replaceAll("^, ", "");
 	}
 
-	public String getCannotExecuteReason(long shouldExecuteResult) {
-		if (shouldExecuteResult > 0)
-			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecuteResult)) + ".";
-		else if (shouldExecuteResult == -1)
-			return "";
-		else if (shouldExecuteResult == -2)
-			return "";
-		return null;
-	}
-
-	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) { return tryExecute(command, nick, target, event, params, false);}
-	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) { return tryExecute(command, nick, target, event, params, false);}
-	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
+	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) { return tryExecute(command, nick, target, event, params, false);}
+	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) { return tryExecute(command, nick, target, event, params, false);}
+	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
 	}
 
-	public int tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
+	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
 	{
-		int shouldExecute = this.shouldExecute(command, nick);
+		long shouldExecute = this.shouldExecute(command, (MessageEvent) event, nick);
 		if (shouldExecute == -1) //Command does not match, ignore
 			return 0;
 		else if (shouldExecute == 0) {
@@ -225,7 +277,7 @@ public class Command {
 
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {}
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {}
-	public void onExecuteFail(Command command, String nick, String target, int timeout) {
+	public void onExecuteFail(Command command, String nick, String target, long timeout) {
 		Helper.sendMessage(target, getCannotExecuteReason(timeout), nick);
 	}
 }
