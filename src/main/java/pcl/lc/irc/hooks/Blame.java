@@ -28,6 +28,8 @@ public class Blame extends AbstractListener {
 		local_command = new Command("blame", 5) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.toLowerCase() == IRCBot.getOurNick().toLowerCase())
+					params = Helper.parseSelfReferral("himself");
 				Helper.sendAction(target, "blames " + params + " for " + getEvent());
 			}
 		};
