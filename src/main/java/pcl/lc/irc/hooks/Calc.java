@@ -27,46 +27,43 @@ public class Calc extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		local_command = new Command("calc", 0);
-		IRCBot.registerCommand(local_command, "Does basic math on the expression passed to the command Ex: " + Config.commandprefix + "calc 2+2");
-	}
-
-	@Override
-	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
-		long shouldExecute = local_command.shouldExecute(command, event);
-		if (shouldExecute == 0) {
-			String expression;
-			expression = StringUtils.join(args," ");
-			if (!IRCBot.isIgnored(event.getUser().getNick())) {
-				if (expression.equalsIgnoreCase("the meaning of life")) {
-					event.respond("42");
+		local_command = new Command("calc", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.equalsIgnoreCase("the meaning of life")) {
+					Helper.sendMessage(target, "42", nick);
 				} else {
-					Expression e = new ExpressionBuilder(expression).build();
+					Expression e = new ExpressionBuilder(params).build();
 					double result = e.evaluate();
 					NumberFormat formatter = new DecimalFormat("#,###.##");
 					formatter.setRoundingMode(RoundingMode.DOWN);
-					event.getBot().sendIRC().message(event.getChannel().getName(), Helper.antiPing(sender) + ": " + formatter.format(result));
+					Helper.sendMessage(target, formatter.format(result), nick);
 				}
 			}
+		}; local_command.setHelpText("Does basic math on the expression passed to the command Ex: 2+2");
+		IRCBot.registerCommand(local_command);
+	}
+
+	public String chan;
+	public String target = null;
+	@Override
+	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
+		chan = event.getChannel().getName();
+	}
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event,	String command, String[] copyOfRange) {
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
 		}
+		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event,
-			String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
 
 	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }
