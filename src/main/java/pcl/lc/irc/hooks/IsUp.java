@@ -13,6 +13,7 @@ import pcl.lc.utils.Helper;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * @author Caitlyn
@@ -38,39 +39,38 @@ public class IsUp extends AbstractListener {
 		}
 	}
 
-	private String chan;
-
 	@Override
 	protected void initHook() {
-		local_command = new Command("isup", 0);
-		IRCBot.registerCommand(local_command, "Checks is a website is up");
+		local_command = new Command("isup", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				String site = params.get(0);
+				if (!site.startsWith("http://") && !site.startsWith("https://")) {
+					Helper.sendMessage(target, "https is " + ((ping("https://" + site, 1000)) ? "UP" : "DOWN"), nick);
+					Helper.sendMessage(target, "http  is " + ((ping("http://" + site, 1000)) ? "UP" : "DOWN"), nick);
+				}
+				else {
+					Helper.sendMessage(target, site + " is " + ((ping(site, 1000)) ? "UP" : "DOWN"));
+				}
+			}
+		}; local_command.setHelpText("Checks if a website is up");
+		IRCBot.registerCommand(local_command);
 	}
 
+	public String chan;
+	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecuteBool(command, event)) {
-			chan = event.getChannel().getName();
-		}
+		chan = event.getChannel().getName();
 	}
-
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (local_command.shouldExecuteBool(command, event)) {
-			String target;
-			String dest = null;
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}
-			String site = copyOfRange[0].trim();
-			boolean rez = ping(site, 1000);
-			if (rez) {
-				Helper.sendMessage(target, site + " Is Up.", nick);
-			} else {
-				Helper.sendMessage(target, site + " Is Down.", nick);
-			}
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
 		}
+		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
