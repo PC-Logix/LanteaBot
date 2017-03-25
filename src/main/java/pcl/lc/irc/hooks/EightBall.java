@@ -1,15 +1,14 @@
 package pcl.lc.irc.hooks;
 
-import java.util.Random;
-
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * @author Caitlyn
@@ -21,40 +20,44 @@ public class EightBall extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("8ball", 0);
-		IRCBot.registerCommand(local_command, "Gives vauge answers to vauge questions.");
+		local_command = new Command("eightball", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.length() > 6) {
+					if (params.matches(".*\\?$")) {
+						ArrayList<String> messages = new ArrayList<>();
+						messages.add("Signs point to yes");
+						messages.add("Without a doubt");
+						messages.add("Reply hazy, try again");
+						messages.add("Ask again later");
+						messages.add("My reply is no");
+						messages.add("Outlook not so good");
+						Helper.sendMessage(target, messages.get(Helper.getRandomInt(0, messages.size() - 1)), nick);
+						return;
+					}
+				}
+				Helper.sendMessage(target, "I don't think that's a question...", nick);
+			}
+		}; local_command.setHelpText("Gives vague answers to all questions.");
+		local_command.registerAlias("8ball");
+		IRCBot.registerCommand(local_command);
 	}
 
 	public String chan;
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecute(command, event) >= 0) {
-			chan = event.getChannel().getName();
-		}
+		chan = event.getChannel().getName();
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		long shouldExecute = local_command.shouldExecute(command, event);
 		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 			target = nick;
 		} else {
 			target = chan;
 		}
-		if (shouldExecute == 0) {
-			String message = "";
-			for( int i = 0; i < copyOfRange.length; i++)
-			{
-				message = message + " " + copyOfRange[i];
-			}
-			if (message.length() > 6) {
-				Random generator = new Random();
-				String[] ballmessages = new String[] {"Signs point to yes", "Without a doubt", "Reply hazy, try again", "Ask again later", "My reply is no", "Outlook not so good"};
-				int randommessage = generator.nextInt( 4 );
-				Helper.sendMessage(target, Helper.antiPing(nick) + ": " +  ballmessages[randommessage]);
-			}
-		}
+		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
