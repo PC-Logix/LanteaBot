@@ -27,6 +27,8 @@ public class Tell extends AbstractListener {
 	
 	@Override
 	public void onJoin(final JoinEvent event) {
+		if (event.getUser().getNick().equals(IRCBot.getOurNick()))
+			return;
 		int numTells = 0;
         try {
             PreparedStatement checkTells = IRCBot.getInstance().getPreparedStatement("getTells");
