@@ -44,13 +44,16 @@ public class IsUp extends AbstractListener {
 		local_command = new Command("isup", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				String site = params.get(0);
-				if (!site.startsWith("http://") && !site.startsWith("https://")) {
-					Helper.sendMessage(target, "https is " + ((ping("https://" + site, 1000)) ? "UP" : "DOWN"), nick);
-					Helper.sendMessage(target, "http  is " + ((ping("http://" + site, 1000)) ? "UP" : "DOWN"), nick);
-				}
-				else {
-					Helper.sendMessage(target, site + " is " + ((ping(site, 1000)) ? "UP" : "DOWN"));
+				if (params.size() > 0) {
+					String site = params.get(0);
+					if (!site.startsWith("http://") && !site.startsWith("https://")) {
+						Helper.sendMessage(target, "https is " + ((ping("https://" + site, 1000)) ? "UP" : "DOWN (Might be using untrusted certificates)"), nick);
+						Helper.sendMessage(target, "http  is " + ((ping("http://" + site, 1000)) ? "UP" : "DOWN"), nick);
+					} else {
+						Helper.sendMessage(target, site + " is " + ((ping(site, 1000)) ? "UP" : "DOWN"));
+					}
+				} else {
+					Helper.sendMessage(target, "Specify a site address!", nick);
 				}
 			}
 		}; local_command.setHelpText("Checks if a website is up");
