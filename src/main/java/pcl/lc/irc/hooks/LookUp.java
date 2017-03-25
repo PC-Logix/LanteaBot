@@ -32,7 +32,7 @@ public class LookUp extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command_lookup.shouldExecuteBool(command)) {
+		if (local_command_lookup.shouldExecuteBool(command, event)) {
 			chan = event.getChannel().getName();
 		}
 		
@@ -45,7 +45,7 @@ public class LookUp extends AbstractListener {
 		} else {
 			target = chan;
 		}
-		if (local_command_lookup.shouldExecuteBool(command, nick)) {
+		if (local_command_lookup.shouldExecuteBool(command, event, nick)) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				InetAddress[] inetAddressArray = null;
 				try {
@@ -60,7 +60,7 @@ public class LookUp extends AbstractListener {
 				}
 				event.respond(output.replace(copyOfRange[0] + "/", " ").replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2"));
 			}
-		} else if (local_command_rdns.shouldExecuteBool(command, nick)) {
+		} else if (local_command_rdns.shouldExecuteBool(command, event, nick)) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				InetAddress addr = null;
 				try {

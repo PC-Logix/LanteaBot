@@ -63,7 +63,7 @@ public class Blame extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecute(command) >= 0) {
+		if (local_command.shouldExecute(command, event) >= 0) {
 			chan = event.getChannel().getName();
 		}
 	}

@@ -58,7 +58,7 @@ public class DynamicCommands extends AbstractListener {
       if (!IRCBot.isIgnored(event.getUser().getNick())) {
         String[] message = event.getMessage().split(" ", 3);
 
-        long shouldExecute = local_command_add.shouldExecute(command);
+        long shouldExecute = local_command_add.shouldExecute(command, event);
         if (shouldExecute == 0) {
           boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
           if (isOp || Helper.isChannelOp(event)) {
@@ -82,7 +82,7 @@ public class DynamicCommands extends AbstractListener {
           }
         }
         else {
-          shouldExecute = local_command_del.shouldExecute(command);
+          shouldExecute = local_command_del.shouldExecute(command, event);
           if (shouldExecute == 0) {
             boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
             if (isOp || Helper.isChannelOp(event)) {

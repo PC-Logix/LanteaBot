@@ -33,7 +33,7 @@ public class Calc extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
-		long shouldExecute = local_command.shouldExecute(command);
+		long shouldExecute = local_command.shouldExecute(command, event);
 		if (shouldExecute == 0) {
 			String expression;
 			expression = StringUtils.join(args," ");
