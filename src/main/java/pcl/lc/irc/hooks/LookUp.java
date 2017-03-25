@@ -1,15 +1,15 @@
 package pcl.lc.irc.hooks;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 /**
  * @author Caitlyn
@@ -22,20 +22,47 @@ public class LookUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command_lookup = new Command("lookup", 0);
-		local_command_rdns = new Command("rdns", 0);
-		IRCBot.registerCommand(local_command_lookup, "Returns DNS information");
-		IRCBot.registerCommand(local_command_rdns, "Returns Reverse DNS information");
+		local_command_lookup = new Command("lookup", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				InetAddress[] inetAddressArray = null;
+				try {
+					inetAddressArray = InetAddress.getAllByName(params.get(0));
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String output = "DNS Info for " + params.get(0) + " ";
+				for (InetAddress anInetAddressArray : inetAddressArray) {
+					output += anInetAddressArray;
+				}
+				Helper.sendMessage(target, output.replace(params.get(0) + "/", " ").replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2"), nick);
+			}
+		}; local_command_lookup.setHelpText("Returns DNS information");
+		local_command_rdns = new Command("rdns", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				InetAddress addr = null;
+				try {
+					addr = InetAddress.getByName(params.get(0));
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String host = addr.getCanonicalHostName();
+				String output = "Reverse DNS Info for " + params.get(0) + " " + host;
+				Helper.sendMessage(target, output, nick);
+			}
+		}; local_command_rdns.setHelpText("Returns Reverse DNS information");
+		IRCBot.registerCommand(local_command_lookup);
+		local_command_lookup.registerSubCommand(local_command_rdns);
 	}
 
 	public String chan;
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command_lookup.shouldExecuteBool(command, event)) {
-			chan = event.getChannel().getName();
-		}
-		
+		chan = event.getChannel().getName();
 	}
 
 	@Override
@@ -45,45 +72,11 @@ public class LookUp extends AbstractListener {
 		} else {
 			target = chan;
 		}
-		if (local_command_lookup.shouldExecuteBool(command, event, nick)) {
-			if (!IRCBot.isIgnored(event.getUser().getNick())) {
-				InetAddress[] inetAddressArray = null;
-				try {
-					inetAddressArray = InetAddress.getAllByName(copyOfRange[0]);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String output = "DNS Info for " + copyOfRange[0] + " ";
-				for (int i = 0; i < inetAddressArray.length; i++) {
-					output += inetAddressArray[i];
-				}
-				event.respond(output.replace(copyOfRange[0] + "/", " ").replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2"));
-			}
-		} else if (local_command_rdns.shouldExecuteBool(command, event, nick)) {
-			if (!IRCBot.isIgnored(event.getUser().getNick())) {
-				InetAddress addr = null;
-				try {
-					addr = InetAddress.getByName(copyOfRange[0]);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String host = addr.getCanonicalHostName();
-				String output = "Reverse DNS Info for " + copyOfRange[0] + " " + host;
-				event.respond(output);
-			}
-		}	
+		local_command_lookup.tryExecute(command, nick, target, event, copyOfRange);
 	}
 	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
 
 	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }
