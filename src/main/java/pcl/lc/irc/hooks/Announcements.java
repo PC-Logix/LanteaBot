@@ -31,6 +31,7 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class Announcements extends AbstractListener {
+	private Command local_command_announce;
 	private Command local_command_add;
 	private Command local_command_list;
 	private Command local_command_remove;
@@ -43,10 +44,11 @@ public class Announcements extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command_add);
-		IRCBot.registerCommand(local_command_list);
-		IRCBot.registerCommand(local_command_remove);
-		IRCBot.registerCommand(local_command_reload);
+		IRCBot.registerCommand(local_command_announce);
+		local_command_announce.registerSubCommand(local_command_add);
+		local_command_announce.registerSubCommand(local_command_list);
+		local_command_announce.registerSubCommand(local_command_remove);
+		local_command_announce.registerSubCommand(local_command_reload);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
 		Database.addPreparedStatement("addAnnounce", "INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);");
 		Database.addPreparedStatement("getAnnounce", "SELECT schedule, title, message FROM Announcements WHERE channel = ?;");
@@ -55,25 +57,31 @@ public class Announcements extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command_add = new Command("addannounce", 0, Permissions.ADMIN) {
+		local_command_announce = new Command("announce", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
+			}
+		}; local_command_announce.setHelpText("Has sub-commands: add, list, remove");
+		local_command_add = new Command("add", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_add.setHelpText("Add announce message");
-		local_command_list = new Command("listannounce", 0, Permissions.ADMIN) {
+		local_command_list = new Command("list", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_list.setHelpText("List announce messages");
-		local_command_remove = new Command("removeannounce", 0, Permissions.ADMIN) {
+		local_command_remove = new Command("remove", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_remove.setHelpText("Remove announce message");
-		local_command_reload = new Command("reloadannounce", 0, Permissions.ADMIN) {
+		local_command_reload = new Command("reload", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
@@ -95,6 +103,7 @@ public class Announcements extends AbstractListener {
 		} else {
 			target = chan;
 		}
+		local_command_announce.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_add.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_list.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_remove.tryExecute(command, nick, target, event, copyOfRange);
