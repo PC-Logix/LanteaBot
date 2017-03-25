@@ -76,6 +76,10 @@ public class IRCBot {
 	public static HashMap<String, Command> commands = new HashMap<>();
 	public static HashMap<String, String> helpList = new HashMap<String, String>();
 
+	public static void registerCommand(Command command) {
+		registerCommand(command, command.getHelpText());
+	}
+
 	public static void registerCommand(Command command, String help) {
 		if (!commands.containsKey(command.getCommand())) {
 			commands.put(command.getCommand(), command);

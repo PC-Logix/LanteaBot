@@ -313,31 +313,31 @@ public class Admin extends AbstractListener {
 				}
 			}
 		}; command_addadmin.setHelpText("Add a new admin");
-		IRCBot.registerCommand(command_prefix, command_prefix.getHelpText());
-		IRCBot.registerCommand(command_join, command_join.getHelpText());
-		IRCBot.registerCommand(command_part, command_part.getHelpText());
-		IRCBot.registerCommand(command_shutdown, command_shutdown.getHelpText());
-		IRCBot.registerCommand(command_cycle, command_cycle.getHelpText());
-		IRCBot.registerCommand(command_raw, command_raw.getHelpText());
-		IRCBot.registerCommand(command_chnick, command_chnick.getHelpText());
-		IRCBot.registerCommand(command_hashcount, command_hashcount.getHelpText());
-		IRCBot.registerCommand(command_usercount, command_usercount.getHelpText());
-		IRCBot.registerCommand(command_authcount, command_authcount.getHelpText());
-		IRCBot.registerCommand(command_flushhash, command_flushhash.getHelpText());
-		IRCBot.registerCommand(command_flushauth, command_flushauth.getHelpText());
-		IRCBot.registerCommand(command_ignore, command_ignore.getHelpText());
-		IRCBot.registerCommand(command_unignore, command_unignore.getHelpText());
-		IRCBot.registerCommand(command_ignorelist, command_ignorelist.getHelpText());
-		IRCBot.registerCommand(command_load, command_load.getHelpText());
-		IRCBot.registerCommand(command_commands, command_commands.getHelpText());
-		IRCBot.registerCommand(command_charset, command_charset.getHelpText());
-		IRCBot.registerCommand(command_ram, command_ram.getHelpText());
-		IRCBot.registerCommand(command_restart, command_restart.getHelpText());
-		IRCBot.registerCommand(command_test, command_test.getHelpText());
-		IRCBot.registerCommand(command_listadmins, command_listadmins.getHelpText());
-		IRCBot.registerCommand(command_help, command_help.getHelpText());
-		IRCBot.registerCommand(command_authed, command_authed.getHelpText());
-		IRCBot.registerCommand(command_addadmin, command_addadmin.getHelpText());
+		IRCBot.registerCommand(command_prefix);
+		IRCBot.registerCommand(command_join);
+		IRCBot.registerCommand(command_part);
+		IRCBot.registerCommand(command_shutdown);
+		IRCBot.registerCommand(command_cycle);
+		IRCBot.registerCommand(command_raw);
+		IRCBot.registerCommand(command_chnick);
+		IRCBot.registerCommand(command_hashcount);
+		IRCBot.registerCommand(command_usercount);
+		IRCBot.registerCommand(command_authcount);
+		IRCBot.registerCommand(command_flushhash);
+		IRCBot.registerCommand(command_flushauth);
+		IRCBot.registerCommand(command_ignore);
+		IRCBot.registerCommand(command_unignore);
+		IRCBot.registerCommand(command_ignorelist);
+		IRCBot.registerCommand(command_load);
+		IRCBot.registerCommand(command_commands);
+		IRCBot.registerCommand(command_charset);
+		IRCBot.registerCommand(command_ram);
+		IRCBot.registerCommand(command_restart);
+		IRCBot.registerCommand(command_test);
+		IRCBot.registerCommand(command_listadmins);
+		IRCBot.registerCommand(command_help);
+		IRCBot.registerCommand(command_authed);
+		IRCBot.registerCommand(command_addadmin);
 	}
 
 	public String chan;
