@@ -13,6 +13,7 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.Database;
 import pcl.lc.irc.DiceRoll;
 import pcl.lc.irc.IRCBot;
 
@@ -194,11 +195,11 @@ public class Helper {
 		if (action.equals("enable")) {
 			try {
 				//enabledChannels.add(chan);
-				PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
+				PreparedStatement enableHook = Database.getPreparedStatement("enableHook");
 				enableHook.setString(1, command);
 				enableHook.setString(2, channel);
 				enableHook.executeUpdate();
-				IRCBot.getInstance().sendMessage(channel, "Enabled " + command);
+				Helper.sendMessage(channel, "Enabled " + command);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -206,11 +207,11 @@ public class Helper {
 		} else if (action.equals("disable") ) {
 			try {
 				//enabledChannels.remove(chan);
-				PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
+				PreparedStatement disableHook = Database.getPreparedStatement("disableHook");
 				disableHook.setString(1, command);
 				disableHook.setString(2, channel);
 				disableHook.executeUpdate();
-				IRCBot.getInstance().sendMessage(channel, "Disabled " + command);
+				Helper.sendMessage(channel, "Disabled " + command);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

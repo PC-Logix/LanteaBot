@@ -31,7 +31,7 @@ public class Tell extends AbstractListener {
 			return;
 		int numTells = 0;
         try {
-            PreparedStatement checkTells = IRCBot.getInstance().getPreparedStatement("getTells");
+            PreparedStatement checkTells = Database.getPreparedStatement("getTells");
             checkTells.setString(1, event.getUser().getNick().toLowerCase());
             ResultSet results = checkTells.executeQuery();
             while (results.next()) {
@@ -109,13 +109,13 @@ public class Tell extends AbstractListener {
 	@Override
     public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
         try {
-            PreparedStatement checkTells = IRCBot.getInstance().getPreparedStatement("getTells");
+            PreparedStatement checkTells = Database.getPreparedStatement("getTells");
             checkTells.setString(1, sender.toLowerCase());
             ResultSet results = checkTells.executeQuery();
             while (results.next()) {
                 event.getBot().sendIRC().notice(sender, results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
             }
-            PreparedStatement clearTells = IRCBot.getInstance().getPreparedStatement("removeTells");
+            PreparedStatement clearTells = Database.getPreparedStatement("removeTells");
             clearTells.setString(1, sender.toLowerCase());
             clearTells.execute();
         } catch (Exception e) {
