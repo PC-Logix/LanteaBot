@@ -16,44 +16,37 @@ import pcl.lc.utils.Helper;
  *
  */
 @SuppressWarnings("rawtypes")
-public class dice extends AbstractListener {
+public class Dice extends AbstractListener {
 	private Command local_command;
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("dice", 0);
+		local_command = new Command("dice", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String s = params.trim();
+				Helper.sendMessage(target, Helper.rollDiceString(s), nick);
+			}
+		}; local_command.setHelpText("Rolls dice. (eg 1d20)");
 		local_command.registerAlias("roll");
-		IRCBot.registerCommand(local_command, "Rolls dice");
+		IRCBot.registerCommand(local_command);
 	}
-
-	public String dest;
 
 	public String chan;
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecute(command, event) >= 0) {
-			chan = event.getChannel().getName();
-		}
+		chan = event.getChannel().getName();
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		long shouldExecute = local_command.shouldExecute(command, event);
 		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 			target = nick;
 		} else {
 			target = chan;
 		}
-		if (shouldExecute == 0) {
-			String message = "";
-			for (String aCopyOfRange : copyOfRange)
-			{
-				message = message + " " + aCopyOfRange;
-			}
-			String s = message.trim();
-			Helper.sendMessage(target, Helper.rollDiceString(s), nick);
-		}
+		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
