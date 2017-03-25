@@ -193,6 +193,7 @@ public class Command {
 
 	public void registerSubCommand(Command command) {
 		if (!this.subCommands.contains(command)) {
+			command.isSubCommand = true;
 			this.subCommands.add(command);
 		}
 	}
