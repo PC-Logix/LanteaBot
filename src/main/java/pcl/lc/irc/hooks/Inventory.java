@@ -97,8 +97,8 @@ public class Inventory extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("inventory", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendMessage(target, "Unknown sub-command '" + params + "' (Try: " + local_command.getSubCommandsAsString(true) + ")", nick);
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
 			}
 		};
 		local_command.registerAlias("inv");

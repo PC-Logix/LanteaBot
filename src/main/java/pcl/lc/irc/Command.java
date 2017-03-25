@@ -216,20 +216,35 @@ public class Command {
 	}
 
 	public String getSubCommandsAsString(boolean includeAliases) {
-		String list = "";
-		for (Command command : this.subCommands) {
-			list += ", " + command.getCommand();
-			if (includeAliases) {
-				String aliases = "";
-				for (String alias : command.aliases) {
-					aliases += alias + ", ";
+		if (this.subCommands.size() > 0) {
+			String list = "";
+			for (Command command : this.subCommands) {
+				list += ", " + command.getCommand();
+				if (includeAliases) {
+					String aliases = "";
+					for (String alias : command.aliases) {
+						aliases += alias + ", ";
+					}
+					aliases = aliases.replaceAll(", $", "");
+					if (aliases != "")
+						list += " (" + aliases + ")";
 				}
-				aliases = aliases.replaceAll(", $", "");
-				if (aliases != "")
-					list += " (" + aliases + ")";
 			}
+			return list.replaceAll("^, ", "");
 		}
-		return list.replaceAll("^, ", "");
+		else
+			return "No registered sub-commands.";
+	}
+
+	public String trySubCommandsMessage(ArrayList<String> params) {
+		if (params.size() > 0)
+			return trySubCommandsMessage(params.get(0));
+		else
+			return "Must specify sub-command. (Try: " + this.getSubCommandsAsString(true) + ")";
+	}
+
+	public String trySubCommandsMessage(String param) {
+		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
 	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) { return tryExecute(command, nick, target, event, params, false);}
