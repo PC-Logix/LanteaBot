@@ -48,53 +48,44 @@ public class Flip extends AbstractListener {
 
   @Override
   protected void initHook() {
-    local_command = new Command("flip", 0);
-    IRCBot.registerCommand(local_command, "Flips the text sent");
+    local_command = new Command("flip", 0) {
+      @Override
+      public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+        if (params.equals("")) {
+          Helper.sendMessage(target, "(╯°□°）╯┻━┻", nick);
+        } else {
+          if (params.equals("^")) {
+            List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+            for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+              if (entry.getValue().get(0).equals(target)) {
+                Helper.sendMessage(target, Helper.antiPing(nick) + ": " + "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
+                return;
+              }
+            }
+          } else {
+            Helper.sendMessage(target, "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(params))).reverse().toString(), nick);
+          }
+        }
+      }
+    }; local_command.setHelpText("Flips the text sent");
+    IRCBot.registerCommand(local_command);
   }
 
   public String chan;
   public String target = null;
-
   @Override
   public void handleCommand(String nick, MessageEvent event, String command, String[] args) {
-    if (local_command.shouldExecute(command, event) >= 0) {
-      chan = event.getChannel().getName();
-    }
+    chan = event.getChannel().getName();
   }
 
   @Override
   public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-    long shouldExecute = local_command.shouldExecute(command, event, nick);
     if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
       target = nick;
     } else {
       target = chan;
     }
-    if (shouldExecute == 0) {
-      String s = "";
-      for (String arg : copyOfRange) {
-        s += arg + " ";
-      }
-      s = s.trim();
-
-      System.out.println(s);
-
-      if (s.equals("")) {
-        Helper.sendMessage(target, "(╯°□°）╯┻━┻", nick);
-      } else {
-        if (s.equals("^")) {
-          List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-          for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-            if (entry.getValue().get(0).equals(target)) {
-              Helper.sendMessage(target, Helper.antiPing(nick) + ": " + "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
-              return;
-            }
-          }
-        } else {
-          Helper.sendMessage(target, "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(s))).reverse().toString(), nick);
-        }
-      }
-    }
+    local_command.tryExecute(command, nick, target, event, copyOfRange);
   }
 
   @Override
