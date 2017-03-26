@@ -144,7 +144,7 @@ public class Quotes extends AbstractListener {
 							IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + id + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(1)) + "> " + results.getString(2));
 						}
 						else {
-							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for id " + id);
+							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for id #" + id);
 						}
 					}
 					catch (Exception e) {
@@ -160,7 +160,7 @@ public class Quotes extends AbstractListener {
 							IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(2));
 						}
 						else {
-							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + pcl.lc.utils.Helper.antiPing(key));
+							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for user " + pcl.lc.utils.Helper.antiPing(key));
 						}
 					}
 					catch (Exception e) {
