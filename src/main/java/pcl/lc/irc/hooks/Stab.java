@@ -32,9 +32,7 @@ public class Stab extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecute(command, event) >= 0) {
-			chan = event.getChannel().getName();
-		}
+		chan = event.getChannel().getName();
 	}
 
 	@Override
@@ -72,7 +70,7 @@ public class Stab extends AbstractListener {
 
 				if (target == "")
 					Helper.sendAction(this.target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-				else if (!target.toLowerCase().contains(IRCBot.ournick.toLowerCase()))
+				else if (Helper.doInterractWith(target))
 					Helper.sendAction(this.target,actions.get(action) + " " + target + (item != null ? " with " + item.getName() : "") + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
 				else
 					Helper.sendAction(this.target,"uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);

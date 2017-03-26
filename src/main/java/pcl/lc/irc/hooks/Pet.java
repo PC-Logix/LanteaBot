@@ -44,11 +44,10 @@ public class Pet extends AbstractListener {
 					DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4");
 
 					int action = Helper.getRandomInt(0, actions.size() - 1);
-					System.out.println("Action: " + action);
 
 					if (params == "")
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					else if (!params.equals(IRCBot.ournick))
+					else if (Helper.doInterractWith(target))
 						Helper.sendAction(target,actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + params + " recovers " + roll.getSum() + " health!" : "") + dust);
 					else
 						Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
@@ -67,9 +66,7 @@ public class Pet extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecute(command, event) >= 0) {
-			chan = event.getChannel().getName();
-		}
+		chan = event.getChannel().getName();
 	}
 
 	@Override

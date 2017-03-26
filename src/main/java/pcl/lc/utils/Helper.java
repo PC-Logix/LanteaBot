@@ -1,21 +1,23 @@
 package pcl.lc.utils;
 
-import java.io.*;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
+import org.pircbotx.hooks.events.MessageEvent;
+import pcl.lc.irc.Database;
+import pcl.lc.irc.DiceRoll;
+import pcl.lc.irc.IRCBot;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
-import org.pircbotx.hooks.events.MessageEvent;
-
-import pcl.lc.irc.Database;
-import pcl.lc.irc.DiceRoll;
-import pcl.lc.irc.IRCBot;
 
 public class Helper {
 	public static final Charset utf8 = Charset.forName("UTF-8");
@@ -389,8 +391,7 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
-	public static String parseSelfReferral(String type)
-	{
+	public static String parseSelfReferral(String type) {
 		switch (type) {
 			case "his": //Takes a swing with his axe
 				return "her"; //Takes a swing with her axe
@@ -402,6 +403,22 @@ public class Helper {
 				return "herself"; //The bot blames herself for ruining christmas
 			default:
 				return type;
+		}
+	}
+
+	public static boolean doInterractWith(String target) {
+		if (target.toLowerCase().contains(IRCBot.getOurNick().toLowerCase()))
+			return false;
+		switch (target.toLowerCase()) {
+			case "herself":
+			case "himself":
+			case "itself":
+			case "themself":
+			case "themselves":
+			case "themselfs":
+				return false;
+			default:
+				return true;
 		}
 	}
 }
