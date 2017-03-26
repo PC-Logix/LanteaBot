@@ -12,8 +12,10 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -21,47 +23,43 @@ import pcl.lc.irc.IRCBot;
  */
 @SuppressWarnings("rawtypes")
 public class OCTime extends AbstractListener {
+	Command local_command;
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("octime", "Returns the time in GMT");
+		local_command = new Command("octime", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+				dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+				Helper.sendMessage(target, dateFormatGmt.format(new Date()), nick);
+			}
+		};
+		local_command.setHelpText("Returns the time in GMT");
+		local_command.registerAlias("time");
+		IRCBot.registerCommand(local_command);
 	}
 
+	public String chan;
+	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		chan = event.getChannel().getName();
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (command.equals(Config.commandprefix + "octime")) {
-			if (!IRCBot.isIgnored(nick)) {
-				SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-				dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-				//Local time zone   
-				SimpleDateFormat dateFormatLocal = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-				//Time in GMT
-				Date octime = null;
-				try {
-					octime = dateFormatLocal.parse( dateFormatGmt.format(new Date()) );
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				event.respond(dateFormatGmt.format(new Date()));
-			} 
-		}	
-	}
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
+		}
+		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
+
+	@Override
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }
