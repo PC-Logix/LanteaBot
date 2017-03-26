@@ -152,10 +152,12 @@ public class Inventory extends AbstractListener {
 		sub_command_add = new Command("add", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (!nick.toLowerCase().equals(params.toLowerCase()))
-					Helper.sendMessage(target, addItem(params, nick), nick);
-				else
+				if (params.toLowerCase().equals("myself") || params.toLowerCase().equals(IRCBot.getOurNick()))
+					Helper.sendMessage(target, "I can't add myself to the inventory.", nick);
+				else if (nick.toLowerCase().equals(params.toLowerCase()))
 					Helper.sendMessage(target, "You can't add yourself to the inventory.", nick);
+				else
+					Helper.sendMessage(target, addItem(params.replaceAll("[.!?,‽]$", ""), nick), nick);
 			}
 		};
 		sub_command_remove = new Command("remove", 0, true) {
