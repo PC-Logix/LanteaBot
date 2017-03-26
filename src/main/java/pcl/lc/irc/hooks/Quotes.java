@@ -28,14 +28,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pcl.lc.httpd.httpd;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Permissions;
+import pcl.lc.irc.*;
+import pcl.lc.utils.Helper;
 
 @SuppressWarnings("rawtypes")
 public class Quotes extends AbstractListener {
+	private Command quote;
+	private Command add;
+	private Command delete;
+	private Command list;
+	private Command quotes;
+
+	private String idIdentificationCharacter = "#";
 	
 	static String html;
 	
@@ -46,11 +50,13 @@ public class Quotes extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		IRCBot.httpServer.registerContext("/quotes", new QuoteHandler());
-		IRCBot.registerCommand("addquote", "Adds a quote to the database (Requires BotAdmin, or Channel Op");
-		IRCBot.registerCommand("quote", "Returns quotes from the quote database");
-		IRCBot.registerCommand("delquote", "Removes a quote from the database (Requires BotAdmin, or Channel Op");
-		IRCBot.registerCommand("listquotes", "Returns list of ids for quotes belonging to user as well as their total quote count");
+		httpd.registerContext("/quotes", new QuoteHandler());
+		initCommands();
+		IRCBot.registerCommand(quote);
+		quote.registerAlias("q");
+		quote.registerSubCommand(add);
+		quote.registerSubCommand(delete);
+		quote.registerSubCommand(list);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
 		Database.addPreparedStatement("addQuote","INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 		Database.addPreparedStatement("getUserQuote","SELECT id, data FROM Quotes WHERE LOWER(user) = ? ORDER BY RANDOM () LIMIT 1;");
@@ -61,6 +67,145 @@ public class Quotes extends AbstractListener {
 		Database.addPreparedStatement("getSpecificQuote","SELECT id, data FROM Quotes WHERE user = ? AND data = ?;");
 		Database.addPreparedStatement("removeQuote","DELETE FROM Quotes WHERE id = ?;");
 
+	}
+
+	private void initCommands() {
+		quote = new Command("quote", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.length() == 0) {
+					try {
+						PreparedStatement getAnyQuote = Database.getPreparedStatement("getAnyQuote");
+						ResultSet results = getAnyQuote.executeQuery();
+						if (results.next()) {
+							Helper.sendMessage(target, "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(2)) + "> " + results.getString(3));
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					if (params.substring(0, 1).equals(idIdentificationCharacter)) {
+						String id = params.replace(idIdentificationCharacter, "");
+						try {
+							PreparedStatement getQuote = Database.getPreparedStatement("getIdQuote");
+							getQuote.setString(1, id);
+							ResultSet results = getQuote.executeQuery();
+							if (results.next()) {
+								Helper.sendMessage(target, "Quote #" + id + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(1)) + "> " + results.getString(2));
+							}
+							else {
+								Helper.sendMessage(target, "No quotes found for id #" + id, nick);
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					else {
+						try	{
+							PreparedStatement getQuote = Database.getPreparedStatement("getUserQuote");
+							getQuote.setString(1, params.toLowerCase());
+							ResultSet results = getQuote.executeQuery();
+							if (results.next()) {
+								Helper.sendMessage(target, "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(params) + "> " + results.getString(2));
+							}
+							else {
+								Helper.sendMessage(target, "No quotes found for name '" + pcl.lc.utils.Helper.antiPing(params) + "'", nick);
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}; quote.setHelpText("Returns quotes from the quote database");
+		add = new Command("add", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (params.size() > 1) {
+					String key = params.get(0);
+					String data = "";
+					for (int i = 1; i < params.size(); i++) {
+						data += " " + params.get(i);
+					}
+					data = data.trim();
+					try {
+						PreparedStatement addQuote = Database.getPreparedStatement("addQuote");
+						addQuote.setString(1, key);
+						addQuote.setString(2, data);
+						if (addQuote.executeUpdate() > 0) {
+							Helper.sendMessage(target, "Quote added at id: " + addQuote.getGeneratedKeys().getInt(1), nick);
+							return;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Helper.sendMessage(target, "An error occurred while trying to save the quote.", nick);
+				}
+			}
+		}; add.setHelpText("Adds a quote to the database");
+		delete = new Command("delete", 0, true, true, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (params.size() > 0) {
+					String key = params.get(0).replace(idIdentificationCharacter, "");
+					//String data = StringUtils.join(args, " ", 1, args.length);
+					try {
+						PreparedStatement removeQuote = Database.getPreparedStatement("removeQuote");
+						removeQuote.setString(1, key);
+						//removeQuote.setString(2, data);
+						if (removeQuote.executeUpdate() > 0) {
+							Helper.sendMessage(target, "Quote removed.", nick);
+							return;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Helper.sendMessage(target, "An error occurred while trying to set the value.", nick);
+				}
+			}
+		}; delete.setHelpText("Removes a quote from the database");
+		delete.registerAlias("del");
+		list = new Command("list", 0, true) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (params.size() > 0) {
+					String key = params.get(0);
+					try	{
+						PreparedStatement getUserQuoteAll = IRCBot.getInstance().getPreparedStatement("getUserQuoteAll");
+						getUserQuoteAll.setString(1, key.toLowerCase());
+						ResultSet results = getUserQuoteAll.executeQuery();
+
+						ArrayList<String> returnValues = new ArrayList<String>();
+
+						while (results.next())
+							returnValues.add(results.getString(1));
+
+						if (!returnValues.isEmpty()) {
+							String ids = "";
+							for (String value :returnValues) {
+								ids += value + ", ";
+							}
+							ids = ids.replaceAll(", $", "");
+							Helper.sendMessage(target, "User <" + pcl.lc.utils.Helper.antiPing(key) + "> has " + returnValues.size() + " quotes: " + ids);
+						}
+						else {
+							Helper.sendMessage(target, "No quotes found for user '" + key + "'", nick);
+						}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}; list.setHelpText("Returns list of ids for quotes belonging to user as well as their total quote count");
+		quotes = new Command("quotes", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, httpd.getBaseDomain() + "/quotes", nick);
+			}
+		};
 	}
 
 	static class QuoteHandler implements HttpHandler {
@@ -115,146 +260,27 @@ public class Quotes extends AbstractListener {
 		}
 	}
 
+	public String chan;
+	public String target = null;
 	@Override
-	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
-		String prefix = Config.commandprefix;
-		if (command.equals(prefix + "quote") || command.equals(prefix + "q")) {
-			if (args.length == 0) {
-				try {
-					PreparedStatement getAnyQuote = IRCBot.getInstance().getPreparedStatement("getAnyQuote");
-					ResultSet results = getAnyQuote.executeQuery();
-					if (results.next()) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(2)) + "> " + results.getString(3));
-					}
-					return;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			if (args.length == 1) {
-				String idIdentificationCharacter = "#";
-				String key = args[0];
-				if (key.substring(0, 1).equals(idIdentificationCharacter)) {
-					String id = key.replace(idIdentificationCharacter, "");
-					try {
-						PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getIdQuote");
-						getQuote.setString(1, id);
-						ResultSet results = getQuote.executeQuery();
-						if (results.next()) {
-							IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + id + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(1)) + "> " + results.getString(2));
-						}
-						else {
-							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for id #" + id);
-						}
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				else {
-					try	{
-						PreparedStatement getQuote = IRCBot.getInstance().getPreparedStatement("getUserQuote");
-						getQuote.setString(1, key.toLowerCase());
-						ResultSet results = getQuote.executeQuery();
-						if (results.next()) {
-							IRCBot.bot.sendIRC().message(event.getChannel().getName(), "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(key) + "> " + results.getString(2));
-						}
-						else {
-							IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for user " + pcl.lc.utils.Helper.antiPing(key));
-						}
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		} else if (command.equals(prefix + "addquote")) {
-			if (args.length > 1) {
-				String key = args[0];
-				String data = StringUtils.join(args, " ", 1, args.length);
-				try {
-					PreparedStatement addQuote = IRCBot.getInstance().getPreparedStatement("addQuote");
-					addQuote.setString(1, key);
-					addQuote.setString(2, data);
-					if (addQuote.executeUpdate() > 0) {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "Quote added at id: " + addQuote.getGeneratedKeys().getInt(1) );
-					} else {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "An error occurred while trying to set the value.");
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		} else if (command.equals(prefix + "delquote")) {
-			boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
-			if (isOp || event.getChannel().isOp(event.getUser())) {
-				if (args.length == 1) {
-					String key = args[0];
-					//String data = StringUtils.join(args, " ", 1, args.length);
-					try {
-						PreparedStatement removeQuote = IRCBot.getInstance().getPreparedStatement("removeQuote");
-						removeQuote.setString(1, key);
-						//removeQuote.setString(2, data);
-						if (removeQuote.executeUpdate() > 0) {
-							event.respond("Quote removed.");
-						} else {
-							event.respond("An error occurred while trying to set the value.");
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		} else if (command.equals(prefix + "listquotes")) {
-			if (args.length == 1) {
-				String key = args[0];
-				try	{
-					PreparedStatement getUserQuoteAll = IRCBot.getInstance().getPreparedStatement("getUserQuoteAll");
-					getUserQuoteAll.setString(1, key.toLowerCase());
-					ResultSet results = getUserQuoteAll.executeQuery();
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+		chan = event.getChannel().getName();
+	}
 
-					ArrayList<String> returnValues = new ArrayList<String>();
-
-					while (results.next())
-						returnValues.add(results.getString(1));
-
-					if (!returnValues.isEmpty()) {
-						String ids = "";
-						for (String value :returnValues) {
-							ids += value + ", ";
-						}
-						ids = ids.replaceAll(", $", "");
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), "User <" + pcl.lc.utils.Helper.antiPing(key) + "> has " + returnValues.size() + " quotes: " + ids);
-					}
-					else {
-						IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + "No quotes found for " + key);
-					}
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		} else if (command.equals(prefix + "quotes")) {
-			IRCBot.bot.sendIRC().message(event.getChannel().getName(), sender + ": " + httpd.getBaseDomain() + "/quotes");
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
 		}
-	}
-
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event,
-			String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-
+		quote.tryExecute(command, nick, target, event, copyOfRange);
+		quotes.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
 
-	}
+	@Override
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }
