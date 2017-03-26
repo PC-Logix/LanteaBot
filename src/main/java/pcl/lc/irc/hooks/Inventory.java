@@ -91,7 +91,7 @@ public class Inventory extends AbstractListener {
 		Database.addPreparedStatement("clearFavourite", "UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1");
 		Database.addPreparedStatement("preserveItem", "UPDATE Inventory SET uses_left = -1 WHERE item_name = ?");
 		Database.addPreparedStatement("unPreserveItem", "UPDATE Inventory SET uses_left = 5 WHERE item_name = ?");
-		IRCBot.httpServer.registerContext("/inventory", new InventoryHandler());
+		httpd.registerContext("/inventory", new InventoryHandler());
 	}
 
 	private void initCommands() {
@@ -152,7 +152,7 @@ public class Inventory extends AbstractListener {
 		sub_command_add = new Command("add", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (nick.toLowerCase() != params.toLowerCase())
+				if (!nick.toLowerCase().equals(params.toLowerCase()))
 					Helper.sendMessage(target, addItem(params, nick), nick);
 				else
 					Helper.sendMessage(target, "You can't add yourself to the inventory.", nick);
