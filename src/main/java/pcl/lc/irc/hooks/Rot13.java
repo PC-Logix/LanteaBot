@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
@@ -17,7 +18,21 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class Rot13 extends AbstractListener {
-	public static String rot13(String input) {
+	private Command rot;
+
+	@Override
+	protected void initHook() {
+		rot = new Command("rot13", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, rot13(params), nick);
+			}
+		};
+		rot.setHelpText("Applies the ROT13 cipher to the supplied text");
+		IRCBot.registerCommand(rot);
+	}
+
+	private static String rot13(String input) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
@@ -30,44 +45,26 @@ public class Rot13 extends AbstractListener {
 		return sb.toString();
 	}
 
-	public String dest;
-
 	public String chan;
 	public String target = null;
-
-	@Override
-	protected void initHook() {
-		IRCBot.registerCommand("rot13", "Applies the ROT13 cipher to the supplied text");
-	}
-
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (command.equals(Config.commandprefix + "rot13")) {
-			chan = event.getChannel().getName();
-		}
+		chan = event.getChannel().getName();
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (command.equals(Config.commandprefix + "rot13")) {
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}
-			String s = event.getMessage().substring(event.getMessage().indexOf("rot13") + 5).trim();
-			IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + rot13(s));
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
 		}
-	}
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		rot.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
+
+	@Override
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }
