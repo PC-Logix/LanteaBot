@@ -47,14 +47,14 @@ public class Give extends AbstractListener {
 					}
 
 				if (item == null) {
-					Helper.sendMessage(target, "I couldn't find an item.", nick);
+					Helper.sendAction(target, "searches through " + Helper.parseSelfReferral("his") + " inventory for a bit. \"I couldn't find anything...\"");
 					return;
 				}
 
 				int removeResult = Inventory.removeItem(item);
 
 				if (removeResult == 0 || removeResult == Inventory.ERROR_ITEM_IS_PRESERVED)
-					Helper.sendAction(target ,  "gives " + target_argument + " " + item.getName() + " from her inventory");
+					Helper.sendAction(target ,  "gives " + target_argument + " " + item.getName() + " from " + Helper.parseSelfReferral("his") + " inventory");
 				else if (removeResult == Inventory.ERROR_ITEM_IS_FAVOURITE)
 					Helper.sendMessage(target ,  "No! This is my favourite thing! I wont give it away!", nick);
 				else if (removeResult == Inventory.ERROR_NO_ROWS_RETURNED)
