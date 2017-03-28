@@ -3,82 +3,85 @@
  */
 package pcl.lc.irc.hooks;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.User;
-import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.NoticeEvent;
-
-import pcl.lc.irc.Config;
+import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TimedHashMap;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Caitlyn
- * 
+ *
  */
 @SuppressWarnings("rawtypes")
-public class Ping extends ListenerAdapter {
-	public Ping() {
-		IRCBot.registerCommand("p", "Sends a CTCP Ping to you, or the user supplied to check latency");
-		IRCBot.registerCommand("ping", "Sends a CTCP Ping to you, or the user supplied to check latency");
-		IRCBot.registerCommand("msp", "Sends a CTCP Ping to you, or the user supplied to check latency, replies with milliseconds");
+public class Ping extends AbstractListener {
+	private Command ping;
+	private Command msp;
+
+	@Override
+	protected void initHook() {
+		initCommands();
+		IRCBot.registerCommand(ping);
+		IRCBot.registerCommand(msp);
 	}
 
-	public static TimedHashMap<String, List<Object>> users = new TimedHashMap<String, List<Object>>(60000, null);
-	public static TimedHashMap<String, List<Object>> usersMSP = new TimedHashMap<String, List<Object>>(60000, null);
+	private static TimedHashMap<String, List<Object>> users = new TimedHashMap<String, List<Object>>(60000, null);
+	private static TimedHashMap<String, List<Object>> usersMSP = new TimedHashMap<String, List<Object>>(60000, null);
 
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
-		super.onMessage(event);
-		String prefix = Config.commandprefix;
-		String ourinput = event.getMessage().toLowerCase();
-		String trigger = ourinput.trim();
-		if (trigger.length() > 1) {
-			String[] message = StringUtils.split(trigger);
-			String triggerWord = message[0];
-			if (triggerWord.equals(prefix + "p") || triggerWord.equals(prefix + "ping")) {
-				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					List<Object> eventData = new ArrayList<Object>();
-					eventData.add(event.getChannel().getName());
-					eventData.add(System.currentTimeMillis());
-					if (message.length > 1) {
-						for (User u : event.getChannel().getUsers()) {
-							if(u.getNick().toLowerCase().equals(message[1])) {
-								users.put(message[1].toLowerCase(), eventData);
-								IRCBot.bot.sendIRC().ctcpCommand(message[1].toLowerCase(), "PING " + System.currentTimeMillis());	
-							}
-						}
-					} else {
-						users.put(event.getUser().getNick().toLowerCase(), eventData);
-						IRCBot.bot.sendIRC().ctcpCommand(event.getUser().getNick(), "PING " + System.currentTimeMillis());					
-					}
-				}
-			} else if (triggerWord.equals(prefix + "msp") || triggerWord.equals(prefix + "msping")) {
-				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					List<Object> eventData = new ArrayList<Object>();
-					eventData.add(event.getChannel().getName());
-					eventData.add(System.currentTimeMillis());
-					if (message.length > 1) {
-						for (User u : event.getChannel().getUsers()) {
-							if(u.getNick().toLowerCase().equals(message[1])) {
-								usersMSP.put(message[1].toLowerCase(), eventData);
-								IRCBot.bot.sendIRC().ctcpCommand(message[1].toLowerCase(), "PING " + System.currentTimeMillis());	
-							}
-						}
-					} else {
-						usersMSP.put(event.getUser().getNick().toLowerCase(), eventData);
-						IRCBot.bot.sendIRC().ctcpCommand(event.getUser().getNick(), "PING " + System.currentTimeMillis());					
-					}
-				}
-			}			
+	private void initCommands() {
+		ping = new Command("ping", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				sendPing(params, nick, false);
+			}
+		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
+		ping.registerAlias("p");
+		msp = new Command("msp", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				sendPing(params, nick, true);
+			}
+		}; msp.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency, replies with milliseconds");
+	}
+
+	private void sendPing(ArrayList<String> params, String nick, boolean ms) {
+		List<Object> eventData = new ArrayList<Object>();
+		eventData.add(target);
+		eventData.add(System.currentTimeMillis());
+		if (params.size() > 0) {
+			for (String n : params) {
+				((ms) ? usersMSP : users).put(n.toLowerCase(), eventData);
+				IRCBot.bot.sendIRC().ctcpCommand(n.toLowerCase(), "PING " + System.currentTimeMillis());
+			}
+		} else {
+			((ms) ? usersMSP : users).put(nick.toLowerCase(), eventData);
+			IRCBot.bot.sendIRC().ctcpCommand(nick.toLowerCase(), "PING " + System.currentTimeMillis());
 		}
+	}
+
+	public String chan;
+	public String target = null;
+	@Override
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+		chan = event.getChannel().getName();
+	}
+
+	@Override
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+			target = nick;
+		} else {
+			target = chan;
+		}
+		ping.tryExecute(command, nick, target, event, copyOfRange);
+		msp.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
@@ -104,4 +107,10 @@ public class Ping extends ListenerAdapter {
 			}
 		}
 	}
+
+	@Override
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
+
+	@Override
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }
