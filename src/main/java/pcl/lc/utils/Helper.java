@@ -391,6 +391,20 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
+	public static String get_surprise_response() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("What? D:");
+		strings.add("Nooooo");
+		strings.add("Whatever.");
+		strings.add("Nuuh");
+		strings.add("I'll stab you in the face!");
+		strings.add("How dare you?!");
+		strings.add("Fight me!");
+		strings.add("No u!");
+		strings.add("Someone's mad.");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
 	public static String parseSelfReferral(String type) {
 		switch (type) {
 			case "his": //Takes a swing with his axe
