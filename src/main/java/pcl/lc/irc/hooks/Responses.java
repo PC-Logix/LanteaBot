@@ -3,6 +3,7 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
@@ -28,6 +29,7 @@ public class Responses extends ListenerAdapter {
 			respondTo.add(new String[]{"howdareyou", "2"});
 			respondTo.add(new String[]{"no u", "2"});
 			respondTo.add(new String[]{"no you", "2"});
+			respondTo.add(new String[]{"really", "2"});
 
 			respondTo.add(new String[]{"you're welcome", "3"});
 			respondTo.add(new String[]{"youre welcome", "3"});
@@ -35,6 +37,8 @@ public class Responses extends ListenerAdapter {
 			respondTo.add(new String[]{"good", "4"});
 			respondTo.add(new String[]{"excellent", "4"});
 			respondTo.add(new String[]{"nice", "4"});
+
+			respondTo.add(new String[]{"poor", "5"});
 
 			for (String[] str : respondTo) {
 				if (event.getMessage().toLowerCase().contains(str[0])) {
@@ -58,6 +62,9 @@ public class Responses extends ListenerAdapter {
 				break;
 			case "4":
 				event.respond(Helper.get_thanks_response());
+				break;
+			case "5":
+				event.respond("Don't you poor me! I'll poor you in the face! D:<");
 				break;
 		}
 	}
