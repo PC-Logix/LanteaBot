@@ -32,6 +32,10 @@ public class Responses extends ListenerAdapter {
 			respondTo.add(new String[]{"you're welcome", "3"});
 			respondTo.add(new String[]{"youre welcome", "3"});
 
+			respondTo.add(new String[]{"good", "4"});
+			respondTo.add(new String[]{"excellent", "4"});
+			respondTo.add(new String[]{"nice", "4"});
+
 			for (String[] str : respondTo) {
 				if (event.getMessage().toLowerCase().contains(str[0])) {
 					respond(str[1], event);
@@ -51,6 +55,9 @@ public class Responses extends ListenerAdapter {
 				break;
 			case "3":
 				event.respond("What?");
+				break;
+			case "4":
+				event.respond(Helper.get_thanks_response());
 				break;
 		}
 	}

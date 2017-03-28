@@ -405,6 +405,13 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
+	public static String get_thanks_response() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("Thanks!");
+		strings.add("You're too kind!");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
 	public static String parseSelfReferral(String type) {
 		switch (type) {
 			case "his": //Takes a swing with his axe

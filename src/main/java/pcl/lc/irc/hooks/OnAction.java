@@ -30,6 +30,8 @@ public class OnAction extends ListenerAdapter {
 			event.getChannel().send().action("Purrs");
 		} else if (event.getAction().contains("glomps " + IRCBot.ournick)) {
 			event.getChannel().send().action("gets out the pepper spray");
+		} else if (event.getAction().contains("high-fives " + IRCBot.ournick)) {
+			event.getChannel().send().action("high-fives " + event.getUser().getNick());
 		}
 		
 		List<String> list = new ArrayList<String>();
