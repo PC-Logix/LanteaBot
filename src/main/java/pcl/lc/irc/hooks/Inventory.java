@@ -45,6 +45,7 @@ public class Inventory extends AbstractListener {
 	private Command sub_command_preserve;
 	private Command sub_command_unpreserve;
 	private Command sub_command_count;
+	private Command sub_command_favourite;
 	private static double favourite_chance = 0.01;
 
 	static int ERROR_ITEM_IS_FAVOURITE = 1;
@@ -70,7 +71,8 @@ public class Inventory extends AbstractListener {
 		local_command.registerSubCommand(sub_command_preserve);
 		local_command.registerSubCommand(sub_command_unpreserve);
 		local_command.registerSubCommand(sub_command_count);
-		IRCBot.registerCommand(local_command, "Interact with the bots inventory");
+		local_command.registerSubCommand(sub_command_favourite);
+		IRCBot.registerCommand(local_command);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD is_favourite BOOLEAN DEFAULT 0 NULL");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
@@ -78,6 +80,7 @@ public class Inventory extends AbstractListener {
 
 		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory;");
 		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE id = ?;");
+		Database.addPreparedStatement("getFavouriteItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite = 1 LIMIT 1");
 		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE item_name = ?;");
 		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory ORDER BY Random() LIMIT 1");
 		Database.addPreparedStatement("getRandomItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory ORDER BY Random() LIMIT ?");
@@ -102,6 +105,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("inv");
+		local_command.setHelpText("Interact with the bots inventory");
 		sub_command_list = new Command("list", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -214,6 +218,24 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_unpreserve.registerAlias("unpre");
+		sub_command_favourite = new Command("favourite", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				try {
+					PreparedStatement getFav = Database.getPreparedStatement("getFavouriteItem");
+					ResultSet fav = getFav.executeQuery();
+					if (fav.next()) {
+						Helper.sendMessage(target, "My favourite item is " + fav.getString(2) + " added by " + fav.getString(5), nick);
+					} else {
+						Helper.sendMessage(target, "I have no favourite item right now.", nick);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					Helper.sendMessage(target, "Something went wrong.", nick);
+				}
+			}
+		};
+		sub_command_favourite.registerAlias("fav");
 	}
 
 	static class InventoryHandler implements HttpHandler {
