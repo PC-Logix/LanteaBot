@@ -386,10 +386,22 @@ public class Admin extends AbstractListener {
 
 	@Override
 	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+		ArrayList<String> terms = new ArrayList<>();
+		terms.add(": prefix");
+		terms.add(", prefix");
+		terms.add(" prefix");
+		terms.add(": commandchar");
+		terms.add(", commandchar");
+		terms.add(" commandchar");
+		terms.add(": commandprefix");
+		terms.add(", commandprefix");
+		terms.add(" commandprefix");
 		String botNick = IRCBot.ournick.toLowerCase();
 		String message = event.getMessage().toLowerCase();
-		if (message.startsWith(botNick + ": prefix") || message.startsWith(botNick + ", prefix") || message.startsWith(botNick + " prefix")) {
-			event.respond(Config.commandprefix);
+		for (String term : terms) {
+			if (message.startsWith(botNick + term)) {
+				event.respond(Config.commandprefix);
+			}
 		}
 	}
 
