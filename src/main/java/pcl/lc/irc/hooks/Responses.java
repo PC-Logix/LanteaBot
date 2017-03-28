@@ -6,6 +6,9 @@ import org.pircbotx.hooks.events.MessageEvent;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("rawtypes")
 public class Responses extends ListenerAdapter {
 
@@ -15,13 +18,40 @@ public class Responses extends ListenerAdapter {
 		super.onMessage(event);
 		
 		if (event.getMessage().toLowerCase().contains(IRCBot.getOurNick().toLowerCase())) {
-			if (event.getMessage().toLowerCase().contains("thanks") || event.getMessage().toLowerCase().contains("thank you")) {
-				event.respond("You're welcome!");
-			}
+			ArrayList<String[]> respondTo = new ArrayList<>();
+			respondTo.add(new String[]{"thanks", "1"});
+			respondTo.add(new String[]{"thank you", "1"});
 
-			if (event.getMessage().toLowerCase().contains("seriously") || event.getMessage().toLowerCase().contains("srsly") || event.getMessage().toLowerCase().contains("how dare you") || event.getMessage().toLowerCase().contains("howdareyou") || event.getMessage().toLowerCase().contains("no u") || event.getMessage().toLowerCase().contains("no you")) {
-				event.respond(Helper.get_surprise_response());
+			respondTo.add(new String[]{"seriously", "2"});
+			respondTo.add(new String[]{"srsly", "2"});
+			respondTo.add(new String[]{"how dare you", "2"});
+			respondTo.add(new String[]{"howdareyou", "2"});
+			respondTo.add(new String[]{"no u", "2"});
+			respondTo.add(new String[]{"no you", "2"});
+
+			respondTo.add(new String[]{"you're welcome", "3"});
+			respondTo.add(new String[]{"youre welcome", "3"});
+
+			for (String[] str : respondTo) {
+				if (event.getMessage().toLowerCase().contains(str[0])) {
+					respond(str[1], event);
+					break;
+				}
 			}
+		}
+	}
+
+	private void respond(String type, MessageEvent event) {
+		switch (type) {
+			case "1":
+				event.respond("You're welcome!");
+				break;
+			case "2":
+				event.respond(Helper.get_surprise_response());
+				break;
+			case "3":
+				event.respond("What?");
+				break;
 		}
 	}
 }
