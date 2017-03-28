@@ -17,7 +17,7 @@ import java.util.ArrayList;
 @SuppressWarnings("rawtypes")
 public class Juggle extends AbstractListener {
 	private Command local_command;
-	private double base_drop_chance = .20; // 0.10 is added for every item included
+	private double base_drop_chance = .20; // 0.08 is added for every item included
 
 	@Override
 	protected void initHook() {
@@ -46,7 +46,7 @@ public class Juggle extends AbstractListener {
 				for (Item item : items.getItems()) {
 					if (item != null) {
 						int drop_roll = Helper.getRandomInt(0, 100);
-						if (drop_roll < (100 * (base_drop_chance + (0.10 * item_amount)))) {
+						if (drop_roll < (100 * (base_drop_chance + (0.08 * item_amount)))) {
 							dropped++;
 							int damage = Helper.getRandomInt(1, 5);
 							String dust = item.damage(damage);
