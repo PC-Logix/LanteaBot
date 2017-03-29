@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -255,13 +257,21 @@ public class Helper {
 		if (message.length() > 200) {
 			String pasteURL = PasteUtils.paste(message, format);
 			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);
+			IRCBot.log.info("--> " +  target + " " + targetUser.replaceAll("\\p{C}", "") + " Message too long to send to channel " + pasteURL);
 		} else {
 			IRCBot.bot.sendIRC().message(target, targetUser + message);
+			List<String> list = new ArrayList<String>();
+			list.add(target);
+			list.add(targetUser.replaceAll("\\p{C}", ""));
+			list.add(message);
+			IRCBot.messages.put(UUID.randomUUID(), list);
+			IRCBot.log.info("--> " + target + " " + targetUser.replaceAll("\\p{C}", "") + " " + message);
 		}
 	}
 
 	public static void sendAction(String target, String message) {
 		IRCBot.bot.sendIRC().message(target, "\u0001ACTION " + message + "\u0001");
+		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + message);
 	}
 
 	public static class TimeObject {

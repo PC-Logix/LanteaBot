@@ -41,6 +41,7 @@ public class GenericEventListener extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
+		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + " " + event.getUser().getNick() + " " + event.getMessage());
 		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			String[] firstWord = StringUtils.split(event.getMessage());
 			String triggerWord = firstWord[0];

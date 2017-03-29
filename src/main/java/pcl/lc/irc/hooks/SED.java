@@ -79,12 +79,14 @@ public class SED extends ListenerAdapter {
 											if (reply.length() >= 380) {
 												reply = reply.substring(0, 380);
 											}
+											//Helper.sendMessage(event.getChannel().getName().toString(), reply, "<" + entry.getValue().get(1) + ">".replace(": ", ""));
 											event.getChannel().send().message("<" + entry.getValue().get(1) + "> " + reply);
-											List<String> list = new ArrayList<String>();
-											list.add(event.getChannel().getName().toString());
-											list.add(entry.getValue().get(1));
-											list.add(reply);
-											IRCBot.messages.put(UUID.randomUUID(), list);
+											//List<String> list = new ArrayList<String>();
+											//list.add(event.getChannel().getName().toString());
+											//list.add(entry.getValue().get(1));
+											//list.add(reply);
+											//IRCBot.messages.put(UUID.randomUUID(), list);
+											IRCBot.log.info("--> " + event.getChannel().getName().toString() + " " + "<" + entry.getValue().get(1) + "> " + reply);
 											return;
 										} catch(IllegalArgumentException e) {
 											event.respond("Invalid regex " + e.getMessage());

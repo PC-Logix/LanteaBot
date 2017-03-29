@@ -1,0 +1,24 @@
+<configuration>
+    <timestamp key="byDay" datePattern="yyyy-MM-dd"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</Pattern>
+        </layout>
+    </appender>
+   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+      <file> log-${byDay}.txt </file>
+      <append>true</append>
+      <encoder>
+         <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+      </encoder>
+   </appender>
+    <logger name="org.pircbotx.PircBotX" level="ERROR" />
+    <logger name="org.pircbotx.InputParser" level="ERROR" />
+    <logger name="org.pircbotx.output.OutputRaw" level="ERROR" />
+    <logger name="org.pircbotx.dcc.Chat" level="ERROR" />
+    <logger name="org.pircbotx.dcc.ReceiveChat" level="ERROR" />
+    <logger name="pcl.lc.irc" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </logger>
+</configuration> 
