@@ -33,7 +33,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -97,7 +99,7 @@ public class Inventory extends AbstractListener {
 		Database.addPreparedStatement("clearFavourite", "UPDATE Inventory SET is_favourite = 0 WHERE is_favourite = 1");
 		Database.addPreparedStatement("preserveItem", "UPDATE Inventory SET uses_left = -1 WHERE item_name = ?");
 		Database.addPreparedStatement("unPreserveItem", "UPDATE Inventory SET uses_left = 5 WHERE item_name = ?");
-		httpd.registerContext("/inventory", new InventoryHandler());
+		httpd.registerContext("/inventory", new InventoryHandler(), "Inventory");
 	}
 
 	private void initCommands() {
@@ -276,13 +278,21 @@ public class Inventory extends AbstractListener {
 					e.printStackTrace();
 				}*/
 			}
+			
+			String navData = "";
+		    Iterator it = httpd.pages.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        navData += "<div class=\"innertube\"><h1><a href=\""+ pair.getValue() +"\">"+ pair.getKey() +"</a></h1></div>";
+		    }
+			
 			// convert String into InputStream
 			InputStream is = new ByteArrayInputStream(html.getBytes());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 				String line = null;
 				
 				while ((line = br.readLine()) != null) {
-					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#INVDATA#", items)+"\n";
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#INVDATA#", items).replace("#NAVDATA#", navData)+"\n";
 				}
 			}
 			t.sendResponseHeaders(200, response.getBytes().length);

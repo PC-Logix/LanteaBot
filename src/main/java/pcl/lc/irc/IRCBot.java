@@ -141,6 +141,7 @@ public class IRCBot {
 		if(Config.httpdEnable.equals("true")) {
 			try {
 				httpd.setBaseDomain(Config.httpdBaseDomain);
+				
 				httpd.setup();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

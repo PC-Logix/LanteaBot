@@ -25,7 +25,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
@@ -50,7 +52,7 @@ public class Quotes extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		httpd.registerContext("/quotes", new QuoteHandler());
+		httpd.registerContext("/quotes", new QuoteHandler(), "Quotes");
 		initCommands();
 		IRCBot.registerCommand(quote);
 		quote.registerAlias("q");
@@ -245,12 +247,21 @@ public class Quotes extends AbstractListener {
 					e.printStackTrace();
 				}
 			}
+
+			String navData = "";
+		    Iterator it = httpd.pages.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        navData += "<div class=\"innertube\"><h1><a href=\""+ pair.getValue() +"\">"+ pair.getKey() +"</a></h1></div>";
+		    }
+		    
 			// convert String into InputStream
 			InputStream is = new ByteArrayInputStream(html.getBytes());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 				String line = null;
 				while ((line = br.readLine()) != null) {
-					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#QUOTEDATA#", quoteList)+"\n";
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#QUOTEDATA#", quoteList)
+							.replace("#NAVIGATION#", navData)+"\n";
 				}
 			}
 			t.sendResponseHeaders(200, response.getBytes().length);
