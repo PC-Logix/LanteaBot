@@ -60,12 +60,13 @@ public class Quotes extends AbstractListener {
 		quote.registerSubCommand(delete);
 		quote.registerSubCommand(list);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
-		Database.addPreparedStatement("addQuote","INSERT INTO Quotes(id, user, data) VALUES (NULL, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+		Database.addUpdateQuery(3, "ALTER TABLE Quotes ADD added_by DEFAULT NULL");
+		Database.addPreparedStatement("addQuote","INSERT INTO Quotes(id, user, data, added_by) VALUES (NULL, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 		Database.addPreparedStatement("getUserQuote","SELECT id, data FROM Quotes WHERE LOWER(user) = ? ORDER BY RANDOM () LIMIT 1;");
 		Database.addPreparedStatement("getIdQuote","SELECT user, data FROM Quotes WHERE id = ? LIMIT 1;");
 		Database.addPreparedStatement("getUserQuoteAll","SELECT id, data FROM Quotes WHERE LOWER(user) = ?;");
 		Database.addPreparedStatement("getAnyQuote","SELECT id, user, data FROM Quotes ORDER BY RANDOM () LIMIT 1;");
-		Database.addPreparedStatement("getAllQuotes","SELECT id, user, data FROM Quotes;");
+		Database.addPreparedStatement("getAllQuotes","SELECT id, user, data, added_by FROM Quotes;");
 		Database.addPreparedStatement("getSpecificQuote","SELECT id, data FROM Quotes WHERE user = ? AND data = ?;");
 		Database.addPreparedStatement("removeQuote","DELETE FROM Quotes WHERE id = ?;");
 
@@ -136,6 +137,7 @@ public class Quotes extends AbstractListener {
 						PreparedStatement addQuote = Database.getPreparedStatement("addQuote");
 						addQuote.setString(1, key);
 						addQuote.setString(2, data);
+						addQuote.setString(3, nick);
 						if (addQuote.executeUpdate() > 0) {
 							Helper.sendMessage(target, "Quote added at id: " + addQuote.getGeneratedKeys().getInt(1), nick);
 							return;
@@ -240,7 +242,7 @@ public class Quotes extends AbstractListener {
 					PreparedStatement getAllQuotes = Database.getPreparedStatement("getAllQuotes");
 					ResultSet results = getAllQuotes.executeQuery();
 					while (results.next()) {
-						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
+						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1) + "</a>" + " Added by " +results.getString(4)+"<br>\n";
 					}
 				}
 				catch (Exception e) {
