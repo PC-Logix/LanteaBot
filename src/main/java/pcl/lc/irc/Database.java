@@ -138,4 +138,29 @@ public class Database {
 		System.out.println("Database update complete! New version: " + getDBVer());
 		System.out.println("Database update ran " + counter + " queries");
 	}
+
+	public static boolean storeJsonData(String key, String data) {
+		try {
+			Database.addStatement("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+			statement.executeUpdate("INSERT OR REPLACE INTO JsonData (mykey, store) VALUES ('" + key.toLowerCase() + "', '" + data + "')");
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static String getJsonData(String key) {
+		try {
+			Database.addStatement("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+			ResultSet resultSet = statement.executeQuery("SELECT store FROM JsonData WHERE mykey = '" + key.toLowerCase() + "'");
+			if (resultSet.next()) {
+				return resultSet.getString(1);
+			}
+			return "";
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
 }

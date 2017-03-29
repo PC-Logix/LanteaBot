@@ -3,6 +3,7 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
@@ -14,9 +15,15 @@ import java.util.Date;
  * Created by Forecaster on 2017-03-28.
  */
 public class Responses extends AbstractListener {
-  private static long lastTonk = 0;
+  private static long lastTonk;
   @Override
-  protected void initHook() {}
+  protected void initHook() {
+     String tonk = Database.getJsonData("lasttonk");
+     if (tonk != "")
+       lastTonk = Long.parseLong(tonk);
+     else
+       lastTonk = 0;
+  }
 
   @Override
   public void handleCommand(String sender, MessageEvent event, String command, String[] args) {}
@@ -103,10 +110,11 @@ public class Responses extends AbstractListener {
       case "8":
         long time = new Date().getTime();
         if (lastTonk != 0)
-          Helper.sendMessage(target, "The last Tonk was " + Helper.timeString(Helper.parseMilliseconds(time - lastTonk)) + " ago!", nick);
+          Helper.sendMessage(target, "The last Tonk was " + Helper.timeString(Helper.parseMilliseconds(time - lastTonk)) + " ago! This Tonk has been noted.", nick);
         else
-          Helper.sendMessage(target, "There haven't been any Tonks yet.", nick);
+          Helper.sendMessage(target, "There hadn't been any Tonks yet. I've noted your Tonk.", nick);
         lastTonk = time;
+        Database.storeJsonData("lasttonk", Long.toString(time));
         break;
     }
   }
