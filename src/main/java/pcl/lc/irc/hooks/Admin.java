@@ -56,6 +56,7 @@ public class Admin extends AbstractListener {
 	private Command command_help;
 	private Command command_authed;
 	private Command command_addadmin;
+	private Command command_time_test;
 
 	@Override
 	protected void initHook() {
@@ -313,6 +314,18 @@ public class Admin extends AbstractListener {
 				}
 			}
 		}; command_addadmin.setHelpText("Add a new admin");
+		command_time_test = new Command("timetest", 0, Permissions.USER) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (params.size() > 1)
+					if (params.get(1).equals("ms"))
+						Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(Long.parseLong(params.get(0)))));
+					else
+						Helper.sendMessage(target, Helper.timeString(Helper.parseSeconds(Long.parseLong(params.get(0)))));
+				else
+					Helper.sendMessage(target, "I need arguments.", nick);
+			}
+		};
 		IRCBot.registerCommand(command_prefix);
 		IRCBot.registerCommand(command_join);
 		IRCBot.registerCommand(command_part);
@@ -379,6 +392,7 @@ public class Admin extends AbstractListener {
 		command_help.tryExecute(command, nick, target, event, copyOfRange);
 		command_authed.tryExecute(command, nick, target, event, copyOfRange);
 		command_addadmin.tryExecute(command, nick, target, event, copyOfRange);
+		command_time_test.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override

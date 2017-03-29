@@ -319,7 +319,8 @@ public class Helper {
 	}
 	
 	public static TimeObject parseMilliseconds(long milliseconds) {
-		return parseSeconds(milliseconds / 1000);
+		String dump = Long.toString(milliseconds).substring(0, 9);
+		return parseSeconds(Long.parseLong(dump));
 	}
 
 	public static TimeObject parseSeconds(long seconds)
