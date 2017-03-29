@@ -265,16 +265,16 @@ public class Helper {
 	}
 
 	public static class TimeObject {
-		public Integer years;
-		public Integer months;
-		public Integer weeks;
-		public Integer days;
-		public Integer hours;
-		public Integer minutes;
-		public Integer seconds;
-		public Integer input;
+		private long years;
+		private long months;
+		private long weeks;
+		private long days;
+		private long hours;
+		private long minutes;
+		private long seconds;
+		private long input;
 
-		public TimeObject(Integer years, Integer months, Integer weeks, Integer days, Integer hours, Integer minutes, Integer seconds, Integer input) {
+		public TimeObject(long years, long months, long weeks, long days, long hours, long minutes, long seconds, long input) {
 			this.years = years;
 			this.months = months;
 			this.weeks = weeks;
@@ -284,39 +284,75 @@ public class Helper {
 			this.seconds = seconds;
 			this.input = input;
 		}
+
+		public long getYears() {
+			return years;
+		}
+
+		public long getMonths() {
+			return months;
+		}
+
+		public long getWeeks() {
+			return weeks;
+		}
+
+		public long getDays() {
+			return days;
+		}
+
+		public long getHours() {
+			return hours;
+		}
+
+		public long getMinutes() {
+			return minutes;
+		}
+
+		public long getSeconds() {
+			return seconds;
+		}
+
+		public long getInput() {
+			return input;
+		}
+	}
+	
+	public static TimeObject parseMilliseconds(long milliseconds) {
+		return parseSeconds(milliseconds / 1000);
 	}
 
-	public static TimeObject parse_seconds(int seconds)
+	public static TimeObject parseSeconds(long seconds)
 	{
-		int input = seconds;
+		long input = seconds;
 		if (seconds < 0)
 			seconds = seconds * -1;
 
-		int years = (int) Math.floor(seconds / 60 / 60 / 24 / 30 / 12);
+		long years = (long) Math.floor(seconds / 60 / 60 / 24 / 30 / 12);
 
 		seconds = seconds - (years * 12 * 30 * 24 * 60 * 60);
 
-		int months = (int) Math.floor(seconds / 60 / 60 / 24 / 30);
+		long months = (long) Math.floor(seconds / 60 / 60 / 24 / 30);
 
 		seconds = seconds - (months * 30 * 24 * 60 * 60);
 
-		int weeks = (int) Math.floor(seconds / 60 / 60 / 24 / 7);
+		long weeks = (long) Math.floor(seconds / 60 / 60 / 24 / 7);
 
 		seconds = seconds - (weeks * 7 * 24 * 60 * 60);
 
-		int days = (int) Math.floor(seconds / 60 / 60 / 24);
+		long days = (long) Math.floor(seconds / 60 / 60 / 24);
 
 		seconds = seconds - (days * 24 * 60 * 60);
 
-		int hours = (int) Math.floor(seconds / 60 / 60);
+		long hours = (long) Math.floor(seconds / 60 / 60);
 
 		seconds = seconds - (hours * 60 * 60);
 
-		int minutes = (int) Math.floor(seconds / 60);
+		long minutes = (long) Math.floor(seconds / 60);
 
 		seconds = seconds - (minutes * 60);
 
-		return new TimeObject(years, months, weeks, days, hours, minutes, (int) Math.floor(seconds), input);
+		return new TimeObject(years, months, weeks, days, hours, minutes, (long) Math.floor(seconds), input);
 	}
 
 	public static String timeString(TimeObject timeObject) {

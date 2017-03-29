@@ -7,12 +7,14 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Solicit responses from bot
  * Created by Forecaster on 2017-03-28.
  */
 public class Responses extends AbstractListener {
+  private static long lastTonk = 0;
   @Override
   protected void initHook() {}
 
@@ -64,6 +66,8 @@ public class Responses extends AbstractListener {
       respondTo.add(new String[]{"there there", "7"});
       respondTo.add(new String[]{"mean", "7"});
 
+      respondTo.add(new String[]{"tonk", "8"});
+
       for (String[] str : respondTo) {
         if (event.getMessage().toLowerCase().contains(str[0])) {
           respond(str[1], (MessageEvent) event, nick);
@@ -95,6 +99,14 @@ public class Responses extends AbstractListener {
         break;
       case "7":
         Helper.sendMessage(target,";_;");
+        break;
+      case "8":
+        long time = new Date().getTime();
+        if (lastTonk != 0)
+          Helper.sendMessage(target, "The last Tonk was " + Helper.timeString(Helper.parseMilliseconds(time - lastTonk)) + " ago!", nick);
+        else
+          Helper.sendMessage(target, "There haven't been any Tonks yet.", nick);
+        lastTonk = time;
         break;
     }
   }

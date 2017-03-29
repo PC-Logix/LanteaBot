@@ -8,22 +8,23 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class Command {
-	public static long INVALID_COMMAND = -1;
-	public static long IGNORED = -2;
+	private static long INVALID_COMMAND = -1;
+	private static long IGNORED = -2;
 	public static long NO_PERMISSION = -3;
-	public static long DISABLED = -4;
+	private static long DISABLED = -4;
 
-	String command;
-	String className;
-	Integer rateLimit;
-	long lastExecution;
-	ArrayList<String> aliases;
-	ArrayList<Command> subCommands;
-	boolean isSubCommand;
-	boolean isEnabled;
-	int minPermissionLevel;
-	String helpText;
+	private String command;
+	private String className;
+	private Integer rateLimit;
+	private long lastExecution;
+	private ArrayList<String> aliases;
+	private ArrayList<Command> subCommands;
+	private boolean isSubCommand;
+	private boolean isEnabled;
+	private int minPermissionLevel;
+	private String helpText;
 
 	public Command(String command) {
 		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, 0);
@@ -90,7 +91,7 @@ public class Command {
 		return this.command;
 	}
 
-	public String getClassName() {
+	String getClassName() {
 		return this.className;
 	}
 
@@ -143,16 +144,16 @@ public class Command {
 			return 0;
 		long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
 		long difference = timestamp - lastExecution;
-		if (difference > (this.rateLimit * 1000))
+		if (difference > this.rateLimit)
 			return 0;
-		return this.rateLimit - ((int) difference / 1000);
+		return this.rateLimit - difference;
 	}
 
 	public boolean shouldExecuteBool(String command, GenericMessageEvent event) {
 		return shouldExecuteBool(command, event, null);
 	}
 
-	public boolean shouldExecuteBool(String command, GenericMessageEvent event, String nick) {
+	private boolean shouldExecuteBool(String command, GenericMessageEvent event, String nick) {
 		return shouldExecute(command, event, nick) == 0;
 	}
 
@@ -161,9 +162,9 @@ public class Command {
 	 * @param shouldExecuteResult long
 	 * @return String
 	 */
-	public String getCannotExecuteReason(long shouldExecuteResult) {
+	private String getCannotExecuteReason(long shouldExecuteResult) {
 		if (shouldExecuteResult > 0)
-			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parse_seconds((int) shouldExecuteResult)) + ".";
+			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parseMilliseconds(shouldExecuteResult)) + ".";
 		else if (shouldExecuteResult == -1)
 			return "";
 		else if (shouldExecuteResult == -2)
@@ -187,7 +188,7 @@ public class Command {
 		}
 	}
 
-	public boolean hasAlias(String alias) {
+	private boolean hasAlias(String alias) {
 		return this.aliases.contains(alias.replace(Config.commandprefix, ""));
 	}
 
@@ -216,7 +217,7 @@ public class Command {
 		return getSubCommandsAsString(false);
 	}
 
-	public String getSubCommandsAsString(boolean includeAliases) {
+	private String getSubCommandsAsString(boolean includeAliases) {
 		if (this.subCommands.size() > 0) {
 			String list = "";
 			for (Command command : this.subCommands) {
@@ -237,14 +238,14 @@ public class Command {
 			return "No registered sub-commands.";
 	}
 
-	public String trySubCommandsMessage(ArrayList<String> params) {
+	protected String trySubCommandsMessage(ArrayList<String> params) {
 		if (params.size() > 0)
 			return trySubCommandsMessage(params.get(0));
 		else
 			return "Must specify sub-command. (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
-	public String trySubCommandsMessage(String param) {
+	protected String trySubCommandsMessage(String param) {
 		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
