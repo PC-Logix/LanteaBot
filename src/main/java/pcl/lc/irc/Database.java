@@ -126,7 +126,7 @@ public class Database {
 	static void updateDatabase() {
 		int counter = 0;
 		int currentVer = getDBVer();
-		System.out.println("Updating database! Current version: " + currentVer);
+		IRCBot.log.info("Updating database! Current version: " + currentVer);
 		for (UpdateQuery query : updateQueries) {
 			if (currentVer < query.getMinVersion()) {
 				try {
@@ -138,8 +138,8 @@ public class Database {
 				}
 			}
 		}
-		System.out.println("Database update complete! New version: " + getDBVer());
-		System.out.println("Database update ran " + counter + " queries");
+		IRCBot.log.info("Database update complete! New version: " + getDBVer());
+		IRCBot.log.info("Database update ran " + counter + " queries");
 	}
 
 	public static boolean storeJsonData(String key, String data) {
