@@ -153,7 +153,7 @@ public class Inventory extends AbstractListener {
 				}
 			}
 		};
-		sub_command_add = new Command("add", 0, true) {
+		sub_command_add = new Command("create", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.toLowerCase().equals("myself") || params.toLowerCase().equals(IRCBot.getOurNick()))
@@ -161,7 +161,7 @@ public class Inventory extends AbstractListener {
 				else if (nick.toLowerCase().equals(params.toLowerCase()))
 					Helper.sendMessage(target, "You can't add yourself to the inventory.", nick);
 				else
-					Helper.sendMessage(target, addItem(params.replaceAll("[.!?,‽]$", ""), nick), nick);
+					Helper.sendAction(target, addItem(params.replaceAll("[.!?,‽]$", ""), nick));
 			}
 		};
 		sub_command_remove = new Command("remove", 0, true) {
@@ -469,9 +469,9 @@ public class Inventory extends AbstractListener {
 				addItem.setLong(5, new Timestamp(System.currentTimeMillis()).getTime());
 				if (addItem.executeUpdate() > 0) {
 					if (favourite)
-						return "Added '" + item + "' to inventory. I love this! This is my new favourite thing!";
+						return "summons '" + item + "' and adds to " + Helper.parseSelfReferral("his") + " inventory. I love this! This is my new favourite thing!";
 					else
-						return "Added '" + item + "' to inventory. " + getUsesIndicator(uses);
+						return "summons '" + item + "' and adds to " + Helper.parseSelfReferral("his") + " inventory. " + getUsesIndicator(uses);
 				}
 				else {
 					return "Wrong things happened! (1)";
