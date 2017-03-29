@@ -292,7 +292,7 @@ public class Inventory extends AbstractListener {
 				String line = null;
 				
 				while ((line = br.readLine()) != null) {
-					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#INVDATA#", items).replace("#NAVDATA#", navData)+"\n";
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#INVDATA#", items).replace("#NAVIGATION#", navData)+"\n";
 				}
 			}
 			t.sendResponseHeaders(200, response.getBytes().length);
