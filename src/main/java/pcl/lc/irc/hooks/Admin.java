@@ -263,7 +263,7 @@ public class Admin extends AbstractListener {
 		command_help = new Command("help", 0, Permissions.USER) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (params.size() == 1) {
+				if (params.size() == 0) {
 					String listString = "";
 					for (Object o : IRCBot.commands.entrySet()) {
 						Map.Entry pair = (Map.Entry) o;
@@ -272,12 +272,12 @@ public class Admin extends AbstractListener {
 					event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
 				} else {
 					try {
-						String l_command = params.get(1);
-						event.getBot().sendIRC().notice(target, "help for " + l_command);
-						event.getBot().sendIRC().notice(target, IRCBot.helpList.get(l_command));
+						String l_command = params.get(0);
+						event.getBot().sendIRC().notice(nick, "help for " + l_command);
+						event.getBot().sendIRC().notice(nick, IRCBot.helpList.get(l_command));
 					} catch (Exception e) {
 						e.printStackTrace();
-						event.getBot().sendIRC().notice(target, "Something went wrong!");
+						event.getBot().sendIRC().notice(nick, "Something went wrong!");
 					}
 				}
 			}
