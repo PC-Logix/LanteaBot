@@ -10,6 +10,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
+import com.github.kevinsawicki.timeago.TimeAgo;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
@@ -30,8 +31,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @author Caitlyn
@@ -241,7 +244,7 @@ public class Inventory extends AbstractListener {
 	static class InventoryHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-
+			TimeAgo time = new TimeAgo();
 			String target = t.getRequestURI().toString();
 			String response = "";
 			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
@@ -250,9 +253,12 @@ public class Inventory extends AbstractListener {
 				try {
 					PreparedStatement statement = Database.getPreparedStatement("getItems");
 					ResultSet resultSet = statement.executeQuery();
+					items = "<table><tr><th>Item Name</th><th>Added By</th><th>Added</th></tr>";
 					while (resultSet.next()) {
-						items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "<br>";
+						
+						items += "<tr><td>" + resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "</td><td>" + ((resultSet.getString(5).isEmpty()) ? "N/A" : resultSet.getString(5)) + "</td><td>" + ((resultSet.getLong(6) == 0) ? "N/A" : time.timeAgo(resultSet.getLong(6))) + "</td></tr>";
 					}
+					items += "</table>";
 					items = StringUtils.strip(items, "\n");
 				}
 				catch (Exception e) {
@@ -274,6 +280,7 @@ public class Inventory extends AbstractListener {
 			InputStream is = new ByteArrayInputStream(html.getBytes());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 				String line = null;
+				
 				while ((line = br.readLine()) != null) {
 					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#INVDATA#", items)+"\n";
 				}

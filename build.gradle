@@ -32,6 +32,7 @@ dependencies {
   compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
   compile 'com.google.apis:google-api-services-youtube:v3-rev178-1.22.0'
   compile 'com.sangupta:imgur-client:0.2.0'
+  compile 'com.github.kevinsawicki:timeago:1.0.1'
 }
 version = "${versionObj.toString()}"
 sourceCompatibility = 1.8
