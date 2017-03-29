@@ -70,14 +70,14 @@ public class Responses extends AbstractListener {
 
       for (String[] str : respondTo) {
         if (event.getMessage().toLowerCase().contains(str[0])) {
-          respond(str[1], (MessageEvent) event, nick);
+          respond(str[1], nick);
           break;
         }
       }
     }
   }
 
-  private void respond(String type, MessageEvent event, String nick) {
+  private void respond(String type, String nick) {
     switch (type) {
       case "1":
         Helper.sendMessage(target,"You're welcome!", nick);
