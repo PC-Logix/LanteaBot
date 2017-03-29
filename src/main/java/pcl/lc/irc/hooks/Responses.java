@@ -40,7 +40,9 @@ public class Responses extends AbstractListener {
 
   @Override
   public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-    if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+	if (IRCBot.isIgnored(nick))
+		return;
+	if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
       target = nick;
     } else {
       target = chan;
