@@ -50,6 +50,8 @@ public class Responses extends AbstractListener {
 
     if (event.getMessage().toLowerCase().contains(IRCBot.getOurNick().toLowerCase())) {
       ArrayList<String[]> respondTo = new ArrayList<>();
+      respondTo.add(new String[]{"tonk", "8"});
+
       respondTo.add(new String[]{"thanks", "1"});
       respondTo.add(new String[]{"thank you", "1"});
 
@@ -75,7 +77,8 @@ public class Responses extends AbstractListener {
       respondTo.add(new String[]{"there there", "7"});
       respondTo.add(new String[]{"mean", "7"});
 
-      respondTo.add(new String[]{"tonk", "8"});
+      respondTo.add(new String[]{"boops", "9"});
+
 
       for (String[] str : respondTo) {
         if (event.getMessage().toLowerCase().contains(str[0])) {
@@ -117,6 +120,9 @@ public class Responses extends AbstractListener {
           Helper.sendMessage(target, "There hadn't been any Tonks yet. I've noted your Tonk.", nick);
         lastTonk = time;
         Database.storeJsonData("lasttonk", Long.toString(time));
+        break;
+      case "9":
+        Helper.sendAction(target, "squeaks!");
         break;
     }
   }
