@@ -15,6 +15,7 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.PasteUtils;
 import pcl.lc.utils.SearchResult;
 @SuppressWarnings("rawtypes")
 public class Search extends AbstractListener {
@@ -38,42 +39,42 @@ public class Search extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch(null, params);
-				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick);
+				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; google.setHelpText("Searches google and returns the first result");
 		curseForge = new Command("curseForge", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:minecraft.curseforge.com", params);
-				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick);
+				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; curseForge.setHelpText("Searches CurseForge and returns the first result");
 		wiki = new Command("wiki", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("wiki", params);
-				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick);
+				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; wiki.setHelpText("Searches Wikipedia and returns the first result");
 		urban = new Command("urban", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:urbandictionary.com", params);
-				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick);
+				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; urban.setHelpText("Searches UrbanDictonary and returns the first result");
 		ann = new Command("ann", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:animenewsnetwork.com", params);
-				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick);
+				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; ann.setHelpText("Searches Anime News Network and returns the first result");
 		youtube = new Command("youtube", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:youtube.com", params);
-				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick);
+				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; youtube.setHelpText("Searches YouTube and returns the first result");
 		IRCBot.registerCommand(search);

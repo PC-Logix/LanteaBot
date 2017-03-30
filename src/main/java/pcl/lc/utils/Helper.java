@@ -244,17 +244,25 @@ public class Helper {
 	public static void sendMessage(String target, String message) {
 		sendMessage(target, message, null);
 	}
-	
+
+	public static void sendMessage(String target, String message, String targetUser, boolean overridePaste){
+		sendMessage(target, message, targetUser, PasteUtils.Formats.NONE, overridePaste);
+	}
+
+	public static void sendMessage(String target, String message, String targetUser, Enum format){
+		sendMessage(target, message, targetUser, format, false);
+	}
+
 	public static void sendMessage(String target, String message, String targetUser){
-		sendMessage(target, message, targetUser, PasteUtils.Formats.NONE);
+		sendMessage(target, message, targetUser, PasteUtils.Formats.NONE, false);
 	}
 	
-	public static void sendMessage(String target, String message, String targetUser, Enum format){
+	public static void sendMessage(String target, String message, String targetUser, Enum format, boolean overridePaste){
 		if (targetUser != null)
 			targetUser = Helper.antiPing(targetUser) + ": ";
 		else
 			targetUser = "";
-		if (message.length() > 200) {
+		if (message.length() > 200 && !overridePaste) {
 			String pasteURL = PasteUtils.paste(message, format);
 			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);
 			IRCBot.log.info("--> " +  target + " " + targetUser.replaceAll("\\p{C}", "") + " Message too long to send to channel " + pasteURL);
