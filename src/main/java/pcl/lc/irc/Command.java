@@ -132,7 +132,7 @@ public class Command {
 
 		if (!this.isEnabled)
 			return DISABLED;
-		if (!command.equals(prefix + this.command) && !hasAlias(command))
+		if (!command.toLowerCase().equals(prefix + this.command.toLowerCase()) && !hasAlias(command))
 			return INVALID_COMMAND;
 		if (!Permissions.hasPermission(IRCBot.bot, event, this.minPermissionLevel))
 			return NO_PERMISSION;
