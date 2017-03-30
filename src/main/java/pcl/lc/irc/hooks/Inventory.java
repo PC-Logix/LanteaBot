@@ -31,12 +31,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * @author Caitlyn
@@ -45,7 +43,7 @@ import java.util.TimeZone;
 public class Inventory extends AbstractListener {
 	private Command local_command;
 	private Command sub_command_list;
-	private Command sub_command_add;
+	private Command sub_command_create;
 	private Command sub_command_remove;
 	private Command sub_command_preserve;
 	private Command sub_command_unpreserve;
@@ -71,7 +69,7 @@ public class Inventory extends AbstractListener {
 	protected void initHook() {
 		initCommands();
 		local_command.registerSubCommand(sub_command_list);
-		local_command.registerSubCommand(sub_command_add);
+		local_command.registerSubCommand(sub_command_create);
 		local_command.registerSubCommand(sub_command_remove);
 		local_command.registerSubCommand(sub_command_preserve);
 		local_command.registerSubCommand(sub_command_unpreserve);
@@ -158,7 +156,7 @@ public class Inventory extends AbstractListener {
 				}
 			}
 		};
-		sub_command_add = new Command("create", 0, true) {
+		sub_command_create = new Command("create", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.toLowerCase().equals("myself") || params.toLowerCase().equals(IRCBot.getOurNick()))
@@ -169,6 +167,7 @@ public class Inventory extends AbstractListener {
 					Helper.sendAction(target, addItem(params.replaceAll("[.!?,‽]$", ""), nick));
 			}
 		};
+		sub_command_create.registerAlias("add");
 		sub_command_remove = new Command("remove", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
