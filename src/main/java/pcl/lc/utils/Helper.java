@@ -365,6 +365,10 @@ public class Helper {
 		return new TimeObject(years, months, weeks, days, hours, minutes, (long) Math.floor(seconds), input);
 	}
 
+	public static String timeString(TimeObject timeObject, boolean discard_seconds_unless_only_value) {
+		return timeString(timeObject, false, 6, discard_seconds_unless_only_value);
+	}
+
 	public static String timeString(TimeObject timeObject) {
 		return timeString(timeObject, false, 6, false);
 	}

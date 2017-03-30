@@ -115,7 +115,7 @@ public class Responses extends AbstractListener {
       case "8":
         long time = new Date().getTime();
         if (lastTonk != 0)
-          Helper.sendMessage(target, "The last Tonk was " + Helper.timeString(Helper.parseMilliseconds(time - lastTonk)) + " ago! Your Tonk has been noted.", nick);
+          Helper.sendMessage(target, "The last Tonk was " + Helper.timeString(Helper.parseMilliseconds(time - lastTonk), true) + " ago! Your Tonk has been noted.", nick);
         else
           Helper.sendMessage(target, "There hadn't been any Tonks yet. I've noted your Tonk.", nick);
         lastTonk = time;
