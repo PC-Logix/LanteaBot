@@ -271,7 +271,7 @@ public class Command {
 					if (params.size() > 1)
 						subParams = new ArrayList<>(params.subList(1, params.size()));
 					else
-						subParams = params;
+						subParams = new ArrayList<>();
 					executed += sub.tryExecute(firstParam, nick, target, event, subParams, false);
 				}
 				if (executed > 0)
