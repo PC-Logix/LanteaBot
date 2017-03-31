@@ -60,12 +60,14 @@ public class Seen extends AbstractListener {
 	protected void initHook() {
 		IRCBot.registerCommand("seen", "Tells you the last time a user was active.  Active means they sent a message");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp)");
-		Database.addPreparedStatement("updateLastSeen","REPLACE INTO LastSeen(user, timestamp) VALUES (?, ?);");
-		Database.addPreparedStatement("getLastSeen","SELECT timestamp FROM LastSeen WHERE LOWER(user) = ? GROUP BY LOWER(user) ORDER BY timestamp desc");
-		Database.addPreparedStatement("updateInfo","REPLACE INTO Info(key, data) VALUES (?, ?);");
-		Database.addPreparedStatement("getInfo","SELECT data FROM Info WHERE key = ?;");
-		Database.addPreparedStatement("getInfoAll","SELECT key, data FROM Info;");
-		Database.addPreparedStatement("removeInfo","DELETE FROM Info WHERE key = ?;");
+		Database.addUpdateQuery(4, "ALTER TABLE LastSeen ADD doing DEFAULT NULL");
+		Database.addPreparedStatement("updateLastSeen","REPLACE INTO LastSeen(user, timestamp, doing) VALUES (?, ?, ?);");
+		Database.addPreparedStatement("getLastSeen","SELECT timestamp, doing FROM LastSeen WHERE LOWER(user) = ? GROUP BY LOWER(user) ORDER BY timestamp desc");
+		//I Have NO idea where these came from, or why they are here.
+		//Database.addPreparedStatement("updateInfo","REPLACE INTO Info(key, data, doing) VALUES (?, ?, ?);");
+		//Database.addPreparedStatement("getInfo","SELECT data FROM Info WHERE key = ?;");
+		//Database.addPreparedStatement("getInfoAll","SELECT key, data FROM Info;");
+		//Database.addPreparedStatement("removeInfo","DELETE FROM Info WHERE key = ?;");
 	}
 
 	@Override
@@ -90,15 +92,15 @@ public class Seen extends AbstractListener {
 				dest = "query";
 			}
 			try {
-				PreparedStatement getSeen = IRCBot.getInstance().getPreparedStatement("getLastSeen");
+				PreparedStatement getSeen = Database.getPreparedStatement("getLastSeen");
 				String target = copyOfRange[0];
 				getSeen.setString(1, target.toLowerCase());
 				ResultSet results = getSeen.executeQuery();
 				if (results.next()) {
 					if (dest.equals("query")) {
-						event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago.");
+						event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2).isEmpty()) ? "No Record" : results.getString(2)));
 					} else {
-						event.getBot().sendIRC().message(dest, target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago.");
+						event.getBot().sendIRC().message(dest, target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
 					}
 				} else {
 					if (dest.equals("query")) {
@@ -117,10 +119,10 @@ public class Seen extends AbstractListener {
 	public void onAction(final ActionEvent event) throws Exception {
 		User sender = event.getUser();
 		try {
-			PreparedStatement updateSeen = IRCBot.getInstance().getPreparedStatement("updateLastSeen");
+			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
 			updateSeen.setString(1, sender.getNick().toLowerCase());
 			updateSeen.setLong(2, System.currentTimeMillis());
-			//updateSeen.setString(3, event.getAction());
+			updateSeen.setString(3, event.getAction());
 			updateSeen.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -129,10 +131,10 @@ public class Seen extends AbstractListener {
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
 		try {
-			PreparedStatement updateSeen = IRCBot.getInstance().getPreparedStatement("updateLastSeen");
+			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
 			updateSeen.setString(1, sender.toLowerCase());
 			updateSeen.setLong(2, System.currentTimeMillis());
-			//updateSeen.setString(3, event.getMessage());
+			updateSeen.setString(3, event.getMessage());
 			updateSeen.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
