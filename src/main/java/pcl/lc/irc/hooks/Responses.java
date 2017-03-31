@@ -65,6 +65,7 @@ public class Responses extends AbstractListener {
 
       respondTo.add(new String[]{"you're welcome", "3"});
       respondTo.add(new String[]{"youre welcome", "3"});
+      respondTo.add(new String[]{"no problem", "3"});
 
       respondTo.add(new String[]{"good", "4"});
       respondTo.add(new String[]{"excellent", "4"});
