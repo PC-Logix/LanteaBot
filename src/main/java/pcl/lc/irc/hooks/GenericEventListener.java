@@ -41,7 +41,7 @@ public class GenericEventListener extends ListenerAdapter {
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + " " + event.getUser().getNick() + " " + event.getMessage());
+		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + " " + event.getUser().getNick() + ": " + event.getMessage());
 		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			String[] firstWord = StringUtils.split(event.getMessage());
 			String triggerWord = firstWord[0];
@@ -90,16 +90,19 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onJoin(final JoinEvent event) {
+		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + "Joined: " + event.getUser().getNick() + " " + event.getUser().getHostmask());
 
 	}
 
 	@Override
 	public void onPart(final PartEvent event) {
+		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + "Parted: " + event.getUser().getNick() + " " + event.getUser().getHostmask() + " " + event.getReason());
 
 	}
 
 	@Override
 	public void onQuit(final QuitEvent event) {
+		IRCBot.log.info("<-- " + "Quit: " + event.getUser().getNick() + " " + event.getUser().getHostmask());
 		if(event.getReason().equals("*.net *.split")) {
 			IRCBot.authed.remove(event.getUser().getNick());
 			IRCBot.users.remove(event.getUser().getNick());
