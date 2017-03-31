@@ -95,13 +95,13 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onJoin(final JoinEvent event) {
-		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + "Joined: " + event.getUser().getNick() + " " + event.getUser().getHostmask());
+		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + " Joined: " + event.getUser().getNick() + " " + event.getUser().getHostmask());
 
 	}
 
 	@Override
 	public void onPart(final PartEvent event) {
-		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + "Parted: " + event.getUser().getNick() + " " + event.getUser().getHostmask() + " " + event.getReason());
+		IRCBot.log.info("<-- " + event.getChannel().getName().toString() + " Parted: " + event.getUser().getNick() + " " + event.getUser().getHostmask() + " " + event.getReason());
 
 	}
 
