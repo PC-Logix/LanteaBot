@@ -163,8 +163,13 @@ public class Inventory extends AbstractListener {
 					Helper.sendMessage(target, "I can't add myself to the inventory.", nick);
 				else if (nick.toLowerCase().equals(params.toLowerCase()))
 					Helper.sendMessage(target, "You can't add yourself to the inventory.", nick);
-				else
-					Helper.sendAction(target, addItem(params.replaceAll("[.!?,‽]$", ""), nick));
+				else {
+					params = params.replaceAll("[.!?,‽]$", "");
+					if (params.length() > 0)
+						Helper.sendAction(target, addItem(params, nick));
+					else
+						Helper.sendAction(target, "adds nothing to " + Helper.parseSelfReferral("his") + " inventory.");
+				}
 			}
 		};
 		sub_command_create.registerAlias("add");
