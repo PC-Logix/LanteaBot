@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,7 +24,7 @@ public class Reminders extends AbstractListener {
 	private Command remind;
 	private Command list;
 	private Command reminders;
-
+	private ScheduledFuture<?> executor;
 	@Override
 	protected void initHook() {
 		remind = new Command("remind", 0) {
@@ -106,7 +107,7 @@ public class Reminders extends AbstractListener {
 		Database.addPreparedStatement("listReminders", "SELECT dest, nick, time, message FROM Reminders WHERE nick = ? ORDER BY time DESC LIMIT 3;");
 		Database.addPreparedStatement("delReminder", "DELETE FROM Reminders WHERE time = ? AND nick = ?;");
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-		ses.scheduleAtFixedRate(new Runnable() {
+		executor = ses.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -129,7 +130,7 @@ public class Reminders extends AbstractListener {
 					e.printStackTrace();
 				}
 			}
-		}, 0, 10, TimeUnit.SECONDS);
+		}, 0, 1, TimeUnit.SECONDS);
 	}
 
 	public String chan;
