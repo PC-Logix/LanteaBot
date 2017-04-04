@@ -26,6 +26,10 @@ public class Search extends AbstractListener {
 	private Command urban;
 	private Command ann;
 	private Command youtube;
+	private Command g;
+	private Command yt;
+	private Command wik;
+	private Command cf;
 
 	@Override
 	protected void initHook() {
@@ -84,6 +88,30 @@ public class Search extends AbstractListener {
 		search.registerSubCommand(urban);
 		search.registerSubCommand(ann);
 		search.registerSubCommand(youtube);
+		g = new Command("g", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				google.onExecuteSuccess(command, nick, target, event, params);
+			}
+		};
+		yt = new Command("yt", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				youtube.onExecuteSuccess(command, nick, target, event, params);
+			}
+		};
+		wik = new Command("wiki", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				wiki.onExecuteSuccess(command, nick, target, event, params);
+			}
+		};
+		cf = new Command("cf", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				curseForge.onExecuteSuccess(command, nick, target, event, params);
+			}
+		};
 	}
 
 	private List<SearchResult> performSearch(String filter, String terms) {
@@ -124,6 +152,9 @@ public class Search extends AbstractListener {
 			target = chan;
 		}
 		search.tryExecute(command, nick, target, event, copyOfRange);
+		g.tryExecute(command, nick, target, event, copyOfRange);
+		yt.tryExecute(command, nick, target, event, copyOfRange);
+		wik.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
