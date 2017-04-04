@@ -50,35 +50,39 @@ public class Responses extends AbstractListener {
 
     if (event.getMessage().toLowerCase().contains(IRCBot.getOurNick().toLowerCase())) {
       ArrayList<String[]> respondTo = new ArrayList<>();
-      respondTo.add(new String[]{"tonk", "8"});
+      respondTo.add(new String[]{"tonk", "tonk"});
 
-      respondTo.add(new String[]{"thanks", "1"});
-      respondTo.add(new String[]{"thank you", "1"});
+      respondTo.add(new String[]{"thanks", "welcome"});
+      respondTo.add(new String[]{"thank you", "welcome"});
 
-      respondTo.add(new String[]{"seriously", "2"});
-      respondTo.add(new String[]{"srsly", "2"});
-      respondTo.add(new String[]{"how dare you", "2"});
-      respondTo.add(new String[]{"howdareyou", "2"});
-      respondTo.add(new String[]{"no u", "2"});
-      respondTo.add(new String[]{"no you", "2"});
-      respondTo.add(new String[]{"really", "2"});
+      respondTo.add(new String[]{"seriously", "surprise"});
+      respondTo.add(new String[]{"srsly", "surprise"});
+      respondTo.add(new String[]{"how dare you", "surprise"});
+      respondTo.add(new String[]{"howdareyou", "surprise"});
+      respondTo.add(new String[]{"no u", "surprise"});
+      respondTo.add(new String[]{"no you", "surprise"});
+      respondTo.add(new String[]{"really", "surprise"});
 
-      respondTo.add(new String[]{"you're welcome", "3"});
-      respondTo.add(new String[]{"youre welcome", "3"});
-      respondTo.add(new String[]{"no problem", "3"});
+      respondTo.add(new String[]{"you're welcome", "smile"});
+      respondTo.add(new String[]{"youre welcome", "smile"});
+      respondTo.add(new String[]{"no problem", "smile"});
 
-      respondTo.add(new String[]{"good", "4"});
-      respondTo.add(new String[]{"excellent", "4"});
-      respondTo.add(new String[]{"nice", "4"});
+      respondTo.add(new String[]{"good", "thanks"});
+      respondTo.add(new String[]{"excellent", "thanks"});
+      respondTo.add(new String[]{"nice", "thanks"});
 
-      respondTo.add(new String[]{"poor", "5"});
+      respondTo.add(new String[]{"poor", "angry"});
 
-      respondTo.add(new String[]{"you're cute", "6"});
+      respondTo.add(new String[]{"you're cute", "iknow"});
 
-      respondTo.add(new String[]{"there there", "7"});
-      respondTo.add(new String[]{"mean", "7"});
+      respondTo.add(new String[]{"there there", "cry"});
+      respondTo.add(new String[]{"mean", "cry"});
 
-      respondTo.add(new String[]{"boops", "9"});
+      respondTo.add(new String[]{"naughty bits", "blush"});
+      respondTo.add(new String[]{"lewd bits", "blush"});
+
+      respondTo.add(new String[]{"boops", "squeak"});
+      respondTo.add(new String[]{"pokes", "squeak"});
 
 
       for (String[] str : respondTo) {
@@ -92,28 +96,28 @@ public class Responses extends AbstractListener {
 
   private void respond(String type, String nick) {
     switch (type) {
-      case "1":
+      case "welcome":
         Helper.sendMessage(target,"You're welcome!", nick);
         break;
-      case "2":
+      case "surprise":
         Helper.sendMessage(target, Helper.get_surprise_response(), nick);
         break;
-      case "3":
+      case "smile":
         Helper.sendAction(target, "smiles ^.^");
         break;
-      case "4":
+      case "thanks":
         Helper.sendMessage(target, Helper.get_thanks_response(), nick);
         break;
-      case "5":
+      case "angry":
         Helper.sendMessage(target,"Don't you poor me! I'll poor you in the face! D:<", nick);
         break;
-      case "6":
+      case "iknow":
         Helper.sendMessage(target,"I know! :D", nick);
         break;
-      case "7":
-        Helper.sendMessage(target,";_;");
+      case "cry":
+        Helper.sendMessage(target," ;_;");
         break;
-      case "8":
+      case "tonk":
         long time = new Date().getTime();
         if (lastTonk != 0)
           Helper.sendMessage(target, "The last Tonk was " + Helper.timeString(Helper.parseMilliseconds(time - lastTonk), true) + " ago! Your Tonk has been noted.", nick);
@@ -122,9 +126,11 @@ public class Responses extends AbstractListener {
         lastTonk = time;
         Database.storeJsonData("lasttonk", Long.toString(time));
         break;
-      case "9":
+      case "squeak":
         Helper.sendAction(target, "squeaks!");
         break;
+      case "blush":
+        Helper.sendMessage(target, "o///o");
     }
   }
 }
