@@ -1,22 +1,17 @@
 package pcl.lc.irc.hooks;
-import com.google.api.client.json.Json;
 import org.json.JSONException;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
+import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.GoogleSearch;
+import pcl.lc.utils.Helper;
+import pcl.lc.utils.SearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.GoogleSearch;
-import pcl.lc.utils.Helper;
-import pcl.lc.utils.PasteUtils;
-import pcl.lc.utils.SearchResult;
 @SuppressWarnings("rawtypes")
 public class Search extends AbstractListener {
 	private Command search;
@@ -90,25 +85,25 @@ public class Search extends AbstractListener {
 		search.registerSubCommand(youtube);
 		g = new Command("g", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				google.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
 		yt = new Command("yt", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				youtube.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
 		wik = new Command("wiki", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				wiki.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
 		cf = new Command("cf", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				curseForge.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
@@ -155,6 +150,7 @@ public class Search extends AbstractListener {
 		g.tryExecute(command, nick, target, event, copyOfRange);
 		yt.tryExecute(command, nick, target, event, copyOfRange);
 		wik.tryExecute(command, nick, target, event, copyOfRange);
+		cf.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
