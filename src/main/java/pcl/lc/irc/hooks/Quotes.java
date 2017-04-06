@@ -241,9 +241,15 @@ public class Quotes extends AbstractListener {
 				try {
 					PreparedStatement getAllQuotes = Database.getPreparedStatement("getAllQuotes");
 					ResultSet results = getAllQuotes.executeQuery();
+					quoteList = "<table><tr><th>ID</th><th>Quote</th><th>Added By</th></tr>";
+					PreparedStatement getQuote = Database.getPreparedStatement("getIdQuote");
 					while (results.next()) {
-						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1) + "</a>" + " Added by " +results.getString(4)+"<br>\n";
+						getQuote.setInt(1, results.getInt(1));
+						ResultSet quoteData = getQuote.executeQuery();
+						quoteList = quoteList + "<tr><td>" + results.getString(1) + "</td><td>&lt;" + escapeHtml4(quoteData.getString(1)) + "&gt; " + escapeHtml4(quoteData.getString(2))+"</td><td>"+results.getString(4)+"</td></tr>\n";
+						//quoteList = quoteList + "<tr><td>" + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1) + "</a>" + "</td><td>" +results.getString(4)+"</td><td></td></tr>\n";
 					}
+					quoteList += "</table>";
 				}
 				catch (Exception e) {
 					e.printStackTrace();
