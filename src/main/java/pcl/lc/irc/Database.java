@@ -1,8 +1,5 @@
 package pcl.lc.irc;
 
-import com.sun.media.jfxmedia.logging.Logger;
-import pcl.lc.utils.Helper;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

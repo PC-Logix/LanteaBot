@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
@@ -110,7 +108,7 @@ public class Account {
 				waitForQueue.close();
 				user = test.getRegisteredAs();
 			} catch (InterruptedException ex) {
-				Logger.getLogger(MessageEvent.class.getName()).log(Level.SEVERE, null, ex);
+				IRCBot.log.error(ex.getMessage());
 				waitForQueue.close();
 				return null;
 			}
@@ -132,7 +130,7 @@ public class Account {
 				waitForQueue.close();
 				user = test.getRegisteredAs();
 			} catch (InterruptedException ex) {
-				Logger.getLogger(MessageEvent.class.getName()).log(Level.SEVERE, null, ex);
+				IRCBot.log.error(ex.getMessage());
 				waitForQueue.close();
 				return null;
 			}
@@ -156,7 +154,7 @@ public class Account {
 				waitForQueue.close();
 				user = test.getRegisteredAs();
 			} catch (InterruptedException ex) {
-				Logger.getLogger(MessageEvent.class.getName()).log(Level.SEVERE, null, ex);
+				IRCBot.log.error(ex.getMessage());
 				waitForQueue.close();
 				return null;
 			}
