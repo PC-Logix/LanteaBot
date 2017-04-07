@@ -12,6 +12,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 //Author: smbarbour
 
@@ -100,7 +101,7 @@ public class Seen extends AbstractListener {
 					if (dest.equals("query")) {
 						event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2).isEmpty()) ? "No Record" : results.getString(2)));
 					} else {
-						event.getBot().sendIRC().message(dest, target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
+						Helper.sendMessage(dest, target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
 					}
 				} else {
 					if (dest.equals("query")) {
