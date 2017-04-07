@@ -354,6 +354,7 @@ public class Inventory extends AbstractListener {
 	public static int removeItem(String id_or_name, boolean override_favourite, boolean override_preserved) {
 		Integer id = null;
 		Boolean id_is_string = true;
+		id_or_name = StringEscapeUtils.escapeHtml4(id_or_name);
 		PreparedStatement removeItem;
 		try {
 			id = Integer.valueOf(id_or_name);
