@@ -40,12 +40,7 @@ public class IPoints extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		String prefix = Config.commandprefix;
-		String target;
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		String target = Helper.getTarget(event);
 		if (command.contains(prefix + "+")) {
 			Pattern p = Pattern.compile("^\\+?\\d+");
 			Matcher m = p.matcher(event.getMessage().replace(prefix,""));

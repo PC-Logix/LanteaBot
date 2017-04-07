@@ -141,11 +141,7 @@ public class Search extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		target = Helper.getTarget(event);
 		search.tryExecute(command, nick, target, event, copyOfRange);
 		g.tryExecute(command, nick, target, event, copyOfRange);
 		yt.tryExecute(command, nick, target, event, copyOfRange);

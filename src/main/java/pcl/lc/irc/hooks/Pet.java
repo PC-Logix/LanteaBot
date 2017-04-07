@@ -71,11 +71,7 @@ public class Pet extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		target = Helper.getTarget(event);
 		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 

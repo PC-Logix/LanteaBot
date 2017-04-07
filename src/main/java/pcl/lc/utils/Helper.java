@@ -4,6 +4,9 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericChannelUserEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
+
 import pcl.lc.irc.Database;
 import pcl.lc.irc.DiceRoll;
 import pcl.lc.irc.IRCBot;
@@ -499,5 +502,11 @@ public class Helper {
 			default:
 				return true;
 		}
+	}
+
+	public static String getTarget(GenericMessageEvent event) {
+		if (event instanceof GenericChannelUserEvent && ((GenericChannelUserEvent) event).getChannel() != null)
+			return ((GenericChannelUserEvent) event).getChannel().getName();
+		return event.getUser().getNick();
 	}
 }

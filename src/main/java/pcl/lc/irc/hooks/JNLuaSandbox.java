@@ -127,11 +127,7 @@ public class JNLuaSandbox extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (command.equals(Config.commandprefix + "lua")) {
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}
+			target = Helper.getTarget(event);
 			String message = "";
 			for (String aCopyOfRange : copyOfRange)
 			{
@@ -149,11 +145,7 @@ public class JNLuaSandbox extends AbstractListener {
 				Helper.sendMessage(target , luaOut);
 
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}
+			target = Helper.getTarget(event);
 			String message = "";
 			for (String aCopyOfRange : copyOfRange)
 			{

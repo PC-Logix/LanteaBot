@@ -142,11 +142,7 @@ public class Reminders extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		target = Helper.getTarget(event);
 		remind.tryExecute(command, nick, target, event, copyOfRange);
 		reminders.tryExecute(command, nick, target, event, copyOfRange);
 	}

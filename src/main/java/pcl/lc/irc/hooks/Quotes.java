@@ -288,11 +288,7 @@ public class Quotes extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		target = Helper.getTarget(event);
 		quote.tryExecute(command, nick, target, event, copyOfRange);
 		quotes.tryExecute(command, nick, target, event, copyOfRange);
 	}

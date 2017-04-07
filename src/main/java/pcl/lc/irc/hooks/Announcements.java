@@ -98,11 +98,7 @@ public class Announcements extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		target = Helper.getTarget(event);
 		local_command_announce.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_add.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_list.tryExecute(command, nick, target, event, copyOfRange);

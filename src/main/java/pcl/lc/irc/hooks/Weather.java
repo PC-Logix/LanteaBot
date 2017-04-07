@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
@@ -129,12 +130,7 @@ public class Weather extends AbstractListener {
 			{
 				location = location + " " + copyOfRange[i];
 			}
-			String target;
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}			
+			String target = Helper.getTarget(event);
 			try {
 				IRCBot.getInstance().sendMessage(target, getWeather(location));
 			} catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {

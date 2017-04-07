@@ -42,11 +42,7 @@ public class Responses extends AbstractListener {
   public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 	if (IRCBot.isIgnored(nick))
 		return;
-	if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-      target = nick;
-    } else {
-      target = chan;
-    }
+	target = Helper.getTarget(event);
 
     if (event.getMessage().toLowerCase().contains(IRCBot.getOurNick().toLowerCase())) {
       ArrayList<String[]> respondTo = new ArrayList<>();

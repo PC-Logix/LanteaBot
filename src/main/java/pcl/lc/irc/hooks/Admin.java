@@ -362,11 +362,7 @@ public class Admin extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		target = Helper.getTarget(event);
 		command_prefix.tryExecute(command, nick, target, event, copyOfRange);
 		command_join.tryExecute(command, nick, target, event, copyOfRange);
 		command_part.tryExecute(command, nick, target, event, copyOfRange);

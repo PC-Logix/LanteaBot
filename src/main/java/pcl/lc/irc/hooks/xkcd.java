@@ -150,12 +150,7 @@ public class xkcd extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		if (permLevel >= requiredPermLevel) {
-			String target;
-			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				target = nick;
-			} else {
-				target = chan;
-			}
+			String target = Helper.getTarget(event);
 			if (command.equalsIgnoreCase(Config.commandprefix + "xkcd")) {
 				boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 				if (isOp || chanOp) {

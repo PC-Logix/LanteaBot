@@ -38,11 +38,7 @@ public class Stab extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		long shouldExecute = local_command.shouldExecute(command, event, nick);
-		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-			target = nick;
-		} else {
-			target = chan;
-		}
+		target = Helper.getTarget(event);
 		if (shouldExecute == 0) {
 			local_command.updateLastExecution();
 			String message = "";
