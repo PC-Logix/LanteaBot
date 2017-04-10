@@ -25,6 +25,7 @@ public class Search extends AbstractListener {
 	private Command yt;
 	private Command wik;
 	private Command cf;
+	private Command urb;
 
 	@Override
 	protected void initHook() {
@@ -107,6 +108,12 @@ public class Search extends AbstractListener {
 				curseForge.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
+		urban = new Command("urban", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				urb.onExecuteSuccess(command, nick, target, event, params);
+			}
+		};
 	}
 
 	private List<SearchResult> performSearch(String filter, String terms) {
@@ -147,6 +154,7 @@ public class Search extends AbstractListener {
 		yt.tryExecute(command, nick, target, event, copyOfRange);
 		wik.tryExecute(command, nick, target, event, copyOfRange);
 		cf.tryExecute(command, nick, target, event, copyOfRange);
+		urban.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
