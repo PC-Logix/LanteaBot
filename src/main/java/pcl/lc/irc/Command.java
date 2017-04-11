@@ -10,10 +10,10 @@ import java.util.Arrays;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Command {
-	private static long INVALID_COMMAND = -1;
-	private static long IGNORED = -2;
-	public static long NO_PERMISSION = -3;
-	private static long DISABLED = -4;
+	private static final long INVALID_COMMAND = -1;
+	private static final long IGNORED = -2;
+	public static final long NO_PERMISSION = -3;
+	private static final long DISABLED = -4;
 
 	private String command;
 	private String className;
@@ -130,10 +130,10 @@ public class Command {
 		if (!this.isSubCommand)
 			prefix = Config.commandprefix;
 
-		if (!this.isEnabled)
-			return DISABLED;
 		if (!command.toLowerCase().equals(prefix + this.command.toLowerCase()) && !hasAlias(command))
 			return INVALID_COMMAND;
+		if (!this.isEnabled)
+			return DISABLED;
 		if (!Permissions.hasPermission(IRCBot.bot, event, this.minPermissionLevel))
 			return NO_PERMISSION;
 		if (nick != null && IRCBot.isIgnored(nick))
@@ -165,13 +165,13 @@ public class Command {
 	private String getCannotExecuteReason(long shouldExecuteResult) {
 		if (shouldExecuteResult > 0)
 			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parseMilliseconds(shouldExecuteResult)) + ".";
-		else if (shouldExecuteResult == -1)
+		else if (shouldExecuteResult == INVALID_COMMAND)
 			return "";
-		else if (shouldExecuteResult == -2)
+		else if (shouldExecuteResult == IGNORED)
 			return "";
-		else if (shouldExecuteResult == -3)
+		else if (shouldExecuteResult == NO_PERMISSION)
 			return "You do not have sufficient privileges to use this command.";
-		else if (shouldExecuteResult == -4)
+		else if (shouldExecuteResult == DISABLED)
 			return "This command is not enabled.";
 		return "";
 	}
@@ -249,33 +249,37 @@ public class Command {
 		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
-	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) { return tryExecute(command, nick, target, event, params, false);}
-	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) { return tryExecute(command, nick, target, event, params, false);}
-	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) {
+		return tryExecute(command, nick, target, event, params, false);
+	}
+
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+		return tryExecute(command, nick, target, event, params, false);
+	}
+
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
 	}
 
-	public long tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
 	{
 		long shouldExecute = this.shouldExecute(command, (MessageEvent) event, nick);
-		if (shouldExecute == -1) //Command does not match, ignore
-			return 0;
+		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
+			return false;
 		else if (shouldExecute == 0) {
 			this.updateLastExecution();
 			if (!ignore_sub_commands && params.size() > 0) {
 				String firstParam = params.get(0);
-				int executed = 0;
 				for (Command sub : this.subCommands) {
 					ArrayList<String> subParams;
 					if (params.size() > 1)
 						subParams = new ArrayList<>(params.subList(1, params.size()));
 					else
 						subParams = new ArrayList<>();
-					executed += sub.tryExecute(firstParam, nick, target, event, subParams, false);
+					if (sub.tryExecute(firstParam, nick, target, event, subParams, false))
+						return true;
 				}
-				if (executed > 0)
-					return 1;
 			}
 			this.onExecuteSuccess(this, nick, target, event, params);
 			String message = "";
@@ -285,11 +289,10 @@ public class Command {
 			}
 			message = message.trim();
 			this.onExecuteSuccess(this, nick, target, event, message);
-			return 1;
-		}
-		else
+		} else {
 			this.onExecuteFail(this, nick, target, shouldExecute);
-		return 0;
+		}
+		return true;
 	}
 
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {}
