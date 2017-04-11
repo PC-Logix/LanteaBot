@@ -264,7 +264,7 @@ public class Command {
 
 	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
 	{
-		long shouldExecute = this.shouldExecute(command, (MessageEvent) event, nick);
+		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
 			return false;
 		else if (shouldExecute == 0) {
