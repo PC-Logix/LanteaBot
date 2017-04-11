@@ -458,7 +458,7 @@ public class Inventory extends AbstractListener {
 
 				ResultSet result = getItemByName.executeQuery();
 				if (!override_duplicate_check && result.next()) {
-					return "I already have one of those.";
+					return "already has one of those.";
 				}
 			}
 			catch (Exception e) {
