@@ -156,7 +156,7 @@ public class Inventory extends AbstractListener {
 				}
 			}
 		};
-		sub_command_create = new Command("create", 0, true) {
+		sub_command_create = new Command("create", 30000, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.toLowerCase().equals("myself") || params.toLowerCase().equals(IRCBot.getOurNick()))
@@ -173,7 +173,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_create.registerAlias("add");
-		sub_command_remove = new Command("remove", 0, true) {
+		sub_command_remove = new Command("remove", 30000, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4);

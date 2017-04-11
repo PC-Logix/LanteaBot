@@ -21,7 +21,7 @@ public class Juggle extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("juggle", 0) {
+		local_command = new Command("juggle", 30000) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				local_command.updateLastExecution();
