@@ -54,7 +54,6 @@ public class Ping extends AbstractListener {
 	private void sendPing(ArrayList<String> params, String nick, boolean ms) {
 		List<Object> eventData = new ArrayList<Object>();
 		eventData.add(target);
-		eventData.add(System.currentTimeMillis());
 		if (params.size() > 0) {
 			for (String n : params) {
 				((ms) ? usersMSP : users).put(n.toLowerCase(), eventData);
@@ -64,6 +63,7 @@ public class Ping extends AbstractListener {
 			((ms) ? usersMSP : users).put(nick.toLowerCase(), eventData);
 			IRCBot.bot.sendIRC().ctcpCommand(nick.toLowerCase(), "PING " + System.currentTimeMillis());
 		}
+		eventData.add(System.currentTimeMillis());
 	}
 
 	public String chan;
