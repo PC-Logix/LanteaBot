@@ -66,7 +66,7 @@ public class TimedBans extends AbstractListener {
 					e.printStackTrace();
 				}
 			}
-		}, 0, 10, TimeUnit.SECONDS);
+		}, 0, 1, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -114,9 +114,7 @@ public class TimedBans extends AbstractListener {
 				addTimedBan.executeUpdate();
 				if (type.equals("ban")) {
 					event.getBot().sendIRC().message("chanserv", "ban " + event.getChannel().getName() + " " + args[0]);
-					if (event.getChannel().getUsers().contains(args[0])){
-						event.getBot().sendIRC().message("chanserv", "kick " + event.getChannel().getName() + " " + " Reason: " + reason + " | For: " + args[1] + " | Expires: " + expiresTime);
-					}
+					event.getBot().sendIRC().message("chanserv", "kick " + event.getChannel().getName() + " " +args[0] + " Reason: " + reason + " | For: " + args[1] + " | Expires: " + expiresTime);
 				} else {
 					event.getBot().sendIRC().message("chanserv", "quiet " + event.getChannel().getName() + " " + args[0]);
 				}
