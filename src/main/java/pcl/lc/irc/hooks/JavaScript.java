@@ -1,6 +1,19 @@
 package pcl.lc.irc.hooks;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.script.Invocable;
 import javax.script.ScriptContext;
@@ -10,8 +23,25 @@ import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import jdk.nashorn.api.scripting.NashornScriptEngine;
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import jdk.nashorn.internal.lookup.Lookup;
+import jdk.nashorn.internal.objects.Global;
+import jdk.nashorn.internal.runtime.JSType;
+import jdk.nashorn.internal.runtime.Property;
+import jdk.nashorn.internal.runtime.ScriptFunction;
+import jdk.nashorn.internal.runtime.ScriptObject;
+
+import javax.script.CompiledScript;
+import javax.script.ScriptContext;
+import javax.script.ScriptException;
+
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
+import pcl.lc.utils.SandboxThreadFactory;
+import pcl.lc.utils.SandboxThreadGroup;
 
 /**
  * @author Caitlyn
@@ -20,11 +50,15 @@ import pcl.lc.irc.IRCBot;
 
 @SuppressWarnings("rawtypes")
 public class JavaScript  extends ListenerAdapter {
+	private NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();;
+	private final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
+	private final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
+
 	public JavaScript() {
 		IRCBot.registerCommand("js", "Do the Javascript? I dunno.");
 	}
 
-	String script = null;
+	String code = null;
 
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
@@ -37,24 +71,74 @@ public class JavaScript  extends ListenerAdapter {
 			String[] firstWord = StringUtils.split(trigger);
 			String triggerWord = firstWord[0];
 			if (triggerWord.equals(prefix + "js")) {
-				script = event.getMessage().substring(event.getMessage().indexOf("js") + 2).trim();
-				ScriptEngineManager factory = new ScriptEngineManager();
-				ScriptEngine engine = factory.getEngineByName("JavaScript");
-				ScriptContext context = engine.getContext();
-				StringWriter writer = new StringWriter();
-				context.setWriter(writer);
-				engine.eval(script);
-				String output = writer.toString();
-				Invocable invokeEngine = (Invocable) engine;
-				Runnable runner = invokeEngine.getInterface(Runnable.class);
-				Thread t = new Thread(runner);
-				t.start();
-				t.join();
-				event.respond(output);
-				t.stop();
-				event.respond("Thread count: " + java.lang.Thread.activeCount());
+				code = event.getMessage().substring(event.getMessage().indexOf("js") + 2).trim();
+				if (engineFactory == null || code == null) return;
+				NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
+				Helper.sendMessage(event.getChannel().getName(), eval(engine, code));
 			}
 		}
 	}
+	
+	public String eval(NashornScriptEngine engine, String code) {
+		CompiledScript cs;
+		try {
+			cs = engine.compile(code);
+		} catch (ScriptException e) {
+			return e.getMessage();
+		}
+		JSRunner r = new JSRunner(cs);
 
+		final ExecutorService service = Executors.newSingleThreadExecutor(sandboxFactory);
+		TimeUnit unit = TimeUnit.SECONDS;
+		String output = null;
+		try {
+			Future<String> f = service.submit(r);
+		    output = f.get(30, unit);
+		}
+		catch(TimeoutException e) {
+		    output = "Script timed out";
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			output = e.getMessage();
+		}
+		finally {
+		    service.shutdown();
+		}
+		if (output == null)
+			output = "";
+
+		return output;
+	}
+
+	public class JSRunner implements Callable<String> {
+		
+		private final CompiledScript cs;
+		
+		public JSRunner(CompiledScript cs) {
+			this.cs = cs;
+		}
+
+		@Override
+		public String call() throws Exception {
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				ScriptContext context = cs.getEngine().getContext();
+				context.setWriter(pw);
+				context.setErrorWriter(pw);
+				
+				try {
+					Object out = cs.eval();
+					if (sw.getBuffer().length() != 0)
+						return sw.toString();
+					if (out != null)
+						return out.toString();
+				}
+				catch(ScriptException ex) {
+					return ex.getMessage();
+				}
+				return null;
+		}
+	}
+	
 }
