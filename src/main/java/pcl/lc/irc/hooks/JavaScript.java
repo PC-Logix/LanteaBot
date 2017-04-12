@@ -93,7 +93,7 @@ public class JavaScript  extends ListenerAdapter {
 		String output = null;
 		try {
 			Future<String> f = service.submit(r);
-		    output = f.get(30, unit);
+		    output = f.get(5, unit);
 		}
 		catch(TimeoutException e) {
 		    output = "Script timed out";
