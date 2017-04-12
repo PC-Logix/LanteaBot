@@ -249,14 +249,8 @@ public class Command {
 		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) {
-		return tryExecute(command, nick, target, event, params, false);
-	}
-
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-		return tryExecute(command, nick, target, event, params, false);
-	}
-
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) { return tryExecute(command, nick, target, event, params, false); }
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) { return tryExecute(command, nick, target, event, params, false);}
 	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
