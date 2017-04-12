@@ -86,11 +86,11 @@ public class SED extends ListenerAdapter {
 											else
 												newMessage = "<" + entry.getValue().get(1) + "> " + reply;
 											event.getChannel().send().message(newMessage);
-											//List<String> list = new ArrayList<String>();
-											//list.add(event.getChannel().getName().toString());
-											//list.add(entry.getValue().get(1));
-											//list.add(reply);
-											//IRCBot.messages.put(UUID.randomUUID(), list);
+											List<String> list = new ArrayList<String>();
+											list.add(event.getChannel().getName().toString());
+											list.add(entry.getValue().get(1));
+											list.add(reply);
+											IRCBot.messages.put(UUID.randomUUID(), list);
 											IRCBot.log.info("--> " + event.getChannel().getName().toString() + " " + newMessage);
 											return;
 										} catch(IllegalArgumentException e) {
