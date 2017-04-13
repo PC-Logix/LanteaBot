@@ -3,26 +3,43 @@
  */
 package pcl.lc.irc.hooks;
 
+import com.github.kevinsawicki.timeago.TimeAgo;
+import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharStreams;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.ServerResponseEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.FormatUtils;
 import pcl.lc.utils.Helper;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,9 +74,17 @@ public class Admin extends AbstractListener {
 	private Command command_authed;
 	private Command command_addadmin;
 	private Command command_time_test;
-
+	static String html;
 	@Override
 	protected void initHook() {
+		try {
+			httpd.registerContext("/help", new HelpHandler(), "Help");
+			InputStream htmlIn = getClass().getResourceAsStream("/html/help.html");
+			html = CharStreams.toString(new InputStreamReader(htmlIn, Charsets.UTF_8));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		command_prefix = new Command("prefix", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -164,7 +189,7 @@ public class Admin extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				IRCBot.authed.clear();
 				Account.userCache.clear();
-					/*for(Channel chan : event.getBot().getUserBot().getChannels()) {
+				/*for(Channel chan : event.getBot().getUserBot().getChannels()) {
 						IRCBot.bot.sendRaw().rawLineNow("who " + chan.getName() + " %an");
 					}*/
 				Helper.sendMessage(target, "Authed hashmap size: " + IRCBot.authed.size(), nick);
@@ -264,21 +289,25 @@ public class Admin extends AbstractListener {
 		command_help = new Command("help", 0, Permissions.USER) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (params.size() == 0) {
-					String listString = "";
-					for (Object o : IRCBot.commands.entrySet()) {
-						Map.Entry pair = (Map.Entry) o;
-						listString += pair.getKey() + ", ";
-					}
-					event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
+				if (Config.httpdEnable.equals("true")){
+					Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory", nick);
 				} else {
-					try {
-						String l_command = params.get(0);
-						event.getBot().sendIRC().notice(nick, "help for " + l_command);
-						event.getBot().sendIRC().notice(nick, IRCBot.helpList.get(l_command));
-					} catch (Exception e) {
-						e.printStackTrace();
-						event.getBot().sendIRC().notice(nick, "Something went wrong!");
+					if (params.size() == 0) {
+						String listString = "";
+						for (Object o : IRCBot.commands.entrySet()) {
+							Map.Entry pair = (Map.Entry) o;
+							listString += pair.getKey() + ", ";
+						}
+						event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
+					} else {
+						try {
+							String l_command = params.get(0);
+							event.getBot().sendIRC().notice(nick, "help for " + l_command);
+							event.getBot().sendIRC().notice(nick, IRCBot.helpList.get(l_command));
+						} catch (Exception e) {
+							e.printStackTrace();
+							event.getBot().sendIRC().notice(nick, "Something went wrong!");
+						}
 					}
 				}
 			}
@@ -459,6 +488,65 @@ public class Admin extends AbstractListener {
 			} else {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	static class HelpHandler implements HttpHandler {
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			TimeAgo time = new TimeAgo();
+			String target = t.getRequestURI().toString();
+			String response = "";
+			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
+			String items = "";
+			if (paramsList.size() >= 0) {
+				try {
+
+					items = "<table><tr><th>Command</th><th>Help</th></tr>";
+					for (Object o : IRCBot.commands.entrySet()) {
+						Map.Entry pair = (Map.Entry) o;
+
+						items += "<tr><td>" + Config.commandprefix + pair.getKey() + "</td><td>" + IRCBot.helpList.get(pair.getKey()) + "</td></tr>";
+					}
+					items += "</table>";
+					items = StringUtils.strip(items, "\n");
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				/*try {
+					PreparedStatement getAllQuotes = Database.getPreparedStatement("getAllQuotes");
+					ResultSet results = getAllQuotes.executeQuery();
+					while (results.next()) {
+						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}*/
+			}
+
+			String navData = "";
+			Iterator it = httpd.pages.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry pair = (Map.Entry)it.next();
+				navData += "<div class=\"innertube\"><h1><a href=\""+ pair.getValue() +"\">"+ pair.getKey() +"</a></h1></div>";
+			}
+
+			// convert String into InputStream
+			InputStream is = new ByteArrayInputStream(html.getBytes());
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+				String line = null;
+
+				while ((line = br.readLine()) != null) {
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items).replace("#NAVIGATION#", navData)+"\n";
+				}
+			}
+			t.sendResponseHeaders(200, response.getBytes().length);
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
 		}
 	}
 }
