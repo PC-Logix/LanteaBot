@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Caitlyn
@@ -501,9 +502,9 @@ public class Admin extends AbstractListener {
 			String items = "";
 			if (paramsList.size() >= 0) {
 				try {
-
+					TreeMap<String, Command> copy = new TreeMap<>(IRCBot.commands);
 					items = "<table><tr><th>Command</th><th>Help</th></tr>";
-					for (Object o : IRCBot.commands.entrySet()) {
+					for (Object o : copy.entrySet()) {
 						Map.Entry pair = (Map.Entry) o;
 
 						items += "<tr><td>" + Config.commandprefix + pair.getKey() + "</td><td>" + IRCBot.helpList.get(pair.getKey()) + "</td></tr>";
