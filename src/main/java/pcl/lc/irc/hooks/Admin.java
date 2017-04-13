@@ -504,7 +504,7 @@ public class Admin extends AbstractListener {
 				try {
 					TreeMap<String, Command> copy = new TreeMap<>(IRCBot.commands);
 					items = "<table><tr><th>Command</th><th>Help</th></tr>";
-					for (Object o : copy.entrySet()) {
+					for (Object o : IRCBot.commands.entrySet()) {
 						Map.Entry pair = (Map.Entry) o;
 
 						items += "<tr><td>" + Config.commandprefix + pair.getKey() + "</td><td>" + IRCBot.helpList.get(pair.getKey()) + "</td></tr>";
