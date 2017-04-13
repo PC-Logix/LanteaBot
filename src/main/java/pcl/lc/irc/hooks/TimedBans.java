@@ -98,7 +98,7 @@ public class TimedBans extends AbstractListener {
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 				String expiresTime = sdf.format(new Date(time));
 				PreparedStatement addTimedBan = Database.getPreparedStatement("addTimedBan");
-				//channel, username, hostmask, expires, placedby, reason
+				//1 channel,2 username,3 hostmask,4 expires,5 placedby,6 reason,7 type
 				addTimedBan.setString(1, event.getChannel().getName());
 				addTimedBan.setString(2, args[0]);
 				for(User u : event.getChannel().getUsers()) {
