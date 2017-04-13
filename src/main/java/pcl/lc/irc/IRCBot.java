@@ -73,8 +73,8 @@ public class IRCBot {
 		return ournick;
 	}
 	
-	public static HashMap<String, Command> commands = new HashMap<>();
-	public static HashMap<String, String> helpList = new HashMap<String, String>();
+	public static HashMap<String, Command> commands = new LinkedHashMap<>();
+	public static HashMap<String, String> helpList = new LinkedHashMap<String, String>();
 
 	public static void registerCommand(Command command) {
 		registerCommand(command, command.getHelpText());
@@ -90,6 +90,14 @@ public class IRCBot {
 		}
 	}
 
+	public static void setHelp(String command, String help) {
+		if (helpList.containsKey(command)) {
+			helpList.put(command, help);
+		} else {
+			log.error("Attempted to set help on non existent command");
+		}
+	}
+	
 	public static void registerCommand(String command, String help) {
 		registerCommand(command, help, 0);
 	}

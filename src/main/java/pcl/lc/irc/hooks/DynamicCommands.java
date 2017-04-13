@@ -10,6 +10,7 @@ import pcl.lc.utils.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 
 /**
@@ -19,24 +20,64 @@ import java.text.MessageFormat;
 public class DynamicCommands extends AbstractListener {
   private Command local_command_add;
   private Command local_command_del;
+  private Command local_command_addhelp;
 
   @Override
   protected void initHook() {
     local_command_add = new Command("addcommand", 0);
     IRCBot.registerCommand(local_command_add, "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
     local_command_del = new Command("delcommand", 0);
+    local_command_addhelp = new Command ("addcommandhelp", 0) {
+		@Override
+		public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			PreparedStatement addCommandHelp;
+			try {
+				addCommandHelp = Database.getPreparedStatement("addCommandHelp");
+				String arr[] = params.split(" ", 2);
+				String theCommand = arr[0];
+				String theHelp = arr[1]; 
+				if (IRCBot.commands.containsKey(theCommand)) {
+					try {
+						addCommandHelp.setString(1, theHelp);
+						addCommandHelp.setString(2, theCommand.toLowerCase());
+						addCommandHelp.executeUpdate();
+						IRCBot.setHelp(theCommand, theHelp);
+						event.respond("Help Set");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						event.respond("fail 1");
+					}
+				} else {
+					event.respond("fail 2 ");
+				}
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				event.respond("fail 3");
+			}
+		}
+    };
+    local_command_addhelp.setHelpText("Sets help on dynamic commands");
     IRCBot.registerCommand(local_command_del, "Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
-    Database.addStatement("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return)");
+    IRCBot.registerCommand(local_command_addhelp);
+    Database.addStatement("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return, help)");
+    Database.addUpdateQuery(5, "ALTER TABLE Commands ADD help STRING DEFAULT NULL NULL;");
     Database.addPreparedStatement("addCommand", "INSERT INTO Commands(command, return) VALUES (?, ?);");
-    Database.addPreparedStatement("searchCommands", "SELECT command FROM Commands");
+    Database.addPreparedStatement("addCommandHelp", "UPDATE Commands SET help = ? WHERE command = ?");
+    Database.addPreparedStatement("searchCommands", "SELECT command, help FROM Commands");
     Database.addPreparedStatement("getCommand", "SELECT return FROM Commands WHERE command = ?");
     Database.addPreparedStatement("delCommand", "DELETE FROM Commands WHERE command = ?;");
     try {
       PreparedStatement searchCommands = Database.getPreparedStatement("searchCommands");
       ResultSet commands = searchCommands.executeQuery();
       while (commands.next()) {
-        IRCBot.registerCommand(commands.getString(1), "Dynamic commands module, who knows what it does?!");
-      }
+    	  if (commands.getString(2) != null) {
+    	       IRCBot.registerCommand(commands.getString(1), commands.getString(2));
+    	  } else {
+    	       IRCBot.registerCommand(commands.getString(1), "Dynamic commands module, who knows what it does?!");
+    	  }
+       }
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -54,6 +95,7 @@ public class DynamicCommands extends AbstractListener {
   public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
     String prefix = Config.commandprefix;
     String ourinput = event.getMessage().toLowerCase().trim();
+    local_command_addhelp.tryExecute(command, sender, event.getChannel().getName(), event, args);
     if (ourinput.length() > 1) {
       if (!IRCBot.isIgnored(event.getUser().getNick())) {
         String[] message = event.getMessage().split(" ", 3);
