@@ -290,7 +290,7 @@ public class Admin extends AbstractListener {
 		command_help = new Command("help", 0, Permissions.USER) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (Config.httpdEnable.equals("true")){
+				if (Config.httpdEnable.equals("true") && params.size() == 0){
 					Helper.sendMessage(target, "Command list: " + httpd.getBaseDomain() + "/help", nick);
 				} else {
 					if (params.size() == 0) {
