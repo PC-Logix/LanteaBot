@@ -71,7 +71,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	public void onMessage(final MessageEvent event) {
 		String[] splitMessage = event.getMessage().split(" ");
 		if (splitMessage[0].startsWith(Config.commandprefix)) {
-			if (!IRCBot.isIgnored(event.getUser().getNick())) {
+			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
 				handleCommand(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
 		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
@@ -89,7 +89,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	public void onGenericMessage(final GenericMessageEvent event) {
 		String[] splitMessage = event.getMessage().split(" ");
 		if (splitMessage[0].startsWith(Config.commandprefix)) {
-			if (!IRCBot.isIgnored(event.getUser().getNick())) {
+			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
 				handleCommand(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
 		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
