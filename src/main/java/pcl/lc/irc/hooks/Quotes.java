@@ -122,7 +122,7 @@ public class Quotes extends AbstractListener {
 					}
 				}
 			}
-		}; quote.setHelpText("Returns quotes from the quote database");
+		}; quote.setHelpText("Returns quotes from the quote database. Also Has sub-commands: add, del");
 		add = new Command("add", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
