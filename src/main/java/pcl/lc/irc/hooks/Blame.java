@@ -28,6 +28,8 @@ public class Blame extends AbstractListener {
 		local_command = new Command("blame", 5) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.toLowerCase().equals(IRCBot.getOurNick().toLowerCase()))
+					params = Helper.parseSelfReferral("himself");
 				Helper.sendAction(target, "blames " + params + " for " + getEvent());
 			}
 		};
@@ -63,7 +65,7 @@ public class Blame extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecute(command) >= 0) {
+		if (local_command.shouldExecute(command, event) >= 0) {
 			chan = event.getChannel().getName();
 		}
 	}

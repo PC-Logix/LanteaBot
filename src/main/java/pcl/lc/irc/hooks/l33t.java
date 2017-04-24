@@ -74,14 +74,14 @@ public class l33t extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecuteBool(command)) {
+		if (local_command.shouldExecuteBool(command, event)) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (local_command.shouldExecuteBool(command)) {
+		if (local_command.shouldExecuteBool(command, event)) {
 			if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 				target = nick;
 			} else {

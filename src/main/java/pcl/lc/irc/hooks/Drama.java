@@ -38,7 +38,7 @@ public class Drama extends AbstractListener {
 		String ourinput = event.getMessage().toLowerCase();
 		String trigger = ourinput.trim();
 		if (trigger.length() > 1) {
-			long shouldExecute = local_command.shouldExecute(command);
+			long shouldExecute = local_command.shouldExecute(command, event);
 			if (shouldExecute == 0) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					URL obj = null;

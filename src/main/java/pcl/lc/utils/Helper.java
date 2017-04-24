@@ -387,4 +387,20 @@ public class Helper {
 		strings.add("Exactly as planned.");
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
+
+	public static String parseSelfReferral(String type)
+	{
+		switch (type) {
+			case "his": //Takes a swing with his axe
+				return "her"; //Takes a swing with her axe
+			case "he": //He launches the missile
+				return "she"; //She launches the missile
+			case "him": //The boot hits him in the face
+				return "her"; //The boot hits her in the face
+			case "himself": //The bot blames himself for ruining christmas
+				return "herself"; //The bot blames herself for ruining christmas
+			default:
+				return type;
+		}
+	}
 }

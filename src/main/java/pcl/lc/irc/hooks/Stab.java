@@ -32,14 +32,14 @@ public class Stab extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		if (local_command.shouldExecute(command) >= 0) {
+		if (local_command.shouldExecute(command, event) >= 0) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		long shouldExecute = local_command.shouldExecute(command, nick);
+		long shouldExecute = local_command.shouldExecute(command, event, nick);
 		if (!event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 			target = nick;
 		} else {
@@ -75,7 +75,7 @@ public class Stab extends AbstractListener {
 				else if (!target.toLowerCase().contains(IRCBot.ournick.toLowerCase()))
 					Helper.sendAction(this.target,actions.get(action) + " " + target + (item != null ? " with " + item.getName() : "") + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
 				else
-					Helper.sendAction(this.target,"uses " + (item != null ? item.getName() : " an orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
+					Helper.sendAction(this.target,"uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
 			}
 			catch (Exception e)
 			{

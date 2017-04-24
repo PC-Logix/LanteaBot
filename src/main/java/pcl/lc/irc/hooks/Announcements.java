@@ -122,13 +122,13 @@ public class Announcements extends ListenerAdapter implements Runnable {
 			if (trigger.length() > 1) {
 				String[] firstWord = StringUtils.split(trigger);
 				String command = firstWord[0];
-				if (local_command_add.shouldExecute(command) == 0) {
+				if (local_command_add.shouldExecute(command, event) == 0) {
 					event.respond("Merp");
-				} else if (local_command_list.shouldExecute(command) == 0) {
+				} else if (local_command_list.shouldExecute(command, event) == 0) {
 					
-				} else if (local_command_remove.shouldExecute(command) == 0) {
+				} else if (local_command_remove.shouldExecute(command, event) == 0) {
 					
-				} else if (local_command_reload.shouldExecute(command) == 0) {
+				} else if (local_command_reload.shouldExecute(command, event) == 0) {
 					setConfig();
 				}
 			}
