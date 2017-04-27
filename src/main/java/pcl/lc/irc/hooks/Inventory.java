@@ -494,7 +494,7 @@ public class Inventory extends AbstractListener {
 						add.setLong(5, new Timestamp(System.currentTimeMillis()).getTime());
 						add.executeUpdate();
 					}
-					return "The sentence was too long. It has been compressed into a more manageable format.";
+					return "compresses the sentence into a more manageable format since it was too long.";
 				}
 
 				boolean favourite = false;
