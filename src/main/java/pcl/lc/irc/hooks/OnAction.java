@@ -27,7 +27,7 @@ public class OnAction extends ListenerAdapter {
 	public void onAction(final ActionEvent event) throws Exception {
 		super.onAction(event);
 		if (event.getAction().contains("pets " + IRCBot.ournick)) {
-			event.getChannel().send().action("Purrs");
+			event.getChannel().send().action("purrs");
 		} else if (event.getAction().contains("glomps " + IRCBot.ournick)) {
 			event.getChannel().send().action("gets out the pepper spray");
 		} else if (event.getAction().contains("high-fives " + IRCBot.ournick)) {
