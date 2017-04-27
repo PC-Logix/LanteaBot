@@ -81,6 +81,9 @@ public class Inventory extends AbstractListener {
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added INT DEFAULT NULL NULL;");
 
+		Database.addPreparedStatement("getCompressedSentences", "SELECT id, item_name, uses_left FROM Inventory WHERE item_name LIKE '%Compressed Sentence%'");
+		Database.addPreparedStatement("setCompressedSentences", "UPDATE Inventory SET item_name = ?, uses_left = ? WHERE id = ?");
+		Database.addPreparedStatement("newCompressedSentence", "INSERT INTO Inventory (item_name, uses_left, is_favourite, added_by, added) VALUES (?,?,?,?,?)");
 		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory;");
 		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE id = ?;");
 		Database.addPreparedStatement("getFavouriteItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite = 1 LIMIT 1");
@@ -465,6 +468,35 @@ public class Inventory extends AbstractListener {
 				e.printStackTrace();
 			}
 			try {
+				if (item.length() > 70)
+				{
+					PreparedStatement get = Database.getPreparedStatement("getCompressedSentences");
+					ResultSet result = get.executeQuery();
+					if (result.next())
+					{
+						int uses = result.getInt(3);
+						int id = result.getInt(1);
+						uses++;
+						PreparedStatement update = Database.getPreparedStatement("setCompressedSentences");
+						update.setString(1, uses + "x Compressed Sentences");
+						update.setInt(2, uses);
+						update.setInt(3, id);
+						update.executeUpdate();
+					}
+					else
+					{
+						PreparedStatement add = Database.getPreparedStatement("newCompressedSentence");
+						//item_name, uses_left, is_favourite, added_by, added
+						add.setString(1, "1x Compressed Sentence");
+						add.setInt(2, 1);
+						add.setBoolean(3, false);
+						add.setString(4, added_by);
+						add.setLong(5, new Timestamp(System.currentTimeMillis()).getTime());
+						add.executeUpdate();
+					}
+					return "compresses the sentence into a more manageable format since it was too long.";
+				}
+
 				boolean favourite = false;
 				int fav_roll = Helper.getRandomInt(0, 100);
 				System.out.println("Favourite roll: " + fav_roll);
