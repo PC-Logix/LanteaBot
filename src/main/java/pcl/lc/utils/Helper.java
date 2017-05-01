@@ -74,6 +74,9 @@ public class Helper {
 	public static String antiPing(String nick) {
 		return addZeroWidthSpace(nick);
 	}
+	public static String antiPing(String meh, String nick) {
+		return addZeroWidthSpace(nick);
+	}
 
 	public static void sleep(long ms) {
 		try {
