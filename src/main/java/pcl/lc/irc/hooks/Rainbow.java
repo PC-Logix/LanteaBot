@@ -54,7 +54,7 @@ public class Rainbow extends AbstractListener {
 		local_command = new Command("rainbow", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendMessage(target,  Helper.antiPing(nick) + ": " + makeRainbow(params), nick);
+				Helper.sendMessage(target, makeRainbow(params), nick);
 			}
 		}; local_command.setHelpText("Replies with a rainbow version of the supplied text");
 		IRCBot.registerCommand(local_command);
