@@ -1,4 +1,4 @@
-package pcl.lc.irc;
+package pcl.lc.utils;
 
 import com.google.api.client.util.DateTime;
 import pcl.lc.irc.hooks.Inventory;

@@ -25,6 +25,7 @@ import com.wolfram.alpha.WAEngine;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.job.TaskScheduler;
 import pcl.lc.irc.job.WikiChangeWatcher;
+import pcl.lc.utils.Database;
 
 public class IRCBot {
 

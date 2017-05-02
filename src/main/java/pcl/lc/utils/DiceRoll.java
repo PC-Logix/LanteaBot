@@ -1,4 +1,4 @@
-package pcl.lc.irc;
+package pcl.lc.utils;
 
 import java.util.ArrayList;
 

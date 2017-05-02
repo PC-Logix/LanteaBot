@@ -23,6 +23,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.utils.Account;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.FormatUtils;
 import pcl.lc.utils.Helper;
 

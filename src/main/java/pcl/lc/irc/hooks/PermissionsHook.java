@@ -9,10 +9,10 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Account;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 public class PermissionsHook extends AbstractListener {

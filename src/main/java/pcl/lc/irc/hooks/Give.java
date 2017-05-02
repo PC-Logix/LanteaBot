@@ -8,8 +8,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Item;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.Item;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package pcl.lc.irc;
+package pcl.lc.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import pcl.lc.irc.IRCBot;
 
 class UpdateQuery {
 	private int minVersion;
@@ -120,7 +122,7 @@ public class Database {
 		}
 	}
 
-	static void updateDatabase() {
+	public static void updateDatabase() {
 		int counter = 0;
 		int currentVer = getDBVer();
 		IRCBot.log.info("Updating database! Current version: " + currentVer);

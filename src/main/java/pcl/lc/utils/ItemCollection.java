@@ -1,6 +1,4 @@
-package pcl.lc.irc;
-
-import pcl.lc.utils.Helper;
+package pcl.lc.utils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

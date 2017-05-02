@@ -15,9 +15,9 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 /**

@@ -8,6 +8,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.Item;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

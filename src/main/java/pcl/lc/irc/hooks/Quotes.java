@@ -31,6 +31,7 @@ import java.util.Map;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 @SuppressWarnings("rawtypes")

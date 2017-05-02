@@ -15,6 +15,7 @@ import org.pircbotx.hooks.events.WhoisEvent;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Account;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Account.ExpiringToken;
 
 public class Permissions {

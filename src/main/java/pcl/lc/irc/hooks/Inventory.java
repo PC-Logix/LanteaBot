@@ -18,7 +18,9 @@ import com.sun.net.httpserver.HttpHandler;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.Item;
 import pcl.lc.utils.PasteUtils;
 
 import java.io.BufferedReader;

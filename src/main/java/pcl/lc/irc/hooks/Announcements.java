@@ -22,6 +22,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.utils.CommentedProperties;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 

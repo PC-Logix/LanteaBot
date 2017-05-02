@@ -15,9 +15,9 @@ import org.pircbotx.hooks.events.NickChangeEvent;
 import com.google.common.collect.ImmutableSortedSet;
 
 import pcl.lc.irc.Config;
-import pcl.lc.irc.Database;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 public class NickLen extends ListenerAdapter {
