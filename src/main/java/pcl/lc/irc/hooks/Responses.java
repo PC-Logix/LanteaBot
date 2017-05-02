@@ -79,6 +79,8 @@ public class Responses extends AbstractListener {
 
       respondTo.add(new String[]{"boops", "squeak"});
       respondTo.add(new String[]{"pokes", "squeak"});
+      
+      respondTo.add(new String[]{"defragments", "tickles"});
 
 
       for (String[] str : respondTo) {
@@ -127,6 +129,9 @@ public class Responses extends AbstractListener {
         break;
       case "blush":
         Helper.sendMessage(target, "o///o");
+        break;
+      case "tickles":
+    	  Helper.sendMessage(target, "That tickles!");
     }
   }
 }
