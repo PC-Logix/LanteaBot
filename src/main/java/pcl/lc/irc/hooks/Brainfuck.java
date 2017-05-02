@@ -5,11 +5,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import org.faabtech.brainfuck.BrainfuckEngine;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
@@ -22,13 +27,17 @@ public class Brainfuck extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Brainfuck!");
 	}
 
 	private void initCommands() {
-		local_command = new Command("bf", 0);
+		local_command = new Command("bf", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, parse(params, null));
+			}
+		}; local_command.setHelpText("Does brainfuck");
+		IRCBot.registerCommand(local_command);
 	}
-
 	public String parse(String code, String message) {
 		if (code == null) return "";
 		try {
@@ -45,19 +54,18 @@ public class Brainfuck extends AbstractListener {
 		return "";
 	}
 
+	public String chan;
+	public String target = null;
+	
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
+		chan = event.getChannel().getName();
 	}
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		StringBuilder builder = new StringBuilder();
-		for(String s : copyOfRange) {
-		    builder.append(s);
-		}
-		event.respond(parse(builder.toString(), null));
+		target = Helper.getTarget(event);
+		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
