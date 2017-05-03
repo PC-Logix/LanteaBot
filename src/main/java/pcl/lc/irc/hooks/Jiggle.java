@@ -28,7 +28,16 @@ public class Jiggle extends AbstractListener {
 		local_command = new Command("jiggle", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendAction(target, "jiggles");
+				int number = 0;
+				if (params.length() > 0) {
+					try { number = Integer.parseInt(params); } catch (NumberFormatException ignored) {}
+					if (number == 0)
+						Helper.sendAction(target, "jiggles " + params);
+					else
+						Helper.sendAction(target, "jiggles " + number + " times");
+				}
+				else
+					Helper.sendAction(target, "jiggles");
 			}
 		};
 	}
