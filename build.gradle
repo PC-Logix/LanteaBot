@@ -61,7 +61,7 @@ class Version {
     }
 
     String getBuild() {
-        System.getenv("BUILD_NUMBER") ? System.getenv("BUILD_NUMBER") : "DEV"
+        System.getenv("BUILD_NUMBER") ? System.getenv("BUILD_NUMBER") : "0"
     }
 
     String toString() {
