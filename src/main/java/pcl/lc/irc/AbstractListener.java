@@ -34,7 +34,8 @@ public abstract class AbstractListener extends ListenerAdapter
 	 * @param command
 	 * @param args
 	 */
-	public abstract void handleCommand(String sender, MessageEvent event, String command, String[] args);
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	}
 	
 	/**
 	 * Called on channel messages, and queries, the event does NOT have any channel information regardless of the origin.
@@ -44,7 +45,8 @@ public abstract class AbstractListener extends ListenerAdapter
 	 * @param command
 	 * @param copyOfRange
 	 */
-	public abstract void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	}
 	
 	/**
 	 * Called only on channel messages.  Unlike handleCommand this does NOT check if the command is prefixed by the command prefix.
@@ -54,7 +56,9 @@ public abstract class AbstractListener extends ListenerAdapter
 	 * @param command
 	 * @param args
 	 */
-	public abstract void handleMessage(String sender, MessageEvent event, String command, String[] args);
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
+		
+	}
 	
 	/**
 	 * Called on channel messages, and queries, the event does NOT have any channel information regardless of the origin.
@@ -65,7 +69,8 @@ public abstract class AbstractListener extends ListenerAdapter
 	 * @param command
 	 * @param copyOfRange
 	 */
-	public abstract void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange);
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	}
 
 	@Override
 	public void onMessage(final MessageEvent event) {
