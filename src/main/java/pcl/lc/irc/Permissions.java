@@ -87,13 +87,13 @@ public class Permissions {
 	}
 
 	public static boolean isOp(PircBotX sourceBot, User user) {
+		//long startTime = System.currentTimeMillis();
 		String nsRegistration = "";
 		if (Account.userCache.containsKey(user.getUserId()) && Account.userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
 			nsRegistration = Account.userCache.get(user.getUserId()).getValue();
 			IRCBot.log.debug(user.getNick() + " is cached");
 		} else {
 			IRCBot.log.debug(user.getNick() + " is NOT cached");
-			user.isVerified();
 			try {
 				sourceBot.sendRaw().rawLine("WHOIS " + user.getNick() + " " + user.getNick());
 				WaitForQueue waitForQueue = new WaitForQueue(sourceBot);
@@ -107,11 +107,15 @@ public class Permissions {
 			}
 			if (!nsRegistration.isEmpty()) {
 				Calendar future = Calendar.getInstance();
-				future.add(Calendar.MINUTE,10);
+				//future.add(Calendar.MINUTE,10);
+				future.add(Calendar.SECOND,10);
 				Account.userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
-				IRCBot.log.debug(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.toString());
+				IRCBot.log.debug(user.getUserId().toString() + " added to cache: " + nsRegistration + " expires at " + future.getTime().toString());
 			}
 		}
+		//long endTime = System.currentTimeMillis();
+
+		//System.out.println("That took " + (endTime - startTime) + " milliseconds");
 		if (IRCBot.instance.getOps().contains(nsRegistration)) {
 			return true;
 		} else {
