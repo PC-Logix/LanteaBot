@@ -222,20 +222,9 @@ public class xkcd extends AbstractListener {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					IRCBot.getInstance().sendMessage(target, "Random XKCD Comic: " + newurl);
+					Helper.sendMessage(target, "Random XKCD Comic: " + newurl);
 				}
 			}
 		}
-	}
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-
 	}
 }

@@ -141,10 +141,4 @@ public class Seen extends AbstractListener {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-		
-	}
 }

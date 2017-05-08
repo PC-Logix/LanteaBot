@@ -57,10 +57,4 @@ public class Rot13 extends AbstractListener {
 		target = Helper.getTarget(event);
 		rot.tryExecute(command, nick, target, event, copyOfRange);
 	}
-
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }

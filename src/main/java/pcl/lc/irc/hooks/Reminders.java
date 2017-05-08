@@ -147,10 +147,4 @@ public class Reminders extends AbstractListener {
 		remind.tryExecute(command, nick, target, event, copyOfRange);
 		reminders.tryExecute(command, nick, target, event, copyOfRange);
 	}
-
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
 }

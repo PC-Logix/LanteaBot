@@ -107,12 +107,6 @@ public class Announcements extends AbstractListener {
 		local_command_reload.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
-
 	private static void setConfig() {
 		InputStream input = null;
 

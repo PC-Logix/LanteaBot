@@ -153,19 +153,7 @@ public class JNLuaSandbox extends AbstractListener {
 			}
 
 			initLua();
-			IRCBot.getInstance().sendMessage(target, "Sandbox reset");
+			Helper.sendMessage(target, "Sandbox reset");
 		}
-	}
-
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-
 	}
 }

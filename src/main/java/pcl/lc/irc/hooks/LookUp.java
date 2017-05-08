@@ -69,10 +69,4 @@ public class LookUp extends AbstractListener {
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		target = Helper.getTarget(event);
 		local_command_lookup.tryExecute(command, nick, target, event, copyOfRange);
-	}
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {}
-}
+	}}

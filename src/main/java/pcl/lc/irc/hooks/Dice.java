@@ -44,16 +44,4 @@ public class Dice extends AbstractListener {
 		target = Helper.getTarget(event);
 		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
-
-	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		// TODO Auto-generated method stub
-		
-	}
 }
