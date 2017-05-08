@@ -87,9 +87,10 @@ public class Permissions {
 	}
 
 	public static boolean isOp(PircBotX sourceBot, User user) {
-		boolean debug = false;
 		long startTime = System.currentTimeMillis();
 		String nsRegistration = "";
+
+		System.out.println(user.isVerified());
 		if (Account.userCache.containsKey(user.getUserId()) && Account.userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
 			nsRegistration = Account.userCache.get(user.getUserId()).getValue();
 			IRCBot.log.debug(user.getNick() + " is cached");
@@ -108,7 +109,7 @@ public class Permissions {
 			}
 			if (!nsRegistration.isEmpty()) {
 				Calendar future = Calendar.getInstance();
-				if (!debug)
+				if (!IRCBot.getDebug())
 					future.add(Calendar.MINUTE,10);
 				else
 					future.add(Calendar.SECOND,10);
@@ -117,7 +118,7 @@ public class Permissions {
 			}
 		}
 		long endTime = System.currentTimeMillis();
-		if (debug)
+		if (IRCBot.getDebug())
 			System.out.println("That took " + (endTime - startTime) + " milliseconds");
 		if (IRCBot.instance.getOps().contains(nsRegistration)) {
 			return true;

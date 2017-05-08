@@ -143,7 +143,8 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onServerResponse(final ServerResponseEvent event) {
-		//System.out.println(event.getCode());
+		if (!IRCBot.getDebug())
+			System.out.println(event.getCode());
 		if(event.getCode() == 352) {
 			//System.out.println(event.getParsedResponse());
 			Object nick = event.getParsedResponse().toArray()[5];
@@ -178,15 +179,18 @@ public class GenericEventListener extends ListenerAdapter {
 
 	@Override
 	public void onUnknown(final UnknownEvent event) {
-		//System.out.println("UnknownEvent: "+ event.getLine());
+		if (!IRCBot.getDebug())
+			System.out.println("UnknownEvent: "+ event.getLine());
 		if(event.getLine().contains("ACCOUNT")) {
 			String nick = event.getLine().substring(event.getLine().indexOf(":") + 1, event.getLine().indexOf("!"));
 			if(event.getLine().split("\\s")[2].equals("*")) {
-				IRCBot.authed.remove(nick);
+				if (!IRCBot.getDebug())
+					IRCBot.authed.remove(nick);
 				System.out.println(nick + " Logged out");
 			} else {
 				IRCBot.authed.put(nick, event.getLine().split("\\s")[2].toString());
-				System.out.println(nick + " Logged in");
+				if (!IRCBot.getDebug())
+					System.out.println(nick + " Logged in");
 			}
 		}
 	}

@@ -79,6 +79,9 @@ public class Config {
 		            "@versionRevision@",
 		            "@versionBuild@"
 		    );
+		    if (VERSION.getMajor() == -1) {
+		    	IRCBot.setDebug(true);
+		    }
 			Config.config.setVersion("MichiBot Build# " + VERSION);
 			input = new FileInputStream(file);
 			// load a properties file
@@ -139,9 +142,11 @@ public class Config {
 				Config.config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
 			} 
 			if (Config.enableSSL.equals("true")) {
-				Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString()).setSocketFactory(new UtilSSLSocketFactory().disableDiffieHellman().trustAllCertificates());
+				Config.config.addServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()))
+			    .setSocketFactory(new UtilSSLSocketFactory().trustAllCertificates()).setServerPassword(Config.botConfig.get("serverpass").toString());
 			} else {
-				Config.config.setServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()), Config.botConfig.get("serverpass").toString());
+				Config.config.addServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()))
+			    .setServerPassword(Config.botConfig.get("serverpass").toString());
 			}
 
 		} catch (IOException ex) {

@@ -292,6 +292,10 @@ public class IRCBot {
 	public static void setDebug(boolean b) {
 		isDebug = b;
 	}
+	
+	public static boolean getDebug() {
+		return isDebug;
+	}
 
 	/**
 	 * Use Premissions.isOp
