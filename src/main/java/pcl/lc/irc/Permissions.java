@@ -89,7 +89,8 @@ public class Permissions {
 	public static boolean isOp(PircBotX sourceBot, User user) {
 		long startTime = System.currentTimeMillis();
 		String nsRegistration = "";
-		System.out.println(Thread.currentThread().getStackTrace()[2].getClassName() +"#"+ Thread.currentThread().getStackTrace()[2].getMethodName());
+		if (IRCBot.getDebug())
+			System.out.println(Thread.currentThread().getStackTrace()[2].getClassName() +"#"+ Thread.currentThread().getStackTrace()[2].getMethodName());
 		if (Account.userCache.containsKey(user.getUserId()) && Account.userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
 			nsRegistration = Account.userCache.get(user.getUserId()).getValue();
 			Calendar future = Calendar.getInstance();
