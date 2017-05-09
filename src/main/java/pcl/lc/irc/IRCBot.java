@@ -1,6 +1,9 @@
 package pcl.lc.irc;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.*;
@@ -26,6 +29,7 @@ import pcl.lc.httpd.httpd;
 import pcl.lc.irc.job.TaskScheduler;
 import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.Database;
+import pcl.lc.utils.InputThread;
 
 public class IRCBot {
 
@@ -41,12 +45,17 @@ public class IRCBot {
 			return size() > MAX_MESSAGES;
 		}
 	};
-	public static WAEngine engine = new WAEngine();
+	
+	//Keep a list of invites recieved
 	public static HashMap<String, String> invites = new HashMap<String, String>();
+	//Keep a list of users, and what server they're connected from
 	public static HashMap<String, String> users = new HashMap<String, String>();
+	//Keep a list of authed users, this list is cleared on a timer set in Permissions.java
 	public static HashMap<String, String> authed = new HashMap<String,String>();
+	//List of bot admins
 	public static HashMap<String, Integer> admins = new HashMap<String,Integer>();
 	private final List<String> ops = new ArrayList<>();
+	//List of ignored users
 	public static ArrayList<String> ignoredUsers = new ArrayList<String>();
 	public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 	public static String ournick = null;
@@ -201,8 +210,12 @@ public class IRCBot {
 			}
 			scheduler = new TaskScheduler();
 			scheduler.start();
+
+			InputThread input = new InputThread();
+			input.start();
+			
 			bot = new PircBotX(Config.config.buildConfiguration());
-			bot.startBot();
+			bot.startBot();		
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
