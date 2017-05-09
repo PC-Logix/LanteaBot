@@ -27,6 +27,7 @@ import pcl.lc.irc.IRCBot;
  */
 @SuppressWarnings("rawtypes")
 public class WolframAlpha extends ListenerAdapter {
+	WAEngine engine = new WAEngine();
 	public WolframAlpha() {
 		IRCBot.registerCommand("wa", "Sends the query to Wolfram Alpha, this is a early dev command, and replies via Query");
 	}
@@ -45,7 +46,7 @@ public class WolframAlpha extends ListenerAdapter {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					if (Config.botConfig.containsKey("WolframAPI")) {
 						String apiKey = Config.botConfig.get("WolframAPI").toString();
-						WAEngine engine = IRCBot.engine;
+
 						engine.setAppID(apiKey);
 				        engine.addFormat("plaintext");
 				        WAQuery query = engine.createQuery();
