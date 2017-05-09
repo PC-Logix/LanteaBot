@@ -46,8 +46,7 @@ public class Permissions {
 			NSAccount = Account.getAccount(u, (MessageEvent) event);
 			target = ((MessageEvent) event).getChannel().getName();
 		} else if (event instanceof PrivateMessageEvent) {
-			NSAccount = Account.getAccount(u, (PrivateMessageEvent) event);
-			target = "";
+			return 0;
 		}
 		if (NSAccount == null) {
 			return 0;
