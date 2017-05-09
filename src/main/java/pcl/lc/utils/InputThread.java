@@ -32,7 +32,7 @@ public class InputThread extends Thread
 				split[0] = "";
 				StringBuilder builder = new StringBuilder();
 				for(String s : split) {
-				    builder.append(s);
+				    builder.append(s + " ");
 				}
 				String message = builder.toString();
 				if (command.equals("msg")) {
