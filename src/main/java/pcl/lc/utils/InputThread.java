@@ -45,9 +45,9 @@ public class InputThread extends Thread
 				}
 				String message = builder.toString();
 				if (command.equals("msg")) {
-					Helper.sendMessage(target, message);
+					Helper.sendMessageRaw(target, message);
 				}else if (command.equals("act")) {
-					Helper.sendAction(target, message);
+					Helper.sendActionRaw(target, message);
 				}
 				//System.out.println(reader.readLine());
 			} catch (IOException e) {

@@ -245,6 +245,26 @@ public class Helper {
 		return(millis + epoch);
 	}
 
+	public static void sendMessageRaw(String target, String message) {
+		IRCBot.bot.sendIRC().message(target, message);
+		List<String> list = new ArrayList<String>();
+		list.add(target);
+		list.add(IRCBot.getOurNick());
+		list.add(message);
+		IRCBot.messages.put(UUID.randomUUID(), list);
+		IRCBot.log.info("--> " + target + " " + IRCBot.getOurNick() + " " + message);
+	}
+	
+	public static void sendActionRaw(String target, String message) {
+		IRCBot.bot.sendIRC().message(target, message);
+		List<String> list = new ArrayList<String>();
+		list.add(target);
+		list.add(IRCBot.getOurNick());
+		list.add("* " + message);
+		IRCBot.messages.put(UUID.randomUUID(), list);
+		IRCBot.bot.sendIRC().message(target, "\u0001ACTION " + message + "\u0001");
+		IRCBot.log.info("--> " + " " + target + " " + message);	}
+	
 	public static void sendMessage(String target, String message) {
 		sendMessage(target, message, null);
 	}
@@ -274,7 +294,7 @@ public class Helper {
 			IRCBot.bot.sendIRC().message(target, targetUser + message);
 			List<String> list = new ArrayList<String>();
 			list.add(target);
-			list.add(targetUser.replaceAll("\\p{C}", ""));
+			list.add(targetUser.replace(": ", "").replaceAll("\\p{C}", ""));
 			list.add(message);
 			IRCBot.messages.put(UUID.randomUUID(), list);
 			IRCBot.log.info("--> " + target + " " + targetUser.replaceAll("\\p{C}", "") + " " + message);
@@ -490,6 +510,7 @@ public class Helper {
 	}
 
 	public static boolean doInterractWith(String target) {
+		IRCBot.log.info(target.toLowerCase());
 		if (target.toLowerCase().contains(IRCBot.getOurNick().toLowerCase()))
 			return false;
 		switch (target.toLowerCase()) {
