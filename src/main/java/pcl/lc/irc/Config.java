@@ -123,7 +123,7 @@ public class Config {
 				System.setProperty("socksProxyPort",Config.proxyport);
 			}
 
-			Config.config.setName(Config.nick).setLogin("lb");
+			Config.config.setRealName(Config.nick).setName(Config.nick).setLogin(Config.nick);
 			Config.config.setAutoNickChange(true);
 			Config.config.setCapEnabled(true);
 			Config.config.setAutoReconnect(true);
@@ -141,6 +141,7 @@ public class Config {
 			if (Config.enableTLS.equals("true")) {
 				Config.config.addCapHandler(new TLSCapHandler(new UtilSSLSocketFactory().trustAllCertificates(), true));
 			} 
+			Config.config.setSnapshotsEnabled(false);
 			if (Config.enableSSL.equals("true")) {
 				Config.config.addServer(Config.botConfig.get("server").toString(), Integer.parseInt(Config.botConfig.get("serverport").toString()))
 			    .setSocketFactory(new UtilSSLSocketFactory().trustAllCertificates()).setServerPassword(Config.botConfig.get("serverpass").toString());
