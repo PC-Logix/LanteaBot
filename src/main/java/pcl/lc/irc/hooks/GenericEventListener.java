@@ -17,6 +17,7 @@ import org.pircbotx.hooks.events.NickChangeEvent;
 import org.pircbotx.hooks.events.PingEvent;
 import org.pircbotx.hooks.events.ServerResponseEvent;
 import org.pircbotx.hooks.types.GenericCTCPEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
@@ -36,7 +37,14 @@ public class GenericEventListener extends ListenerAdapter {
 		System.out.println("onPing listener loaded");
 	}
 
-
+	@SuppressWarnings({ "unchecked" })
+	@Override
+	public void onGenericMessage(final GenericMessageEvent event) throws Exception {
+		super.onGenericMessage(event);
+		if (!(event instanceof MessageEvent))
+			IRCBot.log.info("<-- Query: " + event.getUser().getNick() + ": " + event.getMessage());
+	}
+	
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
