@@ -11,6 +11,7 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
 import org.pircbotx.hooks.events.WhoisEvent;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
@@ -39,14 +40,22 @@ public class Permissions {
 	}
 
 	public static int getPermLevel(User u, GenericMessageEvent event) {
-		String NSAccount = Account.getAccount(u, (MessageEvent) event);
+		String target = "";
+		String NSAccount = "";
+		if (event instanceof MessageEvent) {
+			NSAccount = Account.getAccount(u, (MessageEvent) event);
+			target = ((MessageEvent) event).getChannel().getName();
+		} else if (event instanceof PrivateMessageEvent) {
+			NSAccount = Account.getAccount(u, (PrivateMessageEvent) event);
+			target = "";
+		}
 		if (NSAccount == null) {
 			return 0;
 		}
 		try {
 			PreparedStatement getPerm = Database.getPreparedStatement("getUserPerms");
 			getPerm.setString(1, NSAccount);
-			getPerm.setString(2, ((MessageEvent) event).getChannel().getName());
+			getPerm.setString(2, target);
 
 			ResultSet results = getPerm.executeQuery();
 			if (results.next()) {
