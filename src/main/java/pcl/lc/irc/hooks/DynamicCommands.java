@@ -85,17 +85,33 @@ public class DynamicCommands extends AbstractListener {
       IRCBot.log.info("An error occurred while processing this command");
     }
   }
-
+	public String chan;
+	public String target = null;
   @Override
   public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-    // TODO Auto-generated method stub
-
+	  String prefix = Config.commandprefix;
+	  target = Helper.getTarget(event);
+	  try {
+          PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
+          getCommand.setString(1, command.replace(prefix, "").toLowerCase());
+          ResultSet command1 = getCommand.executeQuery();
+          if (command1.next()) {
+            String msg = MessageFormat.format(command1.getString(1), copyOfRange);
+            event.getBot().sendIRC().message(target, msg);
+          }
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("An error occurred while processing this command");
+        }
   }
 
   @Override
   public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-    String prefix = Config.commandprefix;
+    
     String ourinput = event.getMessage().toLowerCase().trim();
+    chan = event.getChannel().getName();
+	target = Helper.getTarget(event);
     local_command_addhelp.tryExecute(command, sender, event.getChannel().getName(), event, args);
     if (ourinput.length() > 1) {
       if (!IRCBot.isIgnored(event.getUser().getNick())) {
@@ -140,21 +156,6 @@ public class DynamicCommands extends AbstractListener {
                 e.printStackTrace();
                 event.respond("An error occurred while processing this command");
               }
-            }
-          }
-          else {
-            try {
-              PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
-              getCommand.setString(1, command.replace(prefix, "").toLowerCase());
-              ResultSet command1 = getCommand.executeQuery();
-              if (command1.next()) {
-                String msg = MessageFormat.format(command1.getString(1), args);
-                event.getBot().sendIRC().message(event.getChannel().getName(), msg);
-              }
-            }
-            catch (Exception e) {
-              e.printStackTrace();
-              System.out.println("An error occurred while processing this command");
             }
           }
         }
