@@ -281,7 +281,8 @@ public class Command {
 			{
 				message = message + " " + aCopyOfRange;
 			}
-			message = message.trim();
+			//message = message.trim();
+			message = message.replaceAll("^\\s+", "");
 			this.onExecuteSuccess(this, nick, target, event, message);
 		} else {
 			this.onExecuteFail(this, nick, target, shouldExecute);

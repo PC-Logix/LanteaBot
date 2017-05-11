@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
@@ -34,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +198,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_remove.registerAlias("rem");
+		sub_command_remove.registerAlias("del");
 		sub_command_preserve = new Command("preserve", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -239,7 +242,7 @@ public class Inventory extends AbstractListener {
 					PreparedStatement getFav = Database.getPreparedStatement("getFavouriteItem");
 					ResultSet fav = getFav.executeQuery();
 					if (fav.next()) {
-						Helper.sendMessage(target, "My favourite item is " + fav.getString(2) + " added by " + fav.getString(5), nick);
+						Helper.sendMessage(target, "My favourite item is " + fav.getString(2) + Colors.NORMAL + " added by " + fav.getString(5), nick);
 					} else {
 						Helper.sendMessage(target, "I have no favourite item right now.", nick);
 					}
@@ -275,17 +278,6 @@ public class Inventory extends AbstractListener {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
-				/*try {
-					PreparedStatement getAllQuotes = Database.getPreparedStatement("getAllQuotes");
-					ResultSet results = getAllQuotes.executeQuery();
-					while (results.next()) {
-						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
-					}
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}*/
 			}
 			
 			String navData = "";
@@ -324,7 +316,7 @@ public class Inventory extends AbstractListener {
 				statement = Database.getPreparedStatement("getRandomItemNonFavourite");
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next())
-				return new Item(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getBoolean(4), resultSet.getString(5), resultSet.getInt(6));
+				return new Item(resultSet.getInt(1), resultSet.getString(2) + Colors.NORMAL, resultSet.getInt(3), resultSet.getBoolean(4), resultSet.getString(5), resultSet.getInt(6));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -525,9 +517,9 @@ public class Inventory extends AbstractListener {
 				addItem.setLong(5, new Timestamp(System.currentTimeMillis()).getTime());
 				if (addItem.executeUpdate() > 0) {
 					if (favourite)
-						return "summons '" + item + "' and adds to " + Helper.parseSelfReferral("his") + " inventory. I love this! This is my new favourite thing!";
+						return "summons '" + item + Colors.NORMAL + "' and adds to " + Helper.parseSelfReferral("his") + " inventory. I love this! This is my new favourite thing!";
 					else
-						return "summons '" + item + "' and adds to " + Helper.parseSelfReferral("his") + " inventory. " + getUsesIndicator(uses);
+						return "summons '" + item + Colors.NORMAL + "' and adds to " + Helper.parseSelfReferral("his") + " inventory. " + getUsesIndicator(uses);
 				}
 				else {
 					return "Wrong things happened! (1)";

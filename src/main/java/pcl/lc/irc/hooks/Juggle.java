@@ -3,6 +3,7 @@
  */
 package pcl.lc.irc.hooks;
 
+import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
@@ -52,7 +53,7 @@ public class Juggle extends AbstractListener {
 							dropped++;
 							int damage = Helper.getRandomInt(1, 5);
 							String dust = item.damage(damage);
-							Helper.sendAction(target, "drops " + item.getName() + " which takes " + damage + " damage" + dust);
+							Helper.sendAction(target, "drops " + item.getName() + Colors.NORMAL + " which takes " + damage + " damage" + dust);
 						}
 					}
 				}

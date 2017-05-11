@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import org.pircbotx.Colors;
+
 /**
  * Collection of Item instances
  * Created by Forecaster on 12/03/2017 for the LanteaBot project.
@@ -54,11 +56,11 @@ public class ItemCollection {
 		String items = "";
 		for (int i = 0; i < this.items.size(); i++) {
 			if (i == 0)
-				items += this.items.get(i).getName();
+				items += this.items.get(i).getName() + Colors.NORMAL;
 			else if (i == (this.items.size() - 1))
-				items += " & " + this.items.get(i).getName();
+				items += " & " + this.items.get(i).getName() + Colors.NORMAL;
 			else
-				items += ", " + this.items.get(i).getName();
+				items += ", " + this.items.get(i).getName() + Colors.NORMAL;
 		}
 		return items;
 	}
