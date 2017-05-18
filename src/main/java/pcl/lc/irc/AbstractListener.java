@@ -36,7 +36,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	 */
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 	}
-	
+
 	/**
 	 * Called on channel messages, and queries, the event does NOT have any channel information regardless of the origin.
 	 * Checks if the command is prefixed with the current command prefix
@@ -47,7 +47,7 @@ public abstract class AbstractListener extends ListenerAdapter
 	 */
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 	}
-	
+
 	/**
 	 * Called only on channel messages.  Unlike handleCommand this does NOT check if the command is prefixed by the command prefix.
 	 * This is useful for triggering on random words said in a message.
@@ -57,9 +57,9 @@ public abstract class AbstractListener extends ListenerAdapter
 	 * @param args
 	 */
 	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		
+
 	}
-	
+
 	/**
 	 * Called on channel messages, and queries, the event does NOT have any channel information regardless of the origin.
 	 * Does NOT check if the command is prefixed with the current command prefix
@@ -79,20 +79,21 @@ public abstract class AbstractListener extends ListenerAdapter
 			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
 				handleCommand(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
-		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
+		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")"))) {
 			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
 			if (!IRCBot.isIgnored(sender.replaceAll("\\p{C}", ""))) {
-				handleMessage(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
-				handleCommand(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
+				if (splitMessage[1].startsWith(Config.commandprefix)) {
+					handleCommand(sender.replaceAll("\\p{C}", ""), event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
+				}
+				handleMessage(sender.replaceAll("\\p{C}", ""), event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 			}
 		} else {
 			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
-				String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
-				handleMessage(sender.replaceAll("\\p{C}", ""), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
+				handleMessage(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
 		}
 	}
-	
+
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
 		String[] splitMessage = event.getMessage().split(" ");

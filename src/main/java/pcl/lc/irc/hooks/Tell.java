@@ -92,7 +92,6 @@ public class Tell extends AbstractListener {
                 SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
                 f.setTimeZone(TimeZone.getTimeZone("UTC"));
                 String messageOut = StringUtils.join(copyOfRange," ", 1, copyOfRange.length) + " on " + f.format(new Date()) + " UTC";
-                System.out.println(messageOut);
                 addTell.setString(1, sender);
                 addTell.setString(2, recipient.toLowerCase());
                 addTell.setString(3, channel);
@@ -117,7 +116,7 @@ public class Tell extends AbstractListener {
 	            checkTells.setString(1, nick.toLowerCase());
 	            ResultSet results = checkTells.executeQuery();
 	            while (results.next()) {
-	            	event.getBot().sendIRC().message("Corded", nick.replace("@", "") +": " + results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
+	            	Helper.sendMessage("Corded", nick.replace("@", "") +": " + results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
 	            }
 	            PreparedStatement clearTells = Database.getPreparedStatement("removeTells");
 	            clearTells.setString(1, nick.toLowerCase());
@@ -137,9 +136,4 @@ public class Tell extends AbstractListener {
             e.printStackTrace();
         }
     }
-	
-	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		//System.out.println(nick);
-	}
 }
