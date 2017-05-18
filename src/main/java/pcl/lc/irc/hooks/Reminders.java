@@ -43,7 +43,7 @@ public class Reminders extends AbstractListener {
 					try {
 						PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
 						addReminder.setString(1, target);
-						if (nick.equals("Corded")) {
+						if (event.getUser().getNick().equals("Corded")) {
 							nick = "@" + nick;
 						}
 						addReminder.setString(2, nick.replaceAll("​", ""));
