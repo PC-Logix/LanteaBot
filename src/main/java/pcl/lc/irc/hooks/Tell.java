@@ -15,6 +15,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Database;
+import pcl.lc.utils.Helper;
 
 //Author: smbarbour
 
@@ -109,17 +110,36 @@ public class Tell extends AbstractListener {
 	@Override
     public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
         try {
-            PreparedStatement checkTells = Database.getPreparedStatement("getTells");
-            checkTells.setString(1, sender.toLowerCase());
-            ResultSet results = checkTells.executeQuery();
-            while (results.next()) {
-                event.getBot().sendIRC().notice(sender, results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
-            }
-            PreparedStatement clearTells = Database.getPreparedStatement("removeTells");
-            clearTells.setString(1, sender.toLowerCase());
-            clearTells.execute();
+        	String nick = "";
+			if (event.getUser().getNick().equals("Corded") || event.getUser().getNick().equals("Corded-Test")) {
+				nick = "@" + sender;
+	            PreparedStatement checkTells = Database.getPreparedStatement("getTells");
+	            checkTells.setString(1, nick.toLowerCase());
+	            ResultSet results = checkTells.executeQuery();
+	            while (results.next()) {
+	            	event.getBot().sendIRC().message("Corded", nick.replace("@", "") +": " + results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
+	            }
+	            PreparedStatement clearTells = Database.getPreparedStatement("removeTells");
+	            clearTells.setString(1, nick.toLowerCase());
+	            clearTells.execute();
+			} else {
+	            PreparedStatement checkTells = Database.getPreparedStatement("getTells");
+	            checkTells.setString(1, sender.toLowerCase());
+	            ResultSet results = checkTells.executeQuery();
+	            while (results.next()) {
+	                event.getBot().sendIRC().notice(sender, results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
+	            }
+	            PreparedStatement clearTells = Database.getPreparedStatement("removeTells");
+	            clearTells.setString(1, sender.toLowerCase());
+	            clearTells.execute();
+			}
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+	
+	@Override
+	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+		//System.out.println(nick);
+	}
 }
