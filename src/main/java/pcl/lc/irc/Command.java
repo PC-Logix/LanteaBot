@@ -261,7 +261,7 @@ public class Command {
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
 			return false;
-		else if (shouldExecute == 0) {
+		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, 4)) {
 			this.updateLastExecution();
 			if (!ignore_sub_commands && params.size() > 0) {
 				String firstParam = params.get(0);
