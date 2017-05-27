@@ -173,7 +173,7 @@ public class Inventory extends AbstractListener {
 				else {
 					params = params.replaceAll("[.!?,‽]$", "");
 					if (params.length() > 0)
-						Helper.sendAction(target, addItem(params, nick));
+						Helper.sendAction(target, addItem(params, nick, false, true));
 					else
 						Helper.sendAction(target, "adds nothing to " + Helper.parseSelfReferral("his") + " inventory.");
 				}
@@ -439,23 +439,36 @@ public class Inventory extends AbstractListener {
 		return addItem(item.getName(), item.getAdded_by());
 	}
 
-	private static String addItem(String item) {
-		return addItem(item, null, false);
+	public static String addItem(String item) {
+		return addItem(item, null, false, false);
 	}
 
-	private static String addItem(String item, String added_by) {
-		return addItem(item, added_by, false);
+	public static String addItem(String item, String added_by, boolean override_duplicate_check) {
+		return addItem(item, added_by, override_duplicate_check, false);
 	}
 
-	private static String addItem(String item, String added_by, boolean override_duplicate_check) {
+	public static String addItem(String item, String added_by) {
+		return addItem(item, added_by, false, false);
+	}
+
+	public static String addItem(String item, String added_by, boolean override_duplicate_check, boolean blob_instead_of_decline) {
 		if (item.contains(IRCBot.ournick + "'s") || !item.contains(IRCBot.ournick)) {
 			try {
 				PreparedStatement getItemByName = Database.getPreparedStatement("getItemByName");
 				getItemByName.setString(1, item);
 
 				ResultSet result = getItemByName.executeQuery();
-				if (!override_duplicate_check && result.next()) {
+				if (!override_duplicate_check && !blob_instead_of_decline && result.next()) {
 					return "already has one of those.";
+				} else if (blob_instead_of_decline && result.next()) {
+					Inventory.removeItem(new Item(item));
+					Item has_blob = null;
+					try {
+						has_blob = new Item("Massive Blob");
+					} catch (Exception ignored) {}
+					if (has_blob == null)
+						Inventory.addItem("Massive Blob", added_by, true, false);
+					return "watches the summoning misfire and the two identical items merge into a massive, unidentifiable blob";
 				}
 			}
 			catch (Exception e) {
