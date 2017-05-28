@@ -67,7 +67,7 @@ public class Give extends AbstractListener {
 					if (add_attempt.equals("already has one of those."))
 						Helper.sendAction(target, "politely declines, as " + Helper.parseSelfReferral("he's") + " already got one of those");
 					else
-						Helper.sendAction(target, "accepts the " + item_name + " and adds it to " + Helper.parseSelfReferral("his") + " inventory");
+						Helper.sendAction(target, "accepts " + Inventory.fixItemName(item_name, true) + " and adds it to " + Helper.parseSelfReferral("his") + " inventory");
 				}
 			}
 		}; local_command.setHelpText("/give <target> <item>|random - Give <target> <item> if found or random");
