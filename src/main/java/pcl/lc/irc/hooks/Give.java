@@ -62,7 +62,7 @@ public class Give extends AbstractListener {
 					else
 						Helper.sendMessage(target, "Something went wrong (" + removeResult + ")", nick);
 				}
-				else {
+				else if (!item_name.equals(IRCBot.getOurNick())) {
 					String add_attempt = Inventory.addItem(item_name, nick, false, false);
 					if (add_attempt.equals("already has one of those."))
 						Helper.sendAction(target, "politely declines, as " + Helper.parseSelfReferral("he's") + " already got one of those");
