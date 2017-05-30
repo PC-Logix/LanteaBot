@@ -6,7 +6,6 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericChannelUserEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
 import pcl.lc.irc.IRCBot;
 
 import java.io.BufferedReader;
@@ -492,6 +491,19 @@ public class Helper {
 		ArrayList<String> strings = new ArrayList<>();
 		strings.add("Thanks!");
 		strings.add("You're too kind!");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
+	public static String get_care_response() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("No caring detected in the area");
+		strings.add("The tricorder shows 0%, captain");
+		strings.add("Records show zero shits given");
+		strings.add("Scans indicate 0.001 units of caring, with a 0.02% margin of error");
+		strings.add("Earlier instances indicate you do not.");
+		strings.add("Barely even registers on the care-o-meter");
+		strings.add("The needle seems to be stuck below 0");
+		strings.add("Detecting trace amounts of background caring, but nothing significant");
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 

@@ -8,7 +8,6 @@ import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Solicit responses from bot
@@ -82,6 +81,8 @@ public class Responses extends AbstractListener {
       
       respondTo.add(new String[]{"defragments", "tickles"});
 
+      respondTo.add(new String[]{"care", "whocares"});
+
 
       for (String[] str : respondTo) {
         if (event.getMessage().toLowerCase().contains(str[0])) {
@@ -115,15 +116,6 @@ public class Responses extends AbstractListener {
       case "cry":
         Helper.sendMessage(target," ;_;");
         break;
-      case "tonk":
-        long time = new Date().getTime();
-        if (lastTonk != 0)
-          Helper.sendMessage(target, "The last Tonk was " + Helper.timeString(Helper.parseMilliseconds(time - lastTonk), true) + " ago! Your Tonk has been noted.", nick);
-        else
-          Helper.sendMessage(target, "There hadn't been any Tonks yet. I've noted your Tonk.", nick);
-        lastTonk = time;
-        Database.storeJsonData("lasttonk", Long.toString(time));
-        break;
       case "squeak":
         Helper.sendAction(target, "squeaks!");
         break;
@@ -132,6 +124,8 @@ public class Responses extends AbstractListener {
         break;
       case "tickles":
     	  Helper.sendMessage(target, "That tickles!");
+      case "whocares":
+        Helper.sendMessage(target, Helper.get_care_response(), nick);
     }
   }
 }
