@@ -294,7 +294,7 @@ public class Helper {
 			IRCBot.bot.sendIRC().message(target, targetUser + message);
 			List<String> list = new ArrayList<String>();
 			list.add(target);
-			list.add(targetUser.replace(": ", "").replaceAll("\\p{C}", ""));
+			list.add(targetUser.replace(": ", "").replaceAll("\\p{C}", "") != "" ? targetUser.replace(": ", "").replaceAll("\\p{C}", "") : IRCBot.getOurNick());
 			list.add(message);
 			IRCBot.messages.put(UUID.randomUUID(), list);
 			IRCBot.log.info("--> " + target + " " + targetUser.replaceAll("\\p{C}", "") + " " + message);
