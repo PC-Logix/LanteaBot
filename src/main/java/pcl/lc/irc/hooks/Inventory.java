@@ -3,6 +3,11 @@
  */
 package pcl.lc.irc.hooks;
 
+import com.github.kevinsawicki.timeago.TimeAgo;
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -10,13 +15,6 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
-import com.github.kevinsawicki.timeago.TimeAgo;
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.utils.Database;
@@ -24,18 +22,12 @@ import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 import pcl.lc.utils.PasteUtils;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -457,18 +449,27 @@ public class Inventory extends AbstractListener {
 				PreparedStatement getItemByName = Database.getPreparedStatement("getItemByName");
 				getItemByName.setString(1, item);
 
+				System.out.println("Duplicate item!");
 				ResultSet result = getItemByName.executeQuery();
-				if (!override_duplicate_check && !blob_instead_of_decline && result.next()) {
-					return "already has one of those.";
-				} else if (blob_instead_of_decline && result.next()) {
-					Inventory.removeItem(new Item(item));
-					Item has_blob = null;
-					try {
-						has_blob = new Item("Massive Blob");
-					} catch (Exception ignored) {}
-					if (has_blob == null)
-						Inventory.addItem("Massive Blob", added_by, true, false);
-					return "watches the summoning misfire and the two identical items merge into a massive, unidentifiable blob";
+				if (result.next()) {
+					if (!override_duplicate_check) {
+						if (!blob_instead_of_decline)
+							return "already has a few of those.";
+						else if (result.getBoolean(4) || result.getInt(3) == -1)
+							return "watches the summoning fizzle";
+						else {
+							Inventory.removeItem(new Item(item));
+							Item has_blob = null;
+							try {
+								has_blob = new Item("Massive Blob");
+							} catch (Exception ignored) {
+								System.out.println("No blob found");
+							}
+							if (has_blob == null)
+								Inventory.addItem("Massive Blob", added_by, true, false);
+							return "watches the summoning misfire and the two identical items merge into a massive, unidentifiable blob";
+						}
+					}
 				}
 			}
 			catch (Exception e) {

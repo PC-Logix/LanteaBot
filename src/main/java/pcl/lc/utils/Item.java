@@ -18,23 +18,19 @@ public class Item {
 	private String added_by;
 	private int added;
 
-	public Item(String name) {
-		try {
-			PreparedStatement statement = Database.getPreparedStatement("getItemByName");
-			statement.setString(1, name);
-			ResultSet resultSet = statement.executeQuery();
-			if (resultSet.next()) {
-				this.id = resultSet.getInt(1);
-				this.name = resultSet.getString(2);
-				this.uses_left = resultSet.getInt(3);
-				this.is_favourite = resultSet.getBoolean(4);
-				this.added_by = resultSet.getString(5);
-				this.added = resultSet.getInt(6);
-			} else {
-				throw new Exception("No item '" + name + "' found");
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+	public Item(String name) throws Exception {
+		PreparedStatement statement = Database.getPreparedStatement("getItemByName");
+		statement.setString(1, name);
+		ResultSet resultSet = statement.executeQuery();
+		if (resultSet.next()) {
+			this.id = resultSet.getInt(1);
+			this.name = resultSet.getString(2);
+			this.uses_left = resultSet.getInt(3);
+			this.is_favourite = resultSet.getBoolean(4);
+			this.added_by = resultSet.getString(5);
+			this.added = resultSet.getInt(6);
+		} else {
+			throw new Exception("No item '" + name + "' found");
 		}
 	}
 
