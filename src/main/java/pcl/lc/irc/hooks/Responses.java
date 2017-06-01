@@ -124,6 +124,7 @@ public class Responses extends AbstractListener {
         break;
       case "tickles":
     	  Helper.sendMessage(target, "That tickles!");
+    	  break;
       case "whocares":
         Helper.sendMessage(target, Helper.get_care_response(), nick);
     }
