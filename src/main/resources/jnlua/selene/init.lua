@@ -6,7 +6,6 @@ Author: Vexatos
 --------
 -- Utils
 --------
-
 local function checkArg(n, have, ...)
   have = type(have)
   local function check(want, ...)
@@ -183,7 +182,7 @@ local function checkFunc(n, have, ...)
 end
 
 local function switch(o, ...)
-  for i, f in ipairs({...}) do
+  for i, f in ipairs({ ... }) do
     checkFunc(i + 1, f, 1)
     if type(f) == "table" then
       local fm = getmetatable(f)
@@ -280,10 +279,9 @@ smt.__tostring = smt.__call
 --------
 -- Initialization functions
 --------
-
 local function new(...)
   local t = ...
-  if #{...} > 1 or type(t) ~= "table" then t = {...} end
+  if #{ ... } > 1 or type(t) ~= "table" then t = { ... } end
   t = t or {}
   local newObj = {}
   for i, j in pairs(_Table) do
@@ -295,7 +293,7 @@ local function new(...)
 end
 
 local function newOptional(...)
-  return new({...})
+  return new({ ... })
 end
 
 local function newStringList(s)
@@ -374,7 +372,7 @@ end
 
 local function newWrappedTable(...)
   local t = ...
-  if #{...} > 1 then t = {...} end
+  if #{ ... } > 1 then t = { ... } end
   if type(t) == "string" then
     return newString(t)
   else
@@ -390,7 +388,7 @@ mt.__concat = function(first, second)
   local fType = tblType(first)
   if fType == "map" and type(second) == "table" then
     local merged = shallowcopy(first._tbl)
-    for k,v in lpairs(second) do
+    for k, v in lpairs(second) do
       merged[k] = v
     end
     return newListOrMap(merged)
@@ -405,7 +403,7 @@ local function concatOnCondition(first, second, cond)
   local fType = tblType(first)
   if (fType == "list" or fType == "stringlist") and cond(second) then
     local merged = shallowcopy(first._tbl)
-    for _,v in ipairs(second) do
+    for _, v in ipairs(second) do
       table.insert(merged, v)
     end
     return newListOrMap(merged)
@@ -906,7 +904,6 @@ end
 --------
 -- Bulk data operations on stringlists
 --------
-
 local function strl_filter(self, f)
   checkType(1, self, "stringlist")
   checkFunc(2, f)
@@ -962,7 +959,6 @@ end
 --------
 -- Bulk data operations on strings
 --------
-
 local function wrap_emptystring(self)
   return ""
 end
@@ -1216,10 +1212,14 @@ end
 -- Parsing
 --------
 
-local parser = _selene_parser_
-_selene_parser_ = nil
+local selene = {}
+
+do
+  selene.parser = _selene_parser_
+end
+
 local function parse(chunk, stripcomments)
-  return parser.parse(chunk, stripcomments)
+  return selene.parser.parse(chunk, stripcomments)
 end
 
 --------
@@ -1396,7 +1396,7 @@ local function loadSelene(env, lvMode)
   if env._selene and env._selene.liveMode then
     env._selene.oldload = env.load
     env.load = function(ld, src, mv, loadenv)
-      if env._selene and env._selene.liveMode then
+      if env._selene and env._selene.liveMode and env._selene.isLoaded then
         if type(ld) == "function" then
           local s = ""
           local nws = ld()
@@ -1480,8 +1480,6 @@ if _selene and not _selene.isLoaded and _selene.doAutoload then
   loadSelene(_G or _ENV)
 end
 
-local selene = {}
-selene.parser = parser
 selene.parse = parse
 selene.load = loadSelene
 selene.unload = unloadSelene
