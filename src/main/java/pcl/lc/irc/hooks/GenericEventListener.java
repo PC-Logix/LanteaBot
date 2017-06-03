@@ -2,25 +2,18 @@
  * 
  */
 package pcl.lc.irc.hooks;
+
+import org.apache.commons.lang3.StringUtils;
+import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.*;
+import org.pircbotx.hooks.types.GenericCTCPEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.irc.Config;
+import pcl.lc.irc.IRCBot;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.hooks.events.*;
-import org.pircbotx.hooks.ListenerAdapter;
-import org.pircbotx.hooks.events.ConnectEvent;
-import org.pircbotx.hooks.events.InviteEvent;
-import org.pircbotx.hooks.events.JoinEvent;
-import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.events.NickChangeEvent;
-import org.pircbotx.hooks.events.PingEvent;
-import org.pircbotx.hooks.events.ServerResponseEvent;
-import org.pircbotx.hooks.types.GenericCTCPEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
-
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
 
 /**
  * @author Caitlyn
@@ -50,7 +43,7 @@ public class GenericEventListener extends ListenerAdapter {
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
 		IRCBot.log.info("<-- Msg: " + event.getChannel().getName().toString() + " " + event.getUser().getNick() + ": " + event.getMessage());
-		if (!IRCBot.isIgnored(event.getUser().getNick())) {
+		if (!IRCBot.isIgnored(event.getUser().getNick()) && !event.getMessage().startsWith(Config.commandprefix)) {
 			String[] firstWord = StringUtils.split(event.getMessage());
 			String triggerWord = firstWord[0];
 			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(Config.commandprefix) && IRCBot.commands.containsKey(triggerWord.replace(Config.commandprefix, ""))) {

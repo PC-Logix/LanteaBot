@@ -507,6 +507,23 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
+	public static String get_garbage() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("into a garbage compactor");
+		strings.add("into a black hole");
+		strings.add("in the Sarlacc pit");
+		strings.add("in the tentacle pit");
+		strings.add("in the incinerator");
+		strings.add("into a portal to the moon");
+		strings.add("into a stargate to deep space");
+		strings.add("a forgotten box in somebodies garage");
+		strings.add("into the core of a dying star");
+		strings.add("into a nearby garbage can");
+		strings.add("in a hole with lava in it");
+		strings.add("into the void");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
 	public static String parseSelfReferral(String type) {
 		switch (type) {
 			case "his": 				//Takes a swing with his axe
