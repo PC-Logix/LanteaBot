@@ -1216,7 +1216,8 @@ end
 -- Parsing
 --------
 
-local parser = require("selene.parser")
+local parser = _selene_parser_
+_selene_parser_ = nil
 local function parse(chunk, stripcomments)
   return parser.parse(chunk, stripcomments)
 end

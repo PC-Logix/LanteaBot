@@ -27,12 +27,16 @@ public class JNLuaSandbox extends AbstractListener {
 	private StringBuilder output;
 
 	private String luasb;
+	private String sparser;
 	private String selene;
 
 	public JNLuaSandbox() throws IOException {
 		super();
 		InputStream luain = getClass().getResourceAsStream("/jnlua/luasb.lua");
 		luasb = CharStreams.toString(new InputStreamReader(luain, Charsets.UTF_8));
+
+		InputStream sparserin = getClass().getResourceAsStream("/jnlua/selene/parser.lua");
+		sparser = CharStreams.toString(new InputStreamReader(sparserin, Charsets.UTF_8));
 
 		InputStream selenein = getClass().getResourceAsStream("/jnlua/selene/init.lua");
 		selene = CharStreams.toString(new InputStreamReader(selenein, Charsets.UTF_8));
@@ -91,10 +95,12 @@ public class JNLuaSandbox extends AbstractListener {
 		});
 		luaState.setGlobal("print");
 		
-		//THIS LINE DIES
-		luaState.load(selene, "=selene");
 		luaState.load(luasb, "=luasb");
 		luaState.call(0, 0);
+
+		System.out.println(runScriptInSandbox("_selene_parser_ =(function()\n" + sparser + "\nend)()"));
+		System.out.println(runScriptInSandbox("if _selene_parser_ then selene = (function()\n" + selene + "\nend)() end"));
+		System.out.println(runScriptInSandbox("if selene then selene.load() end"));
 	}
 
 	static String runScriptInSandbox(String script) {

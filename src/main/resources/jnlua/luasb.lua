@@ -6,7 +6,6 @@ local env={
 	next=next,
 	pairs=pairs,
 	pcall=pcall,
-	print=print,
 	rawequal=rawequal,
 	rawget=rawget,
 	rawlen=rawlen,
@@ -41,6 +40,14 @@ local function ctype(n, ...)
 	else
 		return "no value"
 	end
+end
+
+local function filter(...)
+	local args=table.pack(...)
+	for i=1, args.n do
+		args[i]=tostring(args[i])
+	end
+	return table.unpack(args, 1, args.n)
 end
 
 env.load=function(...)
@@ -93,6 +100,10 @@ env.setmetatable=function(...)
 	end
 end
 
+env.print=function(...)
+	return print(filter(...))
+end
+
 function lua(code)
 	local fn, err=load("return "..code, "=main", "t", env)
 	if not fn then
@@ -101,7 +112,7 @@ function lua(code)
 			return err
 		end
 	end
-	local cofn=coroutine.create(fn)
+	local cofn=coroutine.create(function() return filter(fn()) end)
 	debug.sethook(cofn, function()
 		debug.sethook(cofn)
 		debug.sethook(cofn, function()
