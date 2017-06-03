@@ -43,6 +43,8 @@ public class JNLuaSandbox extends AbstractListener {
 
 		initLua();
 		IRCBot.registerCommand("lua", "Lua sandbox");
+		IRCBot.registerCommand("selene", "Runs selene code %blame Vexatos");
+		IRCBot.registerCommand("sel", "Runs selene code %blame Vexatos");
 		IRCBot.registerCommand("resetlua", "Resets the lua sandbox");
 	}
 
@@ -142,6 +144,24 @@ public class JNLuaSandbox extends AbstractListener {
 
 			output = new StringBuilder();
 			output.append(runScriptInSandbox(message));
+			// Trim last newline
+			if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
+				output.setLength(output.length()-1);
+			String luaOut = output.toString().replace("\n", " | ").replace("\r", "");
+
+			if (luaOut.length() > 0)
+				Helper.sendMessage(target , luaOut);
+
+		} else if (command.equals(Config.commandprefix + "selene") || command.equals(Config.commandprefix + "sel")) {
+			target = Helper.getTarget(event);
+			String message = "";
+			for (String aCopyOfRange : copyOfRange)
+			{
+				message = message + " " + aCopyOfRange;
+			}
+
+			output = new StringBuilder();
+			output.append(runScriptInSandbox(runScriptInSandbox("selene.parse([==========["+message+"]==========])")));
 			// Trim last newline
 			if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
 				output.setLength(output.length()-1);
