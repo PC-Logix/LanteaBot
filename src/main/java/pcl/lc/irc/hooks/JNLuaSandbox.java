@@ -100,9 +100,9 @@ public class JNLuaSandbox extends AbstractListener {
 		luaState.load(luasb, "=luasb");
 		luaState.call(0, 0);
 
-		System.out.println(runScriptInSandbox("_selene_parser_ =(function()\n" + sparser + "\nend)()"));
-		System.out.println(runScriptInSandbox("if _selene_parser_ then selene = (function()\n" + selene + "\nend)() end"));
-		System.out.println(runScriptInSandbox("if selene then selene.load() end"));
+		System.out.println(runScriptInSandbox("selene = (function()\n" + selene + "\nend)()"));
+		System.out.println(runScriptInSandbox("selene.parser =(function()\n" + sparser + "\nend)()"));
+		System.out.println(runScriptInSandbox("selene.load()"));
 	}
 
 	static String runScriptInSandbox(String script) {

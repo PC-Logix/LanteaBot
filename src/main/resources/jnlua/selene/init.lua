@@ -244,7 +244,7 @@ local fmt = {
     return fnc._fnc(...)
   end,
   __len = function(fnc)
-    return #fnc._fnc
+    return parCount(fnc)
   end,
   __pairs = function(fnc)
     return pairs(fnc._fnc)
@@ -1215,7 +1215,8 @@ end
 local selene = {}
 
 do
-  selene.parser = _selene_parser_
+  local s, p = pcall(require, "selene.parser") -- This might not be possible in every environment
+  selene.parser = s and p or nil
 end
 
 local function parse(chunk, stripcomments)
