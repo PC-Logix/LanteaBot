@@ -105,22 +105,25 @@ env.print=function(...)
 end
 
 function lua(code)
-	local fn, err=load("return "..code, "=main", "t", env)
-	if not fn then
-		fn, err=load(code, "=main", "t", env)
-		if not fn then
-			return err
-		end
-	end
-	local cofn=coroutine.create(function() return filter(fn()) end)
-	debug.sethook(cofn, function()
-		debug.sethook(cofn)
-		debug.sethook(cofn, function()
-			error("script took too long", 0)
-		end, "", 1)
-		error("script took too long", 0)
-	end, "", 20000)
-	return select(2, coroutine.resume(cofn))
+  local fn, err=load("return "..code, "=main", "t", env)
+  if not fn then
+    fn, err=load(code, "=main", "t", env)
+    if not fn then
+      return err
+    end
+  end
+  local cofn=coroutine.create(function() return filter(fn()) end)
+  local time = os.time()
+  debug.sethook(cofn, function()
+    if os.time() - time > 3 then
+      debug.sethook(cofn)
+      debug.sethook(cofn, function()
+        error("script took too long", 0)
+      end, "", 1)
+      error("script took too long", 0)
+    end
+  end, "", 20000)
+  return select(2, coroutine.resume(cofn))
 end
 
 lua("function uhm(a, r)local b='' for i=1,#a,(r or 0.5)do local c=i+(math.random()>=(i%1)and 1 or 0)b=b..a:sub(c, c)end return b end")
