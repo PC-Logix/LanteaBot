@@ -307,6 +307,12 @@ public class Helper {
 		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + message);
 	}
 
+
+	public static void sendNotice(String target, String cannotExecuteReason, String nick) {
+		IRCBot.bot.sendIRC().notice(target, cannotExecuteReason);
+		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + cannotExecuteReason);
+	}
+	
 	public static class TimeObject {
 		private long years;
 		private long months;
