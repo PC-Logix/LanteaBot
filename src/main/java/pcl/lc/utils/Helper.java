@@ -1,5 +1,6 @@
 package pcl.lc.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -265,19 +266,19 @@ public class Helper {
 		IRCBot.log.info("--> " + " " + target + " " + message);	}
 	
 	public static void sendMessage(String target, String message) {
-		sendMessage(target.trim(), message.trim(), null);
+		sendMessage(target.trim(), message, null);
 	}
 
 	public static void sendMessage(String target, String message, String targetUser, boolean overridePaste){
-		sendMessage(target.trim(), message.trim(), targetUser, PasteUtils.Formats.NONE, overridePaste);
+		sendMessage(target.trim(), message, targetUser, PasteUtils.Formats.NONE, overridePaste);
 	}
 
 	public static void sendMessage(String target, String message, String targetUser, Enum format){
-		sendMessage(target.trim(), message.trim(), targetUser, format, false);
+		sendMessage(target.trim(), message, targetUser, format, false);
 	}
 
 	public static void sendMessage(String target, String message, String targetUser){
-		sendMessage(target.trim(), message.trim(), targetUser, PasteUtils.Formats.NONE, false);
+		sendMessage(target.trim(), message, targetUser, PasteUtils.Formats.NONE, false);
 	}
 	
 	public static void sendMessage(String target, String message, String targetUser, Enum format, boolean overridePaste){
@@ -285,7 +286,7 @@ public class Helper {
 			targetUser = Helper.antiPing(targetUser) + ": ";
 		else
 			targetUser = "";
-		message = message.trim();
+		message = StringUtils.strip(message);
 		if (message.length() > 200 && !overridePaste) {
 			String pasteURL = PasteUtils.paste(message, format);
 			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);

@@ -1,12 +1,27 @@
 import org.apache.tools.ant.filters.ReplaceTokens
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'de.undercouch:gradle-download-task:3.2.0'
+    }
+}
+
+
 repositories {
     mavenCentral()
     maven {
     	url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
+    } 
 }
 apply plugin: 'java'
+apply plugin: 'de.undercouch.download'
+
+import de.undercouch.gradle.tasks.download.Download
 compileJava.options.encoding = 'UTF-8'
+
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
 }
@@ -35,6 +50,7 @@ dependencies {
   compile 'com.sangupta:imgur-client:0.2.0'
   compile 'com.github.kevinsawicki:timeago:1.0.1'
 }
+
 version = "${versionObj.toString()}"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -94,6 +110,15 @@ task processVersion (type: Copy) {
             versionBuild: versionObj.getBuild()
     ])
 }
+task downloadMultipleFiles(type: Download) {
+    src([
+        'https://raw.githubusercontent.com/Vexatos/Selene/master/selene/lib/selene/init.lua',
+        'https://raw.githubusercontent.com/Vexatos/Selene/master/selene/lib/selene/parser.lua'
+    ])
+    dest "src/main/resources/jnlua/selene"
+}
+processVersion.dependsOn downloadMultipleFiles
+
 // tell the compileJava task to compile the filtered source 
 compileJava.source = sourceSets.filtered.java
 compileJava.dependsOn processVersion
