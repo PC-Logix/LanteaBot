@@ -103,7 +103,7 @@ public class Permissions {
 			nsRegistration = Account.userCache.get(user.getUserId()).getValue();
 			Calendar future = Calendar.getInstance();
 			if (!IRCBot.getDebug())
-				future.add(Calendar.MINUTE,10);
+				future.add(Calendar.HOUR,10);
 			else
 				future.add(Calendar.SECOND,30);
 			Account.userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
