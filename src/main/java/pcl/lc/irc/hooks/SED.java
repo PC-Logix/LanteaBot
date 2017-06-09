@@ -50,7 +50,7 @@ public class SED extends ListenerAdapter {
 		if (!event.getChannel().getName().isEmpty()) {
 			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase().replaceFirst(Pattern.quote(prefix), "");
-			String trigger = ourinput.replaceAll("[^a-zA-Z0-9 ]", "").trim();
+			String trigger = ourinput./*replaceAll("[^a-zA-Z0-9 ]", "").*/trim();
 			String trigger2 = event.getMessage().toLowerCase().trim();
 			if (trigger.length() > 1) {
 				String messageEvent = event.getMessage();
@@ -73,7 +73,7 @@ public class SED extends ListenerAdapter {
 							List<Entry<UUID, List<String>>> messageList = new ArrayList<>(IRCBot.messages.entrySet());
 							for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 								if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
-									if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
+									//if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 										try {
 											reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
 											if (reply.length() >= 380) {
@@ -99,8 +99,9 @@ public class SED extends ListenerAdapter {
 										}
 									}
 								}
-							}
-							return;
+							//}
+							//event.respond("wut");
+							//return;
 						}
 					} 
 				}else {
