@@ -293,6 +293,6 @@ public class Command {
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {}
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {}
 	public void onExecuteFail(Command command, String nick, String target, long timeout) {
-		Helper.sendMessage(target, getCannotExecuteReason(timeout), nick);
+		Helper.sendNotice(nick, getCannotExecuteReason(timeout), nick);
 	}
 }
