@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,23 +31,23 @@ import pcl.lc.utils.Helper;
 public class SED extends ListenerAdapter {
 	List<String> enabledChannels = new ArrayList<String>();
 	public SED() {
-        try {
-            PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
-            checkHook.setString(1, "SED");
-            ResultSet results = checkHook.executeQuery();
-            while (results.next()) {
-            	enabledChannels.add(results.getString("channel"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
+			checkHook.setString(1, "SED");
+			ResultSet results = checkHook.executeQuery();
+			while (results.next()) {
+				enabledChannels.add(results.getString("channel"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
-		
+
 		if (!event.getChannel().getName().isEmpty()) {
 			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase().replaceFirst(Pattern.quote(prefix), "");
@@ -74,32 +75,34 @@ public class SED extends ListenerAdapter {
 							for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 								if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
 									//if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
-										try {
-											reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
-											if (reply.length() >= 380) {
-												reply = reply.substring(0, 380);
-											}
-											//Helper.sendMessage(event.getChannel().getName().toString(), reply, "<" + entry.getValue().get(1) + ">".replace(": ", ""));
-											String newMessage;
-											if (reply.length() > 1 && reply.charAt(0) == 1 && reply.charAt(reply.length() - 1) == 1)
-												newMessage = "* " + entry.getValue().get(1) + " " + reply.substring(1, reply.length() - 1);
-											else
-												newMessage = "<" + entry.getValue().get(1) + "> " + reply;
-											event.getChannel().send().message(newMessage);
-											List<String> list = new ArrayList<String>();
-											list.add(event.getChannel().getName().toString());
-											list.add(entry.getValue().get(1));
-											list.add(reply);
-											IRCBot.messages.put(UUID.randomUUID(), list);
-											IRCBot.log.info("--> " + event.getChannel().getName().toString() + " " + newMessage);
-											return;
-										} catch(IllegalArgumentException e) {
-											event.respond("Invalid regex " + e.getMessage());
-											return;
+									try {
+										reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
+										if (reply.length() >= 380) {
+											reply = reply.substring(0, 380);
 										}
+										//Helper.sendMessage(event.getChannel().getName().toString(), reply, "<" + entry.getValue().get(1) + ">".replace(": ", ""));
+										String newMessage;
+										if (reply.length() > 1 && reply.charAt(0) == 1 && reply.charAt(reply.length() - 1) == 1)
+											newMessage = "* " + entry.getValue().get(1) + " " + reply.substring(1, reply.length() - 1);
+										else
+											newMessage = "<" + entry.getValue().get(1) + "> " + reply;
+										if (reply.equals(entry.getValue().get(2))) {
+											continue;
+										}
+										event.getChannel().send().message(newMessage);
+										List<String> list = new ArrayList<String>();
+										list.add(event.getChannel().getName().toString());
+										list.add(entry.getValue().get(1));
+										list.add(reply);
+										IRCBot.messages.put(UUID.randomUUID(), list);
+										IRCBot.log.info("--> " + event.getChannel().getName().toString() + " " + newMessage);
+										return;
+									} catch(IllegalArgumentException e) {
+										event.respond("Invalid regex " + e.getMessage());
+										return;
 									}
 								}
-							//}
+							}
 							//event.respond("wut");
 							//return;
 						}
