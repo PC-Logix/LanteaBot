@@ -531,6 +531,15 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
+	public static String get_hurt_reponse() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("ow");
+		strings.add("ouch");
+		strings.add("owies");
+		strings.add("ohno D:");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
 	public static String parseSelfReferral(String type) {
 		switch (type) {
 			case "his": 				//Takes a swing with his axe

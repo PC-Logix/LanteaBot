@@ -87,6 +87,10 @@ public class Responses extends AbstractListener {
 
       respondTo.add(new String[]{"do the flop", "flop"});
 
+      respondTo.add(new String[]{"baps", "hurt"});
+      respondTo.add(new String[]{"slaps", "hurt"});
+      respondTo.add(new String[]{"hits", "hurt"});
+
       for (String[] str : respondTo) {
         if (event.getMessage().toLowerCase().contains(str[0])) {
           respond(str[1], nick);
@@ -136,6 +140,9 @@ public class Responses extends AbstractListener {
         break;
       case "flop":
         Helper.sendAction(target, "does the flop");
+        break;
+      case "hurt":
+        Helper.sendMessage(target, Helper.get_hurt_reponse(), nick);
     }
   }
 }
