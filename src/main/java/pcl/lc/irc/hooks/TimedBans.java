@@ -103,7 +103,7 @@ public class TimedBans extends AbstractListener {
 				addTimedBan.setString(2, args[0]);
 				for(User u : event.getChannel().getUsers()) {
 					if (u.getNick().equals(args[0])) {
-						hostname = u.getHostmask();
+						hostname = u.getHostname();
 					}
 				}
 				addTimedBan.setString(3, "*!*@"+hostname);
