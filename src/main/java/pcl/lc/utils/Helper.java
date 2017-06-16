@@ -246,7 +246,6 @@ public class Helper {
 	}
 
 	public static void sendMessageRaw(String target, String message) {
-		IRCBot.bot.sendIRC().message(target, message);
 		List<String> list = new ArrayList<String>();
 		list.add(target);
 		list.add(IRCBot.getOurNick());
@@ -256,7 +255,6 @@ public class Helper {
 	}
 	
 	public static void sendActionRaw(String target, String message) {
-		IRCBot.bot.sendIRC().message(target, message);
 		List<String> list = new ArrayList<String>();
 		list.add(target);
 		list.add(IRCBot.getOurNick());
