@@ -3,8 +3,16 @@
  */
 package pcl.lc.irc.hooks;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.Map.Entry;
+
+import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import com.google.common.collect.Lists;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
@@ -25,7 +33,17 @@ public class Rot13 extends AbstractListener {
 		rot = new Command("rot13", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendMessage(target, rot13(params), nick);
+				if (params.equals("^")) {
+					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+						if (entry.getValue().get(0).equals(target)) {
+							Helper.sendMessage(target, rot13(Colors.removeFormattingAndColors(entry.getValue().get(2))), nick);
+							return;
+						}
+					}
+				} else {
+					Helper.sendMessage(target, rot13(Colors.removeFormattingAndColors(params)), nick);
+				}
 			}
 		};
 		rot.setHelpText("Applies the ROT13 cipher to the supplied text");

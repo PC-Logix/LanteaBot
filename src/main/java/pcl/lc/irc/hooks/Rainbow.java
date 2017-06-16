@@ -3,9 +3,16 @@
  */
 package pcl.lc.irc.hooks;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.Map.Entry;
+
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import com.google.common.collect.Lists;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
@@ -54,6 +61,17 @@ public class Rainbow extends AbstractListener {
 		local_command = new Command("rainbow", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.equals("^")) {
+		            List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+		            for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+		              if (entry.getValue().get(0).equals(target)) {
+		                Helper.sendMessage(target, makeRainbow(entry.getValue().get(2)), nick);
+		                return;
+		              }
+		            }
+				} else {
+					Helper.sendMessage(target, makeRainbow(params), nick);
+				}
 				Helper.sendMessage(target, makeRainbow(params), nick);
 			}
 		}; local_command.setHelpText("Replies with a rainbow version of the supplied text");

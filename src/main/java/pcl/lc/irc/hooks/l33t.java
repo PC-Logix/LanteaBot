@@ -3,8 +3,15 @@
  */
 package pcl.lc.irc.hooks;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.Map.Entry;
+
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import com.google.common.collect.Lists;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
@@ -69,7 +76,17 @@ public class l33t extends AbstractListener {
 		local_command = new Command("1337", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendMessage(target ,  toLeet(params), nick);
+				if (params.equals("^")) {
+		            List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+		            for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+		              if (entry.getValue().get(0).equals(target)) {
+		                Helper.sendMessage(target, toLeet(entry.getValue().get(2)), nick);
+		                return;
+		              }
+		            }
+				} else {
+					Helper.sendMessage(target ,  toLeet(params), nick);
+				}
 			}
 		}; local_command.setHelpText("Returns 1337-speak of input text");
 		local_command.registerAlias("leet");

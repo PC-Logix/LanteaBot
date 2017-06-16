@@ -29,7 +29,7 @@ def versionObj = new Version(major: 1, minor: 1, revision: 0)
 dependencies { 
   compile 'org.pircbotx:pircbotx:2.1'
   compile fileTree(dir: 'lib', includes: ['*.jar'])
-  compile 'org.unix4j:unix4j-command:0.3'
+  compile 'org.unix4j:unix4j-command:0.4'
   compile 'org.reflections:reflections:0.9.9-RC1'
   compile 'org.apache.commons:commons-lang3:3.3.2'
   compile 'com.google.code.gson:gson:2.1'
