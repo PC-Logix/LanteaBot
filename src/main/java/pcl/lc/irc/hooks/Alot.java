@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -92,11 +93,18 @@ public class Alot extends ListenerAdapter {
 					}
 				}
 			}
-
+			String[] luaResp = {
+					"lua*",
+					"It's lua, not LUA. Name not an acronym."
+					};
 			if (enabledChannels.contains(event.getChannel().getName().toString())) {
 				if (s.length() > 1) {
 					if (s.toLowerCase().matches(".*\\b" + Pattern.quote("alot") + "\\b.*")){
 						IRCBot.bot.sendIRC().message(event.getChannel().getName().toString(), "ALOT: http://tinyurl.com/y42zurt");
+					}else if (s.matches(".*\\b" + Pattern.quote("LUA") + "\\b.*")){
+						Random random = new Random();
+						int index = random.nextInt(luaResp.length);
+						IRCBot.bot.sendIRC().message(event.getChannel().getName().toString(), luaResp[index]);
 					}
 				}
 			}			
