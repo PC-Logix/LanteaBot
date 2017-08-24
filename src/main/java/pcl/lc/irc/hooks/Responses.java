@@ -50,6 +50,12 @@ public class Responses extends AbstractListener {
       respondTo.add(new String[]{"thanks", "welcome"});
       respondTo.add(new String[]{"thank you", "welcome"});
 
+      respondTo.add(new String[]{"hi", "hello"});
+      respondTo.add(new String[]{"hello", "hello"});
+      respondTo.add(new String[]{"hai", "hello"});
+      respondTo.add(new String[]{"good morning", "hello"});
+      respondTo.add(new String[]{"good afternoon", "hello"});
+
       respondTo.add(new String[]{"seriously", "surprise"});
       respondTo.add(new String[]{"srsly", "surprise"});
       respondTo.add(new String[]{"how dare you", "surprise"});
@@ -143,6 +149,8 @@ public class Responses extends AbstractListener {
         break;
       case "hurt":
         Helper.sendMessage(target, Helper.get_hurt_reponse(), nick);
+      case "hello":
+        Helper.sendMessage(target, "Hello " + nick);
     }
   }
 }
