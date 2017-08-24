@@ -155,7 +155,6 @@ public class Drama extends AbstractListener {
 	}
 
 	public String dramaParse(String dramaString) {
-		String originalString = dramaString;
 		for (Map.Entry<String, String[]> entry : words.entrySet()) {
 			String[] demWords = entry.getValue();
 			String key = entry.getKey();
