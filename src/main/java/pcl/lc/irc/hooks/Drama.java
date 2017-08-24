@@ -145,11 +145,9 @@ public class Drama extends AbstractListener {
 		local_command = new Command("drama", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					Random random = new Random();
-					int index = random.nextInt(sentences.length);
-					Helper.sendMessage(target, dramaParse(sentences[index]), nick);
-				}
+				Random random = new Random();
+				int index = random.nextInt(sentences.length);
+				Helper.sendMessage(target, dramaParse(sentences[index]), nick);
 			}
 		};
 		local_command.setHelpText("Generates random drama using Mod Developers, Projects, and other semi random data.");
