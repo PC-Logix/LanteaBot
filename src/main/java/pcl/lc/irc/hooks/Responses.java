@@ -97,8 +97,9 @@ public class Responses extends AbstractListener {
       respondTo.add(new String[]{"slaps", "hurt"});
       respondTo.add(new String[]{"hits", "hurt"});
 
+      String msg = event.getMessage().toLowerCase().replace(IRCBot.getOurNick().toLowerCase(), "");
       for (String[] str : respondTo) {
-        if (event.getMessage().toLowerCase().replaceAll(IRCBot.getOurNick(), "").contains(str[0])) {
+        if (msg.contains(str[0])) {
           respond(str[1], nick);
           break;
         }
