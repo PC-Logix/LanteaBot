@@ -33,7 +33,7 @@ public class SpamDetect extends ListenerAdapter {
 	}
 	TimedHashMap<String, String> newUsers = new TimedHashMap<String, String>(5000, null);
 	public void onJoin(final JoinEvent join) throws Exception {
-		newUsers.put(join.getUser().getNick(), "merp");
+		newUsers.put(join.getUser().getNick(), join.getChannel().getName());
 	}
 	public static boolean isAllUpperCase(String s)
 	{
