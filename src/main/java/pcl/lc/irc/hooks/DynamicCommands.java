@@ -27,7 +27,6 @@ public class DynamicCommands extends AbstractListener {
 
   @Override
   protected void initHook() {
-	Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory ORDER BY Random() LIMIT 1");
     local_command_add = new Command("addcommand", 0);
     IRCBot.registerCommand(local_command_add, "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
     local_command_del = new Command("delcommand", 0);
@@ -89,26 +88,6 @@ public class DynamicCommands extends AbstractListener {
     }
   }
   
-	public static Item getRandomItem() {
-		return getRandomItem(true);
-	}
-
-	public static Item getRandomItem(boolean can_be_favourite) {
-		try {
-			PreparedStatement statement;
-			if (can_be_favourite)
-				statement = Database.getPreparedStatement("getRandomItem");
-			else
-				statement = Database.getPreparedStatement("getRandomItemNonFavourite");
-			ResultSet resultSet = statement.executeQuery();
-			if (resultSet.next())
-				return new Item(resultSet.getInt(1), resultSet.getString(2) + Colors.NORMAL, resultSet.getInt(3), resultSet.getBoolean(4), resultSet.getString(5), resultSet.getInt(6));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-  
 	public String chan;
 	public String target = null;
   @Override
@@ -122,7 +101,7 @@ public class DynamicCommands extends AbstractListener {
           if (command1.next()) {
             String msg = MessageFormat.format(command1.getString(1), copyOfRange);
             if (msg.contains("[randomitem]")) {
-            	msg = msg.replace("[randomitem]", getRandomItem().getName());
+            	msg = msg.replace("[randomitem]", Inventory.getRandomItem().getName());
             }
             event.getBot().sendIRC().message(target, msg);
           }
