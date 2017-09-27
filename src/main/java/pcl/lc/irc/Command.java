@@ -23,38 +23,38 @@ public class Command {
 	private ArrayList<Command> subCommands;
 	private boolean isSubCommand;
 	private boolean isEnabled;
-	private int minPermissionLevel;
+	private String minRank;
 	private String helpText;
 
 	public Command(String command) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, 0);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, null);
 	}
 
 	public Command(String command, Integer rateLimit) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, 0);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, null);
 	}
 
 	public Command(String command, Integer rateLimit, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, true, 0);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, true, null);
 	}
 
-	public Command(String command, Integer rateLimit, int minPermissionLevel) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, minPermissionLevel);
+	public Command(String command, Integer rateLimit, String minRank) {
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, minRank);
 	}
 
-	public Command(String command, Integer rateLimit, boolean isSubCommand, boolean isEnabled, int minPermissionLevel) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, isEnabled, minPermissionLevel);
+	public Command(String command, Integer rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, isEnabled, minRank);
 	}
 
 	public Command(String command, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand, true, 0);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand, true, null);
 	}
 
 	public Command(String command, String className) {
-		this(command, className, 0, false, true, 0);
+		this(command, className, 0, false, true, null);
 	}
 
-	public Command(String command, String className, Integer rateLimit, boolean isSubCommand, boolean isEnabled, int minPermissionLevel) {
+	public Command(String command, String className, Integer rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
 		this.command = command;
 		this.className = className;
 		this.rateLimit = rateLimit;
@@ -63,7 +63,7 @@ public class Command {
 		this.subCommands = new ArrayList<>();
 		this.isSubCommand = isSubCommand;
 		this.isEnabled = isEnabled;
-		this.minPermissionLevel = minPermissionLevel;
+		this.minRank = minRank;
 		this.helpText = "";
 	}
 
@@ -134,7 +134,7 @@ public class Command {
 			return INVALID_COMMAND;
 		if (!this.isEnabled)
 			return DISABLED;
-		if (!Permissions.hasPermission(IRCBot.bot, event, this.minPermissionLevel))
+		if (!Permissions.hasPermission(IRCBot.bot, event, this.minRank))
 			return NO_PERMISSION;
 		if (nick != null && IRCBot.isIgnored(nick))
 			return IGNORED;
@@ -261,7 +261,7 @@ public class Command {
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
 			return false;
-		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, 4)) {
+		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
 			this.updateLastExecution();
 			if (!ignore_sub_commands && params.size() > 0) {
 				String firstParam = params.get(0);

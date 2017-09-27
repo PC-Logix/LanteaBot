@@ -18,25 +18,41 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Account.ExpiringToken;
+import sun.net.www.content.text.Generic;
 
 public class Permissions {
-	public static int ADMIN = 4;
-	public static int USER = 0;
+	public static String MOD = "Moderator";
+	public static String ADMIN = "Admin";
+	// "ranks" contains each of the above permissions in order of magnitude with lowest first, highest level at the end
+	public static String[] ranks = new String[]{
+		MOD,
+		ADMIN,
+	};
 
-	public static boolean hasPermission(PircBotX bot, GenericMessageEvent event, Integer minLevel) {
-		return hasPermission(bot, event.getUser(), event, minLevel);
+	public static boolean hasPermission(PircBotX bot, GenericMessageEvent event, String minRank) {
+		return hasPermission(bot, event.getUser(), event, minRank);
 	}
 
 	public static boolean hasPermission(PircBotX bot, User u) {
 		return hasPermission(bot, u, null, null);
 	}
 
-	public static boolean hasPermission(PircBotX bot, User u, GenericMessageEvent event, Integer minLevel) {
+	public static boolean hasPermission(PircBotX bot, User u, GenericMessageEvent event, String minRank) {
+		if (minRank == null)
+			return true;
 		if (isOp(bot, u))
 			return true;
-		if (event != null && minLevel != null && getPermLevel(u, event) >= minLevel)
+		if (event != null && getPermLevel(u, event) >= getPermLevel(minRank))
 			return true;
 		return false;
+	}
+
+	public static int getPermLevel(String rank) {
+		for (int i = 0; i < ranks.length; i++) {
+			if (ranks[i].equals(rank))
+				return i;
+		}
+		return 0;
 	}
 
 	public static int getPermLevel(User u, GenericMessageEvent event) {
@@ -58,13 +74,56 @@ public class Permissions {
 
 			ResultSet results = getPerm.executeQuery();
 			if (results.next()) {
-				return results.getInt(1);
+				String rank = results.getString(1);
+				for (int i = 0; i < ranks.length; i++) {
+					if (ranks[i].equals(rank))
+						return i;
+				}
+				return 0;
 			} else {
 				return 0;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0;
+		}
+	}
+
+	public static String getRanks() {
+		String ranksString = "";
+		for (String rank : ranks){
+			ranksString += ", " + rank;
+		}
+		return ranksString.replace(", ", "");
+	}
+
+	public static String getRank(GenericMessageEvent event) {
+		User u = event.getUser();
+		String target = "";
+		String NSAccount = "";
+		if (event instanceof MessageEvent) {
+			NSAccount = Account.getAccount(u, (MessageEvent) event);
+			target = ((MessageEvent) event).getChannel().getName();
+		} else if (event instanceof PrivateMessageEvent) {
+			return "";
+		}
+		if (NSAccount == null) {
+			return "";
+		}
+		try {
+			PreparedStatement getPerm = Database.getPreparedStatement("getUserPerms");
+			getPerm.setString(1, NSAccount);
+			getPerm.setString(2, target);
+
+			ResultSet results = getPerm.executeQuery();
+			if (results.next()) {
+				return results.getString(1);
+			} else {
+				return "";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
 		}
 	}
 

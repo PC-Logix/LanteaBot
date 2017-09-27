@@ -120,7 +120,7 @@ public class IRCBot {
 	 */
 	public static void registerCommand(String command, String help, Integer rateLimit) {
 		if (!commands.containsKey(command)) {
-			commands.put(command, new Command(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, 0));
+			commands.put(command, new Command(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, null));
 			helpList.put(command, help);	
 			log.info("Registering Command: " + command);
 		} else {

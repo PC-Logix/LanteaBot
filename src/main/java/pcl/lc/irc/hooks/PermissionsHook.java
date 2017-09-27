@@ -27,7 +27,7 @@ public class PermissionsHook extends AbstractListener {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS IgnoredUers(nick)");		Database.addPreparedStatement("removeOp","DELETE FROM Ops WHERE name = ?;");
 		Database.addPreparedStatement("addOp","REPLACE INTO Ops (name) VALUES (?);");
 		Database.addPreparedStatement("setPermLevel", "INSERT INTO Permissions VALUES(?, ?, ?, ?, ?)");
-		Database.addPreparedStatement("getUserPerms", "SELECT level FROM Permissions WHERE username = ? AND channel = ?");
+		Database.addPreparedStatement("getUserPerms", "SELECT level FROM Permissions WHERE username = ? AND channel = ? OR channel = '*'");
 		Database.addPreparedStatement("getAllUserPerms", "SELECT * FROM Permissions");
 		Database.addPreparedStatement("deleteUserPerm", "DELETE FROM Permissions WHERE username = ?");
 	}

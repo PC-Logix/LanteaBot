@@ -175,7 +175,7 @@ public class Inventory extends AbstractListener {
 		sub_command_remove = new Command("remove", 30000, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4);
+				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
 				int removeResult = removeItem(params, hasPermission, hasPermission);
 				if (removeResult == 0)
 					Helper.sendMessage(target, "Removed item from inventory", nick);
@@ -194,7 +194,7 @@ public class Inventory extends AbstractListener {
 		sub_command_preserve = new Command("preserve", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
+				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
 					try {
 						PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
 						preserveItem.setString(1, params);
@@ -212,7 +212,7 @@ public class Inventory extends AbstractListener {
 		sub_command_unpreserve = new Command("unpreserve", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, 4)) {
+				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
 					try {
 						PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");
 						unPreserveItem.setString(1, params);
