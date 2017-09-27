@@ -1,6 +1,5 @@
 package pcl.lc.irc;
 
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
 
@@ -20,6 +19,7 @@ public class Command {
 	private Integer rateLimit;
 	private long lastExecution;
 	private ArrayList<String> aliases;
+	private ArrayList<String> aliasesFixedArguments;
 	private ArrayList<Command> subCommands;
 	private boolean isSubCommand;
 	private boolean isEnabled;
@@ -60,6 +60,7 @@ public class Command {
 		this.rateLimit = rateLimit;
 		this.lastExecution = 0;
 		this.aliases = new ArrayList<>();
+		this.aliasesFixedArguments = new ArrayList<>();
 		this.subCommands = new ArrayList<>();
 		this.isSubCommand = isSubCommand;
 		this.isEnabled = isEnabled;
@@ -177,13 +178,27 @@ public class Command {
 	}
 
 	public void registerAlias(String alias) {
+		registerAlias(alias, "");
+	}
+
+	public void registerAlias(String alias, ArrayList<String> forcedArgs) {
+		String args = "";
+		for (String arg : forcedArgs)
+			args += arg + " ";
+		args = args.trim();
+		registerAlias(alias, args);
+	}
+
+	public void registerAlias(String alias, String forcedArgs) {
 		if (!this.aliases.contains(alias)){
 			this.aliases.add(alias);
+			this.aliasesFixedArguments.add(forcedArgs);
 		}
 	}
 
 	public void unregisterAlias(String alias) {
 		if (this.aliases.contains(alias)) {
+			this.aliasesFixedArguments.remove(this.aliases.indexOf(alias));
 			this.aliases.remove(alias);
 		}
 	}
@@ -262,6 +277,13 @@ public class Command {
 		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
 			return false;
 		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
+			int aliasIndex = aliases.indexOf(command.replace(Config.commandprefix, ""));
+			if (aliasIndex != -1) {
+				ArrayList<String> forcedParams = new ArrayList<>();
+				forcedParams.addAll(Arrays.asList(this.aliasesFixedArguments.get(aliasIndex).split(" ")));
+				forcedParams.addAll(params);
+				params = forcedParams;
+			}
 			this.updateLastExecution();
 			if (!ignore_sub_commands && params.size() > 0) {
 				String firstParam = params.get(0);
