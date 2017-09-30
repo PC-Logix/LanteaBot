@@ -43,6 +43,7 @@ public class Ping extends AbstractListener {
 			}
 		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
 		ping.registerAlias("p");
+		ping.registerAlias("pi");
 		msp = new Command("msp", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
