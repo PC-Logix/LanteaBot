@@ -3,16 +3,14 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import pcl.lc.irc.*;
+import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
+import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -34,12 +32,14 @@ public class Attack extends AbstractListener {
 		actions.add("shiv");
 		actions.add("strike");
 		actions.add("slap");
+		actions.add("poke");
+		actions.add("prod");
 
 		local_command = new Command("attack", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() == 0) {
-					Helper.sendAction(target, "shrugs and kicks a nearby bucket");
+					Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
 					return;
 				}
 				try
@@ -60,8 +60,11 @@ public class Attack extends AbstractListener {
 					int action;
 					if (actions.indexOf(method.toLowerCase()) != -1)
 						action = actions.indexOf(method.toLowerCase());
-					else
-						action = Helper.getRandomInt(0, actions.size() - 1);
+					else {
+						Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
+						return;
+					}
+						//action = Helper.getRandomInt(0, actions.size() - 1);
 
 					String attackTarget = message.trim();
 
