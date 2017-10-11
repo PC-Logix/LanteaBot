@@ -280,7 +280,8 @@ public class Command {
 			int aliasIndex = aliases.indexOf(command.replace(Config.commandprefix, ""));
 			if (aliasIndex != -1) {
 				ArrayList<String> forcedParams = new ArrayList<>();
-				forcedParams.addAll(Arrays.asList(this.aliasesFixedArguments.get(aliasIndex).split(" ")));
+				if (!this.aliasesFixedArguments.get(aliasIndex).isEmpty())
+					forcedParams.addAll(Arrays.asList(this.aliasesFixedArguments.get(aliasIndex).split(" ")));
 				forcedParams.addAll(params);
 				params = forcedParams;
 			}
