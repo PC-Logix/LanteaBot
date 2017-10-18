@@ -65,17 +65,23 @@ public class SED extends ListenerAdapter {
 
 							String message = event.getMessage();
 							if (!message.substring(message.length() - 2).equals("/g")) {
-								if(!message.substring(message.length() - 2).equals("/i")) {
+								if(!message.substring(message.length() - 2).equalsIgnoreCase("/i")) {
 									if (!message.substring(message.length() - 1).equals("/")) {
 										message = message + "/";
 									}
 								}
+							}
+							if(message.substring(message.length() - 2).equals("/i")) {
+							    int length = message.length();
+							    String capitalizedLetter = message.substring(length - 1, length).toUpperCase();
+							    message = message.substring(0, length - 1) + capitalizedLetter;
 							}
 							List<Entry<UUID, List<String>>> messageList = new ArrayList<>(IRCBot.messages.entrySet());
 							for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 								if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
 									//if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 									try {
+										//System.out.println(message);
 										reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
 										if (reply.length() >= 380) {
 											reply = reply.substring(0, 380);
