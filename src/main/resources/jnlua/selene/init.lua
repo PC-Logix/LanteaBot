@@ -73,7 +73,7 @@ local function isList_t(t)
   local c = 0
   for i in pairs(t) do
     if type(i) ~= "number" or i < 1 then
-      return false
+      return false, i
     end
     c = c + 1
   end
@@ -86,11 +86,11 @@ local function isList(t)
   if tp == "list" or tp == "stringlist" then
     return true
   elseif tp == "map" then
-    return false
+    return false, -1
   elseif tp == "table" then
     return isList_t(t)
   end
-  return false
+  return false, -2
 end
 
 local function checkList(n, have)
@@ -169,10 +169,10 @@ local function checkFunc(n, have, ...)
   local level = 3
 
   local function check(want, ...)
-    checkArg(level, want, "number")
     if not want then
       return false
     else
+      checkArg(level, want, "number")
       level = level + 1
       return haveParCount == want or check(...)
     end
@@ -187,7 +187,7 @@ end
 
 local function switch(o, ...)
   for i, f in ipairs({ ... }) do
-    checkFunc(i + 1, f, 1)
+    checkFunc(i + 1, f, 1, 0)
     if type(f) == "table" then
       local fm = getmetatable(f)
       if fm and fm.applies and fm.applies(o) then
@@ -335,8 +335,9 @@ end
 
 local function newList(...)
   local newObj = new(...)
-  if not isList_t(newObj._tbl) then
-    error("[Selene] could not create list: bad table key: " .. i, 2)
+  local s, i = isList(newObj._tbl)
+  if not s then
+    error("[Selene] could not create list: " .. (i and (i >= 0 and "bad table key: " .. i or (i == -1 and "parameter is not a list-like table" or "parameter is not a table")) or "table length does not match number of entries"), 2)
   end
   setmetatable(newObj, lmt)
   return newObj
@@ -344,7 +345,7 @@ end
 
 local function newListOrMap(...)
   local newObj = new(...)
-  if isList_t(newObj._tbl) then
+  if isList(newObj._tbl) then
     setmetatable(newObj, lmt)
   end
   return newObj

@@ -137,6 +137,9 @@ local function tokenize(value, stripcomments, utime)
       tokens[#tokens][1] = tokens[#tokens][1] .. char
     elseif not quoted and token == "" and ((char == ">" and lambdachars[tokens[#tokens][1]]) or (char == "-" and tokens[#tokens][1] == "<")) then
       tokens[#tokens][1] = tokens[#tokens][1] .. char
+    elseif char == ">" and not quoted and lambdachars[token] then
+      table.insert(tokens, {token .. char, lines})
+      token = ""
     elseif not quoted and char == "." then
       if waiting == false and string.sub(token, #token) == "." then
         token = string.sub(token, 1, #token - 1)
@@ -195,6 +198,15 @@ end
 local varPattern = "^[%a_][%w_]*$"
 --local lambdaParPattern = "("..varPattern..")((%s*,%s*)("..varPattern.."))*"
 
+local function isVar(t)
+  for str in t:gmatch("([^.]+)") do
+    if not str:find(varPattern) then
+      return false
+    end
+  end
+  return true
+end
+
 local function perror(msg, lvl)
   msg = msg or "unknown error"
   lvl = lvl or 1
@@ -231,7 +243,7 @@ end
 local function split(self, sep)
   local t = {}
   local i = 1
-  for str in self:gmatch("([^" .. sep .. "]+)") do
+  for str in self:gmatch(string.format("([^%s]+)", sep)) do
     t[i] = trim(str)
     i = i + 1
   end
@@ -257,7 +269,7 @@ local function findLambda(tokens, i, part, line, stripcomments)
   local step = i - 1
   local inst, step = bracket(tokens, ")", "(", step, "", -1)
 
-  local cond = split(inst, "!")
+  local cond = {string.match(inst, "([^!]*)!(.*)")}
   inst = cond[1] or inst
   local params = split(inst, ",")
 
@@ -388,16 +400,15 @@ local function findForeach(tokens, i, part, line)
 end
 
 local function findAssignmentOperator(tokens, i)
-  local repl = tokens[i][1]:sub(1, #tokens[i][1] - 1)
-  if tokens[i - 1][1]:find(varPattern) then
-    tokens[i][1] = " = " .. tokens[i - 1][1] .. " " .. repl
+  if isVar(tokens[i - 1][1]) then
+    tokens[i][1] = " = " .. tokens[i - 1][1] .. " " .. tokens[i][1]:sub(1, #tokens[i][1] - 1)
     return i, i
   end
   return false
 end
 
 local function findDollarAssignment(tokens, i, part, line)
-  if tokens[i - 1][1]:find(varPattern) then
+  if isVar(tokens[i - 1][1]) then
     tokens[i][1] = " = _selene._new(" .. tokens[i - 1][1] .. ")"
     return i, i
   else
