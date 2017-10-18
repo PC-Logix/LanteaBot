@@ -172,12 +172,6 @@ public class JNLuaSandbox extends AbstractListener {
 
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
 			target = Helper.getTarget(event);
-			String message = "";
-			for (String aCopyOfRange : copyOfRange)
-			{
-				message = message + " " + aCopyOfRange;
-			}
-
 			initLua();
 			Helper.sendMessage(target, "Sandbox reset");
 		}
