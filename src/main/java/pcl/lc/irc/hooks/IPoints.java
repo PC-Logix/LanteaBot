@@ -29,7 +29,54 @@ public class IPoints extends AbstractListener {
 		Database.addPreparedStatement("getPoints", "SELECT Points FROM InternetPoints WHERE nick = ?;");
 		Database.addPreparedStatement("addPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
 	}
+	@Override
+	public void handleMessage(String sender, MessageEvent event, String message, String[] args) {
+		System.out.println(message);
+		Pattern p = Pattern.compile("(.+?)(\\+\\+)");
+		Matcher m = p.matcher(message);
+		if (m.matches() && event.getChannel().getUsersNicks().contains(m.group(1))) {
+			chan = event.getChannel().getName();
+			String recipient = m.group(1);
+			BigDecimal newPoints = BigDecimal.ZERO;
+			if (!sender.equals(recipient)) {
+				try {
+					PreparedStatement addPoints = IRCBot.getInstance().getPreparedStatement("addPoints");
+					PreparedStatement getPoints = IRCBot.getInstance().getPreparedStatement("getPoints");
+					PreparedStatement getPoints2 = IRCBot.getInstance().getPreparedStatement("getPoints");
 
+					if (Account.getAccount(recipient, event) != null) {
+						recipient = Account.getAccount(recipient, event);
+					}
+
+					getPoints.setString(1, recipient);
+					ResultSet points = getPoints.executeQuery();
+					if(points.next()){
+						newPoints = points.getBigDecimal(1).add(new BigDecimal(1));
+					} else {
+						newPoints = new BigDecimal(1);
+					}
+
+					addPoints.setString(1, recipient);
+					addPoints.setBigDecimal(2, newPoints);
+					addPoints.executeUpdate();
+
+					getPoints2.setString(1, recipient);
+					ResultSet points2 = getPoints2.executeQuery();
+					if(points.next()){
+						IRCBot.getInstance().sendMessage(chan, sender + ": " +  recipient + " now has " + points2.getBigDecimal(1) + " points");
+					} else {
+						IRCBot.getInstance().sendMessage(chan, sender + ": " +  "Error getting " + recipient + "'s points");      	
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					IRCBot.getInstance().sendMessage(chan, sender + ": " +  "An error occurred while processing this command");
+				}
+			} else {
+				IRCBot.getInstance().sendMessage(chan, sender + ": " +  "You can not give yourself points.");
+			}
+		}
+	}
+	
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
 		if (command.contains(Config.commandprefix + "+") || command.contains(Config.commandprefix + "points") || command.equals(Config.commandprefix + "points")) {
