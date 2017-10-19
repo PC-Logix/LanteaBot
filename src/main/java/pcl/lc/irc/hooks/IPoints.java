@@ -21,7 +21,6 @@ import pcl.lc.utils.Account;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
-@SuppressWarnings("rawtypes")
 public class IPoints extends AbstractListener {
 	private String target;
 	private Command command_points;
@@ -49,7 +48,7 @@ public class IPoints extends AbstractListener {
 
 				PreparedStatement getPoints = null;
 				try {
-					getPoints = IRCBot.getInstance().getPreparedStatement("getPoints");
+					getPoints = Database.getPreparedStatement("getPoints");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -70,13 +69,13 @@ public class IPoints extends AbstractListener {
 				try {
 					if(points.next()){
 						try {
-							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has " + points.getBigDecimal(1) + " points");
+							Helper.sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has " + points.getBigDecimal(1) + " points");
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					} else {
-						IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has 0 points");
+						Helper.sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has 0 points");
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -88,11 +87,9 @@ public class IPoints extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					System.out.println(params);
-					PreparedStatement setPoints = IRCBot.getInstance().getPreparedStatement("setPoints");
+					PreparedStatement setPoints = Database.getPreparedStatement("setPoints");
 					String[] splitMessage = params.split(" ");
 					String user;
-					System.out.println(splitMessage.length);
 					if (splitMessage[0].isEmpty()) {
 						user = event.getUser().getNick();
 					} else {
@@ -107,11 +104,11 @@ public class IPoints extends AbstractListener {
 					setPoints.setBigDecimal(2, new BigDecimal(0));
 					setPoints.executeUpdate();
 
-					IRCBot.getInstance().sendMessage(target, nick + ": points reset");
+					Helper.sendMessage(target, nick + ": points reset");
 
 				} catch (Exception e) {
 					e.printStackTrace();
-					IRCBot.getInstance().sendMessage(target, nick + ": " +  "An error occurred while processing this command");
+					Helper.sendMessage(target, nick + ": " +  "An error occurred while processing this command");
 				}
 			}
 		}; command_reset_points.setHelpText("Resets a users points, requires Bot Admin");
@@ -120,7 +117,6 @@ public class IPoints extends AbstractListener {
 	}
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String message, String[] args) {
-		System.out.println(message);
 		Pattern p = Pattern.compile("(.+?)(\\+\\+)");
 		Matcher m = p.matcher(message);
 		if (m.matches() && event.getChannel().getUsersNicks().contains(m.group(1))) {
@@ -129,9 +125,9 @@ public class IPoints extends AbstractListener {
 			BigDecimal newPoints = BigDecimal.ZERO;
 			if (!sender.equals(recipient)) {
 				try {
-					PreparedStatement addPoints = IRCBot.getInstance().getPreparedStatement("addPoints");
-					PreparedStatement getPoints = IRCBot.getInstance().getPreparedStatement("getPoints");
-					PreparedStatement getPoints2 = IRCBot.getInstance().getPreparedStatement("getPoints");
+					PreparedStatement addPoints = Database.getPreparedStatement("addPoints");
+					PreparedStatement getPoints = Database.getPreparedStatement("getPoints");
+					PreparedStatement getPoints2 = Database.getPreparedStatement("getPoints");
 
 					if (Account.getAccount(recipient, event) != null) {
 						recipient = Account.getAccount(recipient, event);
@@ -140,9 +136,9 @@ public class IPoints extends AbstractListener {
 					getPoints.setString(1, recipient);
 					ResultSet points = getPoints.executeQuery();
 					if(points.next()){
-						newPoints = points.getBigDecimal(1).add(new BigDecimal(1));
+						newPoints = points.getBigDecimal(1).add(new BigDecimal(1)).abs();
 					} else {
-						newPoints = new BigDecimal(1);
+						newPoints = new BigDecimal(1).abs();
 					}
 
 					addPoints.setString(1, recipient);
@@ -152,16 +148,16 @@ public class IPoints extends AbstractListener {
 					getPoints2.setString(1, recipient);
 					ResultSet points2 = getPoints2.executeQuery();
 					if(points.next()){
-						IRCBot.getInstance().sendMessage(target, sender + ": " +  recipient + " now has " + points2.getBigDecimal(1) + " points");
+						Helper.sendMessage(target, sender + ": " +  recipient + " now has " + points2.getBigDecimal(1) + " points");
 					} else {
-						IRCBot.getInstance().sendMessage(target, sender + ": " +  "Error getting " + recipient + "'s points");      	
+						Helper.sendMessage(target, sender + ": " +  "Error getting " + recipient + "'s points");      	
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					IRCBot.getInstance().sendMessage(target, sender + ": " +  "An error occurred while processing this command");
+					Helper.sendMessage(target, sender + ": " +  "An error occurred while processing this command");
 				}
 			} else {
-				IRCBot.getInstance().sendMessage(target, sender + ": " +  "You can not give yourself points.");
+				Helper.sendMessage(target, sender + ": " +  "You can not give yourself points.");
 			}
 		}
 	}
