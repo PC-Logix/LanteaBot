@@ -172,20 +172,20 @@ public class Admin extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.users.size(), nick);
 			}
-		}; command_usercount.setHelpText("Flushes the hash table used for various things, requires Bot Admin");
+		}; command_usercount.setHelpText("Count users");
 		command_authcount = new Command("authcount", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.authed.size(), nick);
 			}
-		}; command_authcount.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
+		}; command_authcount.setHelpText("Count authed users");
 		command_flushhash = new Command("flushhash", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				IRCBot.messages.clear();
 				Helper.sendMessage(target, "Hashmap size: " + IRCBot.messages.size(), nick);
 			}
-		}; command_flushhash.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
+		}; command_flushhash.setHelpText("Flushes the hash table used for various things, requires Bot Admin");
 		command_flushauth = new Command("flushauth", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -204,7 +204,7 @@ public class Admin extends AbstractListener {
 				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
 				Config.saveProps();
 			}
-		}; command_ignore.setHelpText("Count users");
+		}; command_ignore.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
 		command_unignore = new Command("unignore", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -212,7 +212,7 @@ public class Admin extends AbstractListener {
 				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
 				Config.saveProps();
 			}
-		}; command_unignore.setHelpText("Count authed users");
+		}; command_unignore.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
 		command_ignorelist = new Command("ignorelist", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
