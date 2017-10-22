@@ -123,7 +123,25 @@ public class TimedBans extends AbstractListener {
 				event.getBot().sendIRC().message(event.getChannel().getName(), sender + ": " + "An error occurred while processing this command (" + command + ")");
 			}
 		} else if (command.equals(Config.commandprefix + "tlist")) {
-			//TODO: Actually add this!
+			try {
+				long epoch = System.currentTimeMillis();
+				PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBans");
+				getTimedBans.setLong(1, epoch);
+				ResultSet results = getTimedBans.executeQuery();
+				if (results.next()) {
+					IRCBot.getInstance();
+					if (results.getString(1).equals(event.getChannel().getName())) {
+						if (results.getString(7).equals("ban")){
+							Helper.sendMessage(event.getChannel().getName(), "Timed ban of " + results.getString(2) + " Expires at " + results.getString(4) + ". Placed by: " + results.getString(5));
+						} else {
+							Helper.sendMessage(event.getChannel().getName(), "Timed quiet of " + results.getString(2) + " Expires at " + results.getString(4) + ". Placed by: " + results.getString(5));
+						}
+					}
+				}
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
