@@ -3,8 +3,10 @@ package pcl.lc.irc.hooks;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +31,7 @@ public class TimedBans extends AbstractListener {
 		Database.addUpdateQuery(1, "ALTER TABLE TimedBans ADD type");
 		Database.addPreparedStatement("addTimedBan", "INSERT INTO TimedBans(channel, username, hostmask, expires, placedby, reason, type) VALUES (?,?,?,?,?,?,?);");
 		Database.addPreparedStatement("getTimedBans", "SELECT channel, username, hostmask, expires, placedby, reason, type FROM TimedBans WHERE expires <= ?;");
+		Database.addPreparedStatement("getTimedBansForChannel", "SELECT channel, username, hostmask, expires, placedby, reason, type FROM TimedBans WHERE channel <= ?;");
 		Database.addPreparedStatement("delTimedBan", "DELETE FROM TimedBans WHERE expires = ? AND username = ? AND channel = ? AND type = ?;");
 		IRCBot.registerCommand("tban", "Timed ban: %tban User Time Reason Ex: %tban MGR 24h Spamming");
 		IRCBot.registerCommand("tquiet", "Timed quiet: %tquiet User Time Reason Ex: %tquiet MGR 24h Spamming");
@@ -124,18 +127,23 @@ public class TimedBans extends AbstractListener {
 			}
 		} else if (command.equals(Config.commandprefix + "tlist")) {
 			try {
-				long epoch = System.currentTimeMillis();
-				PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBans");
-				getTimedBans.setLong(1, epoch);
+				PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBansForChannel");
+				getTimedBans.setString(1, event.getChannel().getName());
 				ResultSet results = getTimedBans.executeQuery();
 				if (results.next()) {
 					IRCBot.getInstance();
-					if (results.getString(1).equals(event.getChannel().getName())) {
-						if (results.getString(7).equals("ban")){
-							Helper.sendMessage(event.getChannel().getName(), "Timed ban of " + results.getString(2) + " Expires at " + results.getString(4) + ". Placed by: " + results.getString(5));
-						} else {
-							Helper.sendMessage(event.getChannel().getName(), "Timed quiet of " + results.getString(2) + " Expires at " + results.getString(4) + ". Placed by: " + results.getString(5));
-						}
+					if (results.getString(7).equals("ban")){
+				        Date date = new Date(results.getLong(4));
+				        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				        format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+				        String formatted = format.format(date);
+						Helper.sendMessage(event.getChannel().getName(), "Timed ban of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
+					} else {
+				        Date date = new Date(results.getLong(4));
+				        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				        format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+				        String formatted = format.format(date);
+						Helper.sendMessage(event.getChannel().getName(), "Timed quiet of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
 					}
 				}
 				return;
