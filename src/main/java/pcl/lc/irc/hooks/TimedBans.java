@@ -130,7 +130,7 @@ public class TimedBans extends AbstractListener {
 				PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBansForChannel");
 				getTimedBans.setString(1, event.getChannel().getName());
 				ResultSet results = getTimedBans.executeQuery();
-				if (results.next()) {
+				while (results.next()) {
 					IRCBot.getInstance();
 					if (results.getString(7).equals("ban")){
 				        Date date = new Date(results.getLong(4));
