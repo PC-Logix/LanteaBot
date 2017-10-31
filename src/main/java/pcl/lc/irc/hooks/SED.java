@@ -18,6 +18,7 @@ import org.unix4j.Unix4j;
 
 import com.google.common.collect.Lists;
 
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
@@ -28,7 +29,7 @@ import pcl.lc.utils.Helper;
  *
  */
 @SuppressWarnings("rawtypes")
-public class SED extends ListenerAdapter {
+public class SED extends AbstractListener {
 	List<String> enabledChannels = new ArrayList<String>();
 	public SED() {
 		try {
@@ -45,7 +46,7 @@ public class SED extends ListenerAdapter {
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
+	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
 		super.onMessage(event);
 
 		if (!event.getChannel().getName().isEmpty()) {
@@ -129,7 +130,7 @@ public class SED extends ListenerAdapter {
 					if (triggerWord2.equals(prefix + "sed")) {
 						boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
 						if (isOp || Helper.isChannelOp(event)) {
-							String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
+							//String command = event.getMessage().substring(event.getMessage().indexOf("sed") + 3).trim();
 							if (command.equals("disable")) {
 								if (enabledChannels.contains(event.getChannel().getName())) {
 									try {
@@ -167,5 +168,11 @@ public class SED extends ListenerAdapter {
 				}
 			}			
 		}
+	}
+
+	@Override
+	protected void initHook() {
+		// TODO Auto-generated method stub
+		
 	}
 }
