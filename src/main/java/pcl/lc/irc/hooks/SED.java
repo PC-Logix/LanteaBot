@@ -47,9 +47,7 @@ public class SED extends AbstractListener {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
-		super.onMessage(event);
-
-		if (!event.getChannel().getName().isEmpty()) {
+		//if (!event.getChannel().getName().isEmpty()) {
 			String prefix = Config.commandprefix;
 			String ourinput = event.getMessage().toLowerCase().replaceFirst(Pattern.quote(prefix), "");
 			String trigger = ourinput./*replaceAll("[^a-zA-Z0-9 ]", "").*/trim();
@@ -62,10 +60,9 @@ public class SED extends AbstractListener {
 					messageEvent = event.getMessage();
 				}
 				String reply = null;
-				if (event.getMessage().matches("s/(.+)/(.+)") || event.getMessage().matches(prefix+"s/(.+)/(.+)")) {
-					if (!IRCBot.isIgnored(event.getUser().getNick())) {					
+				if (messageEvent.matches("s/(.+)/(.+)")) {
+					if (!IRCBot.isIgnored(event.getUser().getNick())) {
 						if (enabledChannels.contains(event.getChannel().getName())) {
-
 							String s = messageEvent.substring(messageEvent.indexOf("/") + 1);
 							s = s.substring(0, s.indexOf("/"));
 
@@ -167,7 +164,7 @@ public class SED extends AbstractListener {
 					}
 				}
 			}			
-		}
+		//}
 	}
 
 	@Override
