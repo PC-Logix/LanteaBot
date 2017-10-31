@@ -54,16 +54,26 @@ public class SED extends ListenerAdapter {
 			String trigger = ourinput./*replaceAll("[^a-zA-Z0-9 ]", "").*/trim();
 			String trigger2 = event.getMessage().toLowerCase().trim();
 			if (trigger.length() > 1) {
-				String messageEvent = event.getMessage();
+				String messageEvent;
+				if (event.getMessage().startsWith(prefix)) {
+					messageEvent = event.getMessage().replace(prefix, "");
+				} else {
+					messageEvent = event.getMessage();
+				}
 				String reply = null;
-				if (event.getMessage().matches("s/(.+)/(.+)")) {
+				if (event.getMessage().matches("s/(.+)/(.+)") || event.getMessage().matches(prefix+"s/(.+)/(.+)")) {
 					if (!IRCBot.isIgnored(event.getUser().getNick())) {					
 						if (enabledChannels.contains(event.getChannel().getName())) {
 
 							String s = messageEvent.substring(messageEvent.indexOf("/") + 1);
 							s = s.substring(0, s.indexOf("/"));
 
-							String message = event.getMessage();
+							String message;
+							if (event.getMessage().startsWith(prefix)) {
+								message = event.getMessage().replace(prefix, "");
+							} else {
+								message = event.getMessage();
+							}
 							if (!message.substring(message.length() - 2).equals("/g")) {
 								if(!message.substring(message.length() - 2).equalsIgnoreCase("/i")) {
 									if (!message.substring(message.length() - 1).equals("/")) {
