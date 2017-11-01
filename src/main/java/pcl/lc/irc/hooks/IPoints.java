@@ -116,9 +116,9 @@ public class IPoints extends AbstractListener {
 		IRCBot.registerCommand(command_reset_points);
 	}
 	@Override
-	public void handleMessage(String sender, MessageEvent event, String message, String[] args) {
+	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		Pattern p = Pattern.compile("(.+?)(\\+\\+)");
-		Matcher m = p.matcher(message);
+		Matcher m = p.matcher(String.join(" ", args));
 		if (m.matches() && event.getChannel().getUsersNicks().contains(m.group(1))) {
 			target = event.getChannel().getName();
 			String recipient = m.group(1);

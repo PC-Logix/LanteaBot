@@ -4,10 +4,11 @@
 package pcl.lc.irc.hooks;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.*;
 import org.pircbotx.hooks.types.GenericCTCPEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
@@ -19,10 +20,9 @@ import java.util.UUID;
  * @author Caitlyn
  *
  */
-@SuppressWarnings({ "rawtypes" })
-public class GenericEventListener extends ListenerAdapter {
-
-	public GenericEventListener() {
+public class GenericEventListener extends AbstractListener{
+	@Override
+	protected void initHook() {
 		System.out.println("onConnect listener loaded");
 		System.out.println("onNickChange listener loaded");
 		System.out.println("onInvite listener loaded");
@@ -30,29 +30,28 @@ public class GenericEventListener extends ListenerAdapter {
 		System.out.println("onPing listener loaded");
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public void onGenericMessage(final GenericMessageEvent event) throws Exception {
+	public void onGenericMessage(final GenericMessageEvent event) {
 		super.onGenericMessage(event);
 		if (!(event instanceof MessageEvent))
 			IRCBot.log.info("<-- Query: " + event.getUser().getNick() + ": " + event.getMessage());
 	}
 	
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
-		super.onMessage(event);
+	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		IRCBot.log.info("<-- Msg: " + event.getChannel().getName().toString() + " " + event.getUser().getNick() + ": " + event.getMessage());
-		if (!IRCBot.isIgnored(event.getUser().getNick()) && !event.getMessage().startsWith(Config.commandprefix)) {
-			String[] firstWord = StringUtils.split(event.getMessage());
+		System.out.println("Sender " + sender);
+		System.out.println("Message " + String.join(" ", args));
+		if (!IRCBot.isIgnored(sender) && !event.getMessage().startsWith(Config.commandprefix)) {
+			String[] firstWord = StringUtils.split(String.join(" ", args));
 			String triggerWord = firstWord[0];
 			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(Config.commandprefix) && IRCBot.commands.containsKey(triggerWord.replace(Config.commandprefix, ""))) {
 
 			} else {
 				List<String> list = new ArrayList<String>();
 				list.add(event.getChannel().getName().toString());
-				list.add(event.getUser().getNick().toString());
-				list.add(event.getMessage());
+				list.add(sender);
+				list.add(String.join(" ", args));
 				IRCBot.messages.put(UUID.randomUUID(), list);
 			}			
 		}

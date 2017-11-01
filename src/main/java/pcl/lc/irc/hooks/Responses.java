@@ -33,12 +33,12 @@ public class Responses extends AbstractListener {
   public String chan;
   public String target = null;
   @Override
-  public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
+  public void handleMessage(String sender, MessageEvent event, String[] args) {
     chan = event.getChannel().getName();
   }
 
   @Override
-  public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+  public void handleMessage(String nick, GenericMessageEvent event, String[] copyOfRange) {
 	if (IRCBot.isIgnored(nick))
 		return;
 	target = Helper.getTarget(event);

@@ -130,7 +130,7 @@ public class Seen extends AbstractListener {
 		}
 	}
 	@Override
-	public void handleMessage(String sender, MessageEvent event, String command, String[] args) {
+	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		try {
 			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
 			updateSeen.setString(1, sender.toLowerCase());

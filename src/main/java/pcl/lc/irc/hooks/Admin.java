@@ -436,7 +436,7 @@ public class Admin extends AbstractListener {
 	}
 
 	@Override
-	public void handleMessage(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleMessage(String nick, GenericMessageEvent event, String[] copyOfRange) {
 		ArrayList<String> terms = new ArrayList<>();
 		terms.add(": prefix");
 		terms.add(", prefix");
