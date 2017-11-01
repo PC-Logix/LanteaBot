@@ -58,7 +58,7 @@ public class ItemCollection {
 			if (i == 0)
 				items += this.items.get(i).getName() + Colors.NORMAL;
 			else if (i == (this.items.size() - 1))
-				items += " & " + this.items.get(i).getName() + Colors.NORMAL;
+				items += ", & " + this.items.get(i).getName() + Colors.NORMAL;
 			else
 				items += ", " + this.items.get(i).getName() + Colors.NORMAL;
 		}
