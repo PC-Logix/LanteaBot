@@ -512,6 +512,20 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
+	public static String get_right_response() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("Meh.");
+		strings.add("Sure, I guess");
+		strings.add("Hm?");
+		strings.add("What? No.");
+		strings.add("That's fine I guess");
+		strings.add("Sure, whatever");
+		strings.add("Yeah right.");
+		strings.add("Maybe.");
+		strings.add("Okay");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
 	public static String get_garbage() {
 		ArrayList<String> strings = new ArrayList<>();
 		strings.add("into a garbage compactor");

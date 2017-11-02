@@ -91,6 +91,10 @@ public class Responses extends AbstractListener {
 
       respondTo.add(new String[]{"that won't work", "face"});
 
+      respondTo.add(new String[]{"right", "right"});
+
+      respondTo.add(new String[]{"pets", "pet"});
+
       respondTo.add(new String[]{"do the flop", "flop"});
 
       respondTo.add(new String[]{"baps", "hurt"});
@@ -152,6 +156,10 @@ public class Responses extends AbstractListener {
         Helper.sendMessage(target, Helper.get_hurt_reponse(), nick);
       case "hello":
         Helper.sendMessage(target, "Hello " + nick);
+      case "right":
+        Helper.sendMessage(target, Helper.get_right_response());
+      case "pet":
+        Helper.sendAction(target, "purrs");
     }
   }
 }
