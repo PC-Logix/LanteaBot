@@ -94,8 +94,8 @@ public class Alot extends ListenerAdapter {
 				}
 			}
 			String[] luaResp = {
-					"lua*",
-					"It's lua, not LUA. Name not an acronym."
+					"Lua*",
+					"It's Lua, not LUA. Name not an acronym."
 					};
 			if (enabledChannels.contains(event.getChannel().getName().toString())) {
 				if (s.length() > 1) {
