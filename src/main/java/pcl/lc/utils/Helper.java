@@ -251,6 +251,7 @@ public class Helper {
 		list.add(IRCBot.getOurNick());
 		list.add(message);
 		IRCBot.messages.put(UUID.randomUUID(), list);
+		IRCBot.bot.sendIRC().message(target, message);
 		IRCBot.log.info("--> " + target + " " + IRCBot.getOurNick() + " " + message);
 	}
 	
