@@ -27,15 +27,15 @@ public class Command {
 	private String helpText;
 
 	public Command(String command) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, null);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, Integer rateLimit) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, null);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, Integer rateLimit, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, true, null);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, Integer rateLimit, String minRank) {
@@ -47,11 +47,11 @@ public class Command {
 	}
 
 	public Command(String command, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand, true, null);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, String className) {
-		this(command, className, 0, false, true, null);
+		this(command, className, 0, false, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, String className, Integer rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {

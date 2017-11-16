@@ -42,7 +42,7 @@ public class Permissions {
 	}
 
 	public static boolean hasPermission(PircBotX bot, User u, GenericMessageEvent event, String minRank) {
-		if (minRank == null)
+		if (minRank == Permissions.EVERYONE)
 			return true;
 		if (isOp(bot, u))
 			return true;
