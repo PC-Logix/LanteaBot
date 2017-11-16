@@ -21,10 +21,14 @@ import pcl.lc.utils.Account.ExpiringToken;
 import sun.net.www.content.text.Generic;
 
 public class Permissions {
+	public static String EVERYONE = "Nobody";
+	public static String TRUSTED = "Trusted";
 	public static String MOD = "Moderator";
 	public static String ADMIN = "Admin";
 	// "ranks" contains each of the above permissions in order of magnitude with lowest first, highest level at the end
 	public static String[] ranks = new String[]{
+		EVERYONE,
+		TRUSTED,
 		MOD,
 		ADMIN,
 	};
@@ -127,7 +131,7 @@ public class Permissions {
 		}
 	}
 
-	public static boolean setPermLevel(String user, GenericMessageEvent event, int level) {
+	public static boolean setPermLevel(String user, GenericMessageEvent event, String level) {
 		User u = Account.getUserFromString(user, (MessageEvent) event);
 		if (u == null) {
 			return false;
@@ -139,7 +143,7 @@ public class Permissions {
 			PreparedStatement addPerm = Database.getPreparedStatement("setPermLevel");
 			addPerm.setString(1, NSAccount);
 			addPerm.setString(2, ((MessageEvent) event).getChannel().getName());
-			addPerm.setInt(3, level);
+			addPerm.setString(3, level);
 			addPerm.setString(4, event.getUser().getNick());
 			addPerm.setString(5, dateFormatGmt.format(new Date()));
 			if (addPerm.executeUpdate() > 0) {
@@ -161,10 +165,13 @@ public class Permissions {
 		if (Account.userCache.containsKey(user.getUserId()) && Account.userCache.get(user.getUserId()).getExpiration().after(Calendar.getInstance().getTime())) {
 			nsRegistration = Account.userCache.get(user.getUserId()).getValue();
 			Calendar future = Calendar.getInstance();
-			if (!IRCBot.getDebug())
+			if (!IRCBot.getDebug()) {
+				System.out.println("Not Debugging setting cache to 10 hours");
 				future.add(Calendar.HOUR,10);
-			else
+			} else {
+				System.out.println("Debugging setting cache to 30 seconds");
 				future.add(Calendar.SECOND,30);
+			}
 			Account.userCache.put(user.getUserId(), new ExpiringToken(future.getTime(),nsRegistration));
 			IRCBot.log.debug(user.getNick() + " is cached");
 		} else {

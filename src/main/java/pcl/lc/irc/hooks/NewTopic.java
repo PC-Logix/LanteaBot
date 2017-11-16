@@ -56,7 +56,7 @@ public class NewTopic extends AbstractListener {
 			}
 		}; command_newTopic.setHelpText("Generates a new topic");
 
-		command_addTopic = new Command("addtopic", 0, Permissions.MOD) {
+		command_addTopic = new Command("addtopic", 0, Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

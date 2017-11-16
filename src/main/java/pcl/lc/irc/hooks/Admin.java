@@ -314,7 +314,7 @@ public class Admin extends AbstractListener {
 				}
 			}
 		}; command_help.setHelpText("If you can read this you don't need help with help.");
-		command_authed = new Command("authed", 0) {
+		command_authed = new Command("authed", 0, Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if(IRCBot.authed.containsKey(event.getUser().getNick())) {
