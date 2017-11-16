@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("rawtypes")
 public class Drama extends AbstractListener {
 	private Command local_command;
-	private Map<String, String[]> words;
-	public String[] sentences = {
+	private static Map<String, String[]> words;
+	public static String[] sentences = {
 			"[people] launched a DoS attack on the website of [things]",
 			"[sites] urges everyone to stop using [things]",
 			"After a [enormous] amount of requests, [packs] removes [things]",
@@ -145,16 +145,18 @@ public class Drama extends AbstractListener {
 		local_command = new Command("drama", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Random random = new Random();
-				int index = random.nextInt(sentences.length);
-				Helper.sendMessage(target, dramaParse(sentences[index]), nick);
+
+				Helper.sendMessage(target, dramaParse(), nick);
 			}
 		};
 		local_command.setHelpText("Generates random drama using Mod Developers, Projects, and other semi random data.");
 		IRCBot.registerCommand(local_command);
 	}
 
-	public String dramaParse(String dramaString) {
+	public static String dramaParse() {
+		Random random = new Random();
+		int index = random.nextInt(sentences.length);
+		String dramaString = sentences[index];
 		for (Map.Entry<String, String[]> entry : words.entrySet()) {
 			String[] demWords = entry.getValue();
 			String key = entry.getKey();

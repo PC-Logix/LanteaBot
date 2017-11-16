@@ -103,6 +103,9 @@ public class DynamicCommands extends AbstractListener {
             if (msg.contains("[randomitem]")) {
             	msg = msg.replace("[randomitem]", Inventory.getRandomItem().getName());
             }
+            if (msg.contains("[drama]")) {
+            	msg = msg.replace("[drama]", Drama.dramaParse());
+            }
             event.getBot().sendIRC().message(target, msg);
           }
         }

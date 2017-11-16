@@ -100,11 +100,11 @@ public class Alot extends ListenerAdapter {
 			if (enabledChannels.contains(event.getChannel().getName().toString())) {
 				if (s.length() > 1) {
 					if (s.toLowerCase().matches(".*\\b" + Pattern.quote("alot") + "\\b.*")){
-						IRCBot.bot.sendIRC().message(event.getChannel().getName().toString(), "ALOT: http://tinyurl.com/y42zurt");
+						Helper.sendMessage(event.getChannel().getName().toString(), "ALOT: http://tinyurl.com/y42zurt");
 					}else if (s.matches(".*\\b" + Pattern.quote("LUA") + "\\b.*")){
 						Random random = new Random();
 						int index = random.nextInt(luaResp.length);
-						IRCBot.bot.sendIRC().message(event.getChannel().getName().toString(), luaResp[index]);
+						Helper.sendMessage(event.getChannel().getName().toString(), luaResp[index]);
 					}
 				}
 			}			
