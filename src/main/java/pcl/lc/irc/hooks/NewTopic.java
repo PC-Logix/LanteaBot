@@ -63,12 +63,12 @@ public class NewTopic extends AbstractListener {
 					PreparedStatement addCommand = Database.getPreparedStatement("addTopic");
 					addCommand.setString(1, params);
 					addCommand.executeUpdate();
+					Helper.sendMessage(target, "Ok", nick);
 				}
 				catch (Exception e) {
 					e.printStackTrace();
 					event.respond("An error occurred while processing this command");
 				}
-				Helper.sendMessage(target, "Ok", nick);
 			}
 		};
 		
@@ -79,12 +79,12 @@ public class NewTopic extends AbstractListener {
 					PreparedStatement delCommand = Database.getPreparedStatement("delTopic");
 					delCommand.setInt(1, Integer.valueOf(params));
 					delCommand.executeUpdate();
+					Helper.sendMessage(target, "Ok", nick);
 				}
 				catch (Exception e) {
 					e.printStackTrace();
 					event.respond("An error occurred while processing this command");
 				}
-				Helper.sendMessage(target, "Ok", nick);
 			}
 		};
 
