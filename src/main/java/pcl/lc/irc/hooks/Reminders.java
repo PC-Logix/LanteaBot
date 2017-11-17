@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("rawtypes")
 public class Reminders extends AbstractListener {
 	private Command remind;
+	private Command remindSomeone;
 	private Command list;
 	private Command reminders;
 	private ScheduledFuture<?> executor;
@@ -66,6 +67,47 @@ public class Reminders extends AbstractListener {
 		};
 		remind.registerAlias("remindme");
 		remind.setHelpText("'remindme 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
+
+		remindSomeone = new Command("remindthem", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (params.size() > 1) {
+					long time = Helper.getFutureTime(params.get(1));
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+					String newTime = sdf.format(new Date(time));
+					String message = "";
+					for (int i = 2; i < params.size(); i++) {
+						message += " " + params.get(i);
+					}
+					message = message.trim();
+					try {
+						PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
+						addReminder.setString(1, target);
+						if (event.getUser().getNick().equals("Corded")) {
+							nick = "@" + nick;
+						}
+						addReminder.setString(2, params.get(0));
+						addReminder.setLong(3, time);
+						addReminder.setString(4, message.trim());
+						if (addReminder.executeUpdate() > 0) {
+							Helper.sendMessage(target, "I'll remind "+ params.get(0)+" about \"" + message.trim() + "\" at " + newTime);
+							return;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Helper.sendMessage(target, "Something went wrong", nick);
+				} else if (params.size() == 0) {
+					Helper.sendMessage(target, "Specify user to remind", nick);
+				} else if (params.size() == 1) {
+					Helper.sendMessage(target, "Specify time (eg 1h20m10s)", nick);
+				} else if (params.size() == 2) {
+					Helper.sendMessage(target, "Specify a remind message after the time.", nick);
+				}
+			}
+		};
+		remindSomeone.setHelpText("'remindthem gamax92 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot) to gamax92");
+		
 		list = new Command("list", 0, true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -100,6 +142,7 @@ public class Reminders extends AbstractListener {
 		};
 		reminders.setHelpText(list.getHelpText());
 		IRCBot.registerCommand(remind);
+		IRCBot.registerCommand(remindSomeone);
 		remind.registerSubCommand(list);
 
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Reminders(dest, nick, time, message)");
@@ -145,6 +188,7 @@ public class Reminders extends AbstractListener {
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		target = Helper.getTarget(event);
 		remind.tryExecute(command, nick, target, event, copyOfRange);
+		remindSomeone.tryExecute(command, nick, target, event, copyOfRange);
 		reminders.tryExecute(command, nick, target, event, copyOfRange);
 	}
 }
