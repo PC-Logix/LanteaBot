@@ -71,8 +71,8 @@ public class NewTopic extends AbstractListener {
 				}
 			}
 		};
-		
-		command_delTopic = new Command("deltopic", 0, Permissions.MOD) {
+
+		command_delTopic = new Command("deltopic", 0, Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
