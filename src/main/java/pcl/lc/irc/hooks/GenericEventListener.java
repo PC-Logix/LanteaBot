@@ -40,8 +40,6 @@ public class GenericEventListener extends AbstractListener{
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		IRCBot.log.info("<-- Msg: " + event.getChannel().getName().toString() + " " + event.getUser().getNick() + ": " + event.getMessage());
-		System.out.println("Sender " + sender);
-		System.out.println("Message " + String.join(" ", args));
 		if (!IRCBot.isIgnored(sender) && !event.getMessage().startsWith(Config.commandprefix)) {
 			String[] firstWord = StringUtils.split(String.join(" ", args));
 			String triggerWord = firstWord[0];
