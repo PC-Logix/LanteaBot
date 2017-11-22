@@ -46,14 +46,16 @@ public class Moo extends AbstractListener {
 						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 							if (entry.getValue().get(0).equals(target)) {
-								str = entry.getValue().get(2);
-								break;
+								if (entry.getValue().get(2).toLowerCase().contains("o")) {
+									str = entry.getValue().get(2);
+									break;
+								}
 							}
 						}
 					} else {
 						str = params;
 					}
-					Helper.sendMessage(target, str.replaceAll("o", "oo"), nick);
+					Helper.sendMessage(target, str.replaceAll("o", "oo").replaceAll("O", "OO"), nick);
 				}
 			}
 		}; local_command.setHelpText("Moos the text");
