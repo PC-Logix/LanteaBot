@@ -53,8 +53,8 @@ public class Moo extends AbstractListener {
 					} else {
 						str = params;
 					}
+					Helper.sendMessage(target, str.replaceAll("o", "oo"), nick);
 				}
-				Helper.sendMessage(target, str.replaceAll("/o/", "oo"), nick);
 			}
 		}; local_command.setHelpText("Moos the text");
 		IRCBot.registerCommand(local_command);
