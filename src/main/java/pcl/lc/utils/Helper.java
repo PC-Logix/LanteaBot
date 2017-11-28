@@ -4,9 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import org.pircbotx.Channel;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericChannelUserEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.UnmodifiableIterator;
+
 import pcl.lc.irc.IRCBot;
 
 import java.io.BufferedReader;
@@ -24,7 +29,7 @@ import java.util.regex.Pattern;
 
 public class Helper {
 	public static final Charset utf8 = Charset.forName("UTF-8");
-
+	public static ImmutableSortedSet<String> AntiPings;
 	@SuppressWarnings("unchecked")
 	public static <T> boolean equalsOR(T instance, T... compareWith) {
 		for (T t : compareWith) if (instance.equals(t)) return true;
@@ -70,9 +75,6 @@ public class Helper {
 	}
 
 	public static String antiPing(String nick) {
-		return addZeroWidthSpace(nick);
-	}
-	public static String antiPing(String meh, String nick) {
 		return addZeroWidthSpace(nick);
 	}
 
@@ -263,7 +265,7 @@ public class Helper {
 		IRCBot.messages.put(UUID.randomUUID(), list);
 		IRCBot.bot.sendIRC().message(target, "\u0001ACTION " + message + "\u0001");
 		IRCBot.log.info("--> " + " " + target + " " + message);	}
-	
+
 	public static void sendMessage(String target, String message) {
 		sendMessage(target.trim(), message, null);
 	}
@@ -281,6 +283,16 @@ public class Helper {
 	}
 	
 	public static void sendMessage(String target, String message, String targetUser, Enum format, boolean overridePaste){
+		if (AntiPings != null && !AntiPings.isEmpty()) {
+			String findMatch = Helper.stringContainsItemFromList(message, AntiPings);
+			if (!findMatch.equals("false")) {
+				String[] parts = findMatch.split(" ");
+				for (String part : parts) {
+					message = message.replace(part, antiPing(part));
+				}
+			}
+		}
+		
 		if (targetUser != null)
 			targetUser = Helper.antiPing(targetUser) + ": ";
 		else
@@ -299,17 +311,55 @@ public class Helper {
 			IRCBot.messages.put(UUID.randomUUID(), list);
 			IRCBot.log.info("--> " + target + " " + targetUser.replaceAll("\\p{C}", "") + " " + message);
 		}
+		Helper.AntiPings = null;
 	}
 
+	public static boolean targetIsChannel(String target) {
+		if (target.contains("#"))
+			return true;
+		return false;
+	}
+	
+	public static ImmutableSortedSet<String> getNamesFromTarget(String target) {
+		Channel channel = IRCBot.bot.getUserChannelDao().getChannel(target);
+		return channel.getUsersNicks();
+		
+	}
+	
 	public static void sendAction(String target, String message) {
+		if (AntiPings != null && !AntiPings.isEmpty()) {
+			String findMatch = Helper.stringContainsItemFromList(message, AntiPings);
+			if (!findMatch.equals("false")) {
+				String[] parts = findMatch.split(" ");
+				for (String part : parts) {
+					message = message.replace(part, antiPing(part));
+				}
+			}
+		}
 		IRCBot.bot.sendIRC().message(target, "\u0001ACTION " + message + "\u0001");
 		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + message);
+		Helper.AntiPings = null;
 	}
 
 
 	public static void sendNotice(String target, String cannotExecuteReason, String nick) {
 		IRCBot.bot.sendIRC().notice(target, cannotExecuteReason);
 		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + cannotExecuteReason);
+	}
+	
+	public static String stringContainsItemFromList(String inputStr, ImmutableSortedSet<String> items)
+	{
+		UnmodifiableIterator<String> itr = items.iterator();
+		String out = "";
+		while(itr.hasNext()) {
+			String match = itr.next();
+			if(inputStr.contains(match)){
+				out += match + " ";
+			}
+		}
+		if (out.equals(""))
+			out = "false";
+		return out;
 	}
 	
 	public static class TimeObject {
