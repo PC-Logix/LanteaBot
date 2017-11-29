@@ -47,11 +47,12 @@ public class NewTopic extends AbstractListener {
 					e.printStackTrace();
 				}
 				if (msg.contains("[randomitem]")) {
-					msg = msg.replace("[randomitem]", Inventory.getRandomItem().getName());
+					msg = msg.replace("[randomitem]", Inventory.getRandomItem().getName(true));
 				}
 				if (msg.contains("[drama]")) {
 					msg = msg.replace("[drama]", Drama.dramaParse());
 				}
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, msg, nick);
 			}
 		}; command_newTopic.setHelpText("Generates a new topic");
