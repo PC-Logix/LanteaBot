@@ -603,6 +603,21 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
+	public static String get_hit_place() {
+		ArrayList<String> strings = new ArrayList<>();
+		strings.add("on the arm");
+		strings.add("in the head");
+		strings.add("on the butt");
+		strings.add("in their pride");
+		strings.add("in the small of the back");
+		strings.add("on the heel");
+		strings.add("on the left hand");
+		strings.add("underneath their foot");
+		strings.add("their spleen");
+		strings.add("a body part they didn't even know they had");
+		return strings.get(getRandomInt(0, strings.size() - 1));
+	}
+
 	public static String parseSelfReferral(String type) {
 		switch (type) {
 			case "his": 				//Takes a swing with his axe
