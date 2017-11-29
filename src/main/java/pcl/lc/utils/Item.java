@@ -83,7 +83,7 @@ public class Item {
 		if (this.uses_left <= 0) {
 			int result = Inventory.removeItem(this.id);
 			if (result == 0)
-				return ", " + Inventory.fixItemName(this.name, true) + " " + Inventory.getItemBreakString() + ".";
+				return ", " + Inventory.getItemBreakString(Inventory.fixItemName(this.name, true)) + ".";
 			else
 				System.out.println("Error removing item (" + result + ")");
 		} else {
