@@ -32,7 +32,9 @@ public class Fling extends AbstractListener {
 				Item item = Inventory.getRandomItem(false);
 
 				if (item != null) {
-					String user = Helper.getRandomUser(event);
+					String user = params;
+					if (user == "")
+						user = Helper.getRandomUser(event);
 					Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits " + user + " " + Helper.get_hit_place() + ". They take " + Helper.rollDiceString("1d6") + " damage.");
 					String dust = item.decrementUses();
 					if (dust != "")
