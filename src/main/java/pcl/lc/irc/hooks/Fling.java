@@ -8,6 +8,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
@@ -36,8 +37,17 @@ public class Fling extends AbstractListener {
 					if (user == "")
 						user = Helper.getRandomUser(event);
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits " + user + " " + Helper.get_hit_place() + ". They take " + Helper.rollDiceString("1d6") + " damage.");
-					String dust = item.decrementUses(false);
+					DiceRoll hit = Helper.rollDice("1d100");
+					int itemDamage = 0;
+					if (hit != null && hit.getSum() > 40) {
+						Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits " + user + " " + Helper.get_hit_place() + ". They take " + Helper.rollDiceString("1d6") + " damage.");
+						itemDamage = 1;
+					}
+					else {
+						Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits the ground near " + user);
+						itemDamage = 2;
+					}
+					String dust = item.damage(itemDamage,false);
 					if (dust != "")
 						Helper.sendAction(target, dust);
 				} else {
