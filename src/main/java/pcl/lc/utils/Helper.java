@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -29,6 +30,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Helper {
+	static HashMap<String,HashMap<String, String>> genderStrings = new HashMap<String,HashMap<String, String>>();
+	public static void init() {
+		
+		HashMap<String, String> female = new HashMap<String, String>();
+		HashMap<String, String> male = new HashMap<String, String>();
+		HashMap<String, String> genderless = new HashMap<String, String>();
+		female.put("his", "her");
+		female.put("he", "she");
+		female.put("him", "her");
+		female.put("himself", "herself");
+		female.put("he's", "she's");
+		genderStrings.put("female", female);
+		male.put("his", "his");
+		male.put("he", "he");
+		male.put("him", "him");
+		male.put("himself", "himself");
+		male.put("he's", "he's");
+		genderStrings.put("male", male);
+		genderless.put("his", "their");
+		genderless.put("he", "they");
+		genderless.put("him", "them");
+		genderless.put("himself", "themself");
+		genderless.put("he's", "they've");
+		genderStrings.put("genderless", genderless);
+	}
+	
 	public static final Charset utf8 = Charset.forName("UTF-8");
 	public static ImmutableSortedSet<String> AntiPings;
 	@SuppressWarnings("unchecked")
@@ -619,20 +646,11 @@ public class Helper {
 	}
 
 	public static String parseSelfReferral(String type) {
-		switch (type) {
-			case "his": 				//Takes a swing with his axe
-				return "her"; 		//Takes a swing with her axe
-			case "he": 					//He launches the missile
-				return "she"; 		//She launches the missile
-			case "him": 				//The boot hits him in the face
-				return "her"; 		//The boot hits her in the face
-			case "himself": 		//The bot blames himself for ruining christmas
-				return "herself"; //The bot blames herself for ruining christmas
-			case "he's": 				//He's already got one of those
-				return "she's"; 	//She's already got one of those
-			default:
-				return type;
-		}
+		//Temp until I add the config opt
+		String gender = "female";
+		HashMap<String, String> genderRef = genderStrings.get(gender);
+		System.out.println("Gender Ref " + genderRef.toString());
+		return genderRef.get(type);
 	}
 
 	public static boolean doInterractWith(String target) {

@@ -29,6 +29,7 @@ import pcl.lc.httpd.httpd;
 import pcl.lc.irc.job.TaskScheduler;
 import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.Database;
+import pcl.lc.utils.Helper;
 import pcl.lc.utils.InputThread;
 
 public class IRCBot {
@@ -136,7 +137,8 @@ public class IRCBot {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public IRCBot() {
 		scanner = new Scanner(System.in);
-		instance = this;		
+		instance = this;	
+		Helper.init();
 		Config.setConfig();	
 		try {
 			Class.forName("org.sqlite.JDBC");
