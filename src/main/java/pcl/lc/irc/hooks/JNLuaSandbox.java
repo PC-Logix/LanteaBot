@@ -149,8 +149,10 @@ public class JNLuaSandbox extends AbstractListener {
 				output.setLength(output.length()-1);
 			String luaOut = output.toString().replace("\n", " | ").replace("\r", "");
 
-			if (luaOut.length() > 0)
+			if (luaOut.length() > 0) {
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target , luaOut);
+			}
 
 		} else if (command.equals(Config.commandprefix + "selene") || command.equals(Config.commandprefix + "sel")) {
 			target = Helper.getTarget(event);
@@ -167,8 +169,10 @@ public class JNLuaSandbox extends AbstractListener {
 				output.setLength(output.length()-1);
 			String luaOut = output.toString().replace("\n", " | ").replace("\r", "");
 
-			if (luaOut.length() > 0)
+			if (luaOut.length() > 0) {
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target , luaOut);
+			}
 
 		} else if (command.equals(Config.commandprefix + "resetlua")) {
 			target = Helper.getTarget(event);

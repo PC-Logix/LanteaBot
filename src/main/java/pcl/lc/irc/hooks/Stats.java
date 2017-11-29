@@ -5,6 +5,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 @SuppressWarnings("rawtypes")
 public class Stats extends AbstractListener {
@@ -20,11 +21,11 @@ public class Stats extends AbstractListener {
 		String prefix = Config.commandprefix;
 		if (command.equals(prefix + "stats")) {
 			if (args.length == 0) {
-				event.respond("Stats: https://oclogs.pc-logix.com/stats.html");
+				Helper.sendMessage(event.getChannel().getName(), "Stats: https://oclogs.pc-logix.com/stats.html");
 			}
 			if (args.length == 1) {
 				String user = args[0];
-				event.respond("Stats: https://oclogs.pc-logix.com/user?cid=oc&nick=" + user);
+				Helper.sendMessage(event.getChannel().getName(), "Stats: https://oclogs.pc-logix.com/user?cid=oc&nick=" + user);
 			}
 		}
 	}

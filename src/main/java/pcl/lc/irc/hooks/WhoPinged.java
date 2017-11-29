@@ -175,29 +175,15 @@ public class WhoPinged extends AbstractListener {
 	public String chan;
 	public String target = null;
 
-	public static String stringContainsItemFromList(String inputStr, ImmutableSortedSet<String> items)
-	{
-		UnmodifiableIterator<String> itr = items.iterator();
-		String out = "";
-		while(itr.hasNext()) {
-			String match = itr.next();
-			if(inputStr.contains(match)){
-				out += match + " ";
-			}
-		}
-		if (out.equals(""))
-			out = "false";
-		return out;
-	}
+
 
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		String message = String.join(" ", args).trim();
 		try {
 			//Pings(whowaspinged, whopinged, message, time, channel)
-			String findMatch = stringContainsItemFromList(message, event.getChannel().getUsersNicks());
+			String findMatch = Helper.stringContainsItemFromList(message, event.getChannel().getUsersNicks());
 			if (!findMatch.equals("false")) {
-				System.out.println(findMatch);
 				String[] parts = findMatch.split(" ");
 				for (String part : parts) {
 					System.out.println(part);
