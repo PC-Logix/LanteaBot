@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -323,7 +324,6 @@ public class Helper {
 	public static ImmutableSortedSet<String> getNamesFromTarget(String target) {
 		Channel channel = IRCBot.bot.getUserChannelDao().getChannel(target);
 		return channel.getUsersNicks();
-		
 	}
 	
 	public static void sendAction(String target, String message) {
@@ -640,6 +640,22 @@ public class Helper {
 	public static String getTarget(GenericMessageEvent event) {
 		if (event instanceof GenericChannelUserEvent && ((GenericChannelUserEvent) event).getChannel() != null)
 			return ((GenericChannelUserEvent) event).getChannel().getName();
+		return event.getUser().getNick();
+	}
+	
+	public static String getRandomUser(GenericMessageEvent event) {
+		if (event instanceof GenericChannelUserEvent && ((GenericChannelUserEvent) event).getChannel() != null) {
+			Channel channel = ((GenericChannelUserEvent) event).getChannel();
+			int size = channel.getUsersNicks().size();
+			int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+			int i = 0;
+			for(String obj : channel.getUsersNicks())
+			{
+			    if (i == item)
+			        return obj;
+			    i++;
+			}
+		}
 		return event.getUser().getNick();
 	}
 }
