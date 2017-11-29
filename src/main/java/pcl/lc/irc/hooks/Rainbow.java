@@ -72,7 +72,7 @@ public class Rainbow extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, makeRainbow(params), nick);
 				}
-				Helper.sendMessage(target, makeRainbow(params), nick);
+				//Helper.sendMessage(target, makeRainbow(params), nick);
 			}
 		}; local_command.setHelpText("Replies with a rainbow version of the supplied text");
 		IRCBot.registerCommand(local_command);
