@@ -563,6 +563,30 @@ public class Inventory extends AbstractListener {
 		strings.add("is eaten by a Grue");
 		strings.add("sinks into quicksand");
 		strings.add("vibrates into the ground");
+		strings.add("gets lost in the woods and is never seen again");
+		strings.add("flies into space and doesn't come back");
+		strings.add("angered a witch and was turned into a toad");
+		strings.add("ate the red pill and exited the matrix");
+		strings.add("took the blue pill and fell asleep");
+		strings.add("was taken out by the mafia");
+		strings.add("was loaned out to a friend and was never returned");
+		strings.add("looked too much like a carrot and was eaten by a near-sighted bunny");
+		strings.add("got into a fight with bigfoot and lost");
+		strings.add("looked too much like a tooth and was claimed by the tooth-fairy");
+		strings.add("looked into the void and was consumed");
+		strings.add("fell into a vat of radioactive goo");
+		strings.add("returned to it's original reality");
+		strings.add("met the Doctor and went on numerous adventures through time and space");
+		strings.add("met a Pikachu and was shocked");
+		strings.add("was caught by Ash, gotta catch 'em all!");
+		strings.add("was claimed by a dragon and added to it's hoard");
+		strings.add("miscalculated and teleported into space");
+		strings.add("suddenly collapses into a singularity");
+		strings.add("angered a gnome and didn't get away in time");
+		strings.add("angered a gnome and didn't put up enough of a fight");
+		strings.add("angered a fairy and was turned into a pie");
+		strings.add("angered a dragon and was incinerated");
+		strings.add("angered a unicorn and was pierced");
 
 		return strings.get(Helper.getRandomInt(0, strings.size() - 1));
 	}
