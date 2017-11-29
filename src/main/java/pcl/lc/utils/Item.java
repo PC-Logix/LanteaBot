@@ -67,8 +67,20 @@ public class Item {
 		return damage(1);
 	}
 
+	public String decrementUses(boolean includeLeadingComma) {
+		return damage(1, includeLeadingComma);
+	}
+
 	public String damage() {
 		return damage(1);
+	}
+
+	public String damage(boolean includeLeadingComma) {
+		return damage(1, includeLeadingComma);
+	}
+
+	public String damage(int damage) {
+		return damage(damage, true);
 	}
 
 	/**
@@ -76,14 +88,14 @@ public class Item {
 	 * Returns the 'dust' string to append if the item was destroyed, empty string otherwise. 'Dust' string should be appended at the end of the message to the channel/user
 	 * @return String
 	 */
-	public String damage(int damage) {
+	public String damage(int damage, boolean includeLeadingComma) {
 		if (this.uses_left == -1)
 			return "";
 		this.uses_left -= damage;
 		if (this.uses_left <= 0) {
 			int result = Inventory.removeItem(this.id);
 			if (result == 0)
-				return ", " + Inventory.getItemBreakString(Inventory.fixItemName(this.name, true)) + ".";
+				return (includeLeadingComma ? ", " : "") + Inventory.getItemBreakString(Inventory.fixItemName(this.name, true)) + ".";
 			else
 				System.out.println("Error removing item (" + result + ")");
 		} else {
