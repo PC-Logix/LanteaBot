@@ -64,16 +64,19 @@ public class Attack extends AbstractListener {
 						Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
 						return;
 					}
-						//action = Helper.getRandomInt(0, actions.size() - 1);
+					//action = Helper.getRandomInt(0, actions.size() - 1);
 
 					String attackTarget = message.trim();
 
 					if (attackTarget == "")
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					else if (Helper.doInterractWith(attackTarget))
+					else if (Helper.doInterractWith(attackTarget)) {
+						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target,Helper.antiPing(actions.get(action)) + "s " + attackTarget + (item != null ? " with " + item.getName() : "") + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
-					else
+					} else {
+						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target,"uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
+					}
 				}
 				catch (Exception e)
 				{
