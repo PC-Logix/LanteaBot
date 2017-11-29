@@ -60,7 +60,7 @@ public class WhoPinged extends AbstractListener {
 		Database.addPreparedStatement("addPing", "INSERT INTO Pings(whowaspinged, whopinged, message, time, channel) VALUES (?,?,?,?,?);");
 		Database.addPreparedStatement("getPings", "SELECT id, whopinged, message, time, channel FROM Pings WHERE LOWER(whowaspinged) = ?;");
 		Database.addPreparedStatement("getAllPings", "SELECT id, time FROM Pings;");
-		Database.addPreparedStatement("delPings", "DELETE FROM Pings WHERE whowaspinged = ?;");
+		Database.addPreparedStatement("delPings", "DELETE FROM Pings WHERE id = ?;");
 
 		command_WhoPinged = new Command("whopinged", 0) {
 			@Override
@@ -107,7 +107,7 @@ public class WhoPinged extends AbstractListener {
 					long epoch = System.currentTimeMillis();
 					PreparedStatement getPings = Database.getPreparedStatement("getAllPings");
 					ResultSet results = getPings.executeQuery();
-					if (results.next()) {
+					while (results.next()) {
 						if ((results.getLong(2) + 259200000) <= epoch) {
 							PreparedStatement delPings = Database.getPreparedStatement("delPings");
 							delPings.setLong(1, results.getLong(1));
