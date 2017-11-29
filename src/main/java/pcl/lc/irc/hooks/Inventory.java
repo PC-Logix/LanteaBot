@@ -548,47 +548,54 @@ public class Inventory extends AbstractListener {
 			return "I can't put myself in my inventory silly.";
 	}
 
-	public static String getItemBreakString() {
+	public static String getItemBreakString(String item) {
 		ArrayList<String> strings = new ArrayList<>();
-		strings.add("poofs away in a sparkly cloud");
-		strings.add("vanishes into a rift in space");
-		strings.add("phases out of the dimension");
-		strings.add("flickers and pops out of existence");
-		strings.add("suddenly ceases to be");
-		strings.add("ruptures and deflates");
-		strings.add("melts into a puddle of unidentifiable goo");
-		strings.add("rides off into the sunset on a horse with no name");
-		strings.add("flies up into space and collides with a satellite");
-		strings.add("falls into a chasm");
-		strings.add("is eaten by a Grue");
-		strings.add("sinks into quicksand");
-		strings.add("vibrates into the ground");
-		strings.add("gets lost in the woods and is never seen again");
-		strings.add("flies into space and doesn't come back");
-		strings.add("angered a witch and was turned into a toad");
-		strings.add("ate the red pill and exited the matrix");
-		strings.add("took the blue pill and fell asleep");
-		strings.add("was taken out by the mafia");
-		strings.add("was loaned out to a friend and was never returned");
-		strings.add("looked too much like a carrot and was eaten by a near-sighted bunny");
-		strings.add("got into a fight with bigfoot and lost");
-		strings.add("looked too much like a tooth and was claimed by the tooth-fairy");
-		strings.add("looked into the void and was consumed");
-		strings.add("fell into a vat of radioactive goo");
-		strings.add("returned to it's original reality");
-		strings.add("met the Doctor and went on numerous adventures through time and space");
-		strings.add("met a Pikachu and was shocked");
-		strings.add("was caught by Ash, gotta catch 'em all!");
-		strings.add("was claimed by a dragon and added to it's hoard");
-		strings.add("miscalculated and teleported into space");
-		strings.add("suddenly collapses into a singularity");
-		strings.add("angered a gnome and didn't get away in time");
-		strings.add("angered a gnome and didn't put up enough of a fight");
-		strings.add("angered a fairy and was turned into a pie");
-		strings.add("angered a dragon and was incinerated");
-		strings.add("angered a unicorn and was pierced");
+		strings.add("{item} poofs away in a sparkly cloud");
+		strings.add("{item} vanishes into a rift in space");
+		strings.add("{item} phases out of the dimension");
+		strings.add("{item} flickers and pops out of existence");
+		strings.add("{item} suddenly ceases to be");
+		strings.add("{item} ruptures and deflates");
+		strings.add("{item} melts into a puddle of unidentifiable goo");
+		strings.add("{item} rides off into the sunset on a horse with no name");
+		strings.add("{item} flies up into space and collides with a satellite");
+		strings.add("{item} falls into a chasm");
+		strings.add("{item} is eaten by a Grue");
+		strings.add("{item} sinks into quicksand");
+		strings.add("{item} vibrates into the ground");
+		strings.add("{item} gets lost in the woods and is never seen again");
+		strings.add("{item} flies into space and doesn't come back");
+		strings.add("{item} angered a witch and was turned into a toad");
+		strings.add("{item} ate the red pill and exited the matrix");
+		strings.add("{item} took the blue pill and fell asleep");
+		strings.add("{item} was taken out by the mafia");
+		strings.add("{item} was loaned out to a friend and was never returned");
+		strings.add("{item} looked too much like a carrot and was eaten by a near-sighted bunny");
+		strings.add("{item} got into a fight with bigfoot and lost");
+		strings.add("{item} looked too much like a tooth and was claimed by the tooth-fairy");
+		strings.add("{item} looked into the void and was consumed");
+		strings.add("{item} fell into a vat of radioactive goo");
+		strings.add("{item} returned to it's original reality");
+		strings.add("{item} met the Doctor and went on numerous adventures through time and space");
+		strings.add("{item} met a Pikachu and was shocked");
+		strings.add("{item} was caught by Ash, gotta catch 'em all!");
+		strings.add("{item} was claimed by a dragon and added to it's hoard");
+		strings.add("{item} miscalculated and teleported into space");
+		strings.add("{item} suddenly collapses into a singularity");
+		strings.add("{item} angered a gnome and didn't get away in time");
+		strings.add("{item} angered a gnome and didn't put up enough of a fight");
+		strings.add("{item} angered a fairy and was turned into a pie");
+		strings.add("{item} angered a dragon and was incinerated");
+		strings.add("{item} angered a unicorn and was pierced");
+		strings.add("{item} returned a DoesNotExistException");
+		strings.add("{item} ran out of memory");
+		strings.add("{item} tried to report a bug with no log and mysteriously vanished");
+		strings.add("{item} experienced a segfault");
+		strings.add("{item} was needed in a different plane of existance");
+		strings.add("an adventurer came by and claimed {item} was the artifact they were looking for to save their village");
+		strings.add("a bug was found in {item} and it was decommissioned");
 
-		return strings.get(Helper.getRandomInt(0, strings.size() - 1));
+		return strings.get(Helper.getRandomInt(0, strings.size() - 1)).replace("{item}", item);
 	}
 
 	public static String fixItemName(String item, boolean sort_out_prefixes) {
