@@ -1,5 +1,7 @@
 package pcl.lc.utils;
 
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.UnmodifiableIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -8,10 +10,6 @@ import org.pircbotx.Channel;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericChannelUserEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.UnmodifiableIterator;
-
 import pcl.lc.irc.IRCBot;
 
 import java.io.BufferedReader;
@@ -20,12 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -166,7 +159,7 @@ public class Helper {
 			ArrayList<Integer> results = new ArrayList<>(100);
 			for (Integer i = 0; i < num_dice; i++)
 			{
-				Integer steps = Helper.getRandomInt(1, 12);
+				Integer steps = Helper.getRandomInt(1, dice_size);
 				Integer gone = 0;
 				Integer result = 1;
 				for (result = 1; gone < steps; gone++)
