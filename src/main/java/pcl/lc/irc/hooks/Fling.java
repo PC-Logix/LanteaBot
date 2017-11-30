@@ -39,7 +39,7 @@ public class Fling extends AbstractListener {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					DiceRoll hit = Helper.rollDice("1d100");
 					int itemDamage = 0;
-					if (hit != null && hit.getSum() > 40) {
+					if (hit != null && hit.getSum() > 20) {
 						Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits " + user + " " + Helper.get_hit_place() + ". They take " + Helper.rollDiceString("1d6") + " damage.");
 						itemDamage = 1;
 					}
