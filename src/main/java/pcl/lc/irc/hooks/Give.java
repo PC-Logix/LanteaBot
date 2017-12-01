@@ -33,7 +33,7 @@ public class Give extends AbstractListener {
 				{
 					item_name += params.get(i) + " ";
 				}
-				item_name = StringEscapeUtils.escapeHtml4(item_name.trim());
+				item_name = item_name.trim();
 
 				if (!target_argument.equals(IRCBot.getOurNick())) {
 					Item item;
@@ -42,7 +42,7 @@ public class Give extends AbstractListener {
 						item = Inventory.getRandomItem(false);
 					} else
 						try {
-							item = new Item(item_name);
+							item = new Item(StringEscapeUtils.escapeHtml4(item_name));
 						} catch (Exception e) {
 							item = null;
 						}
@@ -55,7 +55,7 @@ public class Give extends AbstractListener {
 					int removeResult = Inventory.removeItem(item);
 
 					if (removeResult == 0 || removeResult == Inventory.ERROR_ITEM_IS_PRESERVED)
-						Helper.sendAction(target, "gives " + target_argument + " " + item.getName() + " from " + Helper.parseSelfReferral("his") + " inventory");
+						Helper.sendAction(target, "gives " + target_argument + " " + StringEscapeUtils.unescapeHtml4(item.getName()) + " from " + Helper.parseSelfReferral("his") + " inventory");
 					else if (removeResult == Inventory.ERROR_ITEM_IS_FAVOURITE)
 						Helper.sendMessage(target, "No! This is my favourite thing! I wont give it away!", nick);
 					else if (removeResult == Inventory.ERROR_NO_ROWS_RETURNED)
