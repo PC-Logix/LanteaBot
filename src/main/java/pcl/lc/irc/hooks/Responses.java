@@ -153,7 +153,7 @@ public class Responses extends AbstractListener {
         Helper.sendAction(target, "does the flop");
         break;
       case "hurt":
-        Helper.sendMessage(target, Helper.get_hurt_reponse(), nick);
+        Helper.sendMessage(target, Helper.get_hurt_response(), nick);
       case "hello":
         Helper.sendMessage(target, "Hello " + nick);
       case "right":

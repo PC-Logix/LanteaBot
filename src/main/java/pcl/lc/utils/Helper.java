@@ -621,7 +621,7 @@ public class Helper {
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
-	public static String get_hurt_reponse() {
+	public static String get_hurt_response() {
 		ArrayList<String> strings = new ArrayList<>();
 		strings.add("ow");
 		strings.add("ouch");
@@ -640,7 +640,7 @@ public class Helper {
 		strings.add("on the heel");
 		strings.add("on the left hand");
 		strings.add("underneath their foot");
-		strings.add("their spleen");
+		strings.add("in their spleen");
 		strings.add("a body part they didn't even know they had");
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}

@@ -594,6 +594,12 @@ public class Inventory extends AbstractListener {
 		strings.add("{item} was needed in a different plane of existance");
 		strings.add("an adventurer came by and claimed {item} was the artifact they were looking for to save their village");
 		strings.add("a bug was found in {item} and it was decommissioned");
+		strings.add("{item} was suddenly outlawed and confiscated by the MIB");
+		strings.add("it turns out {item} reacts poorly to acid");
+		strings.add("evidence of {item}'s poor resistance to corrosive chemicals is abundant");
+		strings.add("{item} received a call it had won a million money, it wasn't seen again");
+		strings.add("{item} was shiny enough to be claimed by a dragon");
+		strings.add("if {item} had been less shiny it might not have attracked the attention of a dragon");
 
 		return strings.get(Helper.getRandomInt(0, strings.size() - 1)).replace("{item}", item);
 	}
