@@ -3,6 +3,7 @@
  */
 package pcl.lc.irc.hooks;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
@@ -32,7 +33,7 @@ public class Give extends AbstractListener {
 				{
 					item_name += params.get(i) + " ";
 				}
-				item_name = item_name.trim();
+				item_name = StringEscapeUtils.escapeHtml4(item_name.trim());
 
 				if (!target_argument.equals(IRCBot.getOurNick())) {
 					Item item;
