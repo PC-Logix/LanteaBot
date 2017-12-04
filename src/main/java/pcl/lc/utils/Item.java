@@ -67,20 +67,20 @@ public class Item {
 		return damage(1);
 	}
 
-	public String decrementUses(boolean includeLeadingComma) {
-		return damage(1, includeLeadingComma);
+	public String decrementUses(boolean includeLeadingComma, boolean capitalizeFirstWord) {
+		return damage(1, includeLeadingComma, capitalizeFirstWord);
 	}
 
 	public String damage() {
 		return damage(1);
 	}
 
-	public String damage(boolean includeLeadingComma) {
-		return damage(1, includeLeadingComma);
+	public String damage(boolean includeLeadingComma, boolean capitalizeFirstWord) {
+		return damage(1, includeLeadingComma, capitalizeFirstWord);
 	}
 
 	public String damage(int damage) {
-		return damage(damage, true);
+		return damage(damage, true, false);
 	}
 
 	/**
@@ -88,14 +88,18 @@ public class Item {
 	 * Returns the 'dust' string to append if the item was destroyed, empty string otherwise. 'Dust' string should be appended at the end of the message to the channel/user
 	 * @return String
 	 */
-	public String damage(int damage, boolean includeLeadingComma) {
+	public String damage(int damage, boolean includeLeadingComma, boolean capitalizeFirstWord) {
 		if (this.uses_left == -1)
 			return "";
 		this.uses_left -= damage;
 		if (this.uses_left <= 0) {
 			int result = Inventory.removeItem(this.id);
-			if (result == 0)
-				return (includeLeadingComma ? ", " : "") + Inventory.getItemBreakString(Inventory.fixItemName(this.name, true)) + ".";
+			if (result == 0) {
+				String sentence = Inventory.getItemBreakString(Inventory.fixItemName(this.name, true));
+				if (capitalizeFirstWord)
+					sentence = sentence.substring(0, 1).toUpperCase() + sentence.substring(1);
+				return (includeLeadingComma ? ", " : "") + sentence + ".";
+			}
 			else
 				System.out.println("Error removing item (" + result + ")");
 		} else {

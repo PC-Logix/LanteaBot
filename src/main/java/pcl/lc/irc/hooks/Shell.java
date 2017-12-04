@@ -3,7 +3,6 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
@@ -43,6 +42,7 @@ public class Shell extends AbstractListener {
 						user = Helper.getRandomUser(event);
 					int splash = 2;
 					int itemDamage = 0;
+					String dust = "";
 					String strike = "Seems it was a dud...";
 					try {
 						if (roll != null && roll.getSum() < hitChance) {
@@ -52,18 +52,18 @@ public class Shell extends AbstractListener {
 							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Helper.rollDice("1d10").getSum() + ", " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
 							itemDamage = 2;
 						}
-						String dust = item.damage(itemDamage,false);
-						if (dust != "") {
-							Helper.AntiPings = Helper.getNamesFromTarget(target);
-							Helper.sendAction(target, dust);
-						}
 					} catch (NullPointerException ignored) {}
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendAction(target, "loads " + item.getName(false) + " into a shell and fires it. " + strike);
-					return;
+					dust = item.damage(itemDamage,false, true);
+					if (dust != "") {
+						Helper.AntiPings = Helper.getNamesFromTarget(target);
+						Helper.sendAction(target, dust);
+					}
+				} else {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendAction(target, "found nothing to fire load into the shell...");
 				}
-				Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendAction(target, "found nothing to fire load into the shell...");
 			}
 		};
 	}
