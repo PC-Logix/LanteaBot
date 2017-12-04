@@ -50,9 +50,11 @@ public class Shell extends AbstractListener {
 							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Helper.rollDice("1d10").getSum() + ", " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
 						}
 					} catch (NullPointerException ignored) {}
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendAction(target, "loads " + item.getName(false) + " into a shell and fires it. " + strike);
 					return;
 				}
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendAction(target, "found nothing to fire load into the shell...");
 			}
 		};
