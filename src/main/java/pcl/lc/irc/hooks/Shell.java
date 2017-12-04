@@ -38,16 +38,16 @@ public class Shell extends AbstractListener {
 				if (item != null) {
 					String user = params;
 					String userSecondary = Helper.getRandomUser(event);
-					String userTetriary = Helper.getRandomUser(event);
+					String userTertiary = Helper.getRandomUser(event);
 					if (user == "")
 						user = Helper.getRandomUser(event);
 					int splash = 2;
 					String strike = "Seems it was a dud...";
 					try {
 						if (roll != null && roll.getSum() < hitChance) {
-							strike = "strikes " + user + ". They take " + Helper.rollDice("2d10").getSum() + " damage. " + userSecondary + " and " + userTetriary + " take " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
+							strike = "It strikes " + user + ". They take " + Helper.rollDice("2d10").getSum() + " damage. " + userSecondary + " and " + userTertiary + " take " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
 						} else {
-							strike = "strikes the ground near " + user + ", " + userSecondary + " and " + userTetriary + ". They each take " + Helper.rollDice("1d10").getSum() + ", " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
+							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Helper.rollDice("1d10").getSum() + ", " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
 						}
 					} catch (NullPointerException ignored) {}
 					Helper.sendAction(target, "loads " + item.getName(false) + " into a shell and fires it. " + strike);
