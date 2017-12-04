@@ -634,7 +634,13 @@ public class Helper {
 		strings.add("on the left hand");
 		strings.add("underneath their foot");
 		strings.add("in their spleen");
-		strings.add("a body part they didn't even know they had");
+		strings.add("on a body part they didn't even know they had");
+		strings.add("in the face");
+		strings.add("on a small but very important bone");
+		strings.add("right where they didn't expect");
+		strings.add("just a bit left of where it would have killed them");
+		strings.add("right where the last item hit");
+		strings.add("right in their lunch");
 		return strings.get(getRandomInt(0, strings.size() - 1));
 	}
 
