@@ -17,6 +17,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import org.unix4j.Unix4j;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
 
 import pcl.lc.irc.AbstractListener;
@@ -34,7 +35,7 @@ import pcl.lc.utils.Helper;
 @SuppressWarnings("rawtypes")
 public class SED extends AbstractListener {
 	List<String> enabledChannels;
-
+	public static ImmutableSortedSet<String> AntiPings;
 	private Command local_command;
 
 	@Override
@@ -132,6 +133,7 @@ public class SED extends AbstractListener {
 						List<Entry<UUID, List<String>>> messageList = new ArrayList<>(IRCBot.messages.entrySet());
 						for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
+								AntiPings = Helper.getNamesFromTarget(target);
 								//if (entry.getValue().get(2).indexOf(StringUtils.substringBetween(message, "/", "/"))>= 0 ) {
 								try {
 									reply = Unix4j.fromString(entry.getValue().get(2)).sed(message).toStringResult();
@@ -147,6 +149,17 @@ public class SED extends AbstractListener {
 									if (reply.equals(entry.getValue().get(2))) {
 										continue;
 									}
+									
+									if (AntiPings != null && !AntiPings.isEmpty()) {
+										String findMatch = Helper.stringContainsItemFromList(newMessage, AntiPings);
+										if (!findMatch.equals("false")) {
+											String[] parts = findMatch.split(" ");
+											for (String part : parts) {
+												newMessage = newMessage.replace(part, Helper.antiPing(part));
+											}
+										}
+									}
+									AntiPings = null;
 									event.getChannel().send().message(newMessage);
 									List<String> list = new ArrayList<String>();
 									list.add(event.getChannel().getName().toString());

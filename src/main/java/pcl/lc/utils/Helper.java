@@ -305,7 +305,7 @@ public class Helper {
 	
 	public static void sendMessage(String target, String message, String targetUser, Enum format, boolean overridePaste){
 		if (AntiPings != null && !AntiPings.isEmpty()) {
-			String findMatch = Helper.stringContainsItemFromList(message, AntiPings);
+			String findMatch = stringContainsItemFromList(message, AntiPings);
 			if (!findMatch.equals("false")) {
 				String[] parts = findMatch.split(" ");
 				for (String part : parts) {
