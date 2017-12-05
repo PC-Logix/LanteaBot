@@ -63,47 +63,73 @@ public class Item {
 		this.added = added;
 	}
 
-	public String destroy(boolean includeLeadingComma, boolean capitalizeFirstWord) {
-		return damage(999, includeLeadingComma, capitalizeFirstWord);
+	/**
+	 * Applies massive damage to item, almost guaranteed to destroy it.
+	 * @param includeLeadingComma Whether to begin the sentence with a comma and space
+	 * @param capitalizeFirstWord Whether the first word should be capitalized if it isn't already
+	 * @param includeEndPunctuation If false, any punctuation at the end of the sentence will be cleared
+	 * @return String
+	 */
+	public String destroy(boolean includeLeadingComma, boolean capitalizeFirstWord, boolean includeEndPunctuation) {
+		return damage(999, includeLeadingComma, capitalizeFirstWord, includeEndPunctuation);
 	}
 
+	/**
+	 * Applies one (1) damage to the item, defaults to includeLeadingComma:true, capitalizeFirstWord:false, includeEndPunctuation:false
+	 * @return String
+	 */
 	public String decrementUses() {
 		return damage(1);
 	}
 
-	public String decrementUses(boolean includeLeadingComma, boolean capitalizeFirstWord) {
-		return damage(1, includeLeadingComma, capitalizeFirstWord);
+	/**
+	 * Applies one (1) damage to the item
+	 * @param includeLeadingComma Whether to begin the sentence with a comma and space
+	 * @param capitalizeFirstWord Whether the first word should be capitalized if it isn't already
+	 * @param includeEndPunctuation If false, any punctuation at the end of the sentence will be cleared
+	 * @return String
+	 */
+	public String decrementUses(boolean includeLeadingComma, boolean capitalizeFirstWord, boolean includeEndPunctuation) {
+		return damage(1, includeLeadingComma, capitalizeFirstWord, includeEndPunctuation);
 	}
 
-	public String damage() {
-		return damage(1);
+	/**
+	 * Applies one (1) damage to the item
+	 * @param includeLeadingComma Whether to begin the sentence with a comma and space
+	 * @param capitalizeFirstWord Whether the first word should be capitalized if it isn't already
+	 * @param includeEndPunctuation If false, any punctuation at the end of the sentence will be cleared
+	 * @return String
+	 */
+	public String damage(boolean includeLeadingComma, boolean capitalizeFirstWord, boolean includeEndPunctuation) {
+		return damage(1, includeLeadingComma, capitalizeFirstWord, includeEndPunctuation);
 	}
 
-	public String damage(boolean includeLeadingComma, boolean capitalizeFirstWord) {
-		return damage(1, includeLeadingComma, capitalizeFirstWord);
-	}
-
-	public String damage(int damage, boolean includeLeadingComma) {
-		return damage(damage, includeLeadingComma, false);
-	}
-
+	/**
+	 * Applies damage to the item, defaults to includeLeadingComma:true, capitalizeFirstWord:false, includeEndPunctuation:false
+	 * @param damage Amount of damage to apply
+	 * @return String
+	 */
 	public String damage(int damage) {
-		return damage(damage, true, false);
+		return damage(damage, true, false, false);
 	}
 
 	/**
 	 * Applies damage to the item. If result is 0 or less item is destroyed unless it's preserved
 	 * Returns the 'dust' string to append if the item was destroyed, empty string otherwise. 'Dust' string should be appended at the end of the message to the channel/user
+	 * @param damage Amount of damage to apply
+	 * @param includeLeadingComma Whether to begin the sentence with a comma and space
+	 * @param capitalizeFirstWord Whether the first word should be capitalized if it isn't already
+	 * @param includeEndPunctuation If false, any punctuation at the end of the sentence will be cleared
 	 * @return String
 	 */
-	public String damage(int damage, boolean includeLeadingComma, boolean capitalizeFirstWord) {
+	public String damage(int damage, boolean includeLeadingComma, boolean capitalizeFirstWord, boolean includeEndPunctuation) {
 		if (this.uses_left == -1)
 			return "";
 		this.uses_left -= damage;
 		if (this.uses_left <= 0) {
 			int result = Inventory.removeItem(this.id);
 			if (result == 0) {
-				String sentence = Inventory.getItemBreakString(Inventory.fixItemName(this.name, true));
+				String sentence = Inventory.getItemBreakString(Inventory.fixItemName(this.name, true), includeEndPunctuation);
 				if (capitalizeFirstWord)
 					sentence = sentence.substring(0, 1).toUpperCase() + sentence.substring(1);
 				return (includeLeadingComma ? ", " : "") + sentence + ".";

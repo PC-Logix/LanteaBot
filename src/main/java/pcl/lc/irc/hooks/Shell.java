@@ -55,7 +55,7 @@ public class Shell extends AbstractListener {
 					} catch (NullPointerException ignored) {}
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendAction(target, "loads " + item.getName(false) + " into a shell and fires it. " + strike);
-					dust = item.damage(itemDamage,false, true);
+					dust = item.damage(itemDamage,false, true, true);
 					if (dust != "") {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target, dust);

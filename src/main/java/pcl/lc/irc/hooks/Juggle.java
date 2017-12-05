@@ -52,7 +52,7 @@ public class Juggle extends AbstractListener {
 						if (drop_roll < (100 * (base_drop_chance + (0.08 * item_amount)))) {
 							dropped++;
 							int damage = Helper.getRandomInt(1, 5);
-							String dust = item.damage(damage);
+							String dust = item.damage(damage, true, false, true);
 							Helper.sendAction(target, "drops " + item.getName() + Colors.NORMAL + " which takes " + damage + " damage" + dust);
 						}
 					}

@@ -47,7 +47,7 @@ public class Fling extends AbstractListener {
 						Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits the ground near " + user);
 						itemDamage = 2;
 					}
-					String dust = item.damage(itemDamage, false, true);
+					String dust = item.damage(itemDamage, false, true, true);
 					if (dust != "")
 						Helper.sendAction(target, dust);
 				} else {
