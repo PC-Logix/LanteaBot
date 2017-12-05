@@ -63,6 +63,10 @@ public class Item {
 		this.added = added;
 	}
 
+	public String destroy(boolean includeLeadingComma, boolean capitalizeFirstWord) {
+		return damage(999, includeLeadingComma, capitalizeFirstWord);
+	}
+
 	public String decrementUses() {
 		return damage(1);
 	}
@@ -77,6 +81,10 @@ public class Item {
 
 	public String damage(boolean includeLeadingComma, boolean capitalizeFirstWord) {
 		return damage(1, includeLeadingComma, capitalizeFirstWord);
+	}
+
+	public String damage(int damage, boolean includeLeadingComma) {
+		return damage(damage, includeLeadingComma, false);
 	}
 
 	public String damage(int damage) {
