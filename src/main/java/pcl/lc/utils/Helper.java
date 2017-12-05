@@ -652,7 +652,7 @@ public class Helper {
 		return genderRef.get(type);
 	}
 
-	public static boolean doInterractWith(String target) {
+	public static boolean doInteractWith(String target) {
 		IRCBot.log.info(target.toLowerCase());
 		if (target.toLowerCase().contains(IRCBot.getOurNick().toLowerCase()))
 			return false;

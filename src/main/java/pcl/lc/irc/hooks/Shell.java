@@ -40,7 +40,7 @@ public class Shell extends AbstractListener {
 					String userTertiary = Helper.getRandomUser(event);
 					if (user == "")
 						user = Helper.getRandomUser(event);
-					else if (!Helper.doInterractWith(user))
+					else if (!Helper.doInteractWith(user))
           {
             Helper.sendAction(target, "kicks " + nick + " into space.");
             return;

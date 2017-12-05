@@ -3,7 +3,6 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
@@ -11,9 +10,6 @@ import pcl.lc.utils.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -49,7 +45,7 @@ public class Pet extends AbstractListener {
 
 					if (params == "")
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					else if (Helper.doInterractWith(params))
+					else if (Helper.doInteractWith(params))
 						Helper.sendAction(target,actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + params + " recovers " + roll.getSum() + " health!" : "") + dust);
 					else
 						Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);

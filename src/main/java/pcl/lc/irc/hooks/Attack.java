@@ -70,7 +70,7 @@ public class Attack extends AbstractListener {
 
 					if (attackTarget == "")
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					else if (Helper.doInterractWith(attackTarget)) {
+					else if (Helper.doInteractWith(attackTarget)) {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target,Helper.antiPing(actions.get(action)) + "s " + attackTarget + (item != null ? " with " + item.getName() : "") + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
 					} else {
