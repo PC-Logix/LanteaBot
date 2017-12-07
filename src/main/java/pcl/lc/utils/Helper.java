@@ -373,7 +373,7 @@ public class Helper {
 		String out = "";
 		while(itr.hasNext()) {
 			String match = itr.next();
-			if(inputStr.contains(match)){
+			if(isContain(inputStr,match)){
 				out += match + " ";
 			}
 		}
@@ -381,6 +381,13 @@ public class Helper {
 			out = "false";
 		return out;
 	}
+	
+    private static boolean isContain(String source, String subItem){
+        String pattern = "\\b"+subItem+"\\b";
+        Pattern p=Pattern.compile(pattern);
+        Matcher m=p.matcher(source);
+        return m.find();
+   }
 	
 	public static class TimeObject {
 		private long years;
@@ -648,7 +655,6 @@ public class Helper {
 		//Temp until I add the config opt
 		String gender = "female";
 		HashMap<String, String> genderRef = genderStrings.get(gender);
-		System.out.println("Gender Ref " + genderRef.toString());
 		return genderRef.get(type);
 	}
 
