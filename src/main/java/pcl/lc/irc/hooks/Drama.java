@@ -145,7 +145,7 @@ public class Drama extends AbstractListener {
 		local_command = new Command("drama", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, dramaParse(), nick);
 			}
 		};
