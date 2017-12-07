@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -251,6 +252,21 @@ public class Helper {
 		return true;
 	}
 	
+	public static boolean isEnabledHere(String chan, String hook) {
+		try {
+			PreparedStatement checkHook = Database.getPreparedStatement("checkHookForChan");
+			checkHook.setString(1, hook);
+			checkHook.setString(2, chan);
+			ResultSet results = checkHook.executeQuery();
+			if (results.next()) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public static long getFutureTime(String time) {
 		PeriodFormatter formatter = new PeriodFormatterBuilder()
