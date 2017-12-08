@@ -620,7 +620,11 @@ public class Inventory extends AbstractListener {
 		return str;
 	}
 
-	public static String fixItemName(String item, boolean sort_out_prefixes) {
+	public static String fixItemName(String item, boolean sort_out_prefxies) {
+		return fixItemName(item, sort_out_prefxies, false);
+	}
+
+	public static String fixItemName(String item, boolean sort_out_prefixes, boolean no_prefix) {
 		boolean found_prefix = false;
 		if (sort_out_prefixes) {
 			ArrayList<String> prefixes = new ArrayList<>();
@@ -636,7 +640,7 @@ public class Inventory extends AbstractListener {
 				item = new_item;
 			}
 		}
-		return ((found_prefix) ? "the " : "") + StringEscapeUtils.unescapeHtml4(item);
+		return ((found_prefix && !no_prefix) ? "the " : "") + StringEscapeUtils.unescapeHtml4(item);
 	}
 
 	public String chan;

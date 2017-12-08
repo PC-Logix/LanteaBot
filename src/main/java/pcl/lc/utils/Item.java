@@ -196,6 +196,17 @@ public class Item {
 		return this.name;
 	}
 
+	public String getNameWithoutPrefix() {
+		if (this.name == null)
+			return "null";
+		try {
+			return Inventory.fixItemName(this.name, true, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return this.name;
+	}
+
 	public String getNameRaw() {
 		return this.name;
 	}
