@@ -233,6 +233,7 @@ public class IRCBot {
 			Database.addPreparedStatement("enableHook", "INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);");
 			Database.addPreparedStatement("disableHook","DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;");
 			Database.addPreparedStatement("checkHook","SELECT hook, channel FROM OptionalHooks WHERE hook = ?;");
+			Database.addPreparedStatement("checkHookForChan","SELECT hook FROM OptionalHooks WHERE hook = ? AND channel = ?;");
 			return true;
 	}
 

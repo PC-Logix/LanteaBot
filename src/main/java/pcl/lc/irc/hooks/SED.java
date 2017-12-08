@@ -34,64 +34,25 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class SED extends AbstractListener {
-	List<String> enabledChannels;
 	public static ImmutableSortedSet<String> AntiPings;
 	private Command local_command;
 
 	@Override
 	protected void initHook() {
-		enabledChannels = new ArrayList<String>();
-		try {
-			PreparedStatement checkHook = Database.getPreparedStatement("checkHook");
-			checkHook.setString(1, "SED");
-			ResultSet results = checkHook.executeQuery();
-			while (results.next()) {
-				String channel = results.getString("channel");
-				System.out.println(channel);
-				enabledChannels.add(channel);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		local_command = new Command("sed", 10, Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.equals("disable")) {
-					if (enabledChannels.contains(target)) {
-						try {
-							enabledChannels.remove(target);
-							PreparedStatement disableHook = Database.getPreparedStatement("disableHook");
-							disableHook.setString(1, "SED");
-							disableHook.setString(2, target);
-							disableHook.executeUpdate();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						event.respond("Disabled SED for this channel");
-						return;
-					}
-				} else if (params.equals("enable")) {
-					if (!enabledChannels.contains(target)) {
-						try {
-							enabledChannels.add(target);
-							PreparedStatement enableHook = Database.getPreparedStatement("enableHook");
-							enableHook.setString(1, "SED");
-							enableHook.setString(2, target);
-							enableHook.executeUpdate();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						event.respond("Enabled SED for this channel");
-						return;
-					}
+				if (params.equals("disable") || params.equals("enable")) {
+					Helper.toggleCommand("SED", target, params);
+				} else {
+					String isEnabled = Helper.isEnabledHere(target, "SED") ? "enabled" : "disabled";
+					Helper.sendMessage(target, "SED is " + isEnabled + " in this channel", nick);
 				}
-				String isEnabled = enabledChannels.contains(target) ? "enabled" : "disabled";
-				Helper.sendMessage(target, "SED is " + isEnabled + " in this channel", nick);
 			}
 		}; local_command.setHelpText("SED Operations");
 		IRCBot.registerCommand(local_command);
 	}
-
+	
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		//if (!event.getChannel().getName().isEmpty()) {
@@ -108,7 +69,7 @@ public class SED extends AbstractListener {
 			String reply = null;
 			if (messageEvent.matches("s/(.+)/(.+)")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
-					if (enabledChannels.contains(event.getChannel().getName())) {
+					if (Helper.isEnabledHere(event.getChannel().getName(), "SED")) {
 						String s = messageEvent.substring(messageEvent.indexOf("/") + 1);
 						s = s.substring(0, s.indexOf("/"));
 

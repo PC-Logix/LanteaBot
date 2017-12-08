@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -251,6 +252,21 @@ public class Helper {
 		return true;
 	}
 	
+	public static boolean isEnabledHere(String chan, String hook) {
+		try {
+			PreparedStatement checkHook = Database.getPreparedStatement("checkHookForChan");
+			checkHook.setString(1, hook);
+			checkHook.setString(2, chan);
+			ResultSet results = checkHook.executeQuery();
+			if (results.next()) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public static long getFutureTime(String time) {
 		PeriodFormatter formatter = new PeriodFormatterBuilder()
@@ -373,7 +389,7 @@ public class Helper {
 		String out = "";
 		while(itr.hasNext()) {
 			String match = itr.next();
-			if(inputStr.contains(match)){
+			if(isContain(inputStr,match)){
 				out += match + " ";
 			}
 		}
@@ -381,6 +397,13 @@ public class Helper {
 			out = "false";
 		return out;
 	}
+	
+    private static boolean isContain(String source, String subItem){
+        String pattern = "\\b"+subItem+"\\b";
+        Pattern p=Pattern.compile(pattern);
+        Matcher m=p.matcher(source);
+        return m.find();
+   }
 	
 	public static class TimeObject {
 		private long years;
@@ -648,7 +671,6 @@ public class Helper {
 		//Temp until I add the config opt
 		String gender = "female";
 		HashMap<String, String> genderRef = genderStrings.get(gender);
-		System.out.println("Gender Ref " + genderRef.toString());
 		return genderRef.get(type);
 	}
 
