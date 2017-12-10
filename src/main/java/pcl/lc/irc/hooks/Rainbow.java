@@ -31,22 +31,24 @@ public class Rainbow extends AbstractListener {
 	public String makeRainbow(String message) {
 		Integer rainbow = 0;
 		String messageOut = "";
-		for (int i = 0; i < message.length(); i++){
-			char c = message.charAt(i);
+		for (int i : (Iterable<Integer>) () -> message.codePoints().iterator()){
+			System.out.println(i);
+			char[] c = Character.toChars(i);
+			String out = new String(c);
 			if (rainbow == 0) {
-				messageOut = messageOut + Colors.RED + c;
+				messageOut = messageOut + Colors.RED + out;
 			} else if (rainbow == 1) {
-				messageOut = messageOut + Colors.OLIVE + c;
+				messageOut = messageOut + Colors.OLIVE + out;
 			} else if (rainbow == 2) {
-				messageOut = messageOut + Colors.YELLOW + c;
+				messageOut = messageOut + Colors.YELLOW + out;
 			} else if (rainbow == 3) {
-				messageOut = messageOut + Colors.GREEN + c;
+				messageOut = messageOut + Colors.GREEN + out;
 			} else if (rainbow == 4) {
-				messageOut = messageOut + Colors.BLUE + c;
+				messageOut = messageOut + Colors.BLUE + out;
 			} else if (rainbow == 5) {
-				messageOut = messageOut + Colors.DARK_BLUE + c;
+				messageOut = messageOut + Colors.DARK_BLUE + out;
 			} else if (rainbow == 6) {
-				messageOut = messageOut + Colors.MAGENTA + c;
+				messageOut = messageOut + Colors.MAGENTA + out;
 			}
 			rainbow++;
 			if (rainbow >= 6) {
