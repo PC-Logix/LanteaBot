@@ -11,12 +11,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import pcl.lc.irc.AbstractListener;
@@ -142,6 +144,11 @@ public class Weather extends AbstractListener {
 
 	public String getWeather(String location) throws XPathExpressionException, ParserConfigurationException, MalformedURLException, SAXException, IOException {
 		if (Config.botConfig.containsKey("WeatherAPI")) {
+			if (location.contains(",")){
+				String[] tmp = location.split(",");
+				location = tmp[1].trim() + "/" + tmp[0].trim();
+			}
+			
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			location = location.trim().replace("+", "%20").replace(" ",  "%20");
@@ -149,6 +156,16 @@ public class Weather extends AbstractListener {
 			Document doc = db.parse(new URL("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions/q/" + location + ".xml").openStream());
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			XPath xpath = xPathfactory.newXPath();
+	        XPathExpression expr = xpath.compile("//response/results/result/l");
+	        Object result = expr.evaluate(doc, XPathConstants.NODESET);
+
+	        NodeList nodes = (NodeList) result;
+	        if (nodes.getLength() > 0) {
+	        	String newpath = (String) xpath.evaluate("/response/results/result/l", doc, XPathConstants.STRING);
+				System.out.println("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions" + newpath + ".xml");
+	        	doc = db.parse(new URL("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions" + newpath + ".xml").openStream());
+	        } 
+	        
 			String location_name = (String) xpath.evaluate("/response/current_observation/display_location/full", doc, XPathConstants.STRING);
 			String temp_C = (String) xpath.evaluate("/response/current_observation/temp_c", doc, XPathConstants.STRING);
 			String temp_F = (String) xpath.evaluate("/response/current_observation/temp_f", doc, XPathConstants.STRING);
