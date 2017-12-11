@@ -41,6 +41,7 @@ public class Config {
 	public static String TwitToken = null;
 	public static String TwitTSecret = null;
 	public static String googleAPI = null;
+	public static String AzureTextAPI = null;
 	static String adminProps = null;
 	public static String weatherAPI = null;
 	@SuppressWarnings("rawtypes")
@@ -91,6 +92,7 @@ public class Config {
 			botConfig.put("serverpass", prop.getProperty("serverpass", ""));
 			botConfig.put("WeatherAPI", prop.getProperty("WeatherAPI", ""));
 			botConfig.put("GoogleAPI", prop.getProperty("GoogleAPI", ""));
+			botConfig.put("AzureTextAPI", prop.getProperty("AzureTextAPI", ""));
 			botConfig.put("WolframAPI", prop.getProperty("WolframAPI", ""));
 			nick = prop.getProperty("nick","LanteaBot");
 			nspass = prop.getProperty("nspass", "");
@@ -113,6 +115,7 @@ public class Config {
 			TwitToken = prop.getProperty("TwitToken");
 			TwitTSecret = prop.getProperty("TwitTSecret");
 			googleAPI = prop.getProperty("GoogleAPI", "");
+			AzureTextAPI = prop.getProperty("AzureTextAPI", "");
 			weatherAPI = prop.getProperty("WeatherAPI", "");
 			
 			saveProps();

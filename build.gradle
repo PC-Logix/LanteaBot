@@ -49,6 +49,7 @@ dependencies {
   compile 'com.google.apis:google-api-services-youtube:v3-rev178-1.22.0'
   compile 'com.sangupta:imgur-client:0.2.0'
   compile 'com.github.kevinsawicki:timeago:1.0.1'
+  compile 'io.github.firemaples:microsoft-translator-java-api:0.8.3'
 }
 
 version = "${versionObj.toString()}"
