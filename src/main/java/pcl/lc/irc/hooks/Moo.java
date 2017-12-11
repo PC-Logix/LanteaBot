@@ -60,7 +60,6 @@ public class Moo extends AbstractListener {
 				}
 			}
 		}; local_command.setHelpText("Moos the text");
-		IRCBot.registerCommand(local_command);
 	}
 
 	public String chan;
