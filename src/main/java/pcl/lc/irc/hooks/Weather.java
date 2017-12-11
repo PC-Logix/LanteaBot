@@ -21,6 +21,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import static gcardone.junidecode.Junidecode.*;
+
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
@@ -134,7 +136,7 @@ public class Weather extends AbstractListener {
 			}
 			String target = Helper.getTarget(event);
 			try {
-				IRCBot.getInstance().sendMessage(target, getWeather(location));
+				Helper.sendMessage(target, getWeather(location));
 			} catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -146,7 +148,8 @@ public class Weather extends AbstractListener {
 		if (Config.botConfig.containsKey("WeatherAPI")) {
 			if (location.contains(",")){
 				String[] tmp = location.split(",");
-				location = tmp[1].trim() + "/" + tmp[0].trim();
+				location = unidecode(tmp[1].trim()) + "/" + unidecode(tmp[0].trim());
+				System.out.println(location);
 			}
 			
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
