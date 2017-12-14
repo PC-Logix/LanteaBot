@@ -1,12 +1,13 @@
 package pcl.lc.irc;
 
-import com.sun.istack.internal.Nullable;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import javax.annotation.Nullable;
 
 //Database.addStatement("CREATE TABLE IF NOT EXISTS RPGUsers(
 // account STRING UNIQUE PRIMARY KEY,
