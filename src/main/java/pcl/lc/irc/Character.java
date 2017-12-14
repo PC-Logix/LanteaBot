@@ -1,10 +1,10 @@
-package pcl.lc.irc.job;
+package pcl.lc.irc;
 
+import com.sun.istack.internal.Nullable;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
-import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
