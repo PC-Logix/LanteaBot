@@ -18,6 +18,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.getVideoInfo;
 
@@ -74,7 +75,7 @@ public class YTInfo extends ListenerAdapter {
 							if (!enabledChannels.contains(event.getChannel().getName())) {
 						        try {
 						        	enabledChannels.add(event.getChannel().getName());
-						            PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
+						            PreparedStatement enableHook = Database.getPreparedStatement("enableHook");
 						            enableHook.setString(1, "YouTube");
 						            enableHook.setString(2, event.getChannel().getName());
 						            enableHook.executeUpdate();
@@ -89,7 +90,7 @@ public class YTInfo extends ListenerAdapter {
 							if (enabledChannels.contains(event.getChannel().getName())) {
 						        try {
 						        	enabledChannels.remove(event.getChannel().getName());
-						            PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
+						            PreparedStatement disableHook = Database.getPreparedStatement("disableHook");
 						            disableHook.setString(1, "YouTube");
 						            disableHook.setString(2, event.getChannel().getName());
 						            disableHook.executeUpdate();
