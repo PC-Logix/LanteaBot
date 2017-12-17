@@ -4,25 +4,10 @@ import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
+import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import javax.annotation.Nullable;
-
-//Database.addStatement("CREATE TABLE IF NOT EXISTS RPGUsers(
-// account STRING UNIQUE PRIMARY KEY,
-// userName STRING,
-// health,
-// xp,
-// level,
-// strength,
-// defense,
-// accuracy,
-// dodge,
-// numAttacked,
-// numAttacks,
-// deaths,
-// revives)");
 @SuppressWarnings("FieldCanBeLocal")
 public class RPGCharacter {
   private static int fatalHitpoints = -10;
@@ -31,7 +16,7 @@ public class RPGCharacter {
   private String userName;
   private String activeTarget;
   private double health;
-  private int xp;
+  private double xp;
   private int level;
   private int strength;
   private int defense;
@@ -71,40 +56,41 @@ public class RPGCharacter {
     ResultSet resultSet = statement.executeQuery();
     if (resultSet.next()) {
       if (this.userName == null || this.userName == "")
-        this.userName = resultSet.getString(1);
-      this.health = resultSet.getDouble(2);
-      this.xp = resultSet.getInt(3);
-      this.level = resultSet.getInt(4);
-      this.strength = resultSet.getInt(5);
-      this.defense = resultSet.getInt(6);
-      this.accuracy = resultSet.getInt(7);
-      this.dodge = resultSet.getInt(8);
-      this.gainStrength = resultSet.getInt(9);
-      this.gainDefense = resultSet.getInt(10);
-      this.gainAccuracy = resultSet.getInt(11);
-      this.gainDodge = resultSet.getInt(12);
-      this.numAttacked = resultSet.getInt(13);
-      this.numAttacks = resultSet.getInt(14);
-      this.deaths = resultSet.getInt(15);
-      this.revives = resultSet.getInt(16);
+        this.userName = resultSet.getString(2);
+      this.health = resultSet.getDouble(3);
+      this.xp = resultSet.getDouble(4);
+      this.level = resultSet.getInt(5);
+      this.strength = resultSet.getInt(6);
+      this.defense = resultSet.getInt(7);
+      this.accuracy = resultSet.getInt(8);
+      this.dodge = resultSet.getInt(9);
+      this.gainStrength = resultSet.getInt(10);
+      this.gainDefense = resultSet.getInt(11);
+      this.gainAccuracy = resultSet.getInt(12);
+      this.gainDodge = resultSet.getInt(13);
+      this.numAttacked = resultSet.getInt(14);
+      this.numAttacks = resultSet.getInt(15);
+      this.deaths = resultSet.getInt(16);
+      this.revives = resultSet.getInt(17);
     } else {
       PreparedStatement newCharacter = Database.getPreparedStatement("newRPGCharacter");
       newCharacter.setString(1, this.accountName);
-      newCharacter.setDouble(2, this.health);
-      newCharacter.setInt(3, this.xp);
-      newCharacter.setInt(4, this.level);
-      newCharacter.setInt(5, this.strength);
-      newCharacter.setInt(6, this.defense);
-      newCharacter.setInt(7, this.accuracy);
-      newCharacter.setInt(8, this.dodge);
-      newCharacter.setInt(9, this.gainStrength);
-      newCharacter.setInt(10, this.gainDefense);
-      newCharacter.setInt(11, this.gainAccuracy);
-      newCharacter.setInt(12, this.gainDodge);
-      newCharacter.setInt(13, this.numAttacked);
-      newCharacter.setInt(14, this.numAttacks);
-      newCharacter.setInt(15, this.deaths);
-      newCharacter.setInt(16, this.revives);
+      newCharacter.setString(2, this.userName);
+      newCharacter.setDouble(3, this.health);
+      newCharacter.setDouble(4, this.xp);
+      newCharacter.setInt(5, this.level);
+      newCharacter.setInt(6, this.strength);
+      newCharacter.setInt(7, this.defense);
+      newCharacter.setInt(8, this.accuracy);
+      newCharacter.setInt(9, this.dodge);
+      newCharacter.setInt(10, this.gainStrength);
+      newCharacter.setInt(11, this.gainDefense);
+      newCharacter.setInt(12, this.gainAccuracy);
+      newCharacter.setInt(13, this.gainDodge);
+      newCharacter.setInt(14, this.numAttacked);
+      newCharacter.setInt(15, this.numAttacks);
+      newCharacter.setInt(16, this.deaths);
+      newCharacter.setInt(17, this.revives);
       newCharacter.executeUpdate();
     }
   }
@@ -114,7 +100,7 @@ public class RPGCharacter {
       PreparedStatement updateCharacter = Database.getPreparedStatement("updateRPGCharacter");
       updateCharacter.setString(1, this.userName);
       updateCharacter.setDouble(2, this.health);
-      updateCharacter.setInt(3, this.xp);
+      updateCharacter.setDouble(3, this.xp);
       updateCharacter.setInt(4, this.level);
       updateCharacter.setInt(5, this.strength);
       updateCharacter.setInt(6, this.defense);
@@ -128,8 +114,9 @@ public class RPGCharacter {
       updateCharacter.setInt(14, this.numAttacks);
       updateCharacter.setInt(15, this.deaths);
       updateCharacter.setInt(16, this.revives);
-      updateCharacter.setString(13, this.accountName);
+      updateCharacter.setString(17, this.accountName);
       updateCharacter.executeUpdate();
+      System.out.println("Character " + this.getUserName() + " (" + this.getAccountName() + ") saved!");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -148,8 +135,16 @@ public class RPGCharacter {
     return health;
   }
 
-  public int getXp() {
+  public String getHealthString() {
+    return Double.toString(this.health).replace(".0", "");
+  }
+
+  public double getXp() {
     return xp;
+  }
+
+  public String getXpString() {
+    return Double.toString(this.xp).replace(".0", "");
   }
 
   public int getLevel() {
@@ -191,11 +186,15 @@ public class RPGCharacter {
 
   @Override
   public String toString() {
-    return userName + " [" + this.getHealth() + "/" + this.getMaxHealth() + "], Level " + level + ", " + this.experienceToNextLevel() + " xp to next level.";
+    return userName + " [" + this.getHealthString() + "/" + this.getMaxHealthString() + "], Level " + level + ", " + this.getXpString() + " xp out of " + this.nextLevelThreshhold() + " xp for next level.";
   }
 
   public double getMaxHealth() {
     return 20 + Math.floor(this.level * 0.2);
+  }
+
+  public String getMaxHealthString() {
+    return Double.toString(this.getMaxHealth()).replace(".0", "");
   }
 
   /**
@@ -252,6 +251,10 @@ public class RPGCharacter {
     return Math.max(maxUntilFatal, damage);
   }
 
+  public String takeDamageString(double damage) {
+    return Double.toString(this.takeDamage(damage)).replace(".0", "");
+  }
+
   /**
    *
    * @param health Hitpoints to heal.
@@ -262,6 +265,10 @@ public class RPGCharacter {
     this.health = Math.min(this.getMaxHealth(), this.health + health);
     this.save();
     return Math.min(maxHealed, health);
+  }
+
+  public String healString(double health) {
+    return Double.toString(this.heal(health)).replace(".0", "");
   }
 
   public int getMinutesUntilDeath() {
@@ -320,11 +327,15 @@ public class RPGCharacter {
    * Call levelUp(false) after adding any amount of experience to character.
    * @param experience Experience to add.
    */
-  public void gainExperience(int experience) {
+  public void gainExperience(double experience) {
+    System.out.println(this.userName + " gains " + experience + " going from " + this.xp + " to " + (this.xp + experience) + "!");
     this.xp += experience;
     this.save();
   }
 
+  public boolean shouldLevelUp() {
+    return (this.nextLevelThreshhold() < this.xp && this.gainStrength == 0 && this.gainDefense == 0 && this.gainAccuracy == 0 && this.gainDodge == 0);
+  }
 
   /**
    * Levels up character if they have sufficient xp.
@@ -343,7 +354,7 @@ public class RPGCharacter {
    * @return An array containing the gained strength, defense, accuracy and dodge respectively.
    */
   public int[] levelUpRaw(boolean override) {
-    if (!override && this.xp < this.nextLevelThreshhold())
+    if (!override && !this.shouldLevelUp())
       return null;
     this.level++;
     this.health = this.getMaxHealth();
@@ -359,15 +370,17 @@ public class RPGCharacter {
     return new int[] { strengthBonus, defenseBonus, accuracyBonus, dodgeBonus };
   }
 
-  public void levelUp() {
-    levelUp(false);
+  public boolean levelUp() {
+    return levelUp(false);
   }
 
-  public void levelUp(boolean override) {
+  public boolean levelUp(boolean override) {
     int[] gains = levelUpRaw(override);
     if (gains != null) {
       Helper.sendMessage(this.activeTarget, this.userName + " leveled up! Gain " + gains[0] + " strength, " + gains[1] + " defense, " + gains[2] + " accuracy or " + gains[3] + " dodge by entering the appropriate sub command now!");
+      return true;
     }
+    return false;
   }
 
   private void resetGains() {
