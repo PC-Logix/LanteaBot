@@ -51,10 +51,10 @@ public class Shell extends AbstractListener {
 					String strike = "Seems it was a dud...";
 					try {
 						if (roll != null && roll.getSum() < hitChance) {
-							strike = "It strikes " + user + ". They take " + Helper.rollDice("2d10").getSum() + " damage. " + userSecondary + " and " + userTertiary + " stood too close and take " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
+							strike = "It strikes " + user + ". They take " + Math.max(8, Helper.rollDice("2d10").getSum()) + " damage. " + userSecondary + " and " + userTertiary + " stood too close and take " + Helper.rollDice("1d8").getSum() + " and " + Helper.rollDice("1d8").getSum() + " splash damage respectively.";
 							itemDamage = 1;
 						} else {
-							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Helper.rollDice("1d10").getSum() + ", " + Helper.rollDice("1d10").getSum() + " and " + Helper.rollDice("1d10").getSum() + " splash damage respectively.";
+							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Helper.rollDice("1d8").getSum() + ", " + Helper.rollDice("1d8").getSum() + " and " + Helper.rollDice("1d8").getSum() + " splash damage respectively.";
 							itemDamage = 2;
 						}
 					} catch (NullPointerException ignored) {}
