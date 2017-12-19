@@ -294,6 +294,7 @@ public class CalendarFacts extends AbstractListener {
 										break;
 								}
 								str += "line";
+								break;
 						}
 					case 3:
 						str += "magnetic field reversal";
@@ -312,6 +313,7 @@ public class CalendarFacts extends AbstractListener {
 								str += "FDR";
 								break;
 						}
+						break;
 				}
 				str += "? ";
 				//</editor-fold>
