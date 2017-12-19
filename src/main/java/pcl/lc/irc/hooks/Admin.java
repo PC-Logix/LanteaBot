@@ -483,7 +483,7 @@ public class Admin extends AbstractListener {
 	}
 
 	private static void relaunch() throws InterruptedException, UnsupportedEncodingException {
-		String command = FilenameUtils.getPath("/"+IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
+		String command = "/"+FilenameUtils.getPath(IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
 			Process p;
 			try {
 				p = Runtime.getRuntime().exec(command);
