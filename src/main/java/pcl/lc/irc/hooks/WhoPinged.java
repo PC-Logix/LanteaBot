@@ -135,7 +135,8 @@ public class WhoPinged extends AbstractListener {
 					PreparedStatement statement = Database.getPreparedStatement("getPings");
 					statement.setString(1, paramsList.get(0).getValue().toLowerCase());
 					ResultSet resultSet = statement.executeQuery();
-					items = "<table><tr><th>Channel</th><th>User</th><th>Message</th><th>Time/Date</th></tr>";
+					items = "<form action=\"\" method=\"get\">Nickname: <input type=\"text\" name=\"nick\" value=\""+paramsList.get(0).getValue()+"\"><input type=\"submit\" value=\"Submit\"></form>"
+							+ "<table><tr><th>Channel</th><th>User</th><th>Message</th><th>Time/Date</th></tr>";
 					while (resultSet.next()) {
 						items += "<tr><td>" + resultSet.getString(5) + "</td><td>" + resultSet.getString(2) + "</td><td>" + resultSet.getString(3) + "</td><td>" + time.timeAgo(resultSet.getLong(4)) + "</td></tr>";
 					}
@@ -146,7 +147,7 @@ public class WhoPinged extends AbstractListener {
 					e.printStackTrace();
 				}
 			} else {
-				items = "You must supply a username";
+				items = "<form action=\"\" method=\"get\">Nickname: <input type=\"text\" name=\"nick\"><input type=\"submit\" value=\"Submit\"></form>";
 			}
 
 			String navData = "";
