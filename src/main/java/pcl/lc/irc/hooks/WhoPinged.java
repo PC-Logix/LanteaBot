@@ -187,7 +187,9 @@ public class WhoPinged extends AbstractListener {
 			if (!findMatch.equals("false")) {
 				String[] parts = findMatch.split(" ");
 				for (String part : parts) {
-					System.out.println(part);
+					if (event.getUser().getNick().equalsIgnoreCase("corded")) {
+						sender = "@"+sender;
+					}
 					PreparedStatement addPing = Database.getPreparedStatement("addPing");
 					addPing.setString(1, part);
 					addPing.setString(2, sender);
