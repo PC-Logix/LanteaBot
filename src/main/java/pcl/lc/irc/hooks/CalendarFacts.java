@@ -372,7 +372,7 @@ public class CalendarFacts extends AbstractListener {
 						break;
 				}
 				//</editor-fold>
-				Helper.sendMessage(target, str, null, false);
+				Helper.sendMessage(target, str, null, true);
 			}
 		};
 		local_command.registerAlias("calfacts");
