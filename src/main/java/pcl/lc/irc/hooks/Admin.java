@@ -11,6 +11,7 @@ import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -482,25 +483,16 @@ public class Admin extends AbstractListener {
 	}
 
 	private static void relaunch() throws InterruptedException, UnsupportedEncodingException {
-		String[] command = new String[]{"java", "-Dfile.encoding=UTF-8", "-jar", IRCBot.getThisJarFile().getAbsolutePath()};
-
-		//Relaunches the bot using UTF-8 mode.
-		ProcessBuilder processBuilder = new ProcessBuilder(command);
-		processBuilder.inheritIO(); //Tells the new process to use the same command line as this one.
-		try {
-			Process process = processBuilder.start();
-			process.waitFor();  //We wait here until the actual bot stops. We do this so that we can keep using the same command line.
-			System.exit(process.exitValue());
-		} catch (IOException e) {
-			if (e.getMessage().contains("\"java\"")) {
-				System.out.println("BotLauncher: There was an error relaunching the bot. We couldn't find Java to launch with.");
-				System.out.println("BotLauncher: Attempted to relaunch using the command:\n   " + StringUtils.join(command, " ", 0, command.length));
-				System.out.println("BotLauncher: Make sure that you have Java properly set in your Operating System's PATH variable.");
-				System.out.println("BotLauncher: Stopping here.");
-			} else {
+		String command = "/"+FilenameUtils.getPath(IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
+			Process p;
+			try {
+				p = Runtime.getRuntime().exec(command);
+			    p.waitFor();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+
 	}
 
 	static class HelpHandler implements HttpHandler {
