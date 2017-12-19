@@ -296,6 +296,7 @@ public class CalendarFacts extends AbstractListener {
 								str += "line";
 								break;
 						}
+						break;
 					case 3:
 						str += "magnetic field reversal";
 						break;
