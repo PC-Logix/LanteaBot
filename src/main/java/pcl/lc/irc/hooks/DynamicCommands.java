@@ -33,6 +33,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,7 +54,7 @@ public class DynamicCommands extends AbstractListener {
 	private NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();;
 	private final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
 	private final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
-	
+
 	private Command local_command_add;
 	private Command local_command_del;
 	private Command local_command_addhelp;
@@ -65,9 +66,16 @@ public class DynamicCommands extends AbstractListener {
 
 	private static LuaState luaState;
 	public StringBuilder output;
-		
+
 	@Override
 	protected void initHook() {
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return, help)");
+		Database.addUpdateQuery(5, "ALTER TABLE Commands ADD help STRING DEFAULT NULL NULL;");
+		Database.addPreparedStatement("addCommand", "INSERT OR REPLACE INTO Commands(command, return) VALUES (?, ?);");
+		Database.addPreparedStatement("addCommandHelp", "UPDATE Commands SET help = ? WHERE command = ?");
+		Database.addPreparedStatement("searchCommands", "SELECT command, help FROM Commands");
+		Database.addPreparedStatement("getCommand", "SELECT return, help FROM Commands WHERE command = ?");
+		Database.addPreparedStatement("delCommand", "DELETE FROM Commands WHERE command = ?;");
 		InputStream luain = getClass().getResourceAsStream("/jnlua/luasb.lua");
 		try {
 			luasb = CharStreams.toString(new InputStreamReader(luain, Charsets.UTF_8));
@@ -80,6 +88,52 @@ public class DynamicCommands extends AbstractListener {
 		local_command_add = new Command("addcommand", 0);
 		IRCBot.registerCommand(local_command_add, "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		local_command_del = new Command("delcommand", 0);
+		local_command_print = new Command ("printcommand", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				PreparedStatement getCommand;
+				try {
+					getCommand = Database.getPreparedStatement("getCommand");
+					getCommand.setString(1, params.toLowerCase());
+					ResultSet command1 = getCommand.executeQuery();
+					if (command1.next()) {
+						String message = command1.getString(1);
+						Helper.sendMessage(target, message);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		};
+		local_command_edit = new Command ("editcommand", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try {
+					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
+					PreparedStatement getCommand= Database.getPreparedStatement("getCommand");
+					String[] message = params.split(" ", 2);
+					if (IRCBot.commands.containsKey(message[0])) {
+						getCommand.setString(1, message[0].toLowerCase());
+						ResultSet command1 = getCommand.executeQuery();
+						IRCBot.unregisterCommand(message[0].toLowerCase());
+						addCommand.setString(1, message[0].toLowerCase());
+						addCommand.setString(2, message[1]);
+						addCommand.executeUpdate();
+						event.respond("Command Edited");
+						IRCBot.registerCommand(message[0].toLowerCase(), command1.getString(2));
+					}
+					else {
+						event.respond("Can't add new commands with edit!");
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					event.respond("An error occurred while processing this command");
+				}
+			}
+		};
 		local_command_addhelp = new Command ("addcommandhelp", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -114,13 +168,7 @@ public class DynamicCommands extends AbstractListener {
 		local_command_addhelp.setHelpText("Sets help on dynamic commands");
 		IRCBot.registerCommand(local_command_del, "Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		IRCBot.registerCommand(local_command_addhelp);
-		Database.addStatement("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return, help)");
-		Database.addUpdateQuery(5, "ALTER TABLE Commands ADD help STRING DEFAULT NULL NULL;");
-		Database.addPreparedStatement("addCommand", "INSERT INTO Commands(command, return) VALUES (?, ?);");
-		Database.addPreparedStatement("addCommandHelp", "UPDATE Commands SET help = ? WHERE command = ?");
-		Database.addPreparedStatement("searchCommands", "SELECT command, help FROM Commands");
-		Database.addPreparedStatement("getCommand", "SELECT return FROM Commands WHERE command = ?");
-		Database.addPreparedStatement("delCommand", "DELETE FROM Commands WHERE command = ?;");
+
 		try {
 			PreparedStatement searchCommands = Database.getPreparedStatement("searchCommands");
 			ResultSet commands = searchCommands.executeQuery();
@@ -191,8 +239,8 @@ public class DynamicCommands extends AbstractListener {
 		chan = event.getChannel().getName();
 		target = Helper.getTarget(event);
 		local_command_addhelp.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		//local_command_print.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		//local_command_edit.tryExecute(command, sender, event.getChannel().getName(), event, args);
+		local_command_print.tryExecute(command, sender, event.getChannel().getName(), event, args);
+		local_command_edit.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		if (ourinput.length() > 1) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				String[] message = event.getMessage().split(" ", 3);
@@ -242,7 +290,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		}
 	}
-	
+
 	private static String stackToString(LuaState luaState) {
 		int top = luaState.getTop();
 		if (top > 0) {
@@ -291,7 +339,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		});
 		luaState.setGlobal("print");
-		
+
 		luaState.load(luasb, "=luasb");
 		luaState.call(0, 0);
 	}
@@ -310,7 +358,7 @@ public class DynamicCommands extends AbstractListener {
 		luaState.setTop(0); // Remove results from stack
 		return results.toString();
 	}
-	
+
 	public String eval(NashornScriptEngine engine, String code) {
 		CompiledScript cs;
 		try {
@@ -325,17 +373,17 @@ public class DynamicCommands extends AbstractListener {
 		String output = null;
 		try {
 			Future<String> f = service.submit(r);
-		    output = f.get(5, unit);
+			output = f.get(5, unit);
 		}
 		catch(TimeoutException e) {
-		    output = "Script timed out";
+			output = "Script timed out";
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			output = e.getMessage();
 		}
 		finally {
-		    service.shutdown();
+			service.shutdown();
 		}
 		if (output == null)
 			output = "";
@@ -344,33 +392,33 @@ public class DynamicCommands extends AbstractListener {
 	}
 
 	public class JSRunner implements Callable<String> {
-		
+
 		private final CompiledScript cs;
-		
+
 		public JSRunner(CompiledScript cs) {
 			this.cs = cs;
 		}
 
 		@Override
 		public String call() throws Exception {
-				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
-				ScriptContext context = cs.getEngine().getContext();
-				context.setWriter(pw);
-				context.setErrorWriter(pw);
-				
-				try {
-					Object out = cs.eval();
-					if (sw.getBuffer().length() != 0)
-						return sw.toString();
-					if (out != null)
-						return out.toString();
-				}
-				catch(ScriptException ex) {
-					return ex.getMessage();
-				}
-				return null;
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ScriptContext context = cs.getEngine().getContext();
+			context.setWriter(pw);
+			context.setErrorWriter(pw);
+
+			try {
+				Object out = cs.eval();
+				if (sw.getBuffer().length() != 0)
+					return sw.toString();
+				if (out != null)
+					return out.toString();
+			}
+			catch(ScriptException ex) {
+				return ex.getMessage();
+			}
+			return null;
 		}
 	}
-	
+
 }
