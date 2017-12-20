@@ -12,23 +12,27 @@ import pcl.lc.utils.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
+import java.util.List;
+
 /**
  * @author Forecaster
  *
  */
 @SuppressWarnings("rawtypes")
 public class Shell extends AbstractListener {
-	private Command local_command;
+	private List<Command> commands;
+	private Command shell;
 	int hitChance = 40; //percentage (out of 100)
 
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Shell a target or random user. " + hitChance + "% hit chance.");
+		IRCBot.registerCommand(shell, "Shell a target or random user. " + hitChance + "% hit chance.");
 	}
 
 	private void initCommands() {
-		local_command = new Command("shell", 0) {
+		commands.add(shell);
+		shell = new Command("shell", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100");
@@ -45,7 +49,6 @@ public class Shell extends AbstractListener {
             Helper.sendAction(target, "kicks " + nick + " into space.");
             return;
           }
-					int splash = 2;
 					int itemDamage = 0;
 					String dust = "";
 					String strike = "Seems it was a dud...";
@@ -67,7 +70,7 @@ public class Shell extends AbstractListener {
 					}
 				} else {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendAction(target, "found nothing to fire load into the shell...");
+					Helper.sendAction(target, "found nothing to load into the shell...");
 				}
 			}
 		};
@@ -83,6 +86,7 @@ public class Shell extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
+		for (Command com : commands)
+			com.tryExecute(command, nick, target, event, copyOfRange);
 	}
 }
