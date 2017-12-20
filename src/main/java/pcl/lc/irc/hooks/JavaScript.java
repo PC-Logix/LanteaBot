@@ -76,6 +76,8 @@ public class JavaScript  extends ListenerAdapter {
 				StringBuilder output = new StringBuilder();
 				NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
 				output.append(eval(engine, code));
+				if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
+					output.setLength(output.length()-1);
 				Helper.sendMessage(event.getChannel().getName(), output.toString().replace("\n", " | ").replace("\r", ""));
 			}
 		}

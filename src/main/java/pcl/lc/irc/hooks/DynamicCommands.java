@@ -161,6 +161,8 @@ public class DynamicCommands extends AbstractListener {
 					NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
 					output = new StringBuilder();
 					output.append(eval(engine, message.replace("[js]", "").trim()));
+					if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
+						output.setLength(output.length()-1);
 					message = output.toString().replace("\n", " | ").replace("\r", "");
 				}
 				String msg = "";
