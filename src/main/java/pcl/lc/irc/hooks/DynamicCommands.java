@@ -114,9 +114,9 @@ public class DynamicCommands extends AbstractListener {
 					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
 					PreparedStatement getCommand= Database.getPreparedStatement("getCommand");
 					String[] message = params.split(" ", 2);
-					if (IRCBot.commands.containsKey(message[0])) {
-						getCommand.setString(1, message[0].toLowerCase());
-						ResultSet command1 = getCommand.executeQuery();
+					getCommand.setString(1, message[0].toLowerCase());
+					ResultSet command1 = getCommand.executeQuery();
+					if (command1.next()) {
 						IRCBot.unregisterCommand(message[0].toLowerCase());
 						addCommand.setString(1, message[0].toLowerCase());
 						addCommand.setString(2, message[1]);
