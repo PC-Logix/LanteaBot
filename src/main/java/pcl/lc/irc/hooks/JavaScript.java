@@ -73,8 +73,10 @@ public class JavaScript  extends ListenerAdapter {
 			if (triggerWord.equals(prefix + "js")) {
 				code = event.getMessage().substring(event.getMessage().indexOf("js") + 2).trim();
 				if (engineFactory == null || code == null) return;
+				StringBuilder output = new StringBuilder();
 				NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
-				Helper.sendMessage(event.getChannel().getName(), eval(engine, code));
+				output.append(eval(engine, code));
+				Helper.sendMessage(event.getChannel().getName(), output.toString().replace("\n", " | ").replace("\r", ""));
 			}
 		}
 	}
