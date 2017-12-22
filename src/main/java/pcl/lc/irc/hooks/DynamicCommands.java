@@ -223,7 +223,7 @@ public class DynamicCommands extends AbstractListener {
 					message = msg.replace("[drama]", Drama.dramaParse());
 				}
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendMessage(target, message);
+				Helper.sendMessage(target, message, nick, true);
 			}
 		}
 		catch (Exception e) {
