@@ -12,6 +12,7 @@ import pcl.lc.utils.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class Shell extends AbstractListener {
 	}
 
 	private void initCommands() {
+		commands = new ArrayList<>();
 		commands.add(shell);
 		shell = new Command("shell", 0) {
 			@Override
