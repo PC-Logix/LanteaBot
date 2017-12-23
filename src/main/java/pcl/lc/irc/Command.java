@@ -313,12 +313,8 @@ public class Command {
 		return true;
 	}
 
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-		Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
-	}
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-		Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
-	}
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {}
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {}
 	public void onExecuteFail(Command command, String nick, String target, long timeout) {
 		Helper.sendNotice(nick, getCannotExecuteReason(timeout), nick);
 	}
