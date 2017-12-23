@@ -67,7 +67,12 @@ public class RPG extends AbstractListener {
 			"revives = ? WHERE account = ?");
 		Database.addPreparedStatement("getRPGCharacter", "SELECT * FROM RPGUsers WHERE account = ?");
 
-		rpg = new Command("rpg", 0, Permissions.EVERYONE);
+		rpg = new Command("rpg", 0, Permissions.EVERYONE) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
+			}
+		};
 
 		enable = new Command("enable", 0, Permissions.MOD) {
 			@Override
