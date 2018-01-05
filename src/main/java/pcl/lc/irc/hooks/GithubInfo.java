@@ -66,7 +66,7 @@ public class GithubInfo extends AbstractListener {
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		if (Helper.isEnabledHere(event.getChannel().getName(), "github")) {
 			String message = String.join(" ", args);
-			Pattern pattern = Pattern.compile("(?:github.com)/(.+)/(.+)/(issues)/(.+)");
+			Pattern pattern = Pattern.compile("(?:github.com)/(.+)/(.+)/(issues)/([0-9]+)");
 			Matcher matcher = pattern.matcher(message);
 			StringBuilder path = new StringBuilder();
 			boolean matchFound = matcher.find();
