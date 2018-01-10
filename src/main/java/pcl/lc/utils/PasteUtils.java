@@ -20,7 +20,7 @@ public class PasteUtils {
 	    NONE;
 	}
 	
-    private static String pasteURL = "http://paste.pc-logix.com/";
+    private static String pasteURL = "https://paste.pc-logix.com/";
 
 	  public synchronized static String paste(String urlParameters) {
 	      return paste(urlParameters, Formats.NONE);
