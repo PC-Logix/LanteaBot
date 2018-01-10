@@ -33,7 +33,6 @@ public class Shell extends AbstractListener {
 
 	private void initCommands() {
 		commands = new ArrayList<>();
-		commands.add(shell);
 		shell = new Command("shell", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -47,10 +46,10 @@ public class Shell extends AbstractListener {
 					if (user == "")
 						user = Helper.getRandomUser(event);
 					else if (!Helper.doInteractWith(user))
-          {
-            Helper.sendAction(target, "kicks " + nick + " into space.");
-            return;
-          }
+					{
+						Helper.sendAction(target, "kicks " + nick + " into space.");
+						return;
+					}
 					int itemDamage = 0;
 					String dust = "";
 					String strike = "Seems it was a dud...";
@@ -76,6 +75,7 @@ public class Shell extends AbstractListener {
 				}
 			}
 		};
+		commands.add(shell);
 	}
 
 	public String chan;
