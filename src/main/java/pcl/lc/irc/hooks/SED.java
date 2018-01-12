@@ -56,7 +56,7 @@ public class SED extends AbstractListener {
 		String trigger = ourinput./*replaceAll("[^a-zA-Z0-9 ]", "").*/trim();
 		if (trigger.length() > 1) {
 			String messageEvent = String.join(" ", args);
-			if (messageEvent.startsWith(prefix)) {messageEvent = messageEvent.substring(1);}
+			if (messageEvent.startsWith(prefix)) {messageEvent = messageEvent.substring(prefix.length());}
                         
 			if (messageEvent.matches("s/(.+)/(.*)")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
