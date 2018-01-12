@@ -52,10 +52,14 @@ public class SED extends AbstractListener {
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		String prefix = Config.commandprefix;
+
 		target = Helper.getTarget(event);
 		if (args.length > 0) {
-			String messageEvent = String.join(" ", args).replace(prefix, "");
-			if (messageEvent.matches("s/(.+)/(.+)")) {
+			String messageEvent = String.join(" ", args);
+			if (messageEvent.startsWith(prefix)) {messageEvent = messageEvent.substring(prefix.length());}
+                        
+			if (messageEvent.matches("s/(.+)/(.*)")) {
+
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					if (Helper.isEnabledHere(event.getChannel().getName(), "SED")) {
 						String message = messageEvent;
@@ -65,20 +69,18 @@ public class SED extends AbstractListener {
 						boolean isCaseInsensitive = false;
 
 						message = message.substring(message.indexOf("/")+1);
+						pattern = message.substring(0,message.indexOf("/"));
+						message = message.substring(message.indexOf("/")+1);
+
 						if (message.indexOf('/')>=0) {
-							pattern = message.substring(0,message.indexOf("/"));
+							replacement = message.substring(0,message.indexOf("/"));
 							message = message.substring(message.indexOf("/")+1);
 
-							if (message.indexOf('/')>=0) {
-								replacement = message.substring(0,message.indexOf("/"));
-								message = message.substring(message.indexOf("/")+1);
-
-								if (!message.isEmpty()) {
-									isGlobal = message.indexOf('g')>=0;
-									isCaseInsensitive = message.indexOf('i')>=0;
-								}
-							} else { replacement = message; }
-						}
+							if (!message.isEmpty()) {
+							    isGlobal = message.indexOf('g')>=0;
+							    isCaseInsensitive = message.indexOf('i')>=0;
+							}
+						} else { replacement = message; }
 
 						Pattern regex;
 						try {
@@ -91,7 +93,7 @@ public class SED extends AbstractListener {
 							event.respond("Invalid regex " + err.getPattern());
 							return;
 						}
-
+            
 						List<Entry<UUID, List<String>>> messageList = new ArrayList<>(IRCBot.messages.entrySet());
 						for(Entry<UUID, List<String>> entry : Lists.reverse(messageList)){	
 							if (entry.getValue().get(0).equals(event.getChannel().getName().toString())) {
