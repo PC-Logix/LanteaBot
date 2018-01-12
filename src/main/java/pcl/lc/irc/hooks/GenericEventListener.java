@@ -40,11 +40,8 @@ public class GenericEventListener extends AbstractListener{
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		IRCBot.log.info("<-- Msg: " + event.getChannel().getName().toString() + " " + event.getUser().getNick() + ": " + event.getMessage());
-		if (!IRCBot.isIgnored(sender) && !event.getMessage().startsWith(Config.commandprefix)) {
-			String[] firstWord = StringUtils.split(String.join(" ", args));
-			String triggerWord = firstWord[0];
-			if (event.getMessage().matches("s/(.+)/(.+)") || triggerWord.startsWith(Config.commandprefix) && IRCBot.commands.containsKey(triggerWord.replace(Config.commandprefix, ""))) {
-
+		if (!IRCBot.isIgnored(sender) && !args[0].startsWith(Config.commandprefix)) {
+			if (event.getMessage().matches("s/(.+)/(.+)")) {
 			} else {
 				List<String> list = new ArrayList<String>();
 				list.add(event.getChannel().getName().toString());

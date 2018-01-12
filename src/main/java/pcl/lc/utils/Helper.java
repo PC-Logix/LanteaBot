@@ -251,7 +251,10 @@ public class Helper {
 		}
 		return true;
 	}
-	
+	/*
+	 * Checks if a hook is enabled in a channel
+	 * args String channel String hook
+	 */
 	public static boolean isEnabledHere(String chan, String hook) {
 		try {
 			PreparedStatement checkHook = Database.getPreparedStatement("checkHookForChan");
@@ -359,6 +362,7 @@ public class Helper {
 	
 	public static ImmutableSortedSet<String> getNamesFromTarget(String target) {
 		Channel channel = IRCBot.bot.getUserChannelDao().getChannel(target);
+		channel.createSnapshot();
 		return channel.getUsersNicks();
 	}
 	
