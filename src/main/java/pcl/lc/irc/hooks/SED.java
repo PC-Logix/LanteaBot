@@ -61,35 +61,34 @@ public class SED extends AbstractListener {
 			} else {
 				messageEvent = String.join(" ", args);
 			}
-			if (messageEvent.matches("s/(.+)/(.+)")) {
+                        
+                        
+                        
+			if (messageEvent.matches("s/(.+)/(.*)")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					if (Helper.isEnabledHere(event.getChannel().getName(), "SED")) {
 
-						String message;
-                                                
-						//Remove prefix from message
-                                                if (event.getMessage().startsWith(prefix)) {
-							message = messageEvent.replace(prefix, "");
-						} else {
-							message = messageEvent;
-						}
-                                                
-                                                int indexOfSeparator;
-                                                String pattern;
-                                                String replacement;
+						String message = messageEvent;
+
+                                                String pattern = "";
+                                                String replacement = "";
                                                 boolean isGlobal=false;
                                                 boolean isCaseInsensitive = false;
                                                 
                                                 message = message.substring(message.indexOf("/")+1);
-                                                pattern = message.substring(0,message.indexOf("/"));
-                                                
-                                                message = message.substring(message.indexOf("/")+1);
-                                                replacement = message.substring(0,message.indexOf("/"));
-                                                
-                                                message = message.substring(message.indexOf("/")+1);
-                                                if (!message.equals("")) {
-                                                    isGlobal = message.indexOf('g')>=0;
-                                                    isCaseInsensitive = message.indexOf('i')>=0;
+                                                if (message.indexOf('/')>=0) {
+                                                    pattern = message.substring(0,message.indexOf("/"));
+                                                    message = message.substring(message.indexOf("/")+1);
+
+                                                    if (message.indexOf('/')>=0) {
+                                                        replacement = message.substring(0,message.indexOf("/"));
+                                                        message = message.substring(message.indexOf("/")+1);
+
+                                                        if (!message.isEmpty()) {
+                                                            isGlobal = message.indexOf('g')>=0;
+                                                            isCaseInsensitive = message.indexOf('i')>=0;
+                                                        }
+                                                    } else { replacement = message; }
                                                 }
                                                 
                                                 Pattern regex;
