@@ -8,4 +8,4 @@ for Windows [Drive]:\Windows\System32 will suffice, for linux it can vary.
 # JNLua natives downloads
 Windows 64 bit DLL: https://michi.pc-logix.com/jnlua52.dll
 
-Linux 64bit SO: https://michi.pc-logix.com/jnlua52.so
+Linux 64bit SO: https://michi.pc-logix.com/libjnlua52.so
