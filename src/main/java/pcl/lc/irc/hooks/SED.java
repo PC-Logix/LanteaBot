@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import org.unix4j.Unix4j;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
