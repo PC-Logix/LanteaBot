@@ -262,8 +262,10 @@ public class Helper {
 			checkHook.setString(2, chan);
 			ResultSet results = checkHook.executeQuery();
 			if (results.next()) {
+				results.close();
 				return true;
 			}
+			results.close();
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();

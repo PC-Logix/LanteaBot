@@ -137,7 +137,7 @@ public class SED extends AbstractListener {
 									IRCBot.messages.put(UUID.randomUUID(), list);
 									IRCBot.log.info("--> " + event.getChannel().getName().toString() + " " + newMessage);
 									return;
-								} catch(Exception e) {
+								} catch(PatternSyntaxException e) {
 									event.respond("Invalid regex " + e.getMessage());
 									e.printStackTrace();
 									return;
