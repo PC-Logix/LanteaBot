@@ -2,17 +2,12 @@
  * 
  */
 package pcl.lc.irc.hooks;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import org.unix4j.Unix4j;
@@ -25,7 +20,6 @@ import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
-import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 /**
@@ -66,12 +60,9 @@ public class SED extends AbstractListener {
 			} else {
 				messageEvent = String.join(" ", args);
 			}
-			String reply = null;
 			if (messageEvent.matches("s/(.+)/(.+)")) {
 				if (!IRCBot.isIgnored(event.getUser().getNick())) {
 					if (Helper.isEnabledHere(event.getChannel().getName(), "SED")) {
-						String s = messageEvent.substring(messageEvent.indexOf("/") + 1);
-						s = s.substring(0, s.indexOf("/"));
 
 						String message;
 						if (event.getMessage().startsWith(prefix)) {
