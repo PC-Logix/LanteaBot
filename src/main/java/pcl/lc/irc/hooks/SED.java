@@ -65,20 +65,19 @@ public class SED extends AbstractListener {
 						boolean isCaseInsensitive = false;
 
 						message = message.substring(message.indexOf("/")+1);
+
+						pattern = message.substring(0,message.indexOf("/"));
+						message = message.substring(message.indexOf("/")+1);
+
 						if (message.indexOf('/')>=0) {
-							pattern = message.substring(0,message.indexOf("/"));
+							replacement = message.substring(0,message.indexOf("/"));
 							message = message.substring(message.indexOf("/")+1);
 
-							if (message.indexOf('/')>=0) {
-								replacement = message.substring(0,message.indexOf("/"));
-								message = message.substring(message.indexOf("/")+1);
-
-								if (!message.isEmpty()) {
-									isGlobal = message.indexOf('g')>=0;
-									isCaseInsensitive = message.indexOf('i')>=0;
-								}
-							} else { replacement = message; }
-						}
+							if (!message.isEmpty()) {
+								isGlobal = message.indexOf('g')>=0;
+								isCaseInsensitive = message.indexOf('i')>=0;
+							}
+						} else { replacement = message; }
 
 						Pattern regex;
 						try {
