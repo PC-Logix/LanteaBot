@@ -64,26 +64,26 @@ public class SED extends AbstractListener {
 
 						String message = messageEvent;
 
-                                                String pattern = "";
-                                                String replacement = "";
-                                                boolean isGlobal=false;
-                                                boolean isCaseInsensitive = false;
+						String pattern = "";
+						String replacement = "";
+						boolean isGlobal=false;
+						boolean isCaseInsensitive = false;
+
+						message = message.substring(message.indexOf("/")+1);
+
+						pattern = message.substring(0,message.indexOf("/"));
+						message = message.substring(message.indexOf("/")+1);
+
+						if (message.indexOf('/')>=0) {
+							replacement = message.substring(0,message.indexOf("/"));
+							message = message.substring(message.indexOf("/")+1);
+
+							if (!message.isEmpty()) {
+							    isGlobal = message.indexOf('g')>=0;
+							    isCaseInsensitive = message.indexOf('i')>=0;
+							}
+						} else { replacement = message; }
                                                 
-                                                message = message.substring(message.indexOf("/")+1);
-                                                if (message.indexOf('/')>=0) {
-                                                    pattern = message.substring(0,message.indexOf("/"));
-                                                    message = message.substring(message.indexOf("/")+1);
-
-                                                    if (message.indexOf('/')>=0) {
-                                                        replacement = message.substring(0,message.indexOf("/"));
-                                                        message = message.substring(message.indexOf("/")+1);
-
-                                                        if (!message.isEmpty()) {
-                                                            isGlobal = message.indexOf('g')>=0;
-                                                            isCaseInsensitive = message.indexOf('i')>=0;
-                                                        }
-                                                    } else { replacement = message; }
-                                                }
                                                 
                                                 Pattern regex;
                                                 try {
