@@ -149,6 +149,8 @@ public class DNSBL  extends AbstractListener {
                 }
                 if (foundOn.length() > 1) {
                     Helper.sendMessage(target, params + " found on " + foundOn.replaceAll(", $", ""));
+                } else {
+                	Helper.sendMessage(target, "Host wasn't found on any tracked DNSBLs");
                 }
 			}
 		}; check_command.setHelpText("DNSBL check on demand");
