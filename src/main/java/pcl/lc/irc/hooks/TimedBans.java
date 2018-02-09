@@ -133,16 +133,16 @@ public class TimedBans extends AbstractListener {
 				while (results.next()) {
 					IRCBot.getInstance();
 					if (results.getString(7).equals("ban")){
-				        Date date = new Date(results.getLong(4));
-				        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-				        format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
-				        String formatted = format.format(date);
+						Date date = new Date(results.getLong(4));
+						DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+						format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+						String formatted = format.format(date);
 						Helper.sendMessage(event.getChannel().getName(), "Timed ban of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
 					} else {
-				        Date date = new Date(results.getLong(4));
-				        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-				        format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
-				        String formatted = format.format(date);
+						Date date = new Date(results.getLong(4));
+						DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+						format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+						String formatted = format.format(date);
 						Helper.sendMessage(event.getChannel().getName(), "Timed quiet of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
 					}
 				}
@@ -150,6 +150,36 @@ public class TimedBans extends AbstractListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public static void setDNSBLBan(Channel channel, String nick, String hostname, String length, String reason) {
+		try {
+			reason = reason.trim();
+			long time = Helper.getFutureTime(length);
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+			String expiresTime = sdf.format(new Date(time));
+			PreparedStatement addTimedBan = Database.getPreparedStatement("addTimedBan");
+			//1 channel,2 username,3 hostmask,4 expires,5 placedby,6 reason,7 type
+			addTimedBan.setString(1, channel.getName());
+			addTimedBan.setString(2, nick);
+			for(User u : channel.getUsers()) {
+				if (u.getNick().equals(nick)) {
+					hostname = u.getHostname();
+				}
+			}
+			addTimedBan.setString(3, "*!*@"+hostname);
+			addTimedBan.setLong(4, time);
+			addTimedBan.setString(5, "DNSBL Check");
+			addTimedBan.setString(6, reason);
+			addTimedBan.setString(7, "ban");
+			addTimedBan.executeUpdate();
+			IRCBot.bot.sendIRC().message("chanserv", "ban " + channel.getName() + " " + nick);
+			IRCBot.bot.sendIRC().message("chanserv", "kick " + channel.getName() + " " + nick + " Reason: " + reason + " | For: " + length + " | Expires: " + expiresTime);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			IRCBot.bot.sendIRC().message(channel.getName(), "DNSBL" + ": " + "An error occurred while processing this automated ban");
 		}
 	}
 }
