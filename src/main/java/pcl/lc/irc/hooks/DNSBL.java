@@ -29,7 +29,8 @@ import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Helper;
 
 public class DNSBL  extends AbstractListener {
-	private Command local_command;
+	private Command toggle_command;
+	private Command check_command;
 	
     private static final LoadingCache<String, Boolean> cachedIPs = CacheBuilder.newBuilder()
             .maximumSize(4096)
@@ -97,7 +98,7 @@ public class DNSBL  extends AbstractListener {
 			InetAddress address;
 			try {
 				address = InetAddress.getByName(event.getUserHostmask().getHostname());
-		    	Boolean badIP = checkIP(address.getHostAddress());
+		    	Boolean badIP = checkIP(address.getHostAddress().split("/")[1]);
 		    	if (badIP) {
 		    		TimedBans.setDNSBLBan(event.getChannel(), event.getUser().getNick(), event.getUserHostmask().getHostname(), "6h", "Listed on DNS Black Lists");
 		    	}
@@ -110,7 +111,7 @@ public class DNSBL  extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("dnsbl", 10, Permissions.MOD) {
+		toggle_command = new Command("dnsbl", 10, Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {
@@ -120,8 +121,38 @@ public class DNSBL  extends AbstractListener {
 					Helper.sendMessage(target, "DNSBL is " + isEnabled + " in this channel", nick);
 				}
 			}
-		}; local_command.setHelpText("DNSBL check on join");
-		IRCBot.registerCommand(local_command);
+		}; toggle_command.setHelpText("DNSBL check on join");
+		IRCBot.registerCommand(toggle_command);
+		
+		check_command = new Command("checkdnsbl", 10, Permissions.EVERYONE) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				InetAddress address = null;
+				try {
+					address = InetAddress.getByName(params);
+				}catch (Exception e){ }
+				System.out.println(address.toString().split("/")[1]);
+                String[] parts = address.toString().split("/")[1].split("\\.");
+                String reversedAddress = parts[3] + "." + parts[2] + "." + parts[1] + "." + parts[0];
+                Attribute attribute;
+                Attributes attributes;
+                String foundOn = "";
+                for (String service : dnsbls){
+                	System.out.println("Trying " + service);
+                    try{
+                        attributes = ictx.getAttributes(reversedAddress + "." + service, new String[]{"A"});
+                        attribute = attributes.get("A");
+                        if (attribute != null){
+                        	foundOn += service + ", ";
+                        }
+                    }catch (Exception e){ }
+                }
+                if (foundOn.length() > 1) {
+                    Helper.sendMessage(target, params + " found on " + foundOn.replaceAll(", $", ""));
+                }
+			}
+		}; check_command.setHelpText("DNSBL check on demand");
+		IRCBot.registerCommand(check_command);
 	}
 	
 	public String chan;
@@ -134,7 +165,8 @@ public class DNSBL  extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
+		toggle_command.tryExecute(command, nick, target, event, copyOfRange);
+		check_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 }
 
