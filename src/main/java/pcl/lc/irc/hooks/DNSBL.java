@@ -96,12 +96,12 @@ public class DNSBL  extends AbstractListener {
 			InetAddress address;
 			try {
 				address = InetAddress.getByName(event.getUserHostmask().getHostname());
-				//Boolean badIP = checkIP(address.getHostAddress().split("/")[1]);
-				Boolean badIP = checkIP("49.49.98.78");
-				//if (badIP) {
-				//	TimedBans.setDNSBLBan(event.getChannel(), event.getUser().getNick(), event.getUserHostmask().getHostname(), "6h", "Listed on DNS Black Lists");
-				//}
-				event.respond("bleh " + badIP);
+				Boolean badIP = checkIP(address.getHostAddress().split("/")[1]);
+				//Boolean badIP = checkIP("49.49.98.78");
+				if (badIP) {
+					TimedBans.setDNSBLBan(event.getChannel(), event.getUser().getNick(), event.getUserHostmask().getHostname(), "6h", "Listed on DNS Black Lists");
+				}
+				//event.respond("bleh " + badIP);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
