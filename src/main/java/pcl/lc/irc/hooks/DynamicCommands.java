@@ -62,6 +62,8 @@ public class DynamicCommands extends AbstractListener {
 	private Command local_command_print;
 	private Command local_command_edit;
 
+	private Command toggle_command;
+	
 	public String luasb;
 
 	private static LuaState luaState;
@@ -93,6 +95,9 @@ public class DynamicCommands extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement getCommand;
 				try {
+					if (!Helper.isEnabledHere(target, "DNSBL")) {
+						return;
+					}
 					getCommand = Database.getPreparedStatement("getCommand");
 					getCommand.setString(1, params.toLowerCase());
 					ResultSet command1 = getCommand.executeQuery();
@@ -111,6 +116,9 @@ public class DynamicCommands extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
+					if (!Helper.isEnabledHere(target, "DNSBL")) {
+						return;
+					}
 					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
 					PreparedStatement getCommand= Database.getPreparedStatement("getCommand");
 					String[] message = params.split(" ", 2);
@@ -137,6 +145,9 @@ public class DynamicCommands extends AbstractListener {
 		local_command_addhelp = new Command ("addcommandhelp", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (!Helper.isEnabledHere(target, "DNSBL")) {
+					return;
+				}
 				PreparedStatement addCommandHelp;
 				try {
 					addCommandHelp = Database.getPreparedStatement("addCommandHelp");
@@ -169,6 +180,20 @@ public class DynamicCommands extends AbstractListener {
 		IRCBot.registerCommand(local_command_del, "Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		IRCBot.registerCommand(local_command_addhelp);
 
+		
+		toggle_command = new Command("dyncmd", 10, Permissions.MOD) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.equals("disable") || params.equals("enable")) {
+					Helper.toggleCommand("dyncmd", target, params);
+				} else {
+					String isEnabled = Helper.isEnabledHere(target, "dyncmd") ? "enabled" : "disabled";
+					Helper.sendMessage(target, "dyncmd is " + isEnabled + " in this channel", nick);
+				}
+			}
+		}; toggle_command.setHelpText("Dynamic command module");
+		IRCBot.registerCommand(toggle_command);
+		
 		try {
 			PreparedStatement searchCommands = Database.getPreparedStatement("searchCommands");
 			ResultSet commands = searchCommands.executeQuery();
@@ -192,6 +217,9 @@ public class DynamicCommands extends AbstractListener {
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		String prefix = Config.commandprefix;
 		target = Helper.getTarget(event);
+		if (!Helper.isEnabledHere(target, "dyncmd")) {
+			return;
+		}
 		try {
 			PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
 			getCommand.setString(1, command.replace(prefix, "").toLowerCase());
@@ -241,6 +269,7 @@ public class DynamicCommands extends AbstractListener {
 		local_command_addhelp.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		local_command_print.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		local_command_edit.tryExecute(command, sender, event.getChannel().getName(), event, args);
+		toggle_command.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		if (ourinput.length() > 1) {
 			if (!IRCBot.isIgnored(event.getUser().getNick())) {
 				String[] message = event.getMessage().split(" ", 3);
