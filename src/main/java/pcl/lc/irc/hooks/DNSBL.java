@@ -91,7 +91,7 @@ public class DNSBL  extends AbstractListener {
 		try {
 			getDNSBLs = Database.getPreparedStatement("getDNSBLs");
 			ResultSet results = getDNSBLs.executeQuery();
-			if (results.next()) {
+			while (results.next()) {
 				dnsbls.add(results.getString(1));
 			}
 		} catch (Exception e1) {
