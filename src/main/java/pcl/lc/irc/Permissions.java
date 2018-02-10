@@ -65,6 +65,9 @@ public class Permissions {
 		if (event instanceof MessageEvent) {
 			NSAccount = Account.getAccount(u, (MessageEvent) event);
 			target = ((MessageEvent) event).getChannel().getName();
+			if (((MessageEvent) event).getChannel().getOps().contains(u)){
+				return getPermLevel(Permissions.MOD);
+			}
 		} else if (event instanceof PrivateMessageEvent) {
 			return 0;
 		}
@@ -108,6 +111,9 @@ public class Permissions {
 		if (event instanceof MessageEvent) {
 			NSAccount = Account.getAccount(u, (MessageEvent) event);
 			target = ((MessageEvent) event).getChannel().getName();
+			if (((MessageEvent) event).getChannel().getOps().contains(u)){
+				return Permissions.MOD;
+			}
 		} else if (event instanceof PrivateMessageEvent) {
 			return "";
 		}
