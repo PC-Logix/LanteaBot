@@ -1,20 +1,13 @@
 package pcl.lc.irc.hooks;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -40,29 +33,6 @@ public class DNSBL  extends AbstractListener {
 	private Command remdnsbl_command;
 	private Command listdnsbl_command;
 
-	private static final LoadingCache<String, Boolean> cachedIPs = CacheBuilder.newBuilder()
-			.maximumSize(4096)
-			.expireAfterAccess(10, TimeUnit.SECONDS).build(new CacheLoader<String, Boolean>() {
-				@Override
-				public Boolean load(String ip) throws Exception {
-					String[] parts = ip.split("\\.");
-					String reversedAddress = parts[3] + "." + parts[2] + "." + parts[1] + "." + parts[0];
-					Attribute attribute;
-					Attributes attributes;
-					for (String service : dnsbls){
-						System.out.println("Trying " + service);
-						try{
-							attributes = ictx.getAttributes(reversedAddress + "." + service, new String[]{"A"});
-							attribute = attributes.get("A");
-							if (attribute != null){
-								return true;
-							}
-						}catch (Exception e){ }
-					}
-
-					return false;
-				}
-			});
 	private static DirContext ictx;
 	private static List<String> dnsbls = Lists.newArrayList();
 	static {
@@ -78,34 +48,35 @@ public class DNSBL  extends AbstractListener {
 		}
 	}
 
-	public static boolean checkIP(String ip){
-		try {
-			return cachedIPs.get(ip);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-
 	@Override
 	public void onJoin(final JoinEvent event) {
 		if (event.getUser().getNick().equals(IRCBot.getOurNick()))
 			return;
-		if (Helper.isEnabledHere(event.getChannel().getName(), "DNSBL")) {
-			InetAddress address;
+		if (Helper.isEnabledHere(event.getChannel().getName(), "DNSBL")) {			
+			InetAddress address = null;
 			try {
 				address = InetAddress.getByName(event.getUserHostmask().getHostname());
-				Boolean badIP = checkIP(address.getHostAddress().split("/")[1]);
-				//Boolean badIP = checkIP("49.49.98.78");
-				if (badIP) {
-					TimedBans.setDNSBLBan(event.getChannel(), event.getUser().getNick(), event.getUserHostmask().getHostname(), "6h", "Listed on DNS Black Lists");
-				}
-				//event.respond("bleh " + badIP);
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+			} catch (Exception e){ }
+			System.out.println(address.toString().split("/")[1]);
+			String[] parts = address.toString().split("/")[1].split("\\.");
+			String reversedAddress = parts[3] + "." + parts[2] + "." + parts[1] + "." + parts[0];
+			Attribute attribute;
+			Attributes attributes;
+			String foundOn = "";
+			for (String service : dnsbls){
+				System.out.println("Trying " + service);
+				try{
+					attributes = ictx.getAttributes(reversedAddress + "." + service, new String[]{"A"});
+					attribute = attributes.get("A");
+					if (attribute != null){
+						foundOn += service + ", ";
+					}
+				}catch (Exception e){ }
+			}
+			if (foundOn.length() > 1) {
+				Helper.sendMessage(target, event.getUserHostmask().getHostname() + " found on " + foundOn.replaceAll(", $", ""));
+				TimedBans.setDNSBLBan(event.getChannel(), event.getUser().getNick(), event.getUserHostmask().getHostname(), "6h", "Listed on DNS Black Lists");
+			}
 		}
 	}
 
@@ -217,16 +188,16 @@ public class DNSBL  extends AbstractListener {
 			}
 		}; toggle_command.setHelpText("Remove DNSBL Service");
 		IRCBot.registerCommand(remdnsbl_command);
-		
+
 		listdnsbl_command = new Command("listdnsbl", 10, Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String dnsblServices = "";
 				try {
-				      Iterator<String> iter = dnsbls.iterator();
-				      while (iter.hasNext()) {
-				    	  dnsblServices += iter.next() + ", ";
-				      }
+					Iterator<String> iter = dnsbls.iterator();
+					while (iter.hasNext()) {
+						dnsblServices += iter.next() + ", ";
+					}
 					if (dnsblServices.length() > 1) {
 						Helper.sendMessage(target, dnsblServices.replaceAll(", $", ""), nick, true);
 					} else {
@@ -258,5 +229,3 @@ public class DNSBL  extends AbstractListener {
 		listdnsbl_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 }
-
-
