@@ -112,7 +112,7 @@ public class Admin extends AbstractListener {
 				}
 			}
 		}; command_join.setHelpText("Joins the channel supplied in the first arg, requires Bot Admin");
-		command_part = new Command("part", 0, Permissions.ADMIN) {
+		command_part = new Command("part", 0, Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
