@@ -85,7 +85,7 @@ public class DNSBL  extends AbstractListener {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS DNSBLs(url)");
 		Database.addPreparedStatement("addDNSBL","INSERT INTO DNSBLs(url) VALUES (?);");
 		Database.addPreparedStatement("getDNSBLs","SELECT url FROM DNSBLs;");
-		Database.addPreparedStatement("removeDNSBLs","DELETE FROM DNSBLs WHERE url = ?;");
+		Database.addPreparedStatement("removeDNSBL","DELETE FROM DNSBLs WHERE url = ?;");
 
 		PreparedStatement getDNSBLs;
 		try {

@@ -51,7 +51,6 @@ public class TimedBans extends AbstractListener {
 								if (results.getString(7).equals("ban")){
 									if (!results.getString(1).equals("#Revolution")){
 										Helper.sendMessage(results.getString(1), "Timed ban of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
-
 									}
 									Helper.sendMessage("chanserv", "unban " + results.getString(1) + " " + results.getString(3));
 								} else {
