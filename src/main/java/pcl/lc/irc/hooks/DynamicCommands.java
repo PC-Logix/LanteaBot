@@ -243,13 +243,12 @@ public class DynamicCommands extends AbstractListener {
 				}
 				String msg = "";
 				if (message.contains("[randomitem]")) {
-					msg = MessageFormat.format(command1.getString(1), message);
 					message = msg.replace("[randomitem]", Inventory.getRandomItem().getName());
 				}
 				if (message.contains("[drama]")) {
-					msg = MessageFormat.format(command1.getString(1), message);
 					message = msg.replace("[drama]", Drama.dramaParse());
 				}
+				message = MessageFormat.format(message, (Object[]) copyOfRange);
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, message, nick, true);
 			}
