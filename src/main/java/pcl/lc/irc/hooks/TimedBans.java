@@ -49,10 +49,15 @@ public class TimedBans extends AbstractListener {
 						for (Channel chan : IRCBot.bot.getUserBot().getChannels()) {
 							if (chan.getName().equals(results.getString(1))) {
 								if (results.getString(7).equals("ban")){
-									Helper.sendMessage(results.getString(1), "Timed ban of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
+									if (!results.getString(1).equals("#Revolution")){
+										Helper.sendMessage(results.getString(1), "Timed ban of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
+
+									}
 									Helper.sendMessage("chanserv", "unban " + results.getString(1) + " " + results.getString(3));
 								} else {
-									Helper.sendMessage(results.getString(1), "Timed quiet of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
+									if (!results.getString(1).equals("#Revolution")){
+										Helper.sendMessage(results.getString(1), "Timed quiet of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
+									}
 									Helper.sendMessage("chanserv", "unquiet " + results.getString(1) + " " + results.getString(3));
 								}
 								PreparedStatement delTimedBan = Database.getPreparedStatement("delTimedBan");
