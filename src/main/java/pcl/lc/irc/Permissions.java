@@ -18,7 +18,6 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Account.ExpiringToken;
-import sun.net.www.content.text.Generic;
 
 public class Permissions {
 	public static String EVERYONE = "Nobody";
