@@ -33,7 +33,7 @@ dependencies {
   compile 'org.reflections:reflections:0.9.9-RC1'
   compile 'org.apache.commons:commons-lang3:3.3.2'
   compile 'org.apache.commons:commons-compress:1.16.1'
-  compile 'org.apache.commons:commons-io:2.6'
+  compile group: 'commons-io', name: 'commons-io', version: '2.6'
   compile 'com.google.code.gson:gson:2.1'
   compile 'xstream:xstream:1.2.2'
   compile 'net.objecthunter:exp4j:0.4.0.ALPHA-3'
