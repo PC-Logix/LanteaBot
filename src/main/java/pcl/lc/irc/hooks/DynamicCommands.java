@@ -231,8 +231,7 @@ public class DynamicCommands extends AbstractListener {
 					output = new StringBuilder();
 					output.append(runScriptInSandbox(message.replace("[lua]", "").trim()));
 					message = output.toString();
-				}
-				if (message.startsWith("[js]")) {
+				}else if (message.startsWith("[js]")) {
 					if (engineFactory == null) return;
 					NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
 					output = new StringBuilder();
