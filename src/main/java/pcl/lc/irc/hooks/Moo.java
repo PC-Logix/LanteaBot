@@ -56,7 +56,7 @@ public class Moo extends AbstractListener {
 						str = params;
 					}
 					str = str.replaceAll("u", "o").replaceAll("U", "O");
-					Helper.sendMessage(target, str.replaceAll("o", "oo").replaceAll("O", "OO"), nick);
+					Helper.sendMessage(target, str.replaceAll("o", "oo").replaceAll("O", "OO"));
 				}
 			}
 		}; local_command.setHelpText("Moos the text");
