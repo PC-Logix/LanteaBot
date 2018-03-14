@@ -405,7 +405,7 @@ public class Helper {
 	}
 	
     private static boolean isContain(String source, String subItem){
-        String pattern = "\\b"+subItem+"\\b";
+        String pattern = "\\b"+Pattern.quote(subItem)+"\\b";
         Pattern p=Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
         Matcher m=p.matcher(source);
         return m.find();

@@ -110,7 +110,7 @@ public class Tell extends AbstractListener {
     public void handleMessage(String sender, MessageEvent event,  String[] args) {
         try {
         	String nick = "";
-			if (event.getUser().getNick().equals("Corded") || event.getUser().getNick().equals("Corded-Test")) {
+			if (nick.contains("@")) {
 				nick = "@" + sender;
 	            PreparedStatement checkTells = Database.getPreparedStatement("getTells");
 	            checkTells.setString(1, nick.toLowerCase());
