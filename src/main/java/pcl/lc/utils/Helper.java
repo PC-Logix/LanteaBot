@@ -718,4 +718,30 @@ public class Helper {
 		}
 		return event.getUser().getNick();
 	}
+
+	public static String getRandomExlamations() {
+		return getRandomExlamations(false, false);
+	}
+
+	public static String getRandomExlamations(boolean allowOnes, boolean allowQuestionmarks) {
+		return getRandomExlamations(getRandomInt(1, 8), 1, allowOnes, allowQuestionmarks);
+	}
+
+	public static String getRandomExlamations(int maxLength, int minLength) {
+		return getRandomExlamations(maxLength, minLength, false, false);
+	}
+
+	public static String getRandomExlamations(int maxLength, int minLength, boolean allowOnes, boolean allowQuestionMarks) {
+		String charss = "!";
+		if (allowOnes)
+			charss += "1";
+		if (allowQuestionMarks)
+			charss += "?";
+		char[] chars = charss.toCharArray();
+		String output = "";
+		for (int i = minLength; i < maxLength; i++) {
+			output += chars[getRandomInt(0, chars.length -1)];
+		}
+		return output;
+	}
 }

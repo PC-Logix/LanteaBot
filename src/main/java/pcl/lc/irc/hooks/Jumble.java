@@ -71,6 +71,7 @@ public class Jumble extends AbstractListener {
 				Helper.sendMessage(target, str);
 			}
 		};
+		local_command.registerAlias("yoda");
 	}
 
 	public String chan;
