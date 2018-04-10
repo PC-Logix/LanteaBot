@@ -744,4 +744,221 @@ public class Helper {
 		}
 		return output;
 	}
+
+	public static int getOffensiveItemBonus(Item item)
+	{
+		return getOffensiveItemBonus(item.getName());
+	}
+
+	public static int getOffensiveItemBonus(String itemName)
+	{
+		int value = 0;
+		itemName = itemName.toLowerCase();
+
+		List<String> noDamage = new ArrayList<>();
+		noDamage.add("discharged");
+		noDamage.add("friendly");
+		noDamage.add("baby");
+		noDamage.add("fake");
+		noDamage.add("artificial");
+		noDamage.add("replica");
+
+		for (String str : noDamage)
+			if (itemName.contains(str))
+				return Integer.MIN_VALUE;
+
+		List<String> minusTwo = new ArrayList<>();
+		minusTwo.add("broken");
+
+		for (String str : minusTwo)
+			if (itemName.contains(str))
+				value -= 2;
+
+
+		List<String> minusOne = new ArrayList<>();
+		minusOne.add("ripped");
+		minusOne.add("fragile");
+		minusOne.add("crumbling");
+		minusOne.add("dull");
+		minusOne.add("stuffed");
+		minusOne.add("soft");
+		minusOne.add("ill");
+		minusOne.add("plush");
+		minusOne.add("-");
+		minusOne.add("defeat");
+		minusOne.add("depress");
+		minusOne.add("artificial");
+		minusOne.add("power");
+		minusOne.add("damaged");
+
+		for (String str : minusOne)
+			if (itemName.contains(str))
+				value -= 1;
+
+		List<String> plusOne = new ArrayList<>();
+		plusOne.add("heavy");
+		plusOne.add("blunt");
+		plusOne.add("pointy");
+		plusOne.add("charged");
+		plusOne.add("kitten");
+
+		for (String str : plusOne)
+			if (itemName.contains(str))
+				value += 1;
+
+		List<String> plusTwo = new ArrayList<>();
+		plusTwo.add("sharp");
+		plusTwo.add("weighted");
+		plusTwo.add("dangerous");
+		plusTwo.add("special");
+		plusTwo.add("cat");
+		plusTwo.add("super");
+
+		for (String str : plusTwo)
+			if (itemName.contains(str))
+				value += 2;
+
+		return value;
+	}
+
+	public static int getDefensiveItemBonus(Item item)
+	{
+		return getDefensiveItemBonus(item.getName());
+	}
+
+	public static int getDefensiveItemBonus(String itemName)
+	{
+		int value = 0;
+		itemName = itemName.toLowerCase();
+
+		List<String> noDefense = new ArrayList<>();
+		noDefense.add("paper");
+		noDefense.add("fragile");
+		noDefense.add("artificial");
+		noDefense.add("replica");
+		noDefense.add("fake");
+
+		for (String str : noDefense)
+			if (itemName.contains(str))
+				return Integer.MIN_VALUE;
+
+		List<String> minusTwo = new ArrayList<>();
+		minusTwo.add("broken");
+
+		for (String str : minusTwo)
+			if (itemName.contains(str))
+				value -= 2;
+
+
+		List<String> minusOne = new ArrayList<>();
+		minusOne.add("ripped");
+		minusOne.add("fragile");
+		minusOne.add("crumbling");
+		minusOne.add("dull");
+		minusOne.add("soft");
+		minusOne.add("ill");
+		minusOne.add("plush");
+		minusOne.add("-");
+		minusOne.add("defeat");
+		minusOne.add("depress");
+		minusOne.add("artificial");
+		minusOne.add("power");
+		minusOne.add("damaged");
+
+		for (String str : minusOne)
+			if (itemName.contains(str))
+				value -= 1;
+
+		List<String> plusOne = new ArrayList<>();
+		plusOne.add("hard");
+		plusOne.add("solid");
+		plusOne.add("rugged");
+		plusOne.add("charged");
+		plusOne.add("defensive");
+
+		for (String str : plusOne)
+			if (itemName.contains(str))
+				value += 1;
+
+		List<String> plusTwo = new ArrayList<>();
+		plusTwo.add("reinforced");
+		plusTwo.add("shielded");
+		plusTwo.add("robust");
+		plusTwo.add("super");
+
+		for (String str : plusTwo)
+			if (itemName.contains(str))
+				value += 2;
+
+		return value;
+	}
+
+	public static int getHealingItemBonus(Item item) {
+		return getHealingItemBonus(item.getName());
+	}
+
+	public static int getHealingItemBonus(String itemName)
+	{
+		int value = 0;
+		itemName = itemName.toLowerCase();
+
+		List<String> noHeal = new ArrayList<>();
+		noHeal.add("plague");
+		noHeal.add("ill");
+		noHeal.add("fake");
+		noHeal.add("replica");
+
+		for (String str : noHeal)
+			if (itemName.contains(str))
+				return Integer.MIN_VALUE;
+
+		List<String> minusTwo = new ArrayList<>();
+		minusTwo.add("broken");
+
+		for (String str : minusTwo)
+			if (itemName.contains(str))
+				value -= 2;
+
+
+		List<String> minusOne = new ArrayList<>();
+		minusOne.add("ripped");
+		minusOne.add("crumbling");
+		minusOne.add("ill");
+		minusOne.add("plush");
+		minusOne.add("-");
+		minusOne.add("defeat");
+		minusOne.add("depress");
+		minusOne.add("artificial");
+		minusOne.add("damage");
+		minusOne.add("attack");
+		minusOne.add("hurt");
+
+		for (String str : minusOne)
+			if (itemName.contains(str))
+				value -= 1;
+
+		List<String> plusOne = new ArrayList<>();
+		plusOne.add("friend");
+		plusOne.add("happy");
+		plusOne.add("charged");
+		plusOne.add("healing");
+		plusOne.add("refreshing");
+		plusOne.add("sugar");
+
+		for (String str : plusOne)
+			if (itemName.contains(str))
+				value += 1;
+
+		List<String> plusTwo = new ArrayList<>();
+		plusTwo.add("healthy");
+		plusTwo.add("friendly");
+		plusTwo.add("magic");
+		plusTwo.add("super");
+
+		for (String str : plusTwo)
+			if (itemName.contains(str))
+				value += 2;
+
+		return value;
+	}
 }

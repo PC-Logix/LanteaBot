@@ -5,7 +5,9 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import pcl.lc.irc.*;
+import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
+import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
@@ -45,8 +47,12 @@ public class Pet extends AbstractListener {
 
 					if (params == "")
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					else if (Helper.doInteractWith(params))
-						Helper.sendAction(target,actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + params + " recovers " + roll.getSum() + " health!" : "") + dust);
+					else if (Helper.doInteractWith(params)) {
+						int[] heal = {0,0,0};
+						if (item != null)
+							heal = item.getHealing();
+						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + params + Item.stringifyHealingResult(heal) + "!" : "") + dust);
+					}
 					else
 						Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
 				}

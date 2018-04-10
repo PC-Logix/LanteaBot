@@ -234,4 +234,88 @@ public class Item {
 	public boolean isFavourite() {
 		return this.is_favourite;
 	}
+
+	/**
+	 * Default dice size 4
+	 * @return int
+	 */
+	public int[] getDamage()
+	{
+		return getDamage(4);
+	}
+
+	public int[] getDamage(int diceSize)
+	{
+		int[] damage = new int[3];
+		damage[0] = Helper.rollDice(this.uses_left + "d" + diceSize).getSum();
+		damage[1] = Helper.getOffensiveItemBonus(this);
+		damage[2] = Math.max(0, damage[0] + damage[1]);
+		return damage;
+	}
+
+	/**
+	 * Default dice size 4
+	 * @return int
+	 */
+	public int[] getDamageRecution()
+	{
+		return getDamageReduction(4);
+	}
+
+	public int[] getDamageReduction(int diceSize)
+	{
+		int[] reduction = new int[3];
+		reduction[0] = Helper.rollDice(this.uses_left + "d" + diceSize).getSum();
+		reduction[1] = Helper.getDefensiveItemBonus(this);
+		reduction[2] = Math.max(0, reduction[0] + reduction[1]);
+		return reduction;
+	}
+
+	/**
+	 * Default dice size 4
+	 * @return int
+	 */
+	public int[] getHealing()
+	{
+		return getHealing(4);
+	}
+
+	public int[] getHealing(int diceSize)
+	{
+		int[] health = new int[3];
+		health[0] = Helper.rollDice(this.uses_left + "d" + diceSize).getSum();
+		health[1] = Helper.getHealingItemBonus(this);
+		health[2] = Math.max(0, (health[0] + health[1]));
+		return health;
+	}
+
+	/**
+	 * "{damage} damage (+|-{bonus})"
+	 * @param input int[]
+	 * @return String
+	 */
+	public static String stringifyDamageResult(int[] input)
+	{
+		return input[2] + " damage" + (input[1] != 0 ? " (" + input[0] + (input[1] > 0 ? "+" : "-") + input[1] + ")" : "");
+	}
+
+	/**
+	 * "damage reduced by {reduction} (+|-{bonus}"
+	 * @param input int[]
+	 * @return String
+	 */
+	public static String stringifyDamageReductionResult(int[] input)
+	{
+		return "damage reduced by " + input[2] + (input[1] != 0 ? " (" + input[0] + (input[1] > 0 ? "+" : "-") + input[1] + ")" : "");
+	}
+
+	/**
+	 * "gained {health} health (+|-{bonus})"
+	 * @param input int[]
+	 * @return String
+	 */
+	public static String stringifyHealingResult(int[] input)
+	{
+		return " gained " + input[2] + " health" + (input[1] != 0 ? " (" + input[0] + (input[1] > 0 ? "+" : "-") + input[1] + ")" : "");
+	}
 }
