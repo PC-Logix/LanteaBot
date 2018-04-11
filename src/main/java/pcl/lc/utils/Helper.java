@@ -802,6 +802,12 @@ public class Helper {
 		plusOne.add("kitten");
 		plusOne.add("poison");
 		plusOne.add("double");
+		plusOne.add("bees");
+		plusOne.add("military grade");
+		plusOne.add("shark");
+		plusOne.add("bear");
+		plusOne.add("tiger");
+		plusOne.add("lion");
 
 		for (String str : plusOne)
 			if (itemName.contains(str))
@@ -817,6 +823,9 @@ public class Helper {
 		plusTwo.add("magic");
 		plusTwo.add("orbital");
 		plusTwo.add("vorpal");
+		plusTwo.add("chicken");
+		plusTwo.add("nuclear");
+		plusTwo.add("hippo");
 
 		for (String str : plusTwo)
 			if (itemName.contains(str))
@@ -878,6 +887,7 @@ public class Helper {
 		plusOne.add("rugged");
 		plusOne.add("charged");
 		plusOne.add("defensive");
+		plusOne.add("military grade");
 
 		for (String str : plusOne)
 			if (itemName.contains(str))
@@ -938,6 +948,8 @@ public class Helper {
 		minusOne.add("damage");
 		minusOne.add("attack");
 		minusOne.add("hurt");
+		minusOne.add("bees");
+		minusOne.add("nuclear");
 
 		for (String str : minusOne)
 			if (itemName.contains(str))
