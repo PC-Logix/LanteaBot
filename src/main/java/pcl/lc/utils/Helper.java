@@ -784,7 +784,6 @@ public class Helper {
 		minusOne.add("soft");
 		minusOne.add("ill");
 		minusOne.add("plush");
-		minusOne.add("-");
 		minusOne.add("defeat");
 		minusOne.add("depress");
 		minusOne.add("artificial");
@@ -801,6 +800,8 @@ public class Helper {
 		plusOne.add("pointy");
 		plusOne.add("charged");
 		plusOne.add("kitten");
+		plusOne.add("poison");
+		plusOne.add("double");
 
 		for (String str : plusOne)
 			if (itemName.contains(str))
@@ -813,6 +814,9 @@ public class Helper {
 		plusTwo.add("special");
 		plusTwo.add("cat");
 		plusTwo.add("super");
+		plusTwo.add("magic");
+		plusTwo.add("orbital");
+		plusTwo.add("vorpal");
 
 		for (String str : plusTwo)
 			if (itemName.contains(str))
@@ -858,7 +862,6 @@ public class Helper {
 		minusOne.add("soft");
 		minusOne.add("ill");
 		minusOne.add("plush");
-		minusOne.add("-");
 		minusOne.add("defeat");
 		minusOne.add("depress");
 		minusOne.add("artificial");
@@ -885,6 +888,7 @@ public class Helper {
 		plusTwo.add("shielded");
 		plusTwo.add("robust");
 		plusTwo.add("super");
+		plusTwo.add("magic");
 
 		for (String str : plusTwo)
 			if (itemName.contains(str))
@@ -905,6 +909,9 @@ public class Helper {
 		List<String> noHeal = new ArrayList<>();
 		noHeal.add("plague");
 		noHeal.add("ill");
+		noHeal.add("sick");
+		noHeal.add("infected");
+		noHeal.add("corrupt");
 		noHeal.add("fake");
 		noHeal.add("replica");
 
@@ -925,7 +932,6 @@ public class Helper {
 		minusOne.add("crumbling");
 		minusOne.add("ill");
 		minusOne.add("plush");
-		minusOne.add("-");
 		minusOne.add("defeat");
 		minusOne.add("depress");
 		minusOne.add("artificial");
@@ -944,6 +950,7 @@ public class Helper {
 		plusOne.add("healing");
 		plusOne.add("refreshing");
 		plusOne.add("sugar");
+		plusOne.add("lewd");
 
 		for (String str : plusOne)
 			if (itemName.contains(str))
