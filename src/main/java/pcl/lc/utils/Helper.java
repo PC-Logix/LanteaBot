@@ -782,6 +782,7 @@ public class Helper {
 		minusOne.add("dull");
 		minusOne.add("stuffed");
 		minusOne.add("soft");
+		minusOne.add("fluffy");
 		minusOne.add("ill");
 		minusOne.add("plush");
 		minusOne.add("defeat");
