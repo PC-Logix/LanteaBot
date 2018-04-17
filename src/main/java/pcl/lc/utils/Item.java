@@ -235,6 +235,32 @@ public class Item {
 		return this.is_favourite;
 	}
 
+	public int[] getGenericRoll()
+	{
+		return getGenericRoll(0);
+	}
+
+	public int[] getGenericRoll(int bonus)
+	{
+		return getGenericRoll(4, bonus);
+	}
+
+	public int[] getGenericRoll(int diceSize, int bonus)
+	{
+		return getGenericRoll(diceSize, bonus, 0);
+	}
+
+	public int[] getGenericRoll(int diceSize, int bonus, int minValue)
+	{
+		int[] result = new int[4];
+		int diceRoll = Helper.rollDice(this.uses_left + "d" + diceSize).getSum();
+		result[0] = (bonus == Integer.MIN_VALUE ? 0 : Math.max(minValue, diceRoll + bonus)); //Result
+		result[1] = diceRoll;
+		result[2] = bonus;
+		result[3] = minValue; //Minimum Value
+		return result;
+	}
+
 	/**
 	 * Default dice size 4
 	 * @return int
@@ -246,11 +272,12 @@ public class Item {
 
 	public int[] getDamage(int diceSize)
 	{
-		int[] damage = new int[3];
-		damage[0] = Helper.rollDice(this.uses_left + "d" + diceSize).getSum();
-		damage[1] = Helper.getOffensiveItemBonus(this);
-		damage[2] = Math.max(0, damage[0] + damage[1]);
-		return damage;
+		return getDamage(diceSize, 0);
+	}
+
+	public int[] getDamage(int diceSize, int minDamage)
+	{
+		return getGenericRoll(diceSize, Helper.getOffensiveItemBonus(this), minDamage);
 	}
 
 	/**
@@ -264,11 +291,12 @@ public class Item {
 
 	public int[] getDamageReduction(int diceSize)
 	{
-		int[] reduction = new int[3];
-		reduction[0] = Helper.rollDice(this.uses_left + "d" + diceSize).getSum();
-		reduction[1] = Helper.getDefensiveItemBonus(this);
-		reduction[2] = Math.max(0, reduction[0] + reduction[1]);
-		return reduction;
+		return getDamageReduction(diceSize, 0);
+	}
+
+	public int[] getDamageReduction(int diceSize, Integer minDamageReduction)
+	{
+		return getGenericRoll(diceSize, Helper.getDefensiveItemBonus(this), minDamageReduction);
 	}
 
 	/**
@@ -282,40 +310,82 @@ public class Item {
 
 	public int[] getHealing(int diceSize)
 	{
-		int[] health = new int[3];
-		health[0] = Helper.rollDice(this.uses_left + "d" + diceSize).getSum();
-		health[1] = Helper.getHealingItemBonus(this);
-		health[2] = Math.max(0, (health[0] + health[1]));
-		return health;
+		return getHealing(diceSize, 0);
+	}
+
+	public int[] getHealing(int diceSize, int minHealing)
+	{
+		return getGenericRoll(diceSize, Helper.getHealingItemBonus(this), minHealing);
 	}
 
 	/**
-	 * "{damage} damage (+|-{bonus})"
-	 * @param input int[]
+	 * "{damage} damage (Minimum|{diceRoll}+|-{bonus})"
+	 * @param input int[] The result array from one of the get____Roll methods
 	 * @return String
 	 */
 	public static String stringifyDamageResult(int[] input)
 	{
-		return input[2] + " damage" + (input[1] != 0 ? " (" + input[0] + (input[1] > 0 ? "+" : "-") + input[1] + ")" : "");
+		if (getResult(input) == 0)
+			return "no damage" + getParenthesis(input);
+		return getResult(input) + " damage" + getParenthesis(input);
 	}
 
 	/**
-	 * "damage reduced by {reduction} (+|-{bonus}"
-	 * @param input int[]
+	 * "damage reduced by {reduction} (Minimum|{diceRoll}+-{bonus}"
+	 * or
+	 * "no damage reduction (Incapable|{diceRoll}+-{bonus})"
+	 * @param input int[] The result array from one of the get____Roll methods
 	 * @return String
 	 */
 	public static String stringifyDamageReductionResult(int[] input)
 	{
-		return "damage reduced by " + input[2] + (input[1] != 0 ? " (" + input[0] + (input[1] > 0 ? "+" : "-") + input[1] + ")" : "");
+		if (getResult(input) == 0)
+			return "no damage reduction" + getParenthesis(input);
+		return "damage reduced by " + getResult(input) + getParenthesis(input);
 	}
 
 	/**
-	 * "gained {health} health (+|-{bonus})"
-	 * @param input int[]
+	 * "gained {health} health (Minimum|{diceRoll}+-{bonus})"
+	 * or
+	 * "no health gained (Incapable|{diceRoll}+-{bonus})
+	 * @param input int[] The result array from one of the get____Roll methods
 	 * @return String
 	 */
 	public static String stringifyHealingResult(int[] input)
 	{
-		return " gained " + input[2] + " health" + (input[1] != 0 ? " (" + input[0] + (input[1] > 0 ? "+" : "-") + input[1] + ")" : "");
+		if (getResult(input) == 0)
+			return "no health gained" + getParenthesis(input);
+		return getResult(input) + " health gained" + getParenthesis(input);
+	}
+
+	public static int getResult(int[] input)
+	{
+		return input[0];
+	}
+
+	public static int getDiceRoll(int[] input)
+	{
+		return input[1];
+	}
+
+	public static int getBonus(int[] input)
+	{
+		return input[2];
+	}
+
+	public static int getMinValue(int[] input)
+	{
+		return input[3];
+	}
+
+	public static String getParenthesis(int[] input)
+	{
+		if (getBonus(input) == 0)
+			return "";
+		if (getBonus(input) == Integer.MIN_VALUE)
+			return " (Incapable)";
+		if (getResult(input) == getMinValue(input))
+			return " (Minimum)";
+		return " (" + getDiceRoll(input) + (getBonus(input) < 0 ? "" : "+") + getBonus(input) + ")";
 	}
 }

@@ -756,19 +756,19 @@ public class Helper {
 		itemName = itemName.toLowerCase();
 
 		List<String> noDamage = new ArrayList<>();
-		noDamage.add("discharged");
-		noDamage.add("friendly");
+		noDamage.add("discharged ");
+		noDamage.add("friendly ");
 		noDamage.add("baby");
 		noDamage.add("fake");
-		noDamage.add("artificial");
-		noDamage.add("replica");
+		noDamage.add("artificial ");
+		noDamage.add("replica ");
 
 		for (String str : noDamage)
 			if (itemName.contains(str))
 				return Integer.MIN_VALUE;
 
 		List<String> minusTwo = new ArrayList<>();
-		minusTwo.add("broken");
+		minusTwo.add("broken ");
 
 		for (String str : minusTwo)
 			if (itemName.contains(str))
@@ -776,39 +776,39 @@ public class Helper {
 
 
 		List<String> minusOne = new ArrayList<>();
-		minusOne.add("ripped");
-		minusOne.add("fragile");
-		minusOne.add("crumbling");
-		minusOne.add("dull");
-		minusOne.add("stuffed");
-		minusOne.add("soft");
-		minusOne.add("fluffy");
-		minusOne.add("ill");
+		minusOne.add("ripped ");
+		minusOne.add("fragile ");
+		minusOne.add("crumbling ");
+		minusOne.add("dull ");
+		minusOne.add("stuffed ");
+		minusOne.add("soft ");
+		minusOne.add("fluffy ");
+		minusOne.add("ill ");
 		minusOne.add("plush");
-		minusOne.add("defeat");
+		minusOne.add("defeat ");
 		minusOne.add("depress");
-		minusOne.add("artificial");
+		minusOne.add("artificial ");
 		minusOne.add("power");
-		minusOne.add("damaged");
+		minusOne.add("damaged ");
 
 		for (String str : minusOne)
 			if (itemName.contains(str))
 				value -= 1;
 
 		List<String> plusOne = new ArrayList<>();
-		plusOne.add("heavy");
-		plusOne.add("blunt");
-		plusOne.add("pointy");
-		plusOne.add("charged");
-		plusOne.add("kitten");
+		plusOne.add("heavy ");
+		plusOne.add("blunt ");
+		plusOne.add("pointy ");
+		plusOne.add("charged ");
+		plusOne.add("kitten ");
 		plusOne.add("poison");
-		plusOne.add("double");
-		plusOne.add("bees");
-		plusOne.add("military grade");
-		plusOne.add("shark");
-		plusOne.add("bear");
-		plusOne.add("tiger");
-		plusOne.add("lion");
+		plusOne.add("double ");
+		plusOne.add("bees ");
+		plusOne.add("military grade ");
+		plusOne.add("shark ");
+		plusOne.add("bear ");
+		plusOne.add("tiger ");
+		plusOne.add("lion ");
 
 		for (String str : plusOne)
 			if (itemName.contains(str))
@@ -816,16 +816,16 @@ public class Helper {
 
 		List<String> plusTwo = new ArrayList<>();
 		plusTwo.add("sharp");
-		plusTwo.add("weighted");
+		plusTwo.add("weighted ");
 		plusTwo.add("dangerous");
-		plusTwo.add("special");
-		plusTwo.add("cat");
-		plusTwo.add("super");
+		plusTwo.add("special ");
+		plusTwo.add("cat ");
+		plusTwo.add("super ");
 		plusTwo.add("magic");
-		plusTwo.add("orbital");
-		plusTwo.add("vorpal");
-		plusTwo.add("chicken");
-		plusTwo.add("nuclear");
+		plusTwo.add("orbital ");
+		plusTwo.add("vorpal ");
+		plusTwo.add("chicken ");
+		plusTwo.add("nuclear ");
 		plusTwo.add("hippo");
 
 		for (String str : plusTwo)
@@ -846,10 +846,10 @@ public class Helper {
 		itemName = itemName.toLowerCase();
 
 		List<String> noDefense = new ArrayList<>();
-		noDefense.add("paper");
-		noDefense.add("fragile");
-		noDefense.add("artificial");
-		noDefense.add("replica");
+		noDefense.add("paper ");
+		noDefense.add("fragile ");
+		noDefense.add("artificial ");
+		noDefense.add("replica ");
 		noDefense.add("fake");
 
 		for (String str : noDefense)
@@ -857,7 +857,7 @@ public class Helper {
 				return Integer.MIN_VALUE;
 
 		List<String> minusTwo = new ArrayList<>();
-		minusTwo.add("broken");
+		minusTwo.add("broken ");
 
 		for (String str : minusTwo)
 			if (itemName.contains(str))
@@ -865,18 +865,18 @@ public class Helper {
 
 
 		List<String> minusOne = new ArrayList<>();
-		minusOne.add("ripped");
-		minusOne.add("fragile");
-		minusOne.add("crumbling");
+		minusOne.add("ripped ");
+		minusOne.add("fragile ");
+		minusOne.add("crumbling ");
 		minusOne.add("dull");
-		minusOne.add("soft");
-		minusOne.add("ill");
-		minusOne.add("plush");
+		minusOne.add("soft ");
+		minusOne.add("ill ");
+		minusOne.add("plush ");
 		minusOne.add("defeat");
 		minusOne.add("depress");
-		minusOne.add("artificial");
+		minusOne.add("artificial ");
 		minusOne.add("power");
-		minusOne.add("damaged");
+		minusOne.add("damaged ");
 
 		for (String str : minusOne)
 			if (itemName.contains(str))
@@ -884,20 +884,20 @@ public class Helper {
 
 		List<String> plusOne = new ArrayList<>();
 		plusOne.add("hard");
-		plusOne.add("solid");
-		plusOne.add("rugged");
-		plusOne.add("charged");
-		plusOne.add("defensive");
-		plusOne.add("military grade");
+		plusOne.add("solid ");
+		plusOne.add("rugged ");
+		plusOne.add("charged ");
+		plusOne.add("defensive ");
+		plusOne.add("military grade ");
 
 		for (String str : plusOne)
 			if (itemName.contains(str))
 				value += 1;
 
 		List<String> plusTwo = new ArrayList<>();
-		plusTwo.add("reinforced");
-		plusTwo.add("shielded");
-		plusTwo.add("robust");
+		plusTwo.add("reinforced ");
+		plusTwo.add("shielded ");
+		plusTwo.add("robust ");
 		plusTwo.add("super");
 		plusTwo.add("magic");
 
@@ -919,12 +919,12 @@ public class Helper {
 
 		List<String> noHeal = new ArrayList<>();
 		noHeal.add("plague");
-		noHeal.add("ill");
-		noHeal.add("sick");
-		noHeal.add("infected");
+		noHeal.add("ill ");
+		noHeal.add("sick ");
+		noHeal.add("infected ");
 		noHeal.add("corrupt");
 		noHeal.add("fake");
-		noHeal.add("replica");
+		noHeal.add("replica ");
 
 		for (String str : noHeal)
 			if (itemName.contains(str))
@@ -939,18 +939,18 @@ public class Helper {
 
 
 		List<String> minusOne = new ArrayList<>();
-		minusOne.add("ripped");
-		minusOne.add("crumbling");
-		minusOne.add("ill");
-		minusOne.add("plush");
-		minusOne.add("defeat");
+		minusOne.add("ripped ");
+		minusOne.add("crumbling ");
+		minusOne.add("ill ");
+		minusOne.add("plush ");
+		minusOne.add("defeat ");
 		minusOne.add("depress");
-		minusOne.add("artificial");
+		minusOne.add("artificial ");
 		minusOne.add("damage");
-		minusOne.add("attack");
-		minusOne.add("hurt");
-		minusOne.add("bees");
-		minusOne.add("nuclear");
+		minusOne.add("attack ");
+		minusOne.add("hurt ");
+		minusOne.add("bees ");
+		minusOne.add("nuclear ");
 
 		for (String str : minusOne)
 			if (itemName.contains(str))
@@ -958,20 +958,20 @@ public class Helper {
 
 		List<String> plusOne = new ArrayList<>();
 		plusOne.add("friend");
-		plusOne.add("happy");
-		plusOne.add("charged");
-		plusOne.add("healing");
-		plusOne.add("refreshing");
-		plusOne.add("sugar");
-		plusOne.add("lewd");
+		plusOne.add("happy ");
+		plusOne.add("charged ");
+		plusOne.add("healing ");
+		plusOne.add("refreshing ");
+		plusOne.add("sugar ");
+		plusOne.add("lewd ");
 
 		for (String str : plusOne)
 			if (itemName.contains(str))
 				value += 1;
 
 		List<String> plusTwo = new ArrayList<>();
-		plusTwo.add("healthy");
-		plusTwo.add("friendly");
+		plusTwo.add("healthy ");
+		plusTwo.add("friendly ");
 		plusTwo.add("magic");
 		plusTwo.add("super");
 
