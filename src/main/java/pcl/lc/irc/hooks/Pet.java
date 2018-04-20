@@ -51,7 +51,7 @@ public class Pet extends AbstractListener {
 						int[] heal = {0,0,0};
 						if (item != null)
 							heal = item.getHealing();
-						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + params + Item.stringifyHealingResult(heal) + "!" : "") + dust);
+						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + dust);
 					}
 					else
 						Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
