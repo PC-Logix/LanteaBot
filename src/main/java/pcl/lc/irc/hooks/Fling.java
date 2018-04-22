@@ -36,6 +36,8 @@ public class Fling extends AbstractListener {
 					String user = params;
 					if (user == "")
 						user = Helper.getRandomUser(event);
+					if (!Helper.doInteractWith(user))
+						user = nick;
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					DiceRoll hit = Helper.rollDice("1d100");
 					int itemDamage = 0;
