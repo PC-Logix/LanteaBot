@@ -105,7 +105,7 @@ public class Seen extends AbstractListener {
 					if (dest.equals("query")) {
 						event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2).isEmpty()) ? "No Record" : results.getString(2)));
 					} else {
-						Helper.sendMessage(dest, target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
+						Helper.sendMessage(dest, target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
 					}
 				} else {
 					if (dest.equals("query")) {
