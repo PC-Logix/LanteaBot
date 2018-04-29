@@ -5,7 +5,11 @@ import java.sql.ResultSet;
 
 import org.pircbotx.User;
 import org.pircbotx.hooks.events.ActionEvent;
+import org.pircbotx.hooks.events.JoinEvent;
+import org.pircbotx.hooks.events.KickEvent;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PartEvent;
+import org.pircbotx.hooks.events.QuitEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
@@ -117,25 +121,83 @@ public class Seen extends AbstractListener {
 	}
 
 	@Override
+	public void onPart(final PartEvent event) {
+		User sender = event.getUser();
+		try {
+			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+			updateSeen.setString(1, sender.getNick().toLowerCase());
+			updateSeen.setLong(2, System.currentTimeMillis());
+			updateSeen.setString(3, "Parting");
+			updateSeen.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void onJoin(final JoinEvent event) {
+		User sender = event.getUser();
+		try {
+			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+			updateSeen.setString(1, sender.getNick().toLowerCase());
+			updateSeen.setLong(2, System.currentTimeMillis());
+			updateSeen.setString(3, "Joining");
+			updateSeen.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	@Override
+	public void onQuit(final QuitEvent event) {
+		User sender = event.getUser();
+		try {
+			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+			updateSeen.setString(1, sender.getNick().toLowerCase());
+			updateSeen.setLong(2, System.currentTimeMillis());
+			updateSeen.setString(3, "Quitting");
+			updateSeen.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void onKick(final KickEvent event) {
+		User sender = event.getUser();
+		try {
+			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+			updateSeen.setString(1, sender.getNick().toLowerCase());
+			updateSeen.setLong(2, System.currentTimeMillis());
+			updateSeen.setString(3, "Being Kicked");
+			updateSeen.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
 	public void onAction(final ActionEvent event) throws Exception {
 		User sender = event.getUser();
 		try {
 			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
 			updateSeen.setString(1, sender.getNick().toLowerCase());
 			updateSeen.setLong(2, System.currentTimeMillis());
-			updateSeen.setString(3, event.getAction());
+			updateSeen.setString(3, "Action: " + event.getAction());
 			updateSeen.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		try {
 			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
 			updateSeen.setString(1, sender.toLowerCase());
 			updateSeen.setLong(2, System.currentTimeMillis());
-			updateSeen.setString(3, event.getMessage());
+			updateSeen.setString(3, "Saying: " + event.getMessage());
 			updateSeen.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
