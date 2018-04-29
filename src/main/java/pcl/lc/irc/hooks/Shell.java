@@ -55,10 +55,16 @@ public class Shell extends AbstractListener {
 					String strike = "Seems it was a dud...";
 					try {
 						if (roll != null && roll.getSum() < hitChance) {
-							strike = "It strikes " + user + ". They take " + Math.max(8, Helper.rollDice("2d10").getSum()) + " damage. " + userSecondary + " and " + userTertiary + " stood too close and take " + Helper.rollDice("1d8").getSum() + " and " + Helper.rollDice("1d8").getSum() + " splash damage respectively.";
+							int[] dmg1 = item.getDamage(6, 4);
+							int[] dmg2 = item.getDamage(4, 2);
+							int[] dmg3 = item.getDamage(4, 2);
+							strike = "It strikes " + user + ". They take " + Item.stringifyDamageResult(dmg1) + ". " + userSecondary + " and " + userTertiary + " stood too close and take " + Item.getResult(dmg2) + Item.getParenthesis(dmg2) + " and " + Item.getResult(dmg3) + Item.getParenthesis(dmg3) + " damage respectively.";
 							itemDamage = 1;
 						} else {
-							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Helper.rollDice("1d8").getSum() + ", " + Helper.rollDice("1d8").getSum() + " and " + Helper.rollDice("1d8").getSum() + " splash damage respectively.";
+							int[] dmg1 = item.getDamage(4, 2);
+							int[] dmg2 = item.getDamage(4, 2);
+							int[] dmg3 = item.getDamage(4, 2);
+							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Item.getResult(dmg1) + Item.getParenthesis(dmg1) + ", " + Item.getResult(dmg2) + Item.getParenthesis(dmg2) + " and " + Item.getResult(dmg3) + Item.getParenthesis(dmg3) + " splash damage respectively.";
 							itemDamage = 2;
 						}
 					} catch (NullPointerException ignored) {}

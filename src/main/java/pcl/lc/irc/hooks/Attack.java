@@ -72,7 +72,10 @@ public class Attack extends AbstractListener {
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
 					else if (Helper.doInteractWith(attackTarget)) {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendAction(target,Helper.antiPing(actions.get(action)) + "s " + attackTarget + (item != null ? " with " + item.getName() : "") + " doing " + Helper.rollDiceString("1d20") + " damage" + dust);
+						int[] dmg = {0,0,0};
+						if (item != null)
+							dmg = item.getDamage();
+						Helper.sendAction(target,Helper.antiPing(actions.get(action)) + "s " + attackTarget + (item != null ? " with " + item.getName() : "") + " doing " + Item.stringifyDamageResult(dmg) + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target,"uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
