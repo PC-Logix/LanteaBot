@@ -25,19 +25,6 @@ public class Seen extends AbstractListener {
 	String chan;
 	String dest;
 
-	/*    @Override
-    public void onJoin(final JoinEvent event) throws Exception {
-        User sender = event.getUser();
-        try {
-            PreparedStatement updateSeen = IRCBot.getInstance().getPreparedStatement("updateLastSeen");
-            updateSeen.setString(1, sender.getNick());
-            updateSeen.setLong(2, System.currentTimeMillis());
-            updateSeen.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
 	private String formatTime(long delta) {
 		StringBuilder duration = new StringBuilder();
 		if (delta > 86400000L) {
@@ -122,32 +109,35 @@ public class Seen extends AbstractListener {
 
 	@Override
 	public void onPart(final PartEvent event) {
-		User sender = event.getUser();
-		try {
-			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
-			updateSeen.setString(1, sender.getNick().toLowerCase());
-			updateSeen.setLong(2, System.currentTimeMillis());
-			updateSeen.setString(3, "Parting");
-			updateSeen.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!event.getChannel().getMode().contains("s")) {
+			User sender = event.getUser();
+			try {
+				PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+				updateSeen.setString(1, sender.getNick().toLowerCase());
+				updateSeen.setLong(2, System.currentTimeMillis());
+				updateSeen.setString(3, "Parting");
+				updateSeen.execute();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	
+
 	@Override
 	public void onJoin(final JoinEvent event) {
-		User sender = event.getUser();
-		try {
-			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
-			updateSeen.setString(1, sender.getNick().toLowerCase());
-			updateSeen.setLong(2, System.currentTimeMillis());
-			updateSeen.setString(3, "Joining");
-			updateSeen.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!event.getChannel().getMode().contains("s")) {
+			User sender = event.getUser();
+			try {
+				PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+				updateSeen.setString(1, sender.getNick().toLowerCase());
+				updateSeen.setLong(2, System.currentTimeMillis());
+				updateSeen.setString(3, "Joining");
+				updateSeen.execute();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	
 
 	@Override
 	public void onQuit(final QuitEvent event) {
@@ -162,45 +152,51 @@ public class Seen extends AbstractListener {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void onKick(final KickEvent event) {
-		User sender = event.getUser();
-		try {
-			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
-			updateSeen.setString(1, sender.getNick().toLowerCase());
-			updateSeen.setLong(2, System.currentTimeMillis());
-			updateSeen.setString(3, "Being Kicked");
-			updateSeen.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!event.getChannel().getMode().contains("s")) {
+			User sender = event.getUser();
+			try {
+				PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+				updateSeen.setString(1, sender.getNick().toLowerCase());
+				updateSeen.setLong(2, System.currentTimeMillis());
+				updateSeen.setString(3, "Being Kicked");
+				updateSeen.execute();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	
+
 	@Override
 	public void onAction(final ActionEvent event) throws Exception {
-		User sender = event.getUser();
-		try {
-			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
-			updateSeen.setString(1, sender.getNick().toLowerCase());
-			updateSeen.setLong(2, System.currentTimeMillis());
-			updateSeen.setString(3, "Action: " + event.getAction());
-			updateSeen.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!event.getChannel().getMode().contains("s")) {
+			User sender = event.getUser();
+			try {
+				PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+				updateSeen.setString(1, sender.getNick().toLowerCase());
+				updateSeen.setLong(2, System.currentTimeMillis());
+				updateSeen.setString(3, "Action: " + event.getAction());
+				updateSeen.execute();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	
+
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
-		try {
-			PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
-			updateSeen.setString(1, sender.toLowerCase());
-			updateSeen.setLong(2, System.currentTimeMillis());
-			updateSeen.setString(3, "Saying: " + event.getMessage());
-			updateSeen.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!event.getChannel().getMode().contains("s")) {
+			try {
+				PreparedStatement updateSeen = Database.getPreparedStatement("updateLastSeen");
+				updateSeen.setString(1, sender.toLowerCase());
+				updateSeen.setLong(2, System.currentTimeMillis());
+				updateSeen.setString(3, "Saying: " + event.getMessage());
+				updateSeen.execute();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
