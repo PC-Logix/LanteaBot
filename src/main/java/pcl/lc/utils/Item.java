@@ -253,7 +253,7 @@ public class Item {
 	public int[] getGenericRoll(int diceSize, int bonus, int minValue)
 	{
 		int[] result = new int[4];
-		int diceRoll = Helper.rollDice(Math.max(1, (this.uses_left / 4)) + "d" + diceSize).getSum();
+		int diceRoll = Helper.rollDice(Math.max(1, (this.uses_left / 2)) + "d" + diceSize).getSum();
 		result[0] = (bonus == Integer.MIN_VALUE ? 0 : Math.max(minValue, diceRoll + bonus)); //Result
 		result[1] = diceRoll;
 		result[2] = bonus;
