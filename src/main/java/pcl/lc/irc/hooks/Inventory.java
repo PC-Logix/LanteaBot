@@ -295,6 +295,10 @@ public class Inventory extends AbstractListener {
 		}
 	}
 
+	/**
+	 * Calls getRandomItem(boolean can_be_favourite) with can_be_favourite = true
+	 * @return Item
+	 */
 	public static Item getRandomItem() {
 		return getRandomItem(true);
 	}

@@ -981,4 +981,43 @@ public class Helper {
 
 		return value;
 	}
+
+	/**
+	 * Calls getRandomGarbageItem(boolean all_lower_case) with all_lower_case = false
+	 * Returns a random mundane garbage item
+	 * @return A random name
+	 */
+	public static String getRandomGarbageItem() {
+		return getRandomGarbageItem(false);
+	}
+
+	/**
+	 * Returns a random mundane garbage item
+	 * @param all_lower_case Whether to return all lower case
+	 * @return A random name
+	 */
+	public static String getRandomGarbageItem(boolean all_lower_case) {
+		String name;
+		try {
+			List<String> garbage = new ArrayList<>();
+			garbage.add("Twig");
+			garbage.add("Pebble");
+			garbage.add("Piece of cloth");
+			garbage.add("Leaf");
+			garbage.add("Weed");
+			garbage.add("Paper crane");
+			garbage.add("Half-eaten fortune cookie");
+			garbage.add("Cookie with raisins");
+			garbage.add("Turnip");
+			garbage.add("Potato");
+			garbage.add("Doorknob");
+
+			name = garbage.get(getRandomInt(0, garbage.size() - 1));
+		} catch (Exception ex) {
+			name = "Error";
+		}
+		if (all_lower_case)
+			name = name.toLowerCase();
+		return name;
+	}
 }

@@ -6,13 +6,14 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.Item;
 
 /**
  * @author Forecaster
  *
  */
 @SuppressWarnings("rawtypes")
-public class Jiggle extends AbstractListener {
+public class Bap extends AbstractListener {
 	private Command local_command;
 
 	@Override
@@ -22,22 +23,21 @@ public class Jiggle extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("jiggle", 0) {
+		local_command = new Command("bap", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				int number = 0;
 				if (params.length() > 0) {
-					try { number = Integer.parseInt(params); } catch (NumberFormatException ignored) {}
-					if (number == 0)
-						Helper.sendAction(target, "jiggles " + params);
+					Item item = Inventory.getRandomItem(false);
+					if (item != null)
+						Helper.sendAction(target, "baps " + params + " with " + item.getName(true));
 					else
-						Helper.sendAction(target, "jiggles " + number + " times");
+						Helper.sendAction(target, "baps " + params);
 				}
 				else
-					Helper.sendAction(target, "jiggles");
+					Helper.sendAction(target, "A swing and a miss!");
 			}
 		};
-		local_command.setHelpText("Jiggle");
+		local_command.setHelpText("Bap a fool harmlessly");
 	}
 
 	public String chan;
