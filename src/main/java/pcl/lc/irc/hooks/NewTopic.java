@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -51,6 +52,12 @@ public class NewTopic extends AbstractListener {
 				}
 				if (msg.contains("[drama]")) {
 					msg = msg.replace("[drama]", Drama.dramaParse());
+				}
+				if (msg.contains("[randomuser]")) {
+					Random rnd = new Random();
+					int i = rnd.nextInt(Helper.getNamesFromTarget(target).size());
+					String user = Helper.getNamesFromTarget(target).toArray()[i].toString();
+					msg = msg.replace("[randomuser]", user);
 				}
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, msg, nick);
