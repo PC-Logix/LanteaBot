@@ -37,6 +37,9 @@ public class SpamDetect extends ListenerAdapter {
 	}
 	public static boolean isAllUpperCase(String s)
 	{
+		if (!StringUtils.isAlphanumeric(s)) {
+			return false;
+		}
 		for (int i=0; i<s.length(); i++)
 		{
 			if (Character.isLowerCase(s.charAt(i)))
