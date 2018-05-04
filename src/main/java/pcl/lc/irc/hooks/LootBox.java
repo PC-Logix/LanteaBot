@@ -31,6 +31,7 @@ public class LootBox extends AbstractListener {
 		rarities.put(25, "Magic");
 		rarities.put(10, "Shiny");
 		rarities.put(5, "Legendary");
+		rarities.put(1, "Cursed");
 	}
 
 	private void initCommands() {
@@ -50,11 +51,17 @@ public class LootBox extends AbstractListener {
 				if (rarity == "Normal") {
 					item_name = "a " + Helper.getRandomGarbageItem() + ".";
 				} else {
-					Item item = Inventory.getRandomItem(false);
+					Item item = Inventory.getRandomItem(true);
 					if (item == null)
 						item_name = "a " + Helper.getRandomGarbageItem() + ".";
-					else
+					else {
 						item_name = "a " + rarity + " " + item.getNameWithoutPrefix() + "! (" + rarity_perc + "%)";
+						if (rarity != "Cursed")
+							item.destroy();
+						else {
+							Item new_item = new Item(0, "Cursed " + item.getName(), item.getUsesLeft() + 15, false, "The Curse (" + item.getAdded_by() + ")", item.getAddedRaw());
+						}
+					}
 				}
 				Helper.sendMessage(target, "You get a loot box! It contains " + item_name, nick);
 			}

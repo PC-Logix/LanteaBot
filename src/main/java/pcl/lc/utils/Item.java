@@ -65,10 +65,19 @@ public class Item {
 
 	/**
 	 * Applies massive damage to item, almost guaranteed to destroy it.
+	 * Calls destroy with includeLeadingComma = true, capitalizeFirstWord = false, includeEndPunctuation = true
+	 * @return The dust string from the destroyed item
+	 */
+	public String destroy() {
+		return destroy(true, false, true);
+	}
+
+	/**
+	 * Applies massive damage to item, almost guaranteed to destroy it.
 	 * @param includeLeadingComma Whether to begin the sentence with a comma and space
 	 * @param capitalizeFirstWord Whether the first word should be capitalized if it isn't already
 	 * @param includeEndPunctuation If false, any punctuation at the end of the sentence will be cleared
-	 * @return String
+	 * @return The dust string from the destroyed item
 	 */
 	public String destroy(boolean includeLeadingComma, boolean capitalizeFirstWord, boolean includeEndPunctuation) {
 		return damage(999, includeLeadingComma, capitalizeFirstWord, includeEndPunctuation);
@@ -149,6 +158,22 @@ public class Item {
 		return "";
 	}
 
+	public void addUses(int uses) {
+		this.uses_left += uses;
+		try {
+			PreparedStatement statement = Database.getPreparedStatement("setUses");
+			statement.setInt(1, this.uses_left);
+			statement.setInt(2, this.id);
+			statement.executeUpdate();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void incrementUses() {
+		addUses(1);
+	}
+
 	public int removeItem() {
 		return Inventory.removeItem(this.id);
 	}
@@ -194,6 +219,11 @@ public class Item {
 			e.printStackTrace();
 		}
 		return this.name;
+	}
+
+	public Item setName(String new_name) {
+		this.name = new_name;
+		return this;
 	}
 
 	public String getNameWithoutPrefix() {
