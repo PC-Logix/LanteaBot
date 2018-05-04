@@ -57,7 +57,7 @@ public class LootBox extends AbstractListener {
 					else {
 						item_name = "a " + rarity + " " + item.getNameWithoutPrefix() + "! (" + rarity_perc + "%)";
 						if (rarity == "Cursed")
-							new Item(0, "Cursed " + item.getName(), item.getUsesLeft() + 15, false, "The Curse (" + item.getAdded_by() + ")", item.getAddedRaw());
+							Inventory.addRawItem(new Item(0, "Cursed " + item.getNameWithoutPrefix(), item.getUsesLeft() + 15, false, "The Curse (" + item.getAdded_by() + ")", item.getAddedRaw()));
 						item.destroy();
 					}
 				}

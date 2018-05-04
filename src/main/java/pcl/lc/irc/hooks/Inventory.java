@@ -552,6 +552,30 @@ public class Inventory extends AbstractListener {
 			return "I can't put myself in my inventory silly.";
 	}
 
+	public static void addRawItem(Item item) {
+		addRawItem(item.getNameRaw(), item.getUsesLeft(), item.isFavourite(), item.getAdded_by(), item.getAddedRaw());
+	}
+
+	public static void addRawItem(String item, int uses_left, boolean favourite, String added_by, int added) {
+		try {
+			PreparedStatement addItem = Database.getPreparedStatement("addItem");
+			item = item.replaceAll(" ?\\(\\*\\)", ""); //Replace any (*) to prevent spoofing preserved item marks
+			String itemEscaped = StringEscapeUtils.escapeHtml4(item);
+			addItem.setString(1, itemEscaped);
+			addItem.setInt(2, uses_left);
+			addItem.setInt(3, (favourite) ? 1 : 0);
+			if (added_by != null)
+				addItem.setString(4, added_by);
+			else
+				addItem.setString(4, "");
+			addItem.setInt(5, added);
+			addItem.executeUpdate();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static String getItemBreakString(String item) {
 		return getItemBreakString(item, false);
 	}
