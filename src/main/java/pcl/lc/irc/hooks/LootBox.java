@@ -40,8 +40,8 @@ public class LootBox extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int rarity_value = Helper.rollDice("1d100").getSum();
 				String item_name;
-				String rarity = "";
-				int rarity_perc = 0;
+				String rarity = "Normal";
+				int rarity_perc = 100;
 				for (Map.Entry<Integer, String> rar : rarities.entrySet()) {
 					if (rarity_value < rar.getKey()) {
 						rarity = rar.getValue();
