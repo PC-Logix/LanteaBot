@@ -1043,6 +1043,16 @@ public class Helper {
 			garbage.add(new String[] {"a", "Expired lottery ticket"});
 			garbage.add(new String[] {"a", "Tiny bag of catnip"});
 			garbage.add(new String[] {"a", "Tiny snail"});
+			garbage.add(new String[] {"", "Corn on the cob"});
+			garbage.add(new String[] {"a", "Pecan pie"});
+			garbage.add(new String[] {"an", "Empty drive slot"});
+			garbage.add(new String[] {"a", "Dropbox account with zero capacity"});
+			garbage.add(new String[] {"an", "Empty shot glass"});
+			garbage.add(new String[] {"a", "Lootcrate"});
+			garbage.add(new String[] {"a", "Power adapter incompatible with everything"});
+			garbage.add(new String[] {"a", "Lockpick"});
+			garbage.add(new String[] {"", "Two lockpicks"});
+			garbage.add(new String[] {"a", "Monopoly top hat figure"});
 
 			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
 			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];
