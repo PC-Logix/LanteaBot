@@ -49,11 +49,11 @@ public class LootBox extends AbstractListener {
 					}
 				}
 				if (rarity == "Normal") {
-					item_name = "a " + Helper.getRandomGarbageItem() + ".";
+					item_name = Helper.getRandomGarbageItem(true, true) + ".";
 				} else {
 					Item item = Inventory.getRandomItem(true);
 					if (item == null)
-						item_name = "a " + Helper.getRandomGarbageItem() + ".";
+						item_name = Helper.getRandomGarbageItem(true, true) + ".";
 					else {
 						item_name = "a " + rarity + " " + item.getNameWithoutPrefix() + "! (" + rarity_perc + "%)";
 						if (rarity == "Cursed")

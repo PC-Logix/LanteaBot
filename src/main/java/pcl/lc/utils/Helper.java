@@ -988,7 +988,7 @@ public class Helper {
 	 * @return A random name
 	 */
 	public static String getRandomGarbageItem() {
-		return getRandomGarbageItem(false);
+		return getRandomGarbageItem(true, false);
 	}
 
 	/**
@@ -996,28 +996,61 @@ public class Helper {
 	 * @param all_lower_case Whether to return all lower case
 	 * @return A random name
 	 */
-	public static String getRandomGarbageItem(boolean all_lower_case) {
+	public static String getRandomGarbageItem(boolean include_prefix, boolean all_lower_case) {
 		String name;
 		try {
-			List<String> garbage = new ArrayList<>();
-			garbage.add("Twig");
-			garbage.add("Pebble");
-			garbage.add("Piece of cloth");
-			garbage.add("Leaf");
-			garbage.add("Weed");
-			garbage.add("Paper crane");
-			garbage.add("Half-eaten fortune cookie");
-			garbage.add("Cookie with raisins");
-			garbage.add("Turnip");
-			garbage.add("Potato");
-			garbage.add("Doorknob");
+			List<String[]> garbage = new ArrayList<>();
+			garbage.add(new String[] {"a", "Twig"});
+			garbage.add(new String[] {"a", "Pebble"});
+			garbage.add(new String[] {"a", "Piece of cloth"});
+			garbage.add(new String[] {"a", "Leaf"});
+			garbage.add(new String[] {"a", "Weed"});
+			garbage.add(new String[] {"a", "Paper crane"});
+			garbage.add(new String[] {"a", "Half-eaten fortune cookie"});
+			garbage.add(new String[] {"a", "Cookie with raisins"});
+			garbage.add(new String[] {"a", "Turnip"});
+			garbage.add(new String[] {"a", "Potato"});
+			garbage.add(new String[] {"a", "Doorknob"});
+			garbage.add(new String[] {"a", "Rickety Gazebo"});
+			garbage.add(new String[] {"", "Half of an IKEA shelf"});
+			garbage.add(new String[] {"a", "Metal bearing"});
+			garbage.add(new String[] {"a", "Wooden bird"});
+			garbage.add(new String[] {"", "Cheese residue"});
+			garbage.add(new String[] {"a", "Slice of butter"});
+			garbage.add(new String[] {"a", "Depleted 9v battery"});
+			garbage.add(new String[] {"a", "Brick"});
+			garbage.add(new String[] {"a", "Charred bacon"});
+			garbage.add(new String[] {"a", "Single grain of rice"});
+			garbage.add(new String[] {"an", "Empty bottle"});
+			garbage.add(new String[] {"a", "Bottle filled with concrete"});
+			garbage.add(new String[] {"a", "Ball of yarn"});
+			garbage.add(new String[] {"a", "Fork"});
+			garbage.add(new String[] {"", "Some half-melted snow"});
+			garbage.add(new String[] {"a", "Deed for a bridge"});
+			garbage.add(new String[] {"an", "Unlabeled key"});
+			garbage.add(new String[] {"a", "Napkin with scribbles on it"});
+			garbage.add(new String[] {"a", "Butterfly"});
+			garbage.add(new String[] {"a", "Phone battery"});
+			garbage.add(new String[] {"a", "Set of assorted wires"});
+			garbage.add(new String[] {"a", "Pen"});
+			garbage.add(new String[] {"a", "Pencil"});
+			garbage.add(new String[] {"an", "Eraser"});
+			garbage.add(new String[] {"an", "Empty post-it note"});
+			garbage.add(new String[] {"a", "Hood ornament in the shape of a tomato"});
+			garbage.add(new String[] {"a", "Bottle cap"});
+			garbage.add(new String[] {"an", "Empty Array"});
+			garbage.add(new String[] {"a", "attempt to index nil value"});
+			garbage.add(new String[] {"a", "Expired lottery ticket"});
+			garbage.add(new String[] {"a", "Tiny bag of catnip"});
+			garbage.add(new String[] {"a", "Tiny snail"});
 
-			name = garbage.get(getRandomInt(0, garbage.size() - 1));
+			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
+			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];
+			if (all_lower_case)
+				name = name.toLowerCase();
 		} catch (Exception ex) {
-			name = "Error";
+			name = "[Error]";
 		}
-		if (all_lower_case)
-			name = name.toLowerCase();
 		return name;
 	}
 }
