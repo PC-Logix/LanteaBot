@@ -1083,6 +1083,21 @@ public class Helper {
 			garbage.add(new String[] {"a", "Rosary"});
 			garbage.add(new String[] {"an", "Upside-down cross"});
 			garbage.add(new String[] {"a", "Poofy ball of fluff"});
+			garbage.add(new String[] {"a", "Paperclip, big one"});
+			garbage.add(new String[] {"a", "Leftover pumpkin"});
+			garbage.add(new String[] {"a", "Fork in the road"});
+			garbage.add(new String[] {"a", "Chocolate bar that was left out in the sun"});
+			garbage.add(new String[] {"an", "Impossibly green dress"});
+			garbage.add(new String[] {"a", "Piece of rope slightly too small to be useful"});
+			garbage.add(new String[] {"a", "20ft Pole"});
+			garbage.add(new String[] {"", "Ten birds in a bush"});
+			garbage.add(new String[] {"a", "Very stale piece of pizza"});
+			garbage.add(new String[] {"a", "Tiny packet of cream"});
+			garbage.add(new String[] {"a", "Tiny packet of ketchup"});
+			garbage.add(new String[] {"a", "Tiny packet of salt"});
+			garbage.add(new String[] {"a", "Tiny packet of packets"});
+			garbage.add(new String[] {"a", "Tiny packet of rubber bands"});
+			garbage.add(new String[] {"a", "Tiny model shoe"});
 
 			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
 			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];
