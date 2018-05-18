@@ -47,6 +47,9 @@ public class Pet extends AbstractListener {
 
 					if (params == "")
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
+					 else if (nick.equals(params)) {
+						 Helper.sendMessage(target,"Don't pet yourself in public.", nick);
+					}
 					else if (Helper.doInteractWith(params)) {
 						int[] heal = {0,0,0};
 						if (item != null)
