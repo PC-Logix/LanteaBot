@@ -3,48 +3,31 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.Colors;
-import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
-
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaException;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.LuaState.Library;
-
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
-import pcl.lc.irc.hooks.JavaScript.JSRunner;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
 import pcl.lc.utils.SandboxThreadFactory;
 import pcl.lc.utils.SandboxThreadGroup;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
+import java.io.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.concurrent.*;
 
 /**
  * @author Caitlyn
@@ -95,7 +78,7 @@ public class DynamicCommands extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement getCommand;
 				try {
-					if (!Helper.isEnabledHere(target, "DNSBL")) {
+					if (!Helper.isEnabledHere(target, "dyncmd")) {
 						return;
 					}
 					getCommand = Database.getPreparedStatement("getCommand");
@@ -116,7 +99,7 @@ public class DynamicCommands extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					if (!Helper.isEnabledHere(target, "DNSBL")) {
+					if (!Helper.isEnabledHere(target, "dyncmd")) {
 						return;
 					}
 					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
@@ -145,7 +128,7 @@ public class DynamicCommands extends AbstractListener {
 		local_command_addhelp = new Command ("addcommandhelp", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (!Helper.isEnabledHere(target, "DNSBL")) {
+				if (!Helper.isEnabledHere(target, "dyncmd")) {
 					return;
 				}
 				PreparedStatement addCommandHelp;
