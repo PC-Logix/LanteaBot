@@ -1098,6 +1098,26 @@ public class Helper {
 			garbage.add(new String[] {"a", "Tiny packet of packets"});
 			garbage.add(new String[] {"a", "Tiny packet of rubber bands"});
 			garbage.add(new String[] {"a", "Tiny model shoe"});
+			garbage.add(new String[] {"a", "Mermaids tear"});
+			garbage.add(new String[] {"a", "Mermaid scale"});
+			garbage.add(new String[] {"a", "Dragon tooth"});
+			garbage.add(new String[] {"a", "Dragon scale"});
+			garbage.add(new String[] {"a", "Book that is glued shut"});
+			garbage.add(new String[] {"a", "Sealed unmarked canister"});
+			garbage.add(new String[] {"a", "Canister of neurotoxin"});
+			garbage.add(new String[] {"a", "Frog leg"});
+			garbage.add(new String[] {"", "Eye of newt"});
+			garbage.add(new String[] {"", "Roberto's knife"});
+			garbage.add(new String[] {"an", "Unassuming lamp"});
+			garbage.add(new String[] {"a", "Copy of \"A Lusty Argonian Maid\""});
+			garbage.add(new String[] {"a", "Cabbage leaf"});
+			garbage.add(new String[] {"an", "Ornate chandelier"});
+			garbage.add(new String[] {"a", "Tiny cage"});
+			garbage.add(new String[] {"a", "Tiny fork"});
+			garbage.add(new String[] {"a", "Tiny spoon"});
+			garbage.add(new String[] {"a", "Tiny knife"});
+			garbage.add(new String[] {"an", "Ornate Nate"});
+			garbage.add(new String[] {"a", "Tiny figurine"});
 
 			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
 			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];

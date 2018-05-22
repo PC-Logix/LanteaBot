@@ -3,48 +3,34 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.Colors;
-import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
-
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaException;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.LuaState.Library;
-
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
-import pcl.lc.irc.hooks.JavaScript.JSRunner;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
 import pcl.lc.utils.SandboxThreadFactory;
 import pcl.lc.utils.SandboxThreadGroup;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
+import java.io.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Caitlyn
@@ -68,6 +54,22 @@ public class DynamicCommands extends AbstractListener {
 
 	private static LuaState luaState;
 	public StringBuilder output;
+
+	public class CommandsHaveBeenRun {
+		private ArrayList commands;
+
+		CommandsHaveBeenRun() {
+			this.commands = new ArrayList<>();
+		}
+
+		protected void addCommand(String command) {
+			this.commands.add(command);
+		}
+
+		protected boolean hasCommand(String command) {
+			return this.commands.contains(command);
+		}
+	}
 
 	@Override
 	protected void initHook() {
@@ -95,7 +97,7 @@ public class DynamicCommands extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement getCommand;
 				try {
-					if (!Helper.isEnabledHere(target, "DNSBL")) {
+					if (!Helper.isEnabledHere(target, "dyncmd")) {
 						return;
 					}
 					getCommand = Database.getPreparedStatement("getCommand");
@@ -116,7 +118,7 @@ public class DynamicCommands extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					if (!Helper.isEnabledHere(target, "DNSBL")) {
+					if (!Helper.isEnabledHere(target, "dyncmd")) {
 						return;
 					}
 					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
@@ -145,7 +147,7 @@ public class DynamicCommands extends AbstractListener {
 		local_command_addhelp = new Command ("addcommandhelp", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (!Helper.isEnabledHere(target, "DNSBL")) {
+				if (!Helper.isEnabledHere(target, "dyncmd")) {
 					return;
 				}
 				PreparedStatement addCommandHelp;
@@ -215,42 +217,13 @@ public class DynamicCommands extends AbstractListener {
 	public String target = null;
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		String prefix = Config.commandprefix;
 		target = Helper.getTarget(event);
 		if (!Helper.isEnabledHere(target, "dyncmd")) {
 			return;
 		}
 		try {
-			PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
-			getCommand.setString(1, command.replace(prefix, "").toLowerCase());
-			ResultSet command1 = getCommand.executeQuery();
-			output = new StringBuilder();
-			if (command1.next()) {
-				String message = command1.getString(1);
-				if (message.startsWith("[lua]")) {
-					output = new StringBuilder();
-					output.append(runScriptInSandbox(message.replace("[lua]", "").trim()));
-					message = output.toString();
-				}else if (message.startsWith("[js]")) {
-					if (engineFactory == null) return;
-					NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
-					output = new StringBuilder();
-					output.append(eval(engine, message.replace("[js]", "").trim()));
-					if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
-						output.setLength(output.length()-1);
-					message = output.toString().replace("\n", " | ").replace("\r", "");
-				}
-				String msg = "";
-				if (message.contains("[randomitem]")) {
-					message = msg.replace("[randomitem]", Inventory.getRandomItem().getName());
-				}
-				if (message.contains("[drama]")) {
-					message = msg.replace("[drama]", Drama.dramaParse());
-				}
-				message = MessageFormat.format(message, (Object[]) copyOfRange);
-				Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendMessage(target, message, nick, true);
-			}
+			CommandsHaveBeenRun blacklist = new CommandsHaveBeenRun();
+			parseDynCommand(command, copyOfRange, nick, blacklist);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -315,6 +288,62 @@ public class DynamicCommands extends AbstractListener {
 					}
 				}
 			}
+		}
+	}
+
+	private void parseDynCommand(String command, String[] arguments, String nick, CommandsHaveBeenRun blacklist) throws Exception {
+		String prefix = Config.commandprefix;
+
+		PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
+		getCommand.setString(1, command.replace(prefix, "").toLowerCase());
+		ResultSet command1 = getCommand.executeQuery();
+		if (command1.next()) {
+			String message = command1.getString(1);
+		
+			StringBuilder output;
+			String aliasPattern = "%(.*?)%";
+			Pattern pattern = Pattern.compile(aliasPattern);
+			Matcher matcher = pattern.matcher(message);
+
+			while (matcher.find()) {
+				for (int i = 1; i <= matcher.groupCount(); i++) {
+					String match = matcher.group(i);
+					if (!blacklist.hasCommand(match)) {
+						blacklist.addCommand(match);
+						parseDynCommand(match, arguments, nick, blacklist);
+					}
+					message = message.replace("%" + match + "%", "");
+				}
+			}
+
+			System.out.println("Done with aliases: '" + message + "'");
+
+			if (message.startsWith("[lua]")) {
+				output = new StringBuilder();
+				output.append(runScriptInSandbox(message.replace("[lua]", "").trim()));
+				message = output.toString();
+			}else if (message.startsWith("[js]")) {
+				if (engineFactory == null) return;
+				NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
+				output = new StringBuilder();
+				output.append(eval(engine, message.replace("[js]", "").trim()));
+				if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
+					output.setLength(output.length()-1);
+				message = output.toString().replace("\n", " | ").replace("\r", "");
+			}
+			String msg = "";
+			if (message.contains("[randomitem]")) {
+				message = msg.replace("[randomitem]", Inventory.getRandomItem().getName());
+			}
+			if (message.contains("[drama]")) {
+				message = msg.replace("[drama]", Drama.dramaParse());
+			}
+			message = MessageFormat.format(message, (Object[]) arguments);
+			Helper.AntiPings = Helper.getNamesFromTarget(target);
+			System.out.println("This is what's left: '" + message.replaceAll(" ", "") + "'");
+			if (message.replaceAll(" ", "").equals(""))
+				return;
+			Helper.sendMessage(target, message, nick, true);
 		}
 	}
 
