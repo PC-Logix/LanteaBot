@@ -1128,4 +1128,81 @@ public class Helper {
 		}
 		return name;
 	}
+
+	public static Matcher getMatcherFromPattern(String pattern, String input) {
+		String regex = "^(" + pattern + ") (.*)";
+		Pattern pt = Pattern.compile(regex);
+		System.out.println("Trying '" + regex + "' on '" + input + "'");
+		return pt.matcher(input);
+	}
+
+	public static String[] solvePrefixes(String input) {
+		String regex;
+		String match;
+		Pattern pattern;
+		Matcher matcher;
+
+		String[] counters_part_a = {
+			"a", "an", "the", "a whole lot of", "many", "a lot of", "a number of"
+		};
+		String[] counters_part_twenty = {
+			"twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"
+		};
+		String[] counters_part_one = {
+			"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+		};
+		String[] counters_part_hundred = {
+			"hundred", "thousand", "million", "milliard", "billion", "billiard", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion", "decillion", "undecillion", "duodecillion", "tredecillion", "quattuordecillion", "quindecillion", "sexdecillion", "septendecillion", "octodecillion", "novemdecillion", "vigintillion", "centillion"
+		};
+
+		for (String prefix: counters_part_a) {
+			matcher = getMatcherFromPattern(prefix, input);
+			if (matcher.matches()) {
+				for (String prefixa: counters_part_hundred) {
+					Matcher a = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches())
+						return new String[]{a.group(1), a.group(2)};
+				}
+				return new String[]{matcher.group(1), matcher.group(2)};
+			}
+		}
+
+		for (String prefix: counters_part_one) {
+			matcher = getMatcherFromPattern(prefix, input);
+			if (matcher.matches()) {
+				for (String prefixa: counters_part_hundred) {
+					Matcher a  = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches())
+						return new String[]{a.group(1), a.group(2)};
+				}
+				return new String[]{matcher.group(1), matcher.group(2)};
+			}
+		}
+
+		for (String prefix: counters_part_twenty) {
+			matcher = getMatcherFromPattern(prefix, input);
+			if (matcher.matches()) {
+				for (String prefixa: counters_part_one) {
+					Matcher a = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches()) {
+						for (String prefixb: counters_part_hundred) {
+							Matcher b = getMatcherFromPattern(prefix + " " + prefixa + " " + prefixb, input);
+							if (b.matches())
+								return new String[]{b.group(1), b.group(2)};
+						}
+						return new String[]{a.group(1), a.group(2)};
+					}
+				}
+
+				for (String prefixa: counters_part_hundred) {
+					Matcher a = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches())
+						return new String[]{a.group(1), a.group(2)};
+				}
+				return new String[]{matcher.group(1), matcher.group(2)};
+			}
+		}
+
+		return null;
+	}
 }
