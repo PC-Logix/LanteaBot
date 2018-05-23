@@ -1131,7 +1131,7 @@ public class Helper {
 
 	public static Matcher getMatcherFromPattern(String pattern, String input) {
 		String regex = "^(" + pattern + ") (.*)";
-		Pattern pt = Pattern.compile(regex);
+		Pattern pt = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		System.out.println("Trying '" + regex + "' on '" + input + "'");
 		return pt.matcher(input);
 	}
