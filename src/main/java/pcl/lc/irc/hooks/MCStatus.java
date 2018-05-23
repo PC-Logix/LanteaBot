@@ -50,11 +50,9 @@ public class MCStatus extends ListenerAdapter {
 						message = message + "Website: "			+ isUp(root.getJSONObject(0).getString("minecraft.net")) + " ";
 						message = message + "Session: "			+ isUp(root.getJSONObject(1).getString("session.minecraft.net")) + " ";
 						message = message + "Account: "			+ isUp(root.getJSONObject(2).getString("account.mojang.com")) + " ";
-						message = message + "Auth: "			+ isUp(root.getJSONObject(3).getString("auth.mojang.com")) + " ";
-						message = message + "Skins: "			+ isUp(root.getJSONObject(4).getString("skins.minecraft.net")) + " ";
-						message = message + "Auth Server: " 	+ isUp(root.getJSONObject(5).getString("authserver.mojang.com")) + " ";
+						message = message + "Auth: "			+ isUp(root.getJSONObject(3).getString("authserver.mojang.com")) + " ";
+						message = message + "API: " 			+ isUp(root.getJSONObject(5).getString("api.mojang.com")) + " ";
 						message = message + "Session Server: " 	+ isUp(root.getJSONObject(6).getString("sessionserver.mojang.com")) + " ";
-						message = message + "API: " 			+ isUp(root.getJSONObject(7).getString("api.mojang.com")) + " ";
 						message = message + "Textures: " 		+ isUp(root.getJSONObject(8).getString("textures.minecraft.net")) + " ";
 						event.respond(message);
 					} catch (IOException ex) {
