@@ -1020,7 +1020,7 @@ public class Helper {
 			garbage.add(new String[] {"a", "Slice of butter"});
 			garbage.add(new String[] {"a", "Depleted 9v battery"});
 			garbage.add(new String[] {"a", "Brick"});
-			garbage.add(new String[] {"a", "Charred bacon"});
+			garbage.add(new String[] {"a", "Charred piece bacon"});
 			garbage.add(new String[] {"a", "Single grain of rice"});
 			garbage.add(new String[] {"an", "Empty bottle"});
 			garbage.add(new String[] {"a", "Bottle filled with concrete"});
