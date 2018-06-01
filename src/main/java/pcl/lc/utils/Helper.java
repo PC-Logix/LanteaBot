@@ -1084,6 +1084,41 @@ public class Helper {
 			garbage.add(new String[] {"a", "Rosary"});
 			garbage.add(new String[] {"an", "Upside-down cross"});
 			garbage.add(new String[] {"a", "Poofy ball of fluff"});
+			garbage.add(new String[] {"a", "Paperclip, big one"});
+			garbage.add(new String[] {"a", "Leftover pumpkin"});
+			garbage.add(new String[] {"a", "Fork in the road"});
+			garbage.add(new String[] {"a", "Chocolate bar that was left out in the sun"});
+			garbage.add(new String[] {"an", "Impossibly green dress"});
+			garbage.add(new String[] {"a", "Piece of rope slightly too small to be useful"});
+			garbage.add(new String[] {"a", "20ft Pole"});
+			garbage.add(new String[] {"", "Ten birds in a bush"});
+			garbage.add(new String[] {"a", "Very stale piece of pizza"});
+			garbage.add(new String[] {"a", "Tiny packet of cream"});
+			garbage.add(new String[] {"a", "Tiny packet of ketchup"});
+			garbage.add(new String[] {"a", "Tiny packet of salt"});
+			garbage.add(new String[] {"a", "Tiny packet of packets"});
+			garbage.add(new String[] {"a", "Tiny packet of rubber bands"});
+			garbage.add(new String[] {"a", "Tiny model shoe"});
+			garbage.add(new String[] {"a", "Mermaids tear"});
+			garbage.add(new String[] {"a", "Mermaid scale"});
+			garbage.add(new String[] {"a", "Dragon tooth"});
+			garbage.add(new String[] {"a", "Dragon scale"});
+			garbage.add(new String[] {"a", "Book that is glued shut"});
+			garbage.add(new String[] {"a", "Sealed unmarked canister"});
+			garbage.add(new String[] {"a", "Canister of neurotoxin"});
+			garbage.add(new String[] {"a", "Frog leg"});
+			garbage.add(new String[] {"", "Eye of newt"});
+			garbage.add(new String[] {"", "Roberto's knife"});
+			garbage.add(new String[] {"an", "Unassuming lamp"});
+			garbage.add(new String[] {"a", "Copy of \"A Lusty Argonian Maid\""});
+			garbage.add(new String[] {"a", "Cabbage leaf"});
+			garbage.add(new String[] {"an", "Ornate chandelier"});
+			garbage.add(new String[] {"a", "Tiny cage"});
+			garbage.add(new String[] {"a", "Tiny fork"});
+			garbage.add(new String[] {"a", "Tiny spoon"});
+			garbage.add(new String[] {"a", "Tiny knife"});
+			garbage.add(new String[] {"an", "Ornate Nate"});
+			garbage.add(new String[] {"a", "Tiny figurine"});
 			garbage.add(new String[] {"a", "Mask of your face"});
 			garbage.add(new String[] {"a", "Mask of someones face"});
 			garbage.add(new String[] {"a", "Tiny clay figure"});
@@ -1105,5 +1140,82 @@ public class Helper {
 			name = "[Error]";
 		}
 		return name;
+	}
+
+	public static Matcher getMatcherFromPattern(String pattern, String input) {
+		String regex = "^(" + pattern + ") (.*)";
+		Pattern pt = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		System.out.println("Trying '" + regex + "' on '" + input + "'");
+		return pt.matcher(input);
+	}
+
+	public static String[] solvePrefixes(String input) {
+		String regex;
+		String match;
+		Pattern pattern;
+		Matcher matcher;
+
+		String[] counters_part_a = {
+			"a", "an", "the", "a whole lot of", "many", "a lot of", "a number of"
+		};
+		String[] counters_part_twenty = {
+			"twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"
+		};
+		String[] counters_part_one = {
+			"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+		};
+		String[] counters_part_hundred = {
+			"hundred", "thousand", "million", "milliard", "billion", "billiard", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion", "decillion", "undecillion", "duodecillion", "tredecillion", "quattuordecillion", "quindecillion", "sexdecillion", "septendecillion", "octodecillion", "novemdecillion", "vigintillion", "centillion"
+		};
+
+		for (String prefix: counters_part_a) {
+			matcher = getMatcherFromPattern(prefix, input);
+			if (matcher.matches()) {
+				for (String prefixa: counters_part_hundred) {
+					Matcher a = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches())
+						return new String[]{a.group(1), a.group(2)};
+				}
+				return new String[]{matcher.group(1), matcher.group(2)};
+			}
+		}
+
+		for (String prefix: counters_part_one) {
+			matcher = getMatcherFromPattern(prefix, input);
+			if (matcher.matches()) {
+				for (String prefixa: counters_part_hundred) {
+					Matcher a  = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches())
+						return new String[]{a.group(1), a.group(2)};
+				}
+				return new String[]{matcher.group(1), matcher.group(2)};
+			}
+		}
+
+		for (String prefix: counters_part_twenty) {
+			matcher = getMatcherFromPattern(prefix, input);
+			if (matcher.matches()) {
+				for (String prefixa: counters_part_one) {
+					Matcher a = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches()) {
+						for (String prefixb: counters_part_hundred) {
+							Matcher b = getMatcherFromPattern(prefix + " " + prefixa + " " + prefixb, input);
+							if (b.matches())
+								return new String[]{b.group(1), b.group(2)};
+						}
+						return new String[]{a.group(1), a.group(2)};
+					}
+				}
+
+				for (String prefixa: counters_part_hundred) {
+					Matcher a = getMatcherFromPattern(prefix + " " + prefixa, input);
+					if (a.matches())
+						return new String[]{a.group(1), a.group(2)};
+				}
+				return new String[]{matcher.group(1), matcher.group(2)};
+			}
+		}
+
+		return null;
 	}
 }
