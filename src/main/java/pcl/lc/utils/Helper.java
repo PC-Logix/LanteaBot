@@ -685,6 +685,7 @@ public class Helper {
 		if (target.toLowerCase().contains(IRCBot.getOurNick().toLowerCase()))
 			return false;
 		switch (target.toLowerCase()) {
+			case "me":
 			case "herself":
 			case "himself":
 			case "itself":
@@ -1083,6 +1084,18 @@ public class Helper {
 			garbage.add(new String[] {"a", "Rosary"});
 			garbage.add(new String[] {"an", "Upside-down cross"});
 			garbage.add(new String[] {"a", "Poofy ball of fluff"});
+			garbage.add(new String[] {"a", "Mask of your face"});
+			garbage.add(new String[] {"a", "Mask of someones face"});
+			garbage.add(new String[] {"a", "Tiny clay figure"});
+			garbage.add(new String[] {"an", "Empty soup can"});
+			garbage.add(new String[] {"an", "Empty wooden chest"});
+			garbage.add(new String[] {"a", "Portable stick"});
+			garbage.add(new String[] {"a", "Stationary stick"});
+			garbage.add(new String[] {"an", "Inanimate carbon rod"});
+			garbage.add(new String[] {"a", "Living tombstone"});
+			garbage.add(new String[] {"a", "Talking sword that wont stop talking"});
+			garbage.add(new String[] {"a", "3D-printer that only prints in papier mache"});
+			garbage.add(new String[] {"a", "Raspberry Pi that only beeps at you"});
 
 			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
 			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];

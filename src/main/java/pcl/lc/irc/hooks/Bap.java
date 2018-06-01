@@ -27,14 +27,18 @@ public class Bap extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() > 0) {
-					Item item = Inventory.getRandomItem(false);
-					if (item != null)
-						Helper.sendAction(target, "baps " + params + " with " + item.getName(true));
-					else
-						Helper.sendAction(target, "baps " + params);
+					if (Helper.doInteractWith(params)) {
+						Item item = Inventory.getRandomItem(false);
+						if (item != null)
+							Helper.sendAction(target, "baps " + params + " with " + item.getName(true));
+						else
+							Helper.sendAction(target, "baps " + params);
+					} else {
+						Helper.sendAction(target, "smacks " + nick);
+					}
 				}
 				else
-					Helper.sendAction(target, "A swing and a miss!");
+					Helper.sendAction(target, "flails at the darkness");
 			}
 		};
 		local_command.setHelpText("Bap a fool harmlessly");
