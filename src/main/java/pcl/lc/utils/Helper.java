@@ -1131,6 +1131,21 @@ public class Helper {
 			garbage.add(new String[] {"a", "Talking sword that wont stop talking"});
 			garbage.add(new String[] {"a", "3D-printer that only prints in papier mache"});
 			garbage.add(new String[] {"a", "Raspberry Pi that only beeps at you"});
+			garbage.add(new String[] {"a", "Sphere that just wont stop talking"});
+			garbage.add(new String[] {"a", "Talking fork"});
+			garbage.add(new String[] {"a", "Talking spoon"});
+			garbage.add(new String[] {"a", "Talking knife"});
+			garbage.add(new String[] {"a", "Talking spork"});
+			garbage.add(new String[] {"a", "Eerily quiet singing fish"});
+			garbage.add(new String[] {"a", "Suspicious looking statue"});
+			garbage.add(new String[] {"a", "Radioactive teapot"});
+			garbage.add(new String[] {"a", "Miraculous Miracle Man (MMM) #1 comic"});
+			garbage.add(new String[] {"the", "official laws and migration guidelines of Pluto"});
+			garbage.add(new String[] {"the", "official baby talk translation guide"});
+			garbage.add(new String[] {"", "Loot boxes for dummies volume 1 "});
+			garbage.add(new String[] {"the", "Extra-terrestrials guide to Earth fourth edition"});
+			garbage.add(new String[] {"the", "Ultimate guide to killing all humans"});
+			garbage.add(new String[] {"a", "Shiny metal posterior"});
 
 			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
 			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];
