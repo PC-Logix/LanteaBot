@@ -343,7 +343,12 @@ public class DynamicCommands extends AbstractListener {
 			System.out.println("This is what's left: '" + message.replaceAll(" ", "") + "'");
 			if (message.replaceAll(" ", "").equals(""))
 				return;
-			Helper.sendMessage(target, message, nick, true);
+			if (message.startsWith("[action]")) {
+				message = message.replace("[action]", "");
+				Helper.sendAction(target, message);
+			} else {
+				Helper.sendMessage(target, message, nick, true);
+			}
 		}
 	}
 
