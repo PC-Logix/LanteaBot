@@ -1142,7 +1142,7 @@ public class Helper {
 			garbage.add(new String[] {"a", "Miraculous Miracle Man (MMM) #1 comic"});
 			garbage.add(new String[] {"the", "official laws and migration guidelines of Pluto"});
 			garbage.add(new String[] {"the", "official baby talk translation guide"});
-			garbage.add(new String[] {"", "Loot boxes for dummies volume 1 "});
+			garbage.add(new String[] {"", "Loot boxes for dummies volume 1"});
 			garbage.add(new String[] {"the", "Extra-terrestrials guide to Earth fourth edition"});
 			garbage.add(new String[] {"the", "Ultimate guide to killing all humans"});
 			garbage.add(new String[] {"a", "Shiny metal posterior"});
