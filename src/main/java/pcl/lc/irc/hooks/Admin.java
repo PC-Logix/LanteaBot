@@ -10,8 +10,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -20,7 +20,6 @@ import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.ServerResponseEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.utils.Account;
@@ -28,21 +27,11 @@ import pcl.lc.utils.Database;
 import pcl.lc.utils.FormatUtils;
 import pcl.lc.utils.Helper;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author Caitlyn
@@ -510,7 +499,7 @@ public class Admin extends AbstractListener {
 					for (Object o : IRCBot.commands.entrySet()) {
 						Map.Entry pair = (Map.Entry) o;
 
-						items += "<tr><td>" + Config.commandprefix + pair.getKey() + "</td><td>" + IRCBot.helpList.get(pair.getKey()) + "</td></tr>";
+						items += "<tr><td>" + Config.commandprefix + pair.getKey() + "</td><td>" + StringEscapeUtils.escapeHtml4(IRCBot.helpList.get(pair.getKey())) + "</td></tr>";
 					}
 					items += "</table>";
 					items = StringUtils.strip(items, "\n");
