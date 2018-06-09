@@ -1,17 +1,12 @@
 package pcl.lc.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import pcl.lc.irc.IRCBot;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import pcl.lc.irc.IRCBot;
 
 class UpdateQuery {
 	private int minVersion;
@@ -175,5 +170,9 @@ public class Database {
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	public static ResultSet ExecuteQuery(String query) throws SQLException {
+		return statement.executeQuery(query);
 	}
 }
