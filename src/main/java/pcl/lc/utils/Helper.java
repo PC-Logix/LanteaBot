@@ -1110,7 +1110,7 @@ public class Helper {
 			garbage.add(new String[] {"", "Eye of newt"});
 			garbage.add(new String[] {"", "Roberto's knife"});
 			garbage.add(new String[] {"an", "Unassuming lamp"});
-			garbage.add(new String[] {"a", "Copy of \"A Lusty Argonian Maid\""});
+			garbage.add(new String[] {"a", "Copy of \"The Lusty Argonian Maid\""});
 			garbage.add(new String[] {"a", "Cabbage leaf"});
 			garbage.add(new String[] {"an", "Ornate chandelier"});
 			garbage.add(new String[] {"a", "Tiny cage"});
