@@ -98,7 +98,7 @@ public class Quotes extends AbstractListener {
 								Helper.sendMessage(target, "Quote #" + id + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(1)) + "> " + results.getString(2));
 							}
 							else {
-								Helper.sendMessage(target, "No quotes found for id #" + id, nick);
+								Helper.sendMessage(target, "No quote found for id #" + id, nick);
 							}
 						}
 						catch (Exception e) {
