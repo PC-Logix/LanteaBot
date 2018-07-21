@@ -546,7 +546,11 @@ public class Helper {
 			counter++;
 		}
 
+		String substitute = "$1 and $2";
 		time_string = time_string.replaceAll(", $", "");
+		Pattern pattern = Pattern.compile("(.*), (.*)$");
+		Matcher matcher = pattern.matcher(time_string);
+		time_string = matcher.replaceFirst(substitute);
 		if (time_string.length() == 0)
 			time_string = "<0";
 
@@ -1120,15 +1124,6 @@ public class Helper {
 			garbage.add(new String[] {"a", "Fragrant tan potion"});
 			garbage.add(new String[] {"a", "Fragrant black potion"});
 			garbage.add(new String[] {"a", "Fragrant white potion"});
-			garbage.add(new String[] {"a", "Blue potion"});
-			garbage.add(new String[] {"a", "Red potion"});
-			garbage.add(new String[] {"a", "Yellow potion"});
-			garbage.add(new String[] {"a", "Purple potion"});
-			garbage.add(new String[] {"a", "Green potion"});
-			garbage.add(new String[] {"a", "Cyan potion"});
-			garbage.add(new String[] {"a", "Tan potion"});
-			garbage.add(new String[] {"a", "Black potion"});
-			garbage.add(new String[] {"a", "White potion"});
 			garbage.add(new String[] {"a", "Picture of a crudely drawn appendage"});
 			garbage.add(new String[] {"a", "Broken .jpg"});
 			garbage.add(new String[] {"a", "Broken .png"});
