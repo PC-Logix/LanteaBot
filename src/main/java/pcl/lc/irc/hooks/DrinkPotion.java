@@ -123,28 +123,28 @@ public class DrinkPotion extends AbstractListener {
 
 	public int getPotionEffect(ArrayList<String> params) {
 		boolean is_potion = false;
-		int color = 0;
-		int consistency = 0;
+		int color = -1;
+		int consistency = -1;
 
 		System.out.println(params.toString());
 
 		for (String param : params) {
 			param = param.toLowerCase();
-			if (color == 0 && colors.indexOf(param) != -1)
+			if (color == -1 && colors.indexOf(param) != -1)
 				color = colors.indexOf(param);
-			if (consistency == 0 && consistancies.indexOf(param) != -1)
+			if (consistency == -1 && consistancies.indexOf(param) != -1)
 				consistency = consistancies.indexOf(param);
 			if (param.equals("potion"))
 				is_potion = true;
 		}
 
-		if (!is_potion || color == 0 || consistency == 0) {
-			return -1;
-		}
-
 		System.out.println("Color: " + color);
 		System.out.println("Consistency: " + consistency);
 		System.out.println("Has_potion: " + is_potion);
+
+		if (!is_potion || color == -1 || consistency == -1) {
+			return -1;
+		}
 
 		if (day_of_potioning.equals(DateTime.now().toString("yyyy-MM-dd"))) {
 			resetPotionList();
