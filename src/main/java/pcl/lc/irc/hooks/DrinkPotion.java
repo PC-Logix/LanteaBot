@@ -1,5 +1,6 @@
 package pcl.lc.irc.hooks;
 
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
@@ -8,8 +9,7 @@ import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * @author Forecaster
@@ -91,6 +91,20 @@ public class DrinkPotion extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 0) {
+					if (params.get(0).equals("^")) {
+						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+							if (entry.getValue().get(0).equals(target)) {
+								if (entry.getValue().get(2).toLowerCase().contains("potion")) {
+									String[] words = entry.getValue().get(2).split(" ");
+									params = new ArrayList<>();
+									params.addAll(Arrays.asList(words));
+									break;
+								}
+							}
+						}
+					}
+
 					int effect = getPotionEffect(params);
 
 					if (effect > 0) {
@@ -134,7 +148,7 @@ public class DrinkPotion extends AbstractListener {
 				color = colors.indexOf(param);
 			if (consistency == -1 && consistancies.indexOf(param) != -1)
 				consistency = consistancies.indexOf(param);
-			if (param.equals("potion"))
+			if (param.replace(".", "").equals("potion"))
 				is_potion = true;
 		}
 
