@@ -338,6 +338,9 @@ public class DynamicCommands extends AbstractListener {
 			if (message.contains("[drama]")) {
 				message = msg.replace("[drama]", Drama.dramaParse());
 			}
+			if (message.contains("[nick]")) {
+				message = message.replaceAll("\\[nick\\]", nick);
+			}
 			message = MessageFormat.format(message, (Object[]) arguments);
 			Helper.AntiPings = Helper.getNamesFromTarget(target);
 			System.out.println("This is what's left: '" + message.replaceAll(" ", "") + "'");
