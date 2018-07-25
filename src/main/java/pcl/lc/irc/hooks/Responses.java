@@ -4,24 +4,22 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Solicit responses from bot
  * Created by Forecaster on 2017-03-28.
  */
 public class Responses extends AbstractListener {
-  private static long lastTonk;
+  private static long lastResponse;
+  private static long responseTimeout;
   @Override
   protected void initHook() {
-     String tonk = Database.getJsonData("lasttonk");
-     if (tonk != "")
-       lastTonk = Long.parseLong(tonk);
-     else
-       lastTonk = 0;
+    responseTimeout = 30; //Seconds between responses
   }
 
   @Override
@@ -43,9 +41,9 @@ public class Responses extends AbstractListener {
 		return;
 	target = Helper.getTarget(event);
 
-    if (event.getMessage().toLowerCase().contains(IRCBot.getOurNick().toLowerCase())) {
+    if (System.currentTimeMillis() > (lastResponse + (responseTimeout * 1000)) && event.getMessage().toLowerCase().contains(IRCBot.getOurNick().toLowerCase())) {
+      lastResponse = System.currentTimeMillis();
       ArrayList<String[]> respondTo = new ArrayList<>();
-      respondTo.add(new String[]{"tonk", "tonk"});
 
       respondTo.add(new String[]{"thanks", "welcome"});
       respondTo.add(new String[]{"thank you", "welcome"});
@@ -53,6 +51,7 @@ public class Responses extends AbstractListener {
       respondTo.add(new String[]{"hi", "hello"});
       respondTo.add(new String[]{"hello", "hello"});
       respondTo.add(new String[]{"hai", "hello"});
+      respondTo.add(new String[]{"ohhai", "hello"});
       respondTo.add(new String[]{"good morning", "hello"});
       respondTo.add(new String[]{"good afternoon", "hello"});
 
@@ -103,7 +102,9 @@ public class Responses extends AbstractListener {
 
       String msg = event.getMessage().toLowerCase().replace(IRCBot.getOurNick().toLowerCase(), "");
       for (String[] str : respondTo) {
-        if (msg.contains(str[0])) {
+        Pattern p = Pattern.compile("\b" + str[0] + "\b");
+        Matcher m = p.matcher(msg);
+        if (m.find()) {
           respond(str[1], nick);
           break;
         }
@@ -154,12 +155,16 @@ public class Responses extends AbstractListener {
         break;
       case "hurt":
         Helper.sendMessage(target, Helper.get_hurt_response(), nick);
+        break;
       case "hello":
         Helper.sendMessage(target, "Hello " + nick);
+        break;
       case "right":
         Helper.sendMessage(target, Helper.get_right_response());
+        break;
       case "pet":
         Helper.sendAction(target, "purrs");
+        break;
     }
   }
 }
