@@ -139,12 +139,12 @@ public class PhraseBan extends AbstractListener {
 				}
 				try {
 					Statement statement = Database.getConnection().createStatement();
-					ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + params.get(0) + "'");
+					ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
 					if (result.next()) {
 						Helper.sendMessage(target, "Nick already exempt.", nick);
 						return;
 					}
-					statement.executeUpdate("INSERT INTO ExemptNicks (nick) VALUES ('" + params.get(0) + "')");
+					statement.executeUpdate("INSERT INTO ExemptNicks (nick) VALUES ('" + params.get(0).toLowerCase() + "')");
 					Helper.sendMessage(target, "Added to exempt list!", nick);
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -162,7 +162,7 @@ public class PhraseBan extends AbstractListener {
 				}
 				try {
 					Statement statement = Database.getConnection().createStatement();
-					statement.executeUpdate("DELETE FROM ExemptNicks WHERE nick = '" + params.get(0) + "'");
+					statement.executeUpdate("DELETE FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
 					Helper.sendMessage(target, "Removed from exempt list");
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -196,7 +196,7 @@ public class PhraseBan extends AbstractListener {
 		String message = event.getMessage();
 		try {
 			Statement statement = Database.getConnection().createStatement();
-			ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + nick + "'");
+			ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + nick.toLowerCase() + "'");
 			if (result.next())
 				return;
 
