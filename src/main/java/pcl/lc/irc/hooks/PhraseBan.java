@@ -63,7 +63,7 @@ public class PhraseBan extends AbstractListener {
 				Statement statement;
 				try {
 					statement = Database.getConnection().createStatement();
-					statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + params + "')");
+					statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + params.toLowerCase() + "')");
 					Helper.sendMessage(target, "Added phrase to banlist", nick);
 					phrases.add(params);
 				} catch (SQLException e) {
@@ -79,7 +79,7 @@ public class PhraseBan extends AbstractListener {
 				Statement statement;
 				try {
 					statement = Database.getConnection().createStatement();
-					statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + params + "'");
+					statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
 					Helper.sendMessage(target, "Removed phrase from banlist", nick);
 					phrases.remove(params);
 				} catch (SQLException e) {
@@ -120,10 +120,12 @@ public class PhraseBan extends AbstractListener {
 	public void handleMessage(String nick, GenericMessageEvent event, String[] copyOfRange) {
 		String message = event.getMessage();
 
-		for (String phrase : phrases) {
-			if (message.contains(phrase)) {
-				Helper.sendMessage("chanserv", "kickban " + target + " " + nick + " Banned phrase '" + phrase + "'");
-				break;
+		if (!Permissions.hasPermission(IRCBot.bot, event, Permissions.MOD)) {
+			for (String phrase : phrases) {
+				if (message.toLowerCase().contains(phrase)) {
+					Helper.sendMessage("chanserv", "kickban " + target + " " + nick + " Banned phrase '" + phrase + "'");
+					break;
+				}
 			}
 		}
 	}
