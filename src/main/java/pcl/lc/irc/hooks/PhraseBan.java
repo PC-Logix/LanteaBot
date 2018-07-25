@@ -65,7 +65,7 @@ public class PhraseBan extends AbstractListener {
 					statement = Database.getConnection().createStatement();
 					statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + params.toLowerCase() + "')");
 					Helper.sendMessage(target, "Added phrase to banlist", nick);
-					phrases.add(params);
+					phrases.add(params.toLowerCase());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -81,7 +81,7 @@ public class PhraseBan extends AbstractListener {
 					statement = Database.getConnection().createStatement();
 					statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
 					Helper.sendMessage(target, "Removed phrase from banlist", nick);
-					phrases.remove(params);
+					phrases.remove(params.toLowerCase());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
