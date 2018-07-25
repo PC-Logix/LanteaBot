@@ -24,6 +24,7 @@ public class PhraseBan extends AbstractListener {
 	private Command add;
 	private Command del;
 	private Command list;
+	private Command clear;
 
 	private ArrayList<String> phrases;
 
@@ -96,6 +97,21 @@ public class PhraseBan extends AbstractListener {
 			}
 		};
 		local_command.registerSubCommand(list);
+
+		clear = new Command("clear", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try {
+					Statement statement = Database.getConnection().createStatement();
+					statement.executeUpdate("DELETE FROM BannedPhrases");
+					phrases.clear();
+					Helper.sendMessage(target, "All banned phrases cleared!", nick);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		local_command.registerSubCommand(clear);
 	}
 
 	public String chan;
