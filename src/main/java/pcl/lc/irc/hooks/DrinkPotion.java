@@ -38,6 +38,16 @@ public class DrinkPotion extends AbstractListener {
 		colors.add("tan");
 		colors.add("black");
 		colors.add("white");
+		colors.add("pink");
+		colors.add("gold");
+		colors.add("silver");
+		colors.add("tomato");
+		colors.add("lime");
+		colors.add("sky blue");
+		colors.add("citrus");
+		colors.add("strawberry");
+		colors.add("chocolate");
+		colors.add("tuna");
 
 		consistancies.add("viscous");
 		consistancies.add("cloudy");
