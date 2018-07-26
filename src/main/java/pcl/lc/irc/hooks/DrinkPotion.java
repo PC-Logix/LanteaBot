@@ -50,6 +50,8 @@ public class DrinkPotion extends AbstractListener {
 		consistancies.add("porous");
 		consistancies.add("ripe");
 		consistancies.add("muddy");
+		consistancies.add("shimmering");
+		consistancies.add("gloomy");
 
 		effects.add(" looks confused as nothing happens.");
 		effects.add(" turns into a catgirl.");
@@ -198,5 +200,12 @@ public class DrinkPotion extends AbstractListener {
 	private int getCombinationEffect(int consistancy, int color) {
 		String key = consistancy + "," + color;
 		return potions.get(key);
+	}
+
+	public static String getRandomPotion() {
+		int color = Helper.getRandomInt(0, colors.size() - 1);
+		int consistency = Helper.getRandomInt(0, consistancies.size() - 1);
+
+		return consistancies.get(consistency) + " " + colors.get(color) + " potion";
 	}
 }

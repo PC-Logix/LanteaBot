@@ -61,6 +61,8 @@ public class LootBox extends AbstractListener {
 						item.destroy();
 					}
 				}
+				if (item_name.contains("randompotion"))
+					item_name = DrinkPotion.getRandomPotion();
 				Helper.sendMessage(target, "You get a loot box! It contains " + item_name, nick);
 			}
 		};
