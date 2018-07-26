@@ -1,6 +1,7 @@
 package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericChannelUserEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
@@ -27,6 +28,7 @@ public class PhraseBan extends AbstractListener {
 	private Command clear;
 	private Command exadd;
 	private Command exdel;
+	private Command set;
 
 	private ArrayList<String> phrases;
 
@@ -55,7 +57,7 @@ public class PhraseBan extends AbstractListener {
 		local_command = new Command("phraseban", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				super.onExecuteSuccess(command, nick, target, event, params);
+				this.trySubCommandsMessage(params);
 			}
 		};
 		local_command.setHelpText("Ban phrases, all of them");
@@ -171,6 +173,25 @@ public class PhraseBan extends AbstractListener {
 		};
 		exdel.registerAlias("exrem");
 		local_command.registerSubCommand(exdel);
+
+		set = new Command("set", 0, Permissions.MOD) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (params.size() < 2) {
+					Helper.sendMessage(target, "Specify setting to set then value. Settings: 'duration'", nick);
+					return;
+				}
+				switch (params.get(0)) {
+					case "duration":
+						Database.storeJsonData("phraseban_duration", params.get(1));
+						Helper.sendMessage(target, "Setting updated!");
+						return;
+					default:
+						Helper.sendMessage(target, "Unknown setting '" + params.get(0) + "'", nick);
+				}
+			}
+		};
+		local_command.registerSubCommand(set);
 	}
 
 	public String chan;
@@ -205,6 +226,10 @@ public class PhraseBan extends AbstractListener {
 
 			for (String phrase : phrases) {
 				if (message.toLowerCase().contains(phrase)) {
+					String duration = Database.getJsonData("phraseban_duration");
+					if (duration.isEmpty())
+						duration = "24h";
+					TimedBans.setDNSBLBan(((GenericChannelUserEvent) event).getChannel(), nick, "", duration, "Banned phrase '" + phrase + "'");
 					Helper.sendMessage("chanserv", "kickban " + target + " " + nick + " Banned phrase '" + phrase + "'");
 					if (IRCBot.getOurNick().equals("ForeBot"))
 						Helper.sendMessage(target, "BAN!");
