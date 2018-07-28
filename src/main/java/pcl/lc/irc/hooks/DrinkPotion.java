@@ -19,7 +19,7 @@ import java.util.*;
 public class DrinkPotion extends AbstractListener {
 	private Command local_command;
 	private static ArrayList<String> colors = new ArrayList<>();
-	private static ArrayList<String> consistancies = new ArrayList<>();
+	private static ArrayList<String> consistencies = new ArrayList<>();
 	private static ArrayList<String> effects = new ArrayList<>();
 	private static HashMap<String, Integer> potions = new HashMap<>();
 	private static String day_of_potioning = "";
@@ -49,19 +49,19 @@ public class DrinkPotion extends AbstractListener {
 		colors.add("chocolate");
 		colors.add("tuna");
 
-		consistancies.add("viscous");
-		consistancies.add("cloudy");
-		consistancies.add("fluffy");
-		consistancies.add("thick");
-		consistancies.add("smelly");
-		consistancies.add("fragrant");
-		consistancies.add("light");
-		consistancies.add("shiny");
-		consistancies.add("porous");
-		consistancies.add("ripe");
-		consistancies.add("muddy");
-		consistancies.add("shimmering");
-		consistancies.add("gloomy");
+		consistencies.add("viscous");
+		consistencies.add("cloudy");
+		consistencies.add("fluffy");
+		consistencies.add("thick");
+		consistencies.add("smelly");
+		consistencies.add("fragrant");
+		consistencies.add("light");
+		consistencies.add("shiny");
+		consistencies.add("porous");
+		consistencies.add("ripe");
+		consistencies.add("muddy");
+		consistencies.add("shimmering");
+		consistencies.add("gloomy");
 
 		effects.add(" looks confused as nothing happens.");
 		effects.add(" turns into a catgirl.");
@@ -121,7 +121,7 @@ public class DrinkPotion extends AbstractListener {
 
 					if (effect > 0) {
 						String replace_color = colors.get(Helper.getRandomInt(0, colors.size() - 1));
-						String replace_consistency = consistancies.get(Helper.getRandomInt(0, consistancies.size() - 1));
+						String replace_consistency = consistencies.get(Helper.getRandomInt(0, consistencies.size() - 1));
 						Helper.sendMessage(target, nick + effects.get(effect).replace("{color}", replace_color).replace("{consistency}", replace_consistency));
 					}
 					else
@@ -131,7 +131,7 @@ public class DrinkPotion extends AbstractListener {
 					Helper.sendMessage(target, "Drink what?");
 			}
 		};
-		local_command.setHelpText("Drink a potion with a certain consistancy and color and something might happen.");
+		local_command.setHelpText("Drink a potion with a certain consistency and color and something might happen.");
 	}
 
 	public String chan;
@@ -158,8 +158,8 @@ public class DrinkPotion extends AbstractListener {
 			param = param.toLowerCase();
 			if (color == -1 && colors.indexOf(param) != -1)
 				color = colors.indexOf(param);
-			if (consistency == -1 && consistancies.indexOf(param) != -1)
-				consistency = consistancies.indexOf(param);
+			if (consistency == -1 && consistencies.indexOf(param) != -1)
+				consistency = consistencies.indexOf(param);
 			if (param.replace(".", "").equals("potion"))
 				is_potion = true;
 		}
@@ -202,20 +202,20 @@ public class DrinkPotion extends AbstractListener {
 		return false;
 	}
 
-	private void setCombinationEffect(int consistancy, int color, int effect) {
-		String key = consistancy + "," + color;
+	private void setCombinationEffect(int consistency, int color, int effect) {
+		String key = consistency + "," + color;
 		potions.put(key, effect);
 	}
 
-	private int getCombinationEffect(int consistancy, int color) {
-		String key = consistancy + "," + color;
+	private int getCombinationEffect(int consistency, int color) {
+		String key = consistency + "," + color;
 		return potions.get(key);
 	}
 
 	public static String getRandomPotion() {
 		int color = Helper.getRandomInt(0, colors.size() - 1);
-		int consistency = Helper.getRandomInt(0, consistancies.size() - 1);
+		int consistency = Helper.getRandomInt(0, consistencies.size() - 1);
 
-		return consistancies.get(consistency) + " " + colors.get(color) + " potion";
+		return consistencies.get(consistency) + " " + colors.get(color) + " potion";
 	}
 }
