@@ -75,7 +75,7 @@ public class DNSBL  extends AbstractListener {
 			}
 			if (foundOn.length() > 1) {
 				//Helper.sendMessage(event.getChannel().getName(), event.getUserHostmask().getHostname() + " found on " + foundOn.replaceAll(", $", ""));
-				TimedBans.setDNSBLBan(event.getChannel(), event.getUser().getNick(), event.getUserHostmask().getHostname(), "6h", "Listed on " + foundOn.replaceAll(", $", ""));
+				TimedBans.setTimedBan(event.getChannel(), event.getUser().getNick(), event.getUserHostmask().getHostname(), "6h", "Listed on " + foundOn.replaceAll(", $", ""), "DNSBL Check");
 			}
 		}
 	}

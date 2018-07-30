@@ -157,7 +157,7 @@ public class TimedBans extends AbstractListener {
 		}
 	}
 
-	public static void setDNSBLBan(Channel channel, String nick, String hostname, String length, String reason) {
+	public static void setTimedBan(Channel channel, String nick, String hostname, String length, String reason, String module) {
 		try {
 			reason = reason.trim();
 			long time = Helper.getFutureTime(length);

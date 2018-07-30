@@ -229,7 +229,7 @@ public class PhraseBan extends AbstractListener {
 					String duration = Database.getJsonData("phraseban_duration");
 					if (duration.isEmpty())
 						duration = "24h";
-					TimedBans.setDNSBLBan(((GenericChannelUserEvent) event).getChannel(), nick, "", duration, "Banned phrase '" + phrase + "'");
+					TimedBans.setTimedBan(((GenericChannelUserEvent) event).getChannel(), nick, "", duration, "Banned phrase '" + phrase + "'", "PhraseBan");
 					Helper.sendMessage("chanserv", "kickban " + target + " " + nick + " Banned phrase '" + phrase + "'");
 					if (IRCBot.getOurNick().equals("ForeBot"))
 						Helper.sendMessage(target, "BAN!");
