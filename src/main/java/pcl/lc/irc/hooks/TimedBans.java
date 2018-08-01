@@ -110,10 +110,13 @@ public class TimedBans extends AbstractListener {
 				addTimedBan.setString(2, args[0]);
 				for(User u : event.getChannel().getUsers()) {
 					if (u.getNick().equals(args[0])) {
-						hostname = u.getHostname();
+						hostname = "*!*@"+u.getHostname();
 					}
 				}
-				addTimedBan.setString(3, "*!*@"+hostname);
+				if (hostname == null) {
+					hostname = args[0];
+				}
+				addTimedBan.setString(3, hostname);
 				addTimedBan.setLong(4, time);
 				addTimedBan.setString(5, sender);
 				addTimedBan.setString(6, reason);
@@ -174,7 +177,7 @@ public class TimedBans extends AbstractListener {
 			}
 			addTimedBan.setString(3, "*!*@"+hostname);
 			addTimedBan.setLong(4, time);
-			addTimedBan.setString(5, "DNSBL Check");
+			addTimedBan.setString(5, module);
 			addTimedBan.setString(6, reason);
 			addTimedBan.setString(7, "ban");
 			addTimedBan.executeUpdate();
