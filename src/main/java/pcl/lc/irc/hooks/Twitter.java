@@ -116,7 +116,12 @@ public class Twitter extends ListenerAdapter {
 							long status = Long.parseLong(aSplitMessage.substring(index));
 							try {
 								Status lookup = twitter.showStatus(status);
-								bot.sendIRC().message(event.getChannel().getName(), lookup.getCreatedAt() + " @" + lookup.getUser().getScreenName() + ": " + lookup.getText());
+								
+								// Don't double-embed this in Discord.
+								String pattern = "(https?:\\/\\/\\S+)";
+    								String text = lookup.getText().replaceAll(pattern, "<$1>");
+								
+								bot.sendIRC().message(event.getChannel().getName(), lookup.getCreatedAt() + " @" + lookup.getUser().getScreenName() + ": " + text);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
