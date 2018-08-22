@@ -42,9 +42,15 @@ public class RandomChoice extends AbstractListener {
 				String[] parts = params.split(" or ");
 				String msg = output.get(Helper.getRandomInt(0, output.size() - 1));
 
-				msg = msg.replaceAll("\\{choice}", parts[Helper.getRandomInt(0, parts.length - 1)].trim());
-				if (parts.length > 1)
-					msg = msg.replaceAll("\\{other_choice}", parts[Helper.getRandomInt(0, parts.length - 1)].trim());
+				String choice = parts[Helper.getRandomInt(0, parts.length - 1)].trim();
+				msg = msg.replaceAll("\\{choice}", choice);
+				if (parts.length > 1) {
+					String other_choice = "";
+					while (other_choice == "" || other_choice == choice) {
+						other_choice = parts[Helper.getRandomInt(0, parts.length - 1)].trim();
+					}
+					msg = msg.replaceAll("\\{other_choice}", other_choice);
+				}
 				else
 					msg = msg.replaceAll("\\{other_choice}", "something else");
 				String count = "";
