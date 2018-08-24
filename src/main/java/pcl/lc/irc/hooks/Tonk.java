@@ -57,6 +57,8 @@ public class Tonk extends AbstractListener {
 							Helper.sendMessage(target, nick + "! You beat " + (recorder == nick ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
 							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)));
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
+						} else if (nick == recorder) {
+							Helper.sendMessage(target, "You still hold the record " + nick + ", for now...");
 						} else {
 							System.out.println("No record");
 							Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (recorder == nick ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
