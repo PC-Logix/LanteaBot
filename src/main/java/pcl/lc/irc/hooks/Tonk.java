@@ -60,7 +60,7 @@ public class Tonk extends AbstractListener {
 						} else {
 							System.out.println("No record");
 							Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (recorder == nick ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
-							Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " was wasted!");
+							Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted!");
 						}
 					} catch (Exception ex) {
 						System.out.println(ex.getClass() + ": " + ex.getMessage());
