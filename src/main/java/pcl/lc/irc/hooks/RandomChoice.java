@@ -2,6 +2,9 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import com.ibm.icu.text.RuleBasedNumberFormat;
+
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
@@ -9,6 +12,7 @@ import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 class TemplateCollection {
 	List<Template> templates;
@@ -103,6 +107,9 @@ public class RandomChoice extends AbstractListener {
 					msg = msg.replaceAll("\\{other_choice}", "something else");
 				String count = "";
 				String raw_count = "";
+				
+				RuleBasedNumberFormat ruleBasedNumberFormat = new RuleBasedNumberFormat( new Locale("EN", "US"), RuleBasedNumberFormat.SPELLOUT ); 
+				
 				switch (parts.length)
 				{
 					case 1:
@@ -111,41 +118,9 @@ public class RandomChoice extends AbstractListener {
 						count = "both";
 						raw_count = "two";
 						break;
-					case 3:
-						count = "all three";
-						raw_count = "three";
-						break;
-					case 4:
-						count = "all four";
-						raw_count = "four";
-						break;
-					case 5:
-						count = "all five";
-						raw_count = "five";
-						break;
-					case 6:
-						count = "all six";
-						raw_count = "six";
-						break;
-					case 7:
-						count = "all seven";
-						raw_count = "seven";
-						break;
-					case 8:
-						count = "all eight";
-						raw_count = "eight";
-						break;
-					case 9:
-						count = "all nine";
-						raw_count = "nine";
-						break;
-					case 10:
-						count = "all ten";
-						raw_count = "ten";
-						break;
 					default:
-						count = "all " + parts.length;
-						raw_count = "" + parts.length;
+						count = "all " + ruleBasedNumberFormat.format(parts.length);
+						raw_count = "" + ruleBasedNumberFormat.format(parts.length);
 				}
 				if (count != "")
 					msg = msg.replaceAll("\\{count}", count);
