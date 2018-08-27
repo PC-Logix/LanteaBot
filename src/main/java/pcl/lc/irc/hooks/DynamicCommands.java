@@ -18,6 +18,8 @@ import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SandboxThreadFactory;
 import pcl.lc.utils.SandboxThreadGroup;
+import pcl.lc.utils.db_items.CommandItem;
+import pcl.lc.utils.db_items.InventoryItem;
 
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -80,10 +82,23 @@ public class DynamicCommands extends AbstractListener {
 	protected void initHook() {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return, help)");
 		Database.addUpdateQuery(5, "ALTER TABLE Commands ADD help STRING DEFAULT NULL NULL;");
-		Database.addPreparedStatement("addCommand", "INSERT OR REPLACE INTO Commands(command, return) VALUES (?, ?);");
+		Database.addUpdateQuery(6, "BEGIN TRANSACTION;\n" +
+			"DROP INDEX sqlite_autoindex_Commands_1;\n" +
+			"CREATE TABLE Commands0d9e\n" +
+			"(\n" +
+			"    command STRING PRIMARY KEY,\n" +
+			"    return_value STRING,\n" +
+			"    help STRING DEFAULT NULL\n" +
+			");\n" +
+			"CREATE UNIQUE INDEX sqlite_autoindex_Commands_1 ON Commands0d9e (command);\n" +
+			"INSERT INTO Commands0d9e(command, return_value, help) SELECT command, return, help FROM Commands;\n" +
+			"DROP TABLE Commands;\n" +
+			"ALTER TABLE Commands0d9e RENAME TO Commands;\n" +
+			"COMMIT;");
+		Database.addPreparedStatement("addCommand", "INSERT OR REPLACE INTO Commands(command, return_value) VALUES (?, ?);");
 		Database.addPreparedStatement("addCommandHelp", "UPDATE Commands SET help = ? WHERE command = ?");
 		Database.addPreparedStatement("searchCommands", "SELECT command, help FROM Commands");
-		Database.addPreparedStatement("getCommand", "SELECT return, help FROM Commands WHERE command = ?");
+		Database.addPreparedStatement("getCommand", "SELECT return_value, help FROM Commands WHERE command = ?");
 		Database.addPreparedStatement("delCommand", "DELETE FROM Commands WHERE command = ?;");
 		InputStream luain = getClass().getResourceAsStream("/jnlua/luasb.lua");
 		try {

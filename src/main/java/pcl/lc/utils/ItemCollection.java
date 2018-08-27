@@ -1,10 +1,10 @@
 package pcl.lc.utils;
 
+import org.pircbotx.Colors;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-
-import org.pircbotx.Colors;
 
 /**
  * Collection of Item instances
@@ -40,7 +40,7 @@ public class ItemCollection {
 			ResultSet result = statement.executeQuery();
 			while (result.next()) {
 				found_items = true;
-				items.add(new Item(result.getInt(1), result.getString(2), result.getInt(3), result.getBoolean(4), result.getString(5), result.getInt(6)));
+				items.add(new Item(result.getInt(1), result.getString(2), result.getInt(3), result.getBoolean(4), result.getString(5), result.getInt(6), result.getString(7), result.getBoolean(8)));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

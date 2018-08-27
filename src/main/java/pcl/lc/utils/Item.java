@@ -17,6 +17,8 @@ public class Item {
 	private boolean is_favourite;
 	private String added_by;
 	private int added;
+	private String owner;
+	private boolean cursed;
 
 	public Item(String name) throws Exception {
 		PreparedStatement statement = Database.getPreparedStatement("getItemByName");
@@ -29,6 +31,8 @@ public class Item {
 			this.is_favourite = resultSet.getBoolean(4);
 			this.added_by = resultSet.getString(5);
 			this.added = resultSet.getInt(6);
+			this.owner = resultSet.getString(7);
+			this.cursed = resultSet.getBoolean(8);
 		} else {
 			throw new Exception("No item '" + name + "' found");
 		}
@@ -46,6 +50,8 @@ public class Item {
 				this.is_favourite = resultSet.getBoolean(4);
 				this.added_by = resultSet.getString(5);
 				this.added = resultSet.getInt(6);
+				this.owner = resultSet.getString(7);
+				this.cursed = resultSet.getBoolean(8);
 			} else {
 				throw new Exception("No item '" + name + "' found");
 			}
@@ -54,13 +60,20 @@ public class Item {
 		}
 	}
 	
-	public Item(int id, String name, int uses_left, boolean is_favourite, String added_by, int added) {
+	public Item(int id, String name, int uses_left, boolean is_favourite, String added_by, int added, String owner, boolean cursed) {
 		this.id = id;
 		this.name = name;
 		this.uses_left = uses_left;
 		this.is_favourite = is_favourite;
 		this.added_by = added_by;
 		this.added = added;
+		this.owner = owner;
+		this.cursed = cursed;
+	}
+
+	public void Save()
+	{
+
 	}
 
 	/**
