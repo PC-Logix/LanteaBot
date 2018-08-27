@@ -44,11 +44,16 @@ public class DynamicCommands extends AbstractListener {
 	private Command local_command_add;
 	private Command local_command_del;
 	private Command local_command_addhelp;
-
 	private Command local_command_print;
 	private Command local_command_edit;
-
 	private Command toggle_command;
+
+	private Command base_command;
+	private Command add;
+	private Command del;
+	private Command addhelp;
+	private Command print;
+	private Command edit;
 	
 	public String luasb;
 
@@ -89,17 +94,56 @@ public class DynamicCommands extends AbstractListener {
 		}
 
 		initLua();
-		local_command_add = new Command("addcommand", 0);
+		local_command_add = new Command("addcommand", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				try {
+					System.out.println("Received params '" + String.join(" ", params) + "'");
+					String cmd = params.remove(0).toLowerCase();
+					String content = String.join(" ", params);
+					if (!IRCBot.commands.containsKey(cmd)) {
+						CommandItem item = new CommandItem(cmd, content, null);
+						item.Save();
+						event.respond("Command Added");
+						IRCBot.registerCommand(cmd, "Dynamic commands module, who knows what it does?!");
+					}
+					else {
+						event.respond("Can't override existing commands.");
+					}
+				}
+				catch (Exception e) {
+					Helper.sendMessage(target, "An error occurred while processing this command");
+					e.printStackTrace();
+				}
+			}
+		};
 		IRCBot.registerCommand(local_command_add, "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
-		local_command_del = new Command("delcommand", 0);
+		local_command_del = new Command("delcommand", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (params.size() == 0) {
+					Helper.sendMessage(target, "Specify command to delete", nick);
+					return;
+				}
+				try {
+					String cmd = params.remove(0).toLowerCase();
+					CommandItem item = CommandItem.GetByCommand(cmd);
+					if (item != null)
+						item.Delete();
+					event.respond("Command deleted");
+					IRCBot.unregisterCommand(cmd);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					event.respond("An error occurred while processing this command");
+				}
+			}
+		};
 		local_command_print = new Command ("printcommand", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement getCommand;
 				try {
-					if (!Helper.isEnabledHere(target, "dyncmd")) {
-						return;
-					}
 					getCommand = Database.getPreparedStatement("getCommand");
 					getCommand.setString(1, params.toLowerCase());
 					ResultSet command1 = getCommand.executeQuery();
@@ -108,7 +152,6 @@ public class DynamicCommands extends AbstractListener {
 						Helper.sendMessage(target, message);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -118,9 +161,6 @@ public class DynamicCommands extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					if (!Helper.isEnabledHere(target, "dyncmd")) {
-						return;
-					}
 					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
 					PreparedStatement getCommand= Database.getPreparedStatement("getCommand");
 					String[] message = params.split(" ", 2);
@@ -147,9 +187,6 @@ public class DynamicCommands extends AbstractListener {
 		local_command_addhelp = new Command ("addcommandhelp", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (!Helper.isEnabledHere(target, "dyncmd")) {
-					return;
-				}
 				PreparedStatement addCommandHelp;
 				try {
 					addCommandHelp = Database.getPreparedStatement("addCommandHelp");
@@ -164,7 +201,6 @@ public class DynamicCommands extends AbstractListener {
 							IRCBot.setHelp(theCommand, theHelp);
 							event.respond("Help Set");
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 							event.respond("fail 1");
 						}
@@ -172,7 +208,6 @@ public class DynamicCommands extends AbstractListener {
 						event.respond("fail 2 ");
 					}
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 					event.respond("fail 3");
 				}
@@ -211,6 +246,60 @@ public class DynamicCommands extends AbstractListener {
 			e.printStackTrace();
 			IRCBot.log.info("An error occurred while processing this command");
 		}
+
+		//<editor-fold desc="Alias into proper command sub-command structure">
+		base_command = new Command("command", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
+			}
+		};
+
+		add = new Command("add", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				System.out.println("Send '" + params + "' to add command");
+				local_command_add.forceExecute(nick, target, event, params.split(" "));
+			}
+		};
+
+		del = new Command("del", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				local_command_del.forceExecute(nick, target, event, params.split(" "));
+			}
+		};
+		del.registerAlias("delete");
+		del.registerAlias("rem");
+		del.registerAlias("remove");
+
+		addhelp = new Command("addhelp", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				local_command_addhelp.forceExecute(nick, target, event, params.split(" "));
+			}
+		};
+
+		print = new Command("print", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				local_command_print.forceExecute(nick, target, event, params.split(" "));
+			}
+		};
+
+		edit = new Command("edit", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				local_command_edit.forceExecute(nick, target, event, params.split(" "));
+			}
+		};
+
+		base_command.registerSubCommand(add);
+		base_command.registerSubCommand(del);
+		base_command.registerSubCommand(addhelp);
+		base_command.registerSubCommand(print);
+		base_command.registerSubCommand(edit);
+		//</editor-fold>
 	}
 
 	public String chan;
@@ -233,72 +322,29 @@ public class DynamicCommands extends AbstractListener {
 
 	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
-
-		String ourinput = event.getMessage().toLowerCase().trim();
 		chan = event.getChannel().getName();
 		target = Helper.getTarget(event);
+
+		if (!Helper.isEnabledHere(target, "dyncmd")) {
+			return;
+		}
+
+		local_command_add.tryExecute(command, sender, event.getChannel().getName(), event, args);
+		local_command_del.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		local_command_addhelp.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		local_command_print.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		local_command_edit.tryExecute(command, sender, event.getChannel().getName(), event, args);
 		toggle_command.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		if (ourinput.length() > 1) {
-			if (!IRCBot.isIgnored(event.getUser().getNick())) {
-				String[] message = event.getMessage().split(" ", 3);
 
-				long shouldExecute = local_command_add.shouldExecute(command, event);
-				if (shouldExecute == 0) {
-					boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
-					if (isOp || Helper.isChannelOp(event)) {
-						try {
-							PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
-							if (!IRCBot.commands.containsKey(message[1])) {
-								addCommand.setString(1, message[1].toLowerCase());
-								addCommand.setString(2, message[2]);
-								addCommand.executeUpdate();
-								event.respond("Command Added");
-								IRCBot.registerCommand(message[1].toLowerCase(), "Dynamic commands module, who knows what it does?!");
-							}
-							else {
-								event.respond("Can't override existing commands.");
-							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-							event.respond("An error occurred while processing this command");
-						}
-					}
-				}
-				else {
-					shouldExecute = local_command_del.shouldExecute(command, event);
-					if (shouldExecute == 0) {
-						boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
-						if (isOp || Helper.isChannelOp(event)) {
-							try {
-								PreparedStatement delCommand = Database.getPreparedStatement("delCommand");
-								delCommand.setString(1, message[1].toLowerCase());
-								delCommand.execute();
-								event.respond("Command deleted");
-								IRCBot.unregisterCommand(message[1].toLowerCase());
-							}
-							catch (Exception e) {
-								e.printStackTrace();
-								event.respond("An error occurred while processing this command");
-							}
-						}
-					}
-				}
-			}
-		}
+		base_command.tryExecute(command, sender, event.getChannel().getName(), event, args);
 	}
 
 	private void parseDynCommand(String command, String[] arguments, String nick, CommandsHaveBeenRun blacklist) throws Exception {
 		String prefix = Config.commandprefix;
 
-		PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
-		getCommand.setString(1, command.replace(prefix, "").toLowerCase());
-		ResultSet command1 = getCommand.executeQuery();
-		if (command1.next()) {
-			String message = command1.getString(1);
+		CommandItem com = CommandItem.GetByCommand(command.replace(prefix, "").toLowerCase());
+		if (com != null) {
+			String message = com.return_value;
 		
 			StringBuilder output;
 			String aliasPattern = "%(.*?)%";
@@ -331,12 +377,17 @@ public class DynamicCommands extends AbstractListener {
 					output.setLength(output.length()-1);
 				message = output.toString().replace("\n", " | ").replace("\r", "");
 			}
-			String msg = "";
 			if (message.contains("[randomitem]")) {
-				message = msg.replace("[randomitem]", Inventory.getRandomItem().getName());
+				ArrayList<InventoryItem> items = InventoryItem.GetRandomItems(1);
+				System.out.println("Items: " + items);
+				if (items.size() == 1)
+					message = message.replace("[randomitem]", items.get(0).item_name);
 			}
 			if (message.contains("[drama]")) {
-				message = msg.replace("[drama]", Drama.dramaParse());
+				message = message.replace("[drama]", Drama.dramaParse());
+			}
+			if (message.contains("[argument]")) {
+				message = message.replaceAll("\\[argument\\]", String.join(" ", arguments));
 			}
 			if (message.contains("[nick]")) {
 				message = message.replaceAll("\\[nick\\]", nick);
