@@ -2,8 +2,8 @@ package pcl.lc.utils;
 
 import com.google.api.client.util.DateTime;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
