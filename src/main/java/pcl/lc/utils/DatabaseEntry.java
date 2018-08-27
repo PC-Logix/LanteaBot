@@ -1,8 +1,8 @@
 package pcl.lc.utils;
 
 import com.google.api.client.util.DateTime;
-import com.sun.istack.internal.Nullable;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
