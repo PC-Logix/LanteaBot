@@ -1150,6 +1150,21 @@ public class Helper {
 			garbage.add(new String[] {"the", "Extra-terrestrials guide to Earth fourth edition"});
 			garbage.add(new String[] {"the", "Ultimate guide to killing all humans"});
 			garbage.add(new String[] {"a", "Shiny metal posterior"});
+			garbage.add(new String[] {"an", "Unfinished m"});
+			garbage.add(new String[] {"a", "Sort-of-holy symbol"});
+			garbage.add(new String[] {"a", "Guide to Talking to Rocks"});
+			garbage.add(new String[] {"", "randompotion"});
+			garbage.add(new String[] {"a", "triangular ball"});
+			garbage.add(new String[] {"a", "pie-shaped cake"});
+			garbage.add(new String[] {"an", "Inverted hole"});
+			garbage.add(new String[] {"a", "Small pile of dirt"});
+			garbage.add(new String[] {"a", "Jar of dirt"});
+			garbage.add(new String[] {"a", "Cracked crack"});
+			garbage.add(new String[] {"an", "Extremely short fork"});
+			garbage.add(new String[] {"an", "Incredibly thin sheet of air"});
+			garbage.add(new String[] {"a", "Poofy cloud"});
+			garbage.add(new String[] {"a", "Hard cloud"});
+			garbage.add(new String[] {"a", "Pointy cloud"});
 
 			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
 			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];

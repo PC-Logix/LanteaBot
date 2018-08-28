@@ -52,12 +52,17 @@ public class LootBox extends AbstractListener {
 					item_name = Helper.getRandomGarbageItem(true, true) + ".";
 				} else {
 					Item item = Inventory.getRandomItem(true);
-					if (item == null)
+					if (item == null) {
 						item_name = Helper.getRandomGarbageItem(true, true) + ".";
-					else {
-						item_name = "a " + rarity + " " + item.getNameWithoutPrefix() + "! (" + rarity_perc + "%)";
-						if (rarity == "Cursed")
-							Inventory.addRawItem(new Item(0, "Cursed " + item.getNameWithoutPrefix(), item.getUsesLeft() + 15, false, "The Curse (" + item.getAdded_by() + ")", item.getAddedRaw()));
+					} else {
+						boolean curse = (rarity == "Cursed");
+						String[] strings = Helper.solvePrefixes(item.getNameRaw());
+						if (strings != null)
+							item_name = strings[0] + " " + rarity + " " + strings[1] + "! (" + rarity_perc + "%)";
+						else
+							item_name = "a " + rarity + " " + item.getNameWithoutPrefix() + "! (" + rarity_perc + "%)";
+						String added_by = (curse ? "The Curse (" + item.getAdded_by() + ")" : item.getAdded_by());
+						Inventory.addRawItem(new Item(0, item_name, item.getUsesLeft() + 15, false, added_by, item.getAddedRaw(), nick, curse));
 						item.destroy();
 					}
 				}

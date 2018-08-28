@@ -313,6 +313,24 @@ public class Command {
 		return true;
 	}
 
+	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params) { forceExecute(nick, target, event, params, false); }
+	public void forceExecute(String nick, String target, GenericMessageEvent event, ArrayList<String> params) { forceExecute(nick, target, event, params, false);}
+	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
+		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
+		forceExecute(nick, target, event, arguments, ignore_sub_commands);
+	}
+	public void forceExecute(String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) {
+		this.onExecuteSuccess(this, nick, target, event, params);
+		String message = "";
+		for (String aCopyOfRange : params)
+		{
+			message = message + " " + aCopyOfRange;
+		}
+		//message = message.trim();
+		message = message.replaceAll("^\\s+", "");
+		this.onExecuteSuccess(this, nick, target, event, message);
+	}
+
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {}
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {}
 	public void onExecuteFail(Command command, String nick, String target, long timeout) {

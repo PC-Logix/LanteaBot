@@ -21,11 +21,11 @@ import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 import pcl.lc.utils.PasteUtils;
+import pcl.lc.utils.db_items.InventoryItem;
 
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,6 +76,8 @@ public class Inventory extends AbstractListener {
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD is_favourite BOOLEAN DEFAULT 0 NULL");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added_by VARCHAR(255) DEFAULT '' NULL");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD added INT DEFAULT NULL NULL;");
+		Database.addUpdateQuery(6, "ALTER TABLE Inventory ADD owner VARCHAR(255) DEFAULT null");
+		Database.addUpdateQuery(6, "ALTER TABLE Inventory ADD cursed BOOLEAN DEFAULT 0 NULL");
 
 		Database.addPreparedStatement("getCompressedSentences", "SELECT id, item_name, uses_left FROM Inventory WHERE item_name LIKE '%Compressed Sentence%'");
 		Database.addPreparedStatement("setCompressedSentences", "UPDATE Inventory SET item_name = ?, uses_left = ? WHERE id = ?");
@@ -312,7 +314,7 @@ public class Inventory extends AbstractListener {
 				statement = Database.getPreparedStatement("getRandomItemNonFavourite");
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next())
-				return new Item(resultSet.getInt(1), resultSet.getString(2) + Colors.NORMAL, resultSet.getInt(3), resultSet.getBoolean(4), resultSet.getString(5), resultSet.getInt(6));
+				return new Item(resultSet.getInt(1), resultSet.getString(2) + Colors.NORMAL, resultSet.getInt(3), resultSet.getBoolean(4), resultSet.getString(5), resultSet.getInt(6), resultSet.getString(7), resultSet.getBoolean(8));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -341,81 +343,29 @@ public class Inventory extends AbstractListener {
 	 *
 	 * @param id_or_name         String
 	 * @param override_favourite boolean
-	 * @return int
+	 * @return int Value of one of Inventory.ERROR_... statics
 	 */
-	@SuppressWarnings("Duplicates")
 	public static int removeItem(String id_or_name, boolean override_favourite, boolean override_preserved) {
-		Integer id = null;
-		Boolean id_is_string = true;
-		id_or_name = StringEscapeUtils.escapeHtml4(id_or_name);
-		PreparedStatement removeItem;
+		InventoryItem item;
 		try {
-			id = Integer.valueOf(id_or_name);
-			id_is_string = false;
-
-			try {
-				removeItem = Database.getPreparedStatement("removeItemId");
-				removeItem.setString(1, id.toString());
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return ERROR_INVALID_STATEMENT;
-			}
-		}
-		catch (NumberFormatException e) {
-			try {
-				removeItem = Database.getPreparedStatement("removeItemName");
-				removeItem.setString(1, id_or_name);
-			}
-			catch (Exception ex) {
-				ex.printStackTrace();
-				return ERROR_INVALID_STATEMENT;
-			}
+			item = InventoryItem.GetByID(Integer.parseInt(id_or_name));
+		} catch (NumberFormatException e) {
+			item = InventoryItem.GetByName(id_or_name);
 		}
 
-		if (!override_favourite || !override_preserved) {
-			PreparedStatement getItem;
-			try {
-				if (id_is_string) {
-					getItem = Database.getPreparedStatement("getItemByName");
-					getItem.setString(1, id_or_name);
-				}
-				else if (id != null) {
-					getItem = Database.getPreparedStatement("getItem");
-					getItem.setInt(1, id);
-				}
-				else
-					return ERROR_ID_NOT_SET;
+		if (item != null) {
+			if (item.is_favourite && !override_favourite) {
+				return ERROR_ITEM_IS_FAVOURITE;
+			} else if (item.uses_left == -1 && !override_preserved) {
+				return ERROR_ITEM_IS_PRESERVED;
+			} else {
+				boolean result = item.Delete();
 
-				ResultSet result = getItem.executeQuery();
-
-				if (result.next()) {
-					if (result.getBoolean(4) && !override_favourite)
-						return ERROR_ITEM_IS_FAVOURITE;
-					else if (result.getInt(3) == -1 && !override_preserved)
-						return ERROR_ITEM_IS_PRESERVED;
-				}
-				else
-					return ERROR_NO_ROWS_RETURNED;
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return ERROR_INVALID_STATEMENT;
+				if (result)
+					return 0;
 			}
 		}
-
-		try {
-			if (removeItem.executeUpdate() > 0) {
-				return 0;
-			}
-			else {
-				return ERROR_NO_ROWS_RETURNED;
-			}
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-			return ERROR_SQL_ERROR;
-		}
+		return ERROR_NO_ROWS_RETURNED;
 	}
 
 	public static String getUsesIndicator(int uses) {
