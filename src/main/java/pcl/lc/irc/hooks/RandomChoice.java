@@ -71,7 +71,7 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template("Why not {count}?"));
 		templates.add(new Template("I sense some {choice} in your future!"));
 		templates.add(new Template("{choice} is for cool kids!"));
-		templates.add(new Template(3, "Definitely {choice}. or maybe {other_choice}..."));
+		templates.add(new Template(3, "Definitely {choice}... Or maybe {other_choice}..."));
 		templates.add(new Template("If I had a gold nugget for every time someone asked me about {choice}"));
 		templates.add(new Template("The proof is in the pudding. Definitely {choice}."));
 		templates.add(new Template("I received a message from future you, said to go with {choice}."));
