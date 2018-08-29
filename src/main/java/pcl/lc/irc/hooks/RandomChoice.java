@@ -1,10 +1,8 @@
 package pcl.lc.irc.hooks;
 
+import com.ibm.icu.text.RuleBasedNumberFormat;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
-import com.ibm.icu.text.RuleBasedNumberFormat;
-
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
@@ -75,7 +73,7 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template("If I had a gold nugget for every time someone asked me about {choice}"));
 		templates.add(new Template("The proof is in the pudding. Definitely {choice}."));
 		templates.add(new Template("I received a message from future you, said to go with {choice}."));
-		templates.add(new Template("I was that {choice} is the best choice in a vision"));
+		templates.add(new Template("I saw that {choice} is the best choice in a vision"));
 		templates.add(new Template("You'll want to go with {choice}."));
 		templates.add(new Template("Elementary dear Watson, {choice} is the obvious choice!"));
 		templates.add(new Template("My grandfather always told me that {choice} is the way to go!"));
