@@ -1165,6 +1165,7 @@ public class Helper {
 			garbage.add(new String[] {"a", "Poofy cloud"});
 			garbage.add(new String[] {"a", "Hard cloud"});
 			garbage.add(new String[] {"a", "Pointy cloud"});
+			garbage.add(new String[] {"", "Another settlement that needs your help"});
 
 			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
 			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];
