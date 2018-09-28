@@ -1,23 +1,18 @@
 package pcl.lc.irc.hooks;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
+import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
-import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
@@ -50,11 +45,39 @@ public class Announcements extends AbstractListener {
 		local_command_announce.registerSubCommand(local_command_list);
 		local_command_announce.registerSubCommand(local_command_remove);
 		local_command_announce.registerSubCommand(local_command_reload);
-		Database.addStatement("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, title, message)");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, lastran, title, message)");
 		Database.addPreparedStatement("addAnnounce", "INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);");
 		Database.addPreparedStatement("getAnnounce", "SELECT schedule, title, message FROM Announcements WHERE channel = ?;");
+		Database.addPreparedStatement("getAllAnnounce", "SELECT schedule, title, message, channel FROM Announcements;");
 		Database.addPreparedStatement("delAnnounce", "DELETE FROM Announcements WHERE title = ? AND channel = ?;");
-		setConfig();
+		Database.addUpdateQuery(8, "ALTER TABLE Announcements ADD lastran INTEGER DEFAULT 0 NULL");
+		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+		ses.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (IRCBot.bot != null) {
+						long epoch = System.currentTimeMillis();
+						PreparedStatement getAllAnnounce = Database.getPreparedStatement("getAllAnnounce");
+						//getTimedBans.setString(1, epoch);
+						ResultSet results = getAllAnnounce.executeQuery();
+						if (results.next()) {
+							IRCBot.getInstance();
+							for (Channel chan : IRCBot.bot.getUserBot().getChannels()) {
+								if (chan.getName().equals(results.getString(1))) {
+									PreparedStatement getAnnounce = Database.getPreparedStatement("getAnnounce");
+									getAnnounce.setString(1, chan.getName());
+									ResultSet res = getAnnounce.executeQuery();
+								}
+							}
+						}
+					}
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}, 0, 1, TimeUnit.SECONDS);
 	}
 
 	private void initCommands() {
@@ -73,6 +96,7 @@ public class Announcements extends AbstractListener {
 		local_command_list = new Command("list", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_list.setHelpText("List announce messages");
@@ -105,43 +129,5 @@ public class Announcements extends AbstractListener {
 		local_command_list.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_remove.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_reload.tryExecute(command, nick, target, event, copyOfRange);
-	}
-
-	private static void setConfig() {
-		InputStream input = null;
-
-		try {
-
-			File file = new File("announcements.xml");
-			if (!file.exists()) {
-				System.out.println("Creating announcements.xml");
-				file.createNewFile();
-			}
-
-			input = new FileInputStream(file);
-			// load a properties file
-			prop.load(input);
-			Announcements.clear();
-			for(String key : prop.stringPropertyNames()) {
-				List<Object> eventData = new ArrayList<Object>();
-				eventData.add("Channel");
-				eventData.add("Event");
-				eventData.add("Message");
-				Announcements.put(key, eventData);
-			}
-			IRCBot.log.info(Announcements.toString());
-			System.out.println(Announcements.toString());
-
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 }
