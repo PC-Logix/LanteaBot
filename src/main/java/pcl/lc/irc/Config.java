@@ -13,6 +13,7 @@ import org.pircbotx.Configuration;
 import org.pircbotx.UtilSSLSocketFactory;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.cap.EnableCapHandler;
+import org.pircbotx.cap.SASLCapHandler;
 import org.pircbotx.cap.TLSCapHandler;
 
 import pcl.lc.utils.CommentedProperties;
@@ -132,8 +133,11 @@ public class Config {
 			Config.config.setAutoReconnect(true);
 			Config.config.setAutoNickChange(true);
 			Config.config.setAutoSplitMessage(true);
-			if (!Config.nspass.isEmpty())
+			if (!Config.nspass.isEmpty()){
+				Config.config.setCapEnabled(true);
+				Config.config.addCapHandler(new SASLCapHandler(Config.nsaccount, Config.nspass));
 				Config.config.setNickservPassword(Config.nspass);
+			}
 
 			if (!Config.googleAPI.isEmpty())
 				GoogleSearch.setup(Config.googleAPI);
