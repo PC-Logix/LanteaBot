@@ -40,31 +40,34 @@ public class TimedBans extends AbstractListener {
 			@Override
 			public void run() {
 				try {
-					long epoch = System.currentTimeMillis();
-					PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBans");
-					getTimedBans.setLong(1, epoch);
-					ResultSet results = getTimedBans.executeQuery();
-					if (results.next()) {
-						IRCBot.getInstance();
-						for (Channel chan : IRCBot.bot.getUserBot().getChannels()) {
-							if (chan.getName().equals(results.getString(1))) {
-								if (results.getString(7).equals("ban")){
-									if (!results.getString(1).equals("#Revolution")){
-										Helper.sendMessage(results.getString(1), "Timed ban of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
+					IRCBot.getInstance();
+					if (IRCBot.bot != null) {
+						long epoch = System.currentTimeMillis();
+						PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBans");
+						getTimedBans.setLong(1, epoch);
+						ResultSet results = getTimedBans.executeQuery();
+						if (results.next()) {
+							IRCBot.getInstance();
+							for (Channel chan : IRCBot.bot.getUserBot().getChannels()) {
+								if (chan.getName().equals(results.getString(1))) {
+									if (results.getString(7).equals("ban")){
+										if (!results.getString(1).equals("#Revolution")){
+											Helper.sendMessage(results.getString(1), "Timed ban of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
+										}
+										Helper.sendMessage("chanserv", "unban " + results.getString(1) + " " + results.getString(3));
+									} else {
+										if (!results.getString(1).equals("#Revolution")){
+											Helper.sendMessage(results.getString(1), "Timed quiet of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
+										}
+										Helper.sendMessage("chanserv", "unquiet " + results.getString(1) + " " + results.getString(3));
 									}
-									Helper.sendMessage("chanserv", "unban " + results.getString(1) + " " + results.getString(3));
-								} else {
-									if (!results.getString(1).equals("#Revolution")){
-										Helper.sendMessage(results.getString(1), "Timed quiet of " + results.getString(2) + " Expired. Placed by: " + results.getString(5));
-									}
-									Helper.sendMessage("chanserv", "unquiet " + results.getString(1) + " " + results.getString(3));
+									PreparedStatement delTimedBan = Database.getPreparedStatement("delTimedBan");
+									delTimedBan.setLong(1, results.getLong(4));
+									delTimedBan.setString(2, results.getString(2));
+									delTimedBan.setString(3, results.getString(1));
+									delTimedBan.setString(4, results.getString(7));
+									delTimedBan.execute();
 								}
-								PreparedStatement delTimedBan = Database.getPreparedStatement("delTimedBan");
-								delTimedBan.setLong(1, results.getLong(4));
-								delTimedBan.setString(2, results.getString(2));
-								delTimedBan.setString(3, results.getString(1));
-								delTimedBan.setString(4, results.getString(7));
-								delTimedBan.execute();
 							}
 						}
 					}
