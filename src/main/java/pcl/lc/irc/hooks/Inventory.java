@@ -86,10 +86,10 @@ public class Inventory extends AbstractListener {
 		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE id = ?;");
 		Database.addPreparedStatement("getFavouriteItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite = 1 LIMIT 1");
 		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE item_name = ?;");
-		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory ORDER BY Random() LIMIT 1");
-		Database.addPreparedStatement("getRandomItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory ORDER BY Random() LIMIT ?");
-		Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
-		Database.addPreparedStatement("getRandomItemsNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT ?");
+		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory ORDER BY Random() LIMIT 1");
+		Database.addPreparedStatement("getRandomItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory ORDER BY Random() LIMIT ?");
+		Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
+		Database.addPreparedStatement("getRandomItemsNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT ?");
 		Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, uses_left, is_favourite, added_by, added) VALUES (NULL, ?, ?, ?, ?, ?)");
 		Database.addPreparedStatement("removeItemId", "DELETE FROM Inventory WHERE id = ?");
 		Database.addPreparedStatement("removeItemName", "DELETE FROM Inventory WHERE item_name = ?");
