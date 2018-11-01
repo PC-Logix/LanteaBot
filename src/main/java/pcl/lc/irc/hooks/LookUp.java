@@ -80,7 +80,7 @@ public class LookUp extends AbstractListener {
 		        catch (NamingException exception)
 		        {
 		        	Helper.sendMessage(target, "ERROR: No DNS record for '" + params.get(0) + "'");
-		        	Helper.sendMessage(target, exception.getExplanation());
+		        	Helper.sendMessage(target, exception.getExplanation() + " Resolved: " + exception.getResolvedName() + " Unresolved: " + exception.getRemainingName());
 		        	exception.printStackTrace();
 		        }
 				
