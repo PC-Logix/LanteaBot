@@ -24,7 +24,7 @@ public class Tonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("tonk", 0) {
+		local_command = new Command("tonk", 60 * 25) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String tonkin = Database.getJsonData("lasttonk");
