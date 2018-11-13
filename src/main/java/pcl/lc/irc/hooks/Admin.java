@@ -194,13 +194,11 @@ public class Admin extends AbstractListener {
 				if (params.contains("@")) {
 					String s = IRCBot.getDiscordID(params);
 					IRCBot.ignoredUsers.add(s);
-					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-					Config.saveProps();
 				} else {
 					IRCBot.ignoredUsers.add(params);
-					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-					Config.saveProps();
 				}
+				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+				Config.saveProps();
 			}
 		}; command_ignore.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
 		command_unignore = new Command("unignore", 0, Permissions.ADMIN) {
@@ -208,15 +206,12 @@ public class Admin extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.contains("@")) {
 					String s = IRCBot.getDiscordID(params);
-					IRCBot.ignoredUsers.add(s);
 					IRCBot.ignoredUsers.remove(s);
-					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-					Config.saveProps();
 				} else {
 					IRCBot.ignoredUsers.remove(params);
-					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-					Config.saveProps();
 				}
+				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+				Config.saveProps();
 			}
 		}; command_unignore.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
 		command_ignorelist = new Command("ignorelist", 0, Permissions.ADMIN) {

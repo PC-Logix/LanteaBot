@@ -74,6 +74,7 @@ public class IRCBot {
 		try {
 			url = new URL("eos.pc-logix.com:9790/" + nick);
 			Scanner s = new Scanner(url.openStream());
+			System.out.println(s.toString());
 			return s.toString();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
