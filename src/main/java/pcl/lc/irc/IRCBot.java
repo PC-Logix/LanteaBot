@@ -72,10 +72,9 @@ public class IRCBot {
 	public static String getDiscordID(String nick) {
 		URL url;
 		try {
-			url = new URL("eos.pc-logix.com:9790/" + nick);
+			url = new URL("http://eos.pc-logix.com:9790/" + nick);
 			Scanner s = new Scanner(url.openStream());
-			System.out.println(s.toString());
-			return s.toString();
+			return s.next();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
