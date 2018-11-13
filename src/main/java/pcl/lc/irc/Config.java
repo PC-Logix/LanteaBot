@@ -119,7 +119,7 @@ public class Config {
 			googleAPI = prop.getProperty("GoogleAPI", "");
 			AzureTextAPI = prop.getProperty("AzureTextAPI", "");
 			weatherAPI = prop.getProperty("WeatherAPI", "");
-			yuriWebAPI = prop.getProperty("YuriWebAPI", "");
+			yuriWebAPI = prop.getProperty("yuriWebAPI", "");
 			
 			saveProps();
 
