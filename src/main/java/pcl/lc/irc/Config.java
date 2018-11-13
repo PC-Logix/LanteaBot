@@ -45,6 +45,7 @@ public class Config {
 	public static String AzureTextAPI = null;
 	static String adminProps = null;
 	public static String weatherAPI = null;
+	public static String yuriWebAPI = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
@@ -118,6 +119,7 @@ public class Config {
 			googleAPI = prop.getProperty("GoogleAPI", "");
 			AzureTextAPI = prop.getProperty("AzureTextAPI", "");
 			weatherAPI = prop.getProperty("WeatherAPI", "");
+			yuriWebAPI = prop.getProperty("YuriWebAPI", "");
 			
 			saveProps();
 

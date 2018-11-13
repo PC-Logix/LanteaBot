@@ -48,7 +48,7 @@ public class IRCBot {
 			return size() > MAX_MESSAGES;
 		}
 	};
-	
+
 	//Keep a list of invites recieved
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	//Keep a list of users, and what server they're connected from
@@ -71,17 +71,21 @@ public class IRCBot {
 
 	public static String getDiscordID(String nick) {
 		URL url;
-		try {
-			url = new URL("http://eos.pc-logix.com:9790/" + nick);
-			Scanner s = new Scanner(url.openStream());
-			return s.next();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String tehURL = "";
+		if (Config.yuriWebAPI != "") {
+			tehURL = Config.yuriWebAPI;
+			try {
+				url = new URL(tehURL + nick);
+				Scanner s = new Scanner(url.openStream());
+				return s.next();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return nick;
 	}
-	
+
 	public static httpd httpServer = new httpd();
 	public static boolean isIgnored(String nick) {
 		if (IRCBot.admins.containsKey(nick)) {
@@ -98,7 +102,7 @@ public class IRCBot {
 	public static String getOurNick() {
 		return ournick;
 	}
-	
+
 	public static HashMap<String, Command> commands = new LinkedHashMap<>();
 	public static HashMap<String, String> helpList = new LinkedHashMap<String, String>();
 
@@ -123,7 +127,7 @@ public class IRCBot {
 			log.error("Attempted to set help on non existent command");
 		}
 	}
-	
+
 	public static void registerCommand(String command, String help) {
 		registerCommand(command, help, 0);
 	}
@@ -176,7 +180,7 @@ public class IRCBot {
 		if(Config.httpdEnable.equals("true")) {
 			try {
 				httpd.setBaseDomain(Config.httpdBaseDomain);
-				
+
 				httpd.setup();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -230,7 +234,7 @@ public class IRCBot {
 
 			InputThread input = new InputThread();
 			input.start();
-			
+
 			bot = new PircBotX(Config.config.buildConfiguration());
 			bot.startBot();		
 		} catch (Exception ex) {
@@ -239,19 +243,19 @@ public class IRCBot {
 	}
 
 	private boolean initDatabase() throws SQLException {
-			Database.init();
-			Database.addStatement("CREATE TABLE IF NOT EXISTS Channels(name)");
-			Database.addStatement("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
-			Database.addStatement("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
-			//Channels
-			Database.addPreparedStatement("addChannel", "REPLACE INTO Channels (name) VALUES (?);");
-			Database.addPreparedStatement("removeChannel","DELETE FROM Channels WHERE name = ?;");
-			//Hooks
-			Database.addPreparedStatement("enableHook", "INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);");
-			Database.addPreparedStatement("disableHook","DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;");
-			Database.addPreparedStatement("checkHook","SELECT hook, channel FROM OptionalHooks WHERE hook = ?;");
-			Database.addPreparedStatement("checkHookForChan","SELECT hook FROM OptionalHooks WHERE hook = ? AND channel = ?;");
-			return true;
+		Database.init();
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Channels(name)");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
+		//Channels
+		Database.addPreparedStatement("addChannel", "REPLACE INTO Channels (name) VALUES (?);");
+		Database.addPreparedStatement("removeChannel","DELETE FROM Channels WHERE name = ?;");
+		//Hooks
+		Database.addPreparedStatement("enableHook", "INSERT INTO OptionalHooks(hook, channel) VALUES (?, ?);");
+		Database.addPreparedStatement("disableHook","DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;");
+		Database.addPreparedStatement("checkHook","SELECT hook, channel FROM OptionalHooks WHERE hook = ?;");
+		Database.addPreparedStatement("checkHookForChan","SELECT hook FROM OptionalHooks WHERE hook = ? AND channel = ?;");
+		return true;
 	}
 
 	@Deprecated
@@ -323,7 +327,7 @@ public class IRCBot {
 	public static void setDebug(boolean b) {
 		isDebug = b;
 	}
-	
+
 	public static boolean getDebug() {
 		return isDebug;
 	}
@@ -339,18 +343,18 @@ public class IRCBot {
 		return Permissions.isOp(sourceBot, user);
 	}
 
-    public static File getThisJarFile() throws UnsupportedEncodingException
-    {
-      //Gets the path of the currently running Jar file
-        String path = IRCBot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        String decodedPath = URLDecoder.decode(path, "UTF-8");
+	public static File getThisJarFile() throws UnsupportedEncodingException
+	{
+		//Gets the path of the currently running Jar file
+		String path = IRCBot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String decodedPath = URLDecoder.decode(path, "UTF-8");
 
-        //This is code especially written for running and testing this program in an IDE that doesn't compile to .jar when running.
-        if (!decodedPath.endsWith(".jar"))
-        {
-            return new File("LanteaBot.jar");
-        }
-        return new File(decodedPath);   //We use File so that when we send the path to the ProcessBuilder, we will be using the proper System path formatting.
-    }
-	
+		//This is code especially written for running and testing this program in an IDE that doesn't compile to .jar when running.
+		if (!decodedPath.endsWith(".jar"))
+		{
+			return new File("LanteaBot.jar");
+		}
+		return new File(decodedPath);   //We use File so that when we send the path to the ProcessBuilder, we will be using the proper System path formatting.
+	}
+
 }
