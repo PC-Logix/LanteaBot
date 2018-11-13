@@ -144,10 +144,10 @@ public class Command {
 		if (this.lastExecution == 0)
 			return 0;
 		long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
-		long difference = timestamp - lastExecution;
-		if (difference > this.rateLimit)
+		long difference = timestamp - this.lastExecution;
+		if (difference > (this.rateLimit * 1000))
 			return 0;
-		return this.rateLimit - difference;
+		return (this.rateLimit * 1000) - difference;
 	}
 
 	public boolean shouldExecuteBool(String command, GenericMessageEvent event) {

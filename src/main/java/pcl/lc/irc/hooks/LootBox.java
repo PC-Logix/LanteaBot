@@ -35,7 +35,7 @@ public class LootBox extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("lootbox", 60 * 25) {
+		local_command = new Command("lootbox", 120) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int rarity_value = Helper.rollDice("1d100").getSum();
