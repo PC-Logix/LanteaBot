@@ -29,6 +29,7 @@ import pcl.lc.utils.Helper;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.util.*;
@@ -190,17 +191,53 @@ public class Admin extends AbstractListener {
 		command_ignore = new Command("ignore", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				IRCBot.ignoredUsers.add(params);
-				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-				Config.saveProps();
+				if (params.contains("@")) {
+					try {
+						URL url = new URL("eos.pc-logix.com:9791/" + params);
+						Scanner s = new Scanner(url.openStream());
+						IRCBot.ignoredUsers.add(s.toString());
+						Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+						Config.saveProps();
+						s.close();
+						// read from your scanner
+					}
+					catch(IOException ex) {
+						// there was some connection problem, or the file did not exist on the server,
+						// or your URL was not in the right format.
+						// think about what to do now, and put it here.
+						ex.printStackTrace(); // for now, simply output it.
+					}
+				} else {
+					IRCBot.ignoredUsers.add(params);
+					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+					Config.saveProps();
+				}
 			}
 		}; command_ignore.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
 		command_unignore = new Command("unignore", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				IRCBot.ignoredUsers.remove(params);
-				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-				Config.saveProps();
+				if (params.contains("@")) {
+					try {
+						URL url = new URL("eos.pc-logix.com:9791/" + params);
+						Scanner s = new Scanner(url.openStream());
+						IRCBot.ignoredUsers.remove(s.toString());
+						Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+						Config.saveProps();
+						s.close();
+						// read from your scanner
+					}
+					catch(IOException ex) {
+						// there was some connection problem, or the file did not exist on the server,
+						// or your URL was not in the right format.
+						// think about what to do now, and put it here.
+						ex.printStackTrace(); // for now, simply output it.
+					}
+				} else {
+					IRCBot.ignoredUsers.remove(params);
+					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+					Config.saveProps();
+				}
 			}
 		}; command_unignore.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
 		command_ignorelist = new Command("ignorelist", 0, Permissions.ADMIN) {
@@ -473,14 +510,14 @@ public class Admin extends AbstractListener {
 
 	private static void relaunch() throws InterruptedException, UnsupportedEncodingException {
 		String command = "/"+FilenameUtils.getPath(IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
-			Process p;
-			try {
-				p = Runtime.getRuntime().exec(command);
-			    p.waitFor();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(command);
+			p.waitFor();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

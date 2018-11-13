@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.*;
 import java.util.ArrayList;
@@ -67,11 +69,26 @@ public class IRCBot {
 	public static PircBotX bot;
 	private TaskScheduler scheduler;
 
+	public static String getDiscordID(String nick) {
+		URL url;
+		try {
+			url = new URL("eos.pc-logix.com:9791/" + nick);
+			Scanner s = new Scanner(url.openStream());
+			return s.toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return nick;
+	}
+	
 	public static httpd httpServer = new httpd();
 	public static boolean isIgnored(String nick) {
 		if (IRCBot.admins.containsKey(nick)) {
 			return false;
 		} else if (ignoredUsers.contains(nick)){
+			return true;
+		} else if (ignoredUsers.contains(getDiscordID(nick))) {
 			return true;
 		} else {
 			return false;
