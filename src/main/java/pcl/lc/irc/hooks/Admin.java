@@ -192,21 +192,10 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.contains("@")) {
-					try {
-						URL url = new URL("eos.pc-logix.com:9791/" + params);
-						Scanner s = new Scanner(url.openStream());
-						IRCBot.ignoredUsers.add(s.toString());
-						Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-						Config.saveProps();
-						s.close();
-						// read from your scanner
-					}
-					catch(IOException ex) {
-						// there was some connection problem, or the file did not exist on the server,
-						// or your URL was not in the right format.
-						// think about what to do now, and put it here.
-						ex.printStackTrace(); // for now, simply output it.
-					}
+					String s = IRCBot.getDiscordID(params);
+					IRCBot.ignoredUsers.add(s);
+					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+					Config.saveProps();
 				} else {
 					IRCBot.ignoredUsers.add(params);
 					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
@@ -218,21 +207,11 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.contains("@")) {
-					try {
-						URL url = new URL("eos.pc-logix.com:9791/" + params);
-						Scanner s = new Scanner(url.openStream());
-						IRCBot.ignoredUsers.remove(s.toString());
-						Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-						Config.saveProps();
-						s.close();
-						// read from your scanner
-					}
-					catch(IOException ex) {
-						// there was some connection problem, or the file did not exist on the server,
-						// or your URL was not in the right format.
-						// think about what to do now, and put it here.
-						ex.printStackTrace(); // for now, simply output it.
-					}
+					String s = IRCBot.getDiscordID(params);
+					IRCBot.ignoredUsers.add(s);
+					IRCBot.ignoredUsers.remove(s);
+					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+					Config.saveProps();
 				} else {
 					IRCBot.ignoredUsers.remove(params);
 					Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
