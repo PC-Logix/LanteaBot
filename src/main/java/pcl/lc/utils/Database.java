@@ -167,13 +167,14 @@ public class Database {
 		try {
 			ResultSet resultSet = statement.executeQuery("SELECT store FROM JsonData WHERE mykey = '" + key.toLowerCase() + "'");
 			if (resultSet.next()) {
-				IRCBot.log.info("JsonData: " + resultSet.getString(1));
-				return resultSet.getString(1);
+				String result = resultSet.getString(1);
+				IRCBot.log.info("JsonData: " + result);
+				return result;
 			}
 			IRCBot.log.error("JsonData was empty, returning empty string");
 			return "";
 		} catch (SQLException e) {
-			IRCBot.log.info("Code: " + e.getErrorCode());
+			IRCBot.log.error("Code: " + e.getErrorCode());
 			IRCBot.log.error("Exception is: ", e);
 			e.printStackTrace();
 		}
