@@ -141,6 +141,7 @@ public class Database {
 			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
 		} catch (SQLException e) {
 			if (e.getErrorCode() != 101)
+				IRCBot.log.error("Exception is: ", e);
 				e.printStackTrace();
 		}
 		try {
@@ -148,6 +149,7 @@ public class Database {
 			statement.executeUpdate("INSERT OR REPLACE INTO JsonData (mykey, store) VALUES ('" + key.toLowerCase() + "', '" + data + "')");
 			return true;
 		} catch (SQLException e) {
+			IRCBot.log.error("Exception is: ", e);
 			e.printStackTrace();
 		}
 		IRCBot.log.error("storeJsonData false");
@@ -159,6 +161,7 @@ public class Database {
 			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
 		} catch (SQLException e) {
 			if (e.getErrorCode() != 101)
+				IRCBot.log.error("Exception is: ", e);
 				e.printStackTrace();
 		}
 		try {
@@ -171,6 +174,7 @@ public class Database {
 			return "";
 		} catch (SQLException e) {
 			IRCBot.log.info("Code: " + e.getErrorCode());
+			IRCBot.log.error("Exception is: ", e);
 			e.printStackTrace();
 		}
 		IRCBot.log.error("JsonData try/catch failed");
