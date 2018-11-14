@@ -92,7 +92,7 @@ public class IRCBot {
 			return false;
 		} else if (ignoredUsers.contains(nick)){
 			return true;
-		} else if (ignoredUsers.contains(getDiscordID(nick))) {
+		} else if (ignoredUsers.contains(getDiscordID(nick.replaceAll("\\p{C}", "")))) {
 			return true;
 		} else {
 			return false;
