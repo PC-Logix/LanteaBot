@@ -137,13 +137,13 @@ public class Database {
 	}
 
 	public static boolean storeJsonData(String key, String data) {
-		try {
-			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
-		} catch (SQLException e) {
-			if (e.getErrorCode() != 101)
-				IRCBot.log.error("Exception is: ", e);
-				e.printStackTrace();
-		}
+//		try {
+//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+//		} catch (SQLException e) {
+//			if (e.getErrorCode() != 101)
+//				IRCBot.log.error("Exception is: ", e);
+//				e.printStackTrace();
+//		}
 		try {
 			IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
 			statement.executeUpdate("INSERT OR REPLACE INTO JsonData (mykey, store) VALUES ('" + key.toLowerCase() + "', '" + data + "')");
@@ -157,17 +157,17 @@ public class Database {
 	}
 
 	public static String getJsonData(String key) {
-		try {
-			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
-		} catch (SQLException e) {
-			if (e.getErrorCode() != 101)
-				IRCBot.log.error("Exception is: ", e);
-				e.printStackTrace();
-		}
+//		try {
+//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+//		} catch (SQLException e) {
+//			if (e.getErrorCode() != 101)
+//				IRCBot.log.error("Exception is: ", e);
+//				e.printStackTrace();
+//		}
 		try {
 			ResultSet resultSet = statement.executeQuery("SELECT store FROM JsonData WHERE mykey = '" + key.toLowerCase() + "'");
 			if (resultSet.next()) {
-				IRCBot.log.error("JsonData: " + resultSet.getString(1));
+				IRCBot.log.info("JsonData: " + resultSet.getString(1));
 				return resultSet.getString(1);
 			}
 			IRCBot.log.error("JsonData was empty, returning empty string");
