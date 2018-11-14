@@ -35,7 +35,7 @@ public class Database {
 	public final static Map<String, PreparedStatement> preparedStatements = new HashMap<>();
 	static Statement statement;
 	public static List<UpdateQuery> updateQueries = new ArrayList<>();
-	
+
 	public static void init() throws SQLException {
 		connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
 		statement = connection.createStatement();
@@ -52,7 +52,7 @@ public class Database {
 			return false;
 		}
 	}
-	
+
 	public static boolean addPreparedStatement(String name, String sql) {
 		try {
 			preparedStatements.put(name, connection.prepareStatement(sql));
@@ -62,7 +62,7 @@ public class Database {
 			return false;
 		}
 	}
-	
+
 	public static boolean addPreparedStatement(String name, String sql, int options) {
 		try {
 			preparedStatements.put(name, connection.prepareStatement(sql, options));
@@ -72,7 +72,7 @@ public class Database {
 			return false;
 		}
 	}
-	
+
 	public static Connection getConnection() {
 		return connection;
 	}
@@ -83,7 +83,7 @@ public class Database {
 		}
 		return preparedStatements.get(statement);
 	}
-	
+
 	public static int getDBVer() {
 		try {
 			ResultSet dbVerQuery = Database.getConnection().createStatement().executeQuery("PRAGMA user_version;");
@@ -93,7 +93,7 @@ public class Database {
 		}
 		return 0;
 	}
-	
+
 	public static int setDBVer(int dbVer) {
 		if (getDBVer() < dbVer) {
 			try {
@@ -137,38 +137,43 @@ public class Database {
 	}
 
 	public static boolean storeJsonData(String key, String data) {
-    try {
-      statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
-    } catch (SQLException e) {
-      if (e.getErrorCode() != 101)
-        e.printStackTrace();
-    }
-    try {
+		try {
+			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+		} catch (SQLException e) {
+			if (e.getErrorCode() != 101)
+				e.printStackTrace();
+		}
+		try {
+			IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
 			statement.executeUpdate("INSERT OR REPLACE INTO JsonData (mykey, store) VALUES ('" + key.toLowerCase() + "', '" + data + "')");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		IRCBot.log.error("storeJsonData false");
 		return false;
 	}
 
 	public static String getJsonData(String key) {
-    try {
-      statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
-    } catch (SQLException e) {
-      if (e.getErrorCode() != 101)
-        e.printStackTrace();
-    }
+		try {
+			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+		} catch (SQLException e) {
+			if (e.getErrorCode() != 101)
+				e.printStackTrace();
+		}
 		try {
 			ResultSet resultSet = statement.executeQuery("SELECT store FROM JsonData WHERE mykey = '" + key.toLowerCase() + "'");
 			if (resultSet.next()) {
+				IRCBot.log.error("JsonData: " + resultSet.getString(1));
 				return resultSet.getString(1);
 			}
+			IRCBot.log.error("JsonData was empty, returning empty string");
 			return "";
 		} catch (SQLException e) {
-      IRCBot.log.info("Code: " + e.getErrorCode());
+			IRCBot.log.info("Code: " + e.getErrorCode());
 			e.printStackTrace();
 		}
+		IRCBot.log.error("JsonData try/catch failed");
 		return "";
 	}
 
