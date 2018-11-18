@@ -1,5 +1,6 @@
 package pcl.lc.utils;
 
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
 import java.sql.*;
@@ -27,7 +28,8 @@ class UpdateQuery {
 }
 
 public class Database {
-	private static Connection connection;
+	public static Connection connection;
+	//private static Connection connection;
 	/**
 	 * Updated automatically
 	 */
@@ -37,10 +39,17 @@ public class Database {
 	public static List<UpdateQuery> updateQueries = new ArrayList<>();
 
 	public static void init() throws SQLException {
-		connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
-		statement = connection.createStatement();
-		statement.setPoolable(true);
-		statement.setQueryTimeout(30);  // set timeout to 30 sec.
+
+		try{  
+			Class.forName("com.mysql.jdbc.Driver");  
+			connection=DriverManager.getConnection(Config.mysqlServer,Config.mysqlUser,Config.mysqlPass);
+			statement = connection.createStatement();
+		} catch(Exception e){ System.out.println(e); } 
+		
+		//connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
+		//statement = connection.createStatement();
+		//statement.setPoolable(true);
+		//statement.setQueryTimeout(30);  // set timeout to 30 sec.
 	}
 
 	public static boolean addStatement(String sql) {
@@ -165,9 +174,9 @@ public class Database {
 //				e.printStackTrace();
 //		}
 		try {
-			ResultSet resultSet = statement.executeQuery("SELECT store FROM JsonData WHERE mykey = '" + key.toLowerCase() + "'");
-			if (resultSet.next()) {
-				String result = resultSet.getString(1);
+			ResultSet theResult = statement.executeQuery("SELECT store FROM JsonData WHERE mykey = '" + key.toLowerCase() + "'");
+			if (theResult.next()) {
+				String result = theResult.getString(1);
 				IRCBot.log.info("JsonData: " + result);
 				return result;
 			}
