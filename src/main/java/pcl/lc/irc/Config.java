@@ -50,6 +50,10 @@ public class Config {
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
 
+	public static String mysqlServer = null;
+	public static String mysqlUser = null;
+	public static String mysqlPass = null;
+
 	public static void saveProps() {
 		FileOutputStream output = null;
 		try {
@@ -120,6 +124,9 @@ public class Config {
 			AzureTextAPI = prop.getProperty("AzureTextAPI", "");
 			weatherAPI = prop.getProperty("WeatherAPI", "");
 			yuriWebAPI = prop.getProperty("yuriWebAPI", "");
+			mysqlServer = prop.getProperty("mysqlServer", "");
+			mysqlUser = prop.getProperty("mysqlUser", "");
+			mysqlPass = prop.getProperty("mysqlPass", "");
 			
 			saveProps();
 
