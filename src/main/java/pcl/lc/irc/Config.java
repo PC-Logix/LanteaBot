@@ -1,23 +1,17 @@
 package pcl.lc.irc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-
 import org.pircbotx.Configuration;
-import org.pircbotx.UtilSSLSocketFactory;
 import org.pircbotx.Configuration.Builder;
+import org.pircbotx.UtilSSLSocketFactory;
 import org.pircbotx.cap.EnableCapHandler;
 import org.pircbotx.cap.SASLCapHandler;
 import org.pircbotx.cap.TLSCapHandler;
-
 import pcl.lc.utils.CommentedProperties;
 import pcl.lc.utils.GoogleSearch;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.HashMap;
 
 public class Config {
 
@@ -46,13 +40,15 @@ public class Config {
 	static String adminProps = null;
 	public static String weatherAPI = null;
 	public static String yuriWebAPI = null;
+
+	public static String mysqlDbHost = null;
+	public static String mysqlDbPort = null;
+	public static String mysqlDbUser = null;
+	public static String mysqlDbPass = null;
+	public static String mysqlDbName = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
-
-	public static String mysqlServer = null;
-	public static String mysqlUser = null;
-	public static String mysqlPass = null;
 
 	public static void saveProps() {
 		FileOutputStream output = null;
@@ -124,10 +120,13 @@ public class Config {
 			AzureTextAPI = prop.getProperty("AzureTextAPI", "");
 			weatherAPI = prop.getProperty("WeatherAPI", "");
 			yuriWebAPI = prop.getProperty("yuriWebAPI", "");
-			mysqlServer = prop.getProperty("mysqlServer", "");
-			mysqlUser = prop.getProperty("mysqlUser", "");
-			mysqlPass = prop.getProperty("mysqlPass", "");
-			
+
+			mysqlDbHost = prop.getProperty("mysqlDbHost", "");
+			mysqlDbPort = prop.getProperty("mysqlDbPort", "");
+			mysqlDbUser = prop.getProperty("mysqlDbUser", "");
+			mysqlDbPass = prop.getProperty("mysqlDbPass", "");
+			mysqlDbName = prop.getProperty("mysqlDbName", "");
+
 			saveProps();
 
 

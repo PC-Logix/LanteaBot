@@ -53,6 +53,7 @@ dependencies {
   compile 'com.github.kevinsawicki:timeago:1.0.1'
   compile 'io.github.firemaples:microsoft-translator-java-api:0.8.3'
   compile 'com.maxmind.geoip2:geoip2:2.11.0'
+  compile 'mysql:mysql-connector-java:6.0.+'
 }
 
 version = "${versionObj.toString()}"
