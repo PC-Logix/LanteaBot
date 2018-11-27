@@ -53,7 +53,7 @@ public class Tonk extends AbstractListener {
 						String recorder = tonk[1].trim();
 
 						if (nick.equals(recorder)) {
-							Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(diff)));
+							Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
 						} else if (tonk_record_long < diff) {
 							System.out.println("New record");
 							System.out.println("'" + recorder + "' == '" + nick + "' => " + (nick.equals(recorder) ? "true" : "false"));
