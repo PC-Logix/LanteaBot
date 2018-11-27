@@ -55,7 +55,7 @@ public class Weather extends AbstractListener {
 
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
-		if (!IRCBot.isIgnored(nick) && (command.equalsIgnoreCase(prefix + "weather") || command.equalsIgnoreCase(prefix + "w"))) {
+		if ((command.equalsIgnoreCase(prefix + "weather") || command.equalsIgnoreCase(prefix + "w"))) {
 			String location = "";
 			for( int i = 0; i < copyOfRange.length; i++)
 			{
