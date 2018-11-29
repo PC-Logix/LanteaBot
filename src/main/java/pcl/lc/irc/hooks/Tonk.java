@@ -98,7 +98,11 @@ public class Tonk extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
-		reset_command.tryExecute(command, nick, target, event, copyOfRange);
+		if (target.contains("#")) {
+			local_command.tryExecute(command, nick, target, event, copyOfRange);
+			reset_command.tryExecute(command, nick, target, event, copyOfRange);
+		} else {
+			event.respond("No.");
+		}
 	}
 }
