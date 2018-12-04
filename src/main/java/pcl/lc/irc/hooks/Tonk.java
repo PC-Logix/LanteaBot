@@ -101,8 +101,6 @@ public class Tonk extends AbstractListener {
 		if (target.contains("#")) {
 			local_command.tryExecute(command, nick, target, event, copyOfRange);
 			reset_command.tryExecute(command, nick, target, event, copyOfRange);
-		} else {
-			event.respond("No.");
 		}
 	}
 }
