@@ -109,7 +109,7 @@ public class DynamicCommands extends AbstractListener {
 		}
 
 		initLua();
-		local_command_add = new Command("addcommand", 0) {
+		local_command_add = new Command("addcommand", 0, Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				try {
@@ -133,7 +133,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		};
 		IRCBot.registerCommand(local_command_add, "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
-		local_command_del = new Command("delcommand", 0) {
+		local_command_del = new Command("delcommand", 0, Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() == 0) {
@@ -172,7 +172,7 @@ public class DynamicCommands extends AbstractListener {
 
 			}
 		};
-		local_command_edit = new Command ("editcommand", 0) {
+		local_command_edit = new Command ("editcommand", 0, Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -199,7 +199,7 @@ public class DynamicCommands extends AbstractListener {
 				}
 			}
 		};
-		local_command_addhelp = new Command ("addcommandhelp", 0) {
+		local_command_addhelp = new Command ("addcommandhelp", 0, Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement addCommandHelp;
