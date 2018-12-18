@@ -76,7 +76,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(" gains knowledge about a random useless subject.");
 		effects.add(" gains an extra strand of hair on their face.");
 		effects.add(" grows whiskers.");
-		effects.add(" grows a tail from a random animal.");
+		effects.add(" grows a tail from a {animal}.");
 		effects.add(" shrinks by a negligible amount.");
 		effects.add(" grows slightly.");
 		effects.add(" suddenly craves pie.");
@@ -122,7 +122,7 @@ public class DrinkPotion extends AbstractListener {
 					if (effect > 0) {
 						String replace_color = colors.get(Helper.getRandomInt(0, colors.size() - 1));
 						String replace_consistency = consistencies.get(Helper.getRandomInt(0, consistencies.size() - 1));
-						Helper.sendMessage(target, nick + effects.get(effect).replace("{color}", replace_color).replace("{consistency}", replace_consistency));
+						Helper.sendMessage(target, nick + effects.get(effect).replace("{color}", replace_color).replace("{consistency}", replace_consistency).replace("{animal}", Helper.getRandomAnimal(true)));
 					}
 					else
 						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");

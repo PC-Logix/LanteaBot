@@ -1177,6 +1177,26 @@ public class Helper {
 		return name;
 	}
 
+	public static String getRandomAnimal() {
+		return getRandomAnimal(false);
+	}
+
+	public static String getRandomAnimal(boolean lower_case) {
+		String[] animals = new String[]{
+			"Pig",
+			"Horse",
+			"Cat",
+			"Dog",
+			"Fish",
+			"Crocodile",
+			"Bird"
+		};
+		String ret = animals[Helper.getRandomInt(0, animals.length - 1)];
+		if (lower_case)
+			return ret.toLowerCase();
+		return ret;
+	}
+
 	public static Matcher getMatcherFromPattern(String pattern, String input) {
 		String regex = "^(" + pattern + ") (.*)";
 		Pattern pt = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
