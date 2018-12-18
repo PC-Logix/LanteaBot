@@ -18,12 +18,14 @@ import java.util.Date;
 public class Tonk extends AbstractListener {
 	private Command local_command;
 	private Command reset_command;
+	private Command tonkout_command;
 
 	@Override
 	protected void initHook() {
 		initCommands();
 		IRCBot.registerCommand(local_command);
 		IRCBot.registerCommand(reset_command);
+		IRCBot.registerCommand(tonkout_command);
 	}
 
 	private void initCommands() {
@@ -86,6 +88,45 @@ public class Tonk extends AbstractListener {
 			}
 		};
 		reset_command.setHelpText("What is tonk? Tonk is life.");
+		reset_command.registerAlias("tonkreset");
+
+		tonkout_command = new Command("tonkout", 60) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String tonkin = Database.getJsonData("lasttonk");
+				String tonk_record = Database.getJsonData("tonkrecord");
+
+				String tonk[] = tonk_record.split(";");
+				long tonk_record_long = Long.parseLong(tonk[0]);
+				String recorder = tonk[1].trim();
+
+				if (nick.equals(recorder)) {
+					String personal_record_key = "tonkrecord_" + nick;
+
+					System.out.println("Record long: " + String.valueOf(tonk_record_long));
+					int hours = (int)Math.floor(tonk_record_long / 1000 / 60 / 60);
+					System.out.println("Hours: " + hours);
+
+					double tonk_record_personal = 0;
+					try {
+						tonk_record_personal = Double.parseDouble(Database.getJsonData(personal_record_key));
+					} catch (Exception ignored) {}
+
+					tonk_record_personal += hours;
+
+					Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+
+					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points! Current score: " + (tonk_record_personal / 1000d));
+
+					long now = new Date().getTime();
+					Database.storeJsonData("tonkrecord", "0;" + nick);
+					Database.storeJsonData("lasttonk", String.valueOf(now));
+				} else {
+					Helper.sendMessage(target, "You are not the current record holder. It is " + recorder + ".");
+				}
+			}
+		};
+		tonkout_command.setHelpText("Cash in your tonks!");
 	}
 
 	public String chan;
@@ -101,6 +142,7 @@ public class Tonk extends AbstractListener {
 		if (target.contains("#")) {
 			local_command.tryExecute(command, nick, target, event, copyOfRange);
 			reset_command.tryExecute(command, nick, target, event, copyOfRange);
+			tonkout_command.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
