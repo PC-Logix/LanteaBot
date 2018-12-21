@@ -35,16 +35,18 @@ public class Tonk extends AbstractListener {
 				String tonkin = Database.getJsonData("lasttonk");
 				String tonk_record = Database.getJsonData("tonkrecord");
 				long now = new Date().getTime();
-
+				IRCBot.log.info("tonkin :" + tonkin + " tonk_record: " + tonk_record);
 				if (tonkin == "" || tonk_record == "") {
 					Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
 					Database.storeJsonData("tonkrecord", "0;" + nick);
+					IRCBot.log.info("No previous tonk found");
 				} else {
 					long lasttonk = 0;
 					try {
 						lasttonk = Long.parseLong(tonkin);
 					} catch (Exception ex) {
 						System.out.println(ex.getMessage());
+						IRCBot.log.info(ex.getClass() + ": " + ex.getMessage());
 					}
 
 					long diff = now - lasttonk;
@@ -57,21 +59,21 @@ public class Tonk extends AbstractListener {
 						if (nick.equals(recorder)) {
 							Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
 						} else if (tonk_record_long < diff) {
-							System.out.println("New record");
-							System.out.println("'" + recorder + "' == '" + nick + "' => " + (nick.equals(recorder) ? "true" : "false"));
+							IRCBot.log.info("New record");
+							IRCBot.log.info("'" + recorder + "' == '" + nick + "' => " + (nick.equals(recorder) ? "true" : "false"));
 
 							Helper.sendMessage(target, nick + "! You beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
 							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)));
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
-							System.out.println("No record");
+							IRCBot.log.info("No record");
 							Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
 							Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted!");
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						}
 					} catch (Exception ex) {
-						System.out.println(ex.getClass() + ": " + ex.getMessage());
+						IRCBot.log.info(ex.getClass() + ": " + ex.getMessage());
 					}
 				}
 			}
