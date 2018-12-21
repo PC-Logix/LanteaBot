@@ -67,7 +67,7 @@ public class Tonk extends AbstractListener {
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
-							IRCBot.log.info("No record");
+							IRCBot.log.info("No new record set");
 							Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
 							Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted!");
 							Database.storeJsonData("lasttonk", String.valueOf(now));
