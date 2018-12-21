@@ -18,6 +18,7 @@ import java.util.*;
 @SuppressWarnings("rawtypes")
 public class DrinkPotion extends AbstractListener {
 	private Command local_command;
+	private Command get_random;
 	private static ArrayList<String> colors = new ArrayList<>();
 	private static ArrayList<String> consistencies = new ArrayList<>();
 	private static ArrayList<String> effects = new ArrayList<>();
@@ -28,6 +29,7 @@ public class DrinkPotion extends AbstractListener {
 	protected void initHook() {
 		initCommands();
 		IRCBot.registerCommand(local_command);
+		IRCBot.registerCommand(get_random);
 
 		colors.add("blue");
 		colors.add("red");
@@ -132,6 +134,17 @@ public class DrinkPotion extends AbstractListener {
 			}
 		};
 		local_command.setHelpText("Drink a potion with a certain consistency and color and something might happen.");
+
+		get_random = new Command("randompotion", 10) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, "You get a " + getRandomPotion(), nick);
+			}
+		};
+		get_random.setHelpText("Get a random potion");
+		get_random.registerAlias("potion");
+		get_random.registerAlias("randpotion");
+		get_random.registerAlias("gimmepotion");
 	}
 
 	public String chan;
@@ -145,6 +158,7 @@ public class DrinkPotion extends AbstractListener {
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
 		target = Helper.getTarget(event);
 		local_command.tryExecute(command, nick, target, event, copyOfRange);
+		get_random.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	public int getPotionEffect(ArrayList<String> params) {
