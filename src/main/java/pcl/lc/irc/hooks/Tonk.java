@@ -136,8 +136,10 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String data = Database.getJsonData("tonkrecord_" + nick);
-				if (data != null) {
+				if (data != null && !data.isEmpty()) {
 					Helper.sendMessage(target, "You currently have " + data + " points!");
+				} else {
+					Helper.sendMessage(target, "I can't find any record for '" + nick + "' so you have 0 points.");
 				}
 			}
 		};
