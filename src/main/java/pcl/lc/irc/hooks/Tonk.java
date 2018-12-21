@@ -19,6 +19,7 @@ public class Tonk extends AbstractListener {
 	private Command local_command;
 	private Command reset_command;
 	private Command tonkout_command;
+	private Command tonkpoints_command;
 
 	@Override
 	protected void initHook() {
@@ -26,6 +27,7 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(local_command);
 		IRCBot.registerCommand(reset_command);
 		IRCBot.registerCommand(tonkout_command);
+		IRCBot.registerCommand(tonkpoints_command);
 	}
 
 	private void initCommands() {
@@ -129,6 +131,16 @@ public class Tonk extends AbstractListener {
 			}
 		};
 		tonkout_command.setHelpText("Cash in your tonks!");
+
+		tonkpoints_command = new Command("tonkpoints", 60) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String data = Database.getJsonData("tonkrecord_" + nick);
+				if (data != null) {
+					Helper.sendMessage(target, "You currently have " + data + " points!");
+				}
+			}
+		};
 	}
 
 	public String chan;
@@ -145,6 +157,7 @@ public class Tonk extends AbstractListener {
 			local_command.tryExecute(command, nick, target, event, copyOfRange);
 			reset_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonkout_command.tryExecute(command, nick, target, event, copyOfRange);
+			tonkpoints_command.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
