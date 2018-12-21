@@ -132,7 +132,7 @@ public class Tonk extends AbstractListener {
 		};
 		tonkout_command.setHelpText("Cash in your tonks!");
 
-		tonkpoints_command = new Command("tonkpoints", 60) {
+		tonkpoints_command = new Command("tonkpoints") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String data = Database.getJsonData("tonkrecord_" + nick);
