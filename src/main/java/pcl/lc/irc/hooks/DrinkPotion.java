@@ -69,8 +69,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(" turns into a catgirl.");
 		effects.add(" turns into a newt.");
 		effects.add(" turns into a toad.");
-		effects.add("'s hair turns {color}.");
-		effects.add("'s skin turns {color}.");
+		effects.add("'s hair turns to the color of {color}.");
+		effects.add("'s skin turns to the color of {color}.");
 		effects.add("'s toes turn invisible.");
 		effects.add("'s hair grows three times longer.");
 		effects.add(" gains the proportional strength of a chihuahua.");
@@ -82,7 +82,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(" shrinks by a negligible amount.");
 		effects.add(" grows slightly.");
 		effects.add(" suddenly craves pie.");
-		effects.add(" gains the ability to speak with bricks.");
+		effects.add(" gains the ability to talk to bricks.");
 		effects.add(" gains a strong urge to recycle the potion bottle.");
 		effects.add("'s bed is suddenly slightly less comfortable.");
 		effects.add(" gains a negligible amount of luck.");
@@ -91,13 +91,24 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(" grows a mustache.");
 		effects.add(" has a sudden but short lived desire to run around in a circle.");
 		effects.add(" temporarily gains the ability to summon safety pins.");
-		effects.add(" gains one point of strength");
-		effects.add(" gains one point of agility");
-		effects.add(" gains one point of speed");
-		effects.add(" recovers some mana");
-		effects.add(" looses one point of strength");
-		effects.add(" looses one point of agility");
-		effects.add(" looses one point of speed");
+		effects.add(" gains one point of strength.");
+		effects.add(" gains one point of agility.");
+		effects.add(" gains one point of speed.");
+		effects.add(" recovers some mana.");
+		effects.add(" loses one point of strength.");
+		effects.add(" loses one point of agility.");
+		effects.add(" loses one point of speed.");
+		effects.add(" gains an additional bone.");
+		effects.add(" is suddenly more aware of cute things nearby");
+		effects.add(" loses exactly a handful of luck");
+		effects.add("'s clothes turn completely black");
+		effects.add("'s pockets suddenly contain a number of marbles");
+		effects.add("'s favourite hat is suddenly on fire");
+		effects.add(" has a single tear roll down their cheek for some reason");
+		effects.add("'s nose vanish for one minute.");
+		effects.add(" feels like a champion!");
+		effects.add("'s nail turns to the color of {color}");
+		effects.add("'s bones turn blue");
 	}
 
 	private void initCommands() {
