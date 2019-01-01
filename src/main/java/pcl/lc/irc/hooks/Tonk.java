@@ -58,9 +58,7 @@ public class Tonk extends AbstractListener {
 						long tonk_record_long = Long.parseLong(tonk[0]);
 						String recorder = tonk[1].trim();
 
-						if (nick.equals(recorder)) {
-							Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
-						} else if (tonk_record_long < diff) {
+						if (tonk_record_long < diff) {
 							IRCBot.log.info("New record");
 							IRCBot.log.info("'" + recorder + "' == '" + nick + "' => " + (nick.equals(recorder) ? "true" : "false"));
 
@@ -69,10 +67,14 @@ public class Tonk extends AbstractListener {
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
-							IRCBot.log.info("No new record set");
-							Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
-							Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted!");
-							Database.storeJsonData("lasttonk", String.valueOf(now));
+							if (nick.equals(recorder)) {
+								Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
+							} else {
+								IRCBot.log.info("No new record set");
+								Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
+								Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted!");
+								Database.storeJsonData("lasttonk", String.valueOf(now));
+							}
 						}
 					} catch (Exception ex) {
 						IRCBot.log.info(ex.getClass() + ": " + ex.getMessage());

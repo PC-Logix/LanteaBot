@@ -99,16 +99,18 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(" loses one point of agility.");
 		effects.add(" loses one point of speed.");
 		effects.add(" gains an additional bone.");
-		effects.add(" is suddenly more aware of cute things nearby");
-		effects.add(" loses exactly a handful of luck");
-		effects.add("'s clothes turn completely black");
-		effects.add("'s pockets suddenly contain a number of marbles");
-		effects.add("'s favourite hat is suddenly on fire");
-		effects.add(" has a single tear roll down their cheek for some reason");
+		effects.add(" is suddenly more aware of cute things nearby.");
+		effects.add(" loses exactly a handful of luck.");
+		effects.add("'s clothes turn the color of {color}.");
+		effects.add("'s pockets suddenly contain a number of marbles.");
+		effects.add("'s favourite hat is suddenly on fire.");
+		effects.add(" has a single tear roll down their cheek for some reason.");
 		effects.add("'s nose vanish for one minute.");
 		effects.add(" feels like a champion!");
-		effects.add("'s nail turns to the color of {color}");
-		effects.add("'s bones turn blue");
+		effects.add("'s nail turns to the color of {color}.");
+		effects.add("'s bones turn blue.");
+		effects.add(" feels a sudden surge of static electricity.");
+		effects.add("'s shoes are now slightly too large.");
 	}
 
 	private void initCommands() {
