@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @SuppressWarnings("rawtypes")
 public class Curse extends AbstractListener {
 	private Command local_command;
-	private ArrayList<String> curses;
+	private static ArrayList<String> curses;
 
 	@Override
 	protected void initHook() {
@@ -46,6 +46,10 @@ public class Curse extends AbstractListener {
 		curses.add("Waesucks");
 	}
 
+	public static String getRandomCurse() {
+		return curses.get(Helper.getRandomInt(0, curses.size() - 1));
+	}
+
 	private void initCommands() {
 		local_command = new Command("curse", 0) {
 			@Override
@@ -53,7 +57,7 @@ public class Curse extends AbstractListener {
 				if (curses.size() == 0)
 					Helper.sendMessage(target, "I don't know any curses...");
 				else
-					Helper.sendMessage(target, curses.get(Helper.getRandomInt(0, curses.size() - 1)) + Helper.getRandomExlamations(true, false), nick);
+					Helper.sendMessage(target, getRandomCurse() + Helper.getRandomExlamations(true, false), nick);
 			}
 		};
 		local_command.registerAlias("curses");
