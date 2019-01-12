@@ -44,6 +44,7 @@ public class Curse extends AbstractListener {
 		curses.add("Bejabbers");
 		curses.add("Sard");
 		curses.add("Waesucks");
+		curses.add("Avada Kedavra"); // Harry potter -- killing curse
 	}
 
 	public static String getRandomCurse() {
