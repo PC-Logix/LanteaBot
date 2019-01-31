@@ -83,7 +83,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(" grows slightly.");
 		effects.add(" suddenly craves pie.");
 		effects.add(" gains the ability to talk to bricks.");
-		effects.add(" gains a strong urge to recycle the potion bottle.");
+		effects.add(" feels a strong urge to recycle the potion bottle.");
 		effects.add("'s bed is suddenly slightly less comfortable.");
 		effects.add(" gains a negligible amount of luck.");
 		effects.add(" realizes this was actually a {color} {consistency} potion.");
@@ -111,6 +111,11 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("'s bones turn blue.");
 		effects.add(" feels a sudden surge of static electricity.");
 		effects.add("'s shoes are now slightly too large.");
+		effects.add(" is now Borg.");
+		effects.add(" has no memory of drinking a potion.");
+		effects.add(" knows the exact location of a particular molecule of oxygen for a second.");
+		effects.add(" thinks the empty bottle is a snake.");
+		effects.add(" gets an urge to have another potion.");
 	}
 
 	private void initCommands() {
