@@ -45,11 +45,20 @@ public class DrinkPotion extends AbstractListener {
 		colors.add("silver");
 		colors.add("tomato");
 		colors.add("lime");
-		colors.add("sky blue");
 		colors.add("citrus");
 		colors.add("strawberry");
 		colors.add("chocolate");
+		colors.add("orange");
 		colors.add("tuna");
+		colors.add("salmon");
+		colors.add("rainbow");
+		colors.add("void");
+		colors.add("ocean");
+		colors.add("grass");
+		colors.add("sky");
+		colors.add("rock");
+		colors.add("metal");
+		colors.add("copper");
 
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
@@ -64,6 +73,17 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("muddy");
 		consistencies.add("shimmering");
 		consistencies.add("gloomy");
+		consistencies.add("prickly");
+		consistencies.add("sour");
+		consistencies.add("salty");
+		consistencies.add("sweet");
+		consistencies.add("runny");
+		consistencies.add("boiling");
+		consistencies.add("freezing");
+		consistencies.add("sedimented");
+		consistencies.add("warpy");
+		consistencies.add("basic");
+		consistencies.add("stirring");
 
 		effects.add(" looks confused as nothing happens.");
 		effects.add(" turns into a catgirl.");
