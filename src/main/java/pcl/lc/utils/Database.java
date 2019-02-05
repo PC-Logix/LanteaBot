@@ -158,14 +158,17 @@ public class Database {
 //		}
 		try {
 			IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
-			PreparedStatement stmt = preparedStatements.get("storeJSON");
+			PreparedStatement stmt = getPreparedStatement("storeJSON");
 			stmt.setString(1, key);
 			stmt.setString(2, data);
-			stmt.execute();
+			stmt.executeUpdate();
 
 			return true;
 		} catch (SQLException e) {
 			IRCBot.log.error("Exception is: ", e);
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		IRCBot.log.error("storeJsonData false");
@@ -181,7 +184,7 @@ public class Database {
 //				e.printStackTrace();
 //		}
 		try {
-			PreparedStatement stmt = preparedStatements.get("retreiveJSON");
+			PreparedStatement stmt = getPreparedStatement("retreiveJSON");
 			stmt.setString(1, key);
 			
 			ResultSet theResult = stmt.executeQuery();
@@ -195,6 +198,9 @@ public class Database {
 		} catch (SQLException e) {
 			IRCBot.log.error("Code: " + e.getErrorCode());
 			IRCBot.log.error("Exception is: ", e);
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		IRCBot.log.error("JsonData try/catch failed");
