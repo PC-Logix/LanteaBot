@@ -55,7 +55,7 @@ public class Database {
 		}
 		
 		
-		addPreparedStatement("storeJSON", "INSERT OR REPLACE INTO JsonData (mykey, store) VALUES (?,?)");
+		addPreparedStatement("storeJSON", "INSERT OR REPLACE INTO JsonData (mykey, store) VALUES (?, ?);");
 		addPreparedStatement("retreiveJSON", "SELECT store FROM JsonData WHERE mykey = ?");
 	}
 
