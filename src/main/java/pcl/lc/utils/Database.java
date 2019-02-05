@@ -165,7 +165,7 @@ public class Database {
 			PreparedStatement stmt = preparedStatements.get("storeJSON");
 			stmt.setString(1, key);
 			stmt.setString(2, data);
-			stmt.executeUpdate();
+			stmt.execute();
 
 			return true;
 		} catch (SQLException e) {
