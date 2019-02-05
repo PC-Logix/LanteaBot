@@ -53,6 +53,10 @@ public class Database {
 			statement.setPoolable(true);
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
 		}
+		
+		
+		addPreparedStatement("storeJSON", "INSERT OR REPLACE INTO JsonData (mykey, store) VALUES (?,?)");
+		addPreparedStatement("retreiveJSON", "SELECT store FROM JsonData WHERE mykey = ?");
 	}
 
 	public static boolean addStatement(String sql) {
@@ -158,7 +162,11 @@ public class Database {
 //		}
 		try {
 			IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
-			statement.executeUpdate("INSERT OR REPLACE INTO JsonData (mykey, store) VALUES ('" + key.toLowerCase() + "', '" + data + "')");
+			PreparedStatement stmt = preparedStatements.get("storeJSON");
+			stmt.setString(1, key);
+			stmt.setString(2, data);
+			stmt.executeUpdate();
+
 			return true;
 		} catch (SQLException e) {
 			IRCBot.log.error("Exception is: ", e);
@@ -177,7 +185,10 @@ public class Database {
 //				e.printStackTrace();
 //		}
 		try {
-			ResultSet theResult = statement.executeQuery("SELECT store FROM JsonData WHERE mykey = '" + key.toLowerCase() + "'");
+			PreparedStatement stmt = preparedStatements.get("retreiveJSON");
+			stmt.setString(1, key);
+			
+			ResultSet theResult = stmt.executeQuery();
 			if (theResult.next()) {
 				String result = theResult.getString(1);
 				IRCBot.log.info("JsonData: " + result);
