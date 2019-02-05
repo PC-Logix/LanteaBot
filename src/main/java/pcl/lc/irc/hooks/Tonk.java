@@ -9,6 +9,9 @@ import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -27,20 +30,75 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(local_command);
 		IRCBot.registerCommand(reset_command);
 		IRCBot.registerCommand(tonkout_command);
-		IRCBot.registerCommand(tonkpoints_command);
+		IRCBot.registerCommand(tonkpoints_command);		
+		Database.addPreparedStatement("storeJSON", "INSERT OR REPLACE INTO JsonData (mykey, store) VALUES (?, ?);");
+		Database.addPreparedStatement("retreiveJSON", "SELECT store FROM JsonData WHERE mykey = ?");
+	}
+	
+	public static boolean storeJsonData(String key, String data) {
+//		try {
+//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+//		} catch (SQLException e) {
+//			if (e.getErrorCode() != 101)
+//				IRCBot.log.error("Exception is: ", e);
+//				e.printStackTrace();
+//		}
+		try {
+			IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
+			PreparedStatement stmt = Database.preparedStatements.get("storeJSON");
+			stmt.setString(1, key);
+			stmt.setString(2, data);
+			stmt.execute();
+
+			return true;
+		} catch (SQLException e) {
+			IRCBot.log.error("Exception is: ", e);
+			e.printStackTrace();
+		}
+		IRCBot.log.error("storeJsonData false");
+		return false;
 	}
 
+	public static String getJsonData(String key) {
+//		try {
+//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+//		} catch (SQLException e) {
+//			if (e.getErrorCode() != 101)
+//				IRCBot.log.error("Exception is: ", e);
+//				e.printStackTrace();
+//		}
+		try {
+			PreparedStatement stmt = Database.preparedStatements.get("retreiveJSON");
+			stmt.setString(1, key);
+			
+			ResultSet theResult = stmt.executeQuery();
+			if (theResult.next()) {
+				String result = theResult.getString(1);
+				IRCBot.log.info("JsonData: " + result);
+				return result;
+			}
+			IRCBot.log.error("JsonData was empty, returning empty string");
+			return "";
+		} catch (SQLException e) {
+			IRCBot.log.error("Code: " + e.getErrorCode());
+			IRCBot.log.error("Exception is: ", e);
+			e.printStackTrace();
+		}
+		IRCBot.log.error("JsonData try/catch failed");
+		return "";
+	}
+	
 	private void initCommands() {
 		local_command = new Command("tonk", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String tonkin = Database.getJsonData("lasttonk");
-				String tonk_record = Database.getJsonData("tonkrecord");
+				String tonkin = getJsonData("lasttonk");
+				String tonk_record = getJsonData("tonkrecord");
 				long now = new Date().getTime();
 				IRCBot.log.info("tonkin :" + tonkin + " tonk_record: " + tonk_record);
 				if (tonkin == "" || tonk_record == "") {
 					Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
-					Database.storeJsonData("tonkrecord", "0;" + nick);
+					storeJsonData("tonkrecord", "0;" + nick);
 					IRCBot.log.info("No previous tonk found");
 				} else {
 					long lasttonk = 0;
@@ -64,8 +122,8 @@ public class Tonk extends AbstractListener {
 
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
 							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!");
-							Database.storeJsonData("tonkrecord", diff + ";" + nick);
-							Database.storeJsonData("lasttonk", String.valueOf(now));
+							storeJsonData("tonkrecord", diff + ";" + nick);
+							storeJsonData("lasttonk", String.valueOf(now));
 						} else {
 							if (nick.equals(recorder)) {
 								Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
@@ -73,7 +131,7 @@ public class Tonk extends AbstractListener {
 								IRCBot.log.info("No new record set");
 								Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
 								Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted! Missed by " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long - diff)) + "!");
-								Database.storeJsonData("lasttonk", String.valueOf(now));
+								storeJsonData("lasttonk", String.valueOf(now));
 							}
 						}
 					} catch (Exception ex) {
@@ -89,8 +147,8 @@ public class Tonk extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				long now = new Date().getTime();
 				Helper.sendMessage(target, "Tonk reset " + nick + ", you are the record holder!");
-				Database.storeJsonData("tonkrecord", "0;" + nick);
-				Database.storeJsonData("lasttonk", String.valueOf(now));
+				storeJsonData("tonkrecord", "0;" + nick);
+				storeJsonData("lasttonk", String.valueOf(now));
 			}
 		};
 		reset_command.setHelpText("What is tonk? Tonk is life.");
@@ -99,8 +157,8 @@ public class Tonk extends AbstractListener {
 		tonkout_command = new Command("tonkout", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String tonkin = Database.getJsonData("lasttonk");
-				String tonk_record = Database.getJsonData("tonkrecord");
+				String tonkin = getJsonData("lasttonk");
+				String tonk_record = getJsonData("tonkrecord");
 
 				String tonk[] = tonk_record.split(";");
 				long tonk_record_long = Long.parseLong(tonk[0]);
@@ -115,18 +173,18 @@ public class Tonk extends AbstractListener {
 
 					double tonk_record_personal = 0;
 					try {
-						tonk_record_personal = Double.parseDouble(Database.getJsonData(personal_record_key));
+						tonk_record_personal = Double.parseDouble(getJsonData(personal_record_key));
 					} catch (Exception ignored) {}
 
 					tonk_record_personal += hours;
 
-					Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+					storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
 					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points! Current score: " + (tonk_record_personal / 1000d));
 
 					long now = new Date().getTime();
-					Database.storeJsonData("tonkrecord", "0;" + nick);
-					Database.storeJsonData("lasttonk", String.valueOf(now));
+					storeJsonData("tonkrecord", "0;" + nick);
+					storeJsonData("lasttonk", String.valueOf(now));
 				} else {
 					Helper.sendMessage(target, "You are not the current record holder. It is " + recorder + ".");
 				}
@@ -137,7 +195,7 @@ public class Tonk extends AbstractListener {
 		tonkpoints_command = new Command("tonkpoints") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String data = Database.getJsonData("tonkrecord_" + nick);
+				String data = getJsonData("tonkrecord_" + nick);
 				if (data != null && !data.isEmpty()) {
 					Helper.sendMessage(target, "You currently have " + (Double.parseDouble(data) / 1000d) + " points!", nick);
 				} else {
