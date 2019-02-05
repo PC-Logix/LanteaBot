@@ -148,7 +148,58 @@ public class Database {
 		IRCBot.log.info("Database update ran " + counter + " queries");
 	}
 
+	public static boolean storeJsonData(String key, String data) {
+//		try {
+//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+//		} catch (SQLException e) {
+//			if (e.getErrorCode() != 101)
+//				IRCBot.log.error("Exception is: ", e);
+//				e.printStackTrace();
+//		}
+		try {
+			IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
+			PreparedStatement stmt = preparedStatements.get("storeJSON");
+			stmt.setString(1, key);
+			stmt.setString(2, data);
+			stmt.execute();
 
+			return true;
+		} catch (SQLException e) {
+			IRCBot.log.error("Exception is: ", e);
+			e.printStackTrace();
+		}
+		IRCBot.log.error("storeJsonData false");
+		return false;
+	}
+
+	public static String getJsonData(String key) {
+//		try {
+//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+//		} catch (SQLException e) {
+//			if (e.getErrorCode() != 101)
+//				IRCBot.log.error("Exception is: ", e);
+//				e.printStackTrace();
+//		}
+		try {
+			PreparedStatement stmt = preparedStatements.get("retreiveJSON");
+			stmt.setString(1, key);
+			
+			ResultSet theResult = stmt.executeQuery();
+			if (theResult.next()) {
+				String result = theResult.getString(1);
+				IRCBot.log.info("JsonData: " + result);
+				return result;
+			}
+			IRCBot.log.error("JsonData was empty, returning empty string");
+			return "";
+		} catch (SQLException e) {
+			IRCBot.log.error("Code: " + e.getErrorCode());
+			IRCBot.log.error("Exception is: ", e);
+			e.printStackTrace();
+		}
+		IRCBot.log.error("JsonData try/catch failed");
+		return "";
+	}
 
 	public static ResultSet ExecuteQuery(String query) throws SQLException {
 		return statement.executeQuery(query);
