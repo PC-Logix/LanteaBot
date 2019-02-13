@@ -54,7 +54,7 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(reset_command);
 		IRCBot.registerCommand(tonkout_command);
 		IRCBot.registerCommand(tonkpoints_command);
-		Database.addPreparedStatement("getTonkUsers", "SELECT mykey, store FROM JsonData WHERE mykey LIKE tonkrecord%;");
+		Database.addPreparedStatement("getTonkUsers", "SELECT mykey, store FROM JsonData WHERE mykey LIKE 'tonkrecord%';");
 	}
 	static String html;
 	
@@ -192,8 +192,9 @@ public class Tonk extends AbstractListener {
 			try {
 				PreparedStatement statement = Database.getPreparedStatement("getTonkUsers");
 				ResultSet resultSet = statement.executeQuery();
+				tonkLeaders += "<tr><td>Test</td><td>1000</td></tr>";
 				while (resultSet.next()) {
-					tonkLeaders += "<tr><td>" + resultSet.getString(2) + "</td><td>" + (Double.parseDouble(resultSet.getString(1)) / 1000d) + "</td></tr>";
+					tonkLeaders += "<tr><td>" + resultSet.getString(2).replace("tonkrecord_",  "") + "</td><td>" + (Double.parseDouble(resultSet.getString(1)) / 1000d) + "</td></tr>";
 				}
 			}
 			catch (Exception e) {
