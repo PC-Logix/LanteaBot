@@ -168,6 +168,7 @@ public class Database {
 			IRCBot.log.error("Exception is: ", e);
 			e.printStackTrace();
 		} catch (Exception e) {
+			IRCBot.log.error("Exception is: ", e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -200,6 +201,7 @@ public class Database {
 			IRCBot.log.error("Exception is: ", e);
 			e.printStackTrace();
 		} catch (Exception e) {
+			IRCBot.log.error("Exception is: ", e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

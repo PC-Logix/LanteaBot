@@ -247,6 +247,8 @@ public class IRCBot {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Channels(name)");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
+		Database.addStatement("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
+		
 		//Channels
 		Database.addPreparedStatement("addChannel", "REPLACE INTO Channels (name) VALUES (?);");
 		Database.addPreparedStatement("removeChannel","DELETE FROM Channels WHERE name = ?;");
@@ -255,6 +257,7 @@ public class IRCBot {
 		Database.addPreparedStatement("disableHook","DELETE FROM OptionalHooks WHERE hook = ? AND channel = ?;");
 		Database.addPreparedStatement("checkHook","SELECT hook, channel FROM OptionalHooks WHERE hook = ?;");
 		Database.addPreparedStatement("checkHookForChan","SELECT hook FROM OptionalHooks WHERE hook = ? AND channel = ?;");
+		//JSONStorage
 		Database.addPreparedStatement("storeJSON", "INSERT OR REPLACE INTO JsonData (mykey, store) VALUES (?, ?);");
 		Database.addPreparedStatement("retreiveJSON", "SELECT store FROM JsonData WHERE mykey = ?");
 		return true;
