@@ -38,8 +38,13 @@ public class Tell extends AbstractListener {
             while (results.next()) {
             	numTells++;
             }
-            if (numTells > 0)
-            	event.getUser().send().notice("You have " + numTells + " tell(s) currently waiting for you.");
+            if (numTells > 0) {
+		if (numTells > 1) {
+		    event.getUser().send().notice("You have " + numTells + " tells currently waiting for you.");
+		} else {
+		    event.getUser().send().notice("You have " + numTells + " tell currently waiting for you.");
+		}
+	    }
         } catch (Exception e) {
             e.printStackTrace();
         }
