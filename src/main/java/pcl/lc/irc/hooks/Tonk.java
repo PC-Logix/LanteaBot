@@ -68,13 +68,14 @@ public class Tonk extends AbstractListener {
 		local_command = new Command("tonk", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				nick = nick.replaceAll("\\p{C}", "");
 				String tonkin = Database.getJsonData("lasttonk");
 				String tonk_record = Database.getJsonData("tonkrecord");
 				long now = new Date().getTime();
 				IRCBot.log.info("tonkin :" + tonkin + " tonk_record: " + tonk_record);
 				if (tonkin == "" || tonk_record == "") {
 					Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
-					Database.storeJsonData("tonkrecord", "0;" + nick.replaceAll("\\p{C}", ""));
+					Database.storeJsonData("tonkrecord", "0;" + nick);
 					IRCBot.log.info("No previous tonk found");
 				} else {
 					long lasttonk = 0;
@@ -98,7 +99,7 @@ public class Tonk extends AbstractListener {
 
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
 							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!");
-							Database.storeJsonData("tonkrecord", diff + ";" + nick.replaceAll("\\p{C}", ""));
+							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
 							if (nick.equals(recorder)) {
@@ -122,8 +123,9 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				long now = new Date().getTime();
+				nick = nick.replaceAll("\\p{C}", "");
 				Helper.sendMessage(target, "Tonk reset " + nick + ", you are the record holder!");
-				Database.storeJsonData("tonkrecord", "0;" + nick.replaceAll("\\p{C}", ""));
+				Database.storeJsonData("tonkrecord", "0;" + nick);
 				Database.storeJsonData("lasttonk", String.valueOf(now));
 			}
 		};
@@ -133,6 +135,7 @@ public class Tonk extends AbstractListener {
 		tonkout_command = new Command("tonkout", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				nick = nick.replaceAll("\\p{C}", "");
 				String tonkin = Database.getJsonData("lasttonk");
 				String tonk_record = Database.getJsonData("tonkrecord");
 
@@ -140,8 +143,8 @@ public class Tonk extends AbstractListener {
 				long tonk_record_long = Long.parseLong(tonk[0]);
 				String recorder = tonk[1].trim();
 
-				if (nick.replaceAll("\\p{C}", "").equals(recorder)) {
-					String personal_record_key = "tonkrecord_" + nick.replaceAll("\\p{C}", "");
+				if (nick.equals(recorder)) {
+					String personal_record_key = "tonkrecord_" + nick;
 
 					System.out.println("Record long: " + String.valueOf(tonk_record_long));
 					int hours = (int)Math.floor(tonk_record_long / 1000 / 60 / 60);
@@ -159,7 +162,7 @@ public class Tonk extends AbstractListener {
 					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points! Current score: " + (tonk_record_personal / 1000d));
 
 					long now = new Date().getTime();
-					Database.storeJsonData("tonkrecord", "0;" + nick.replaceAll("\\p{C}", ""));
+					Database.storeJsonData("tonkrecord", "0;" + nick);
 					Database.storeJsonData("lasttonk", String.valueOf(now));
 				} else {
 					Helper.sendMessage(target, "You are not the current record holder. It is " + recorder + ".");
@@ -171,7 +174,9 @@ public class Tonk extends AbstractListener {
 		tonkpoints_command = new Command("tonkpoints") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String data = Database.getJsonData("tonkrecord_" + nick.replaceAll("\\p{C}", ""));
+
+				nick = nick.replaceAll("\\p{C}", "");
+				String data = Database.getJsonData("tonkrecord_" + nick);
 				if (data != null && !data.isEmpty()) {
 					Helper.sendMessage(target, "You currently have " + (Double.parseDouble(data) / 1000d) + " points!", nick);
 				} else {
@@ -206,7 +211,7 @@ public class Tonk extends AbstractListener {
 				int count = 0;
 				while (resultSet.next()) {
 					count++;
-					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace("tonkrecord_",  "").replaceAll("\\p{C}", "") + "</td><td>" + (Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
+					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace("tonkrecord_",  "") + "</td><td>" + (Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
 				}
 			}
 			catch (Exception e) {
