@@ -145,6 +145,16 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("A warpzone opens up next to {user}.");
 		effects.add("After the first sip the potion poofs away.");
 		effects.add("{nick} looks up and sees the moon smile at them for a second.");
+		effects.add("The ghost of a plant haunts you for a while.");
+		effects.add("Three nearby pebbles suddenly shift slightly in your direction.");
+		effects.add("Any pie you eat within the next 10 minutes tastes awful.");
+		effects.add("Sitting down suddenly sounds like a really terrible idea.");
+		effects.add("The next fork you touch tells you it's most deeply guarded secret.");
+		effects.add("A voice whispers into your ear \"Drink or be drunk\" as it fades away as you drink the potion.");
+		effects.add("You briefly feel like you have just stepped out of a car.");
+		effects.add("True enlightenment can be achieved by drinking another potion.");
+		effects.add("For about 5 seconds you know the location of a great treasure.");
+		effects.add("The potion was inside you all along.");
 	}
 
 	private void initCommands() {
