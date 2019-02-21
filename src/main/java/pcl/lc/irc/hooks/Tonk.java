@@ -1,34 +1,22 @@
 package pcl.lc.irc.hooks;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
-
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
-import pcl.lc.irc.hooks.Quotes.QuoteHandler;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.PasteUtils;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
@@ -41,6 +29,7 @@ import java.util.Map;
  * Created by Forecaster on 30/03/2017 for the LanteaBot project.
  */
 public class Tonk extends AbstractListener {
+	static boolean applyBonusPoints = true;
 	private Command local_command;
 	private Command reset_command;
 	private Command tonkout_command;
@@ -157,9 +146,12 @@ public class Tonk extends AbstractListener {
 
 					tonk_record_personal += hours;
 
+					if (applyBonusPoints)
+					    tonk_record_personal += 2d * hours;
+
 					Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
-					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points! Current score: " + (tonk_record_personal / 1000d));
+					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points!" + (applyBonusPoints ? " plus " + ((2d * hours) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + (tonk_record_personal / 1000d));
 
 					long now = new Date().getTime();
 					Database.storeJsonData("tonkrecord", "0;" + nick);
