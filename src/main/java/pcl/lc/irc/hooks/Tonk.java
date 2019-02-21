@@ -146,12 +146,12 @@ public class Tonk extends AbstractListener {
 
 					tonk_record_personal += hours;
 
-					if (applyBonusPoints)
-					    tonk_record_personal += 2d * hours;
+					if (applyBonusPoints && hours > 1)
+					    tonk_record_personal += 2d * (hours - 1);
 
 					Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
-					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points!" + (applyBonusPoints ? " plus " + ((2d * hours) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + (tonk_record_personal / 1000d));
+					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points!" + ((applyBonusPoints && hours > 1) ? " plus " + ((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + (tonk_record_personal / 1000d));
 
 					long now = new Date().getTime();
 					Database.storeJsonData("tonkrecord", "0;" + nick);
