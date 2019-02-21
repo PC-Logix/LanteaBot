@@ -142,6 +142,9 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("It tastes salty.");
 		effects.add("{user} feels like one particular wasp has it out for them suddenly.");
 		effects.add("{user} zones out for a second.");
+		effects.add("A warpzone opens up next to {user}.");
+		effects.add("After the first sip the potion poofs away.");
+		effects.add("{nick} looks up and sees the moon smile at them for a second.");
 	}
 
 	private void initCommands() {
