@@ -98,7 +98,7 @@ public class Tonk extends AbstractListener {
 							Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
-							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained! " + nick + " also gained " + (hours / 1000d) + " tonk points for stealing the tonk.");
+							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((hours > 0) ? " " + nick + " also gained " + (hours / 1000d) + " tonk points for stealing the tonk." : ""));
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
