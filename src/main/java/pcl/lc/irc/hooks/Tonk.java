@@ -86,8 +86,19 @@ public class Tonk extends AbstractListener {
 							IRCBot.log.info("New record");
 							IRCBot.log.info("'" + recorder + "' == '" + nick + "' => " + (nick.equals(recorder) ? "true" : "false"));
 
+							String personal_record_key = "tonkrecord_" + nick;
+							int hours = GetHours(diff);
+
+							double tonk_record_personal = 0;
+							try {
+								tonk_record_personal = Double.parseDouble(Database.getJsonData(personal_record_key));
+							} catch (Exception ignored) {}
+
+							tonk_record_personal += hours;
+							Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
-							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!");
+							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained! " + nick + " also gained " + (hours / 1000d) + " tonk points for stealing the tonk.");
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
@@ -135,9 +146,7 @@ public class Tonk extends AbstractListener {
 				if (nick.equals(recorder)) {
 					String personal_record_key = "tonkrecord_" + nick;
 
-					System.out.println("Record long: " + String.valueOf(tonk_record_long));
-					int hours = (int)Math.floor(tonk_record_long / 1000 / 60 / 60);
-					System.out.println("Hours: " + hours);
+					int hours = GetHours(tonk_record_long);
 
 					double tonk_record_personal = 0;
 					try {
@@ -176,6 +185,14 @@ public class Tonk extends AbstractListener {
 				}
 			}
 		};
+	}
+
+	static int GetHours(long tonk_time) {
+		System.out.println("Record long: " + String.valueOf(tonk_time));
+		int hours = (int)Math.floor(tonk_time / 1000d / 60d / 60d);
+		System.out.println("Hours: " + hours);
+
+		return hours;
 	}
 
 	
