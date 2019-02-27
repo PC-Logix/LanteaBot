@@ -144,7 +144,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} zones out for a second.");
 		effects.add("A warpzone opens up next to {user}.");
 		effects.add("After the first sip the potion poofs away.");
-		effects.add("{nick} looks up and sees the moon smile at them for a second.");
+		effects.add("{user} looks up and sees the moon smile at them for a second.");
 		effects.add("The ghost of a plant haunts you for a while.");
 		effects.add("Three nearby pebbles suddenly shift slightly in your direction.");
 		effects.add("Any pie you eat within the next 10 minutes tastes awful.");
