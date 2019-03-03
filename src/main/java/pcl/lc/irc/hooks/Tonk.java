@@ -19,6 +19,7 @@ import pcl.lc.utils.Helper;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -65,6 +66,7 @@ public class Tonk extends AbstractListener {
 				if (tonkin == "" || tonk_record == "") {
 					Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
 					Database.storeJsonData("tonkrecord", "0;" + nick);
+                    Database.storeJsonData("lasttonk", String.valueOf(now));
 					IRCBot.log.info("No previous tonk found");
 				} else {
 					long lasttonk = 0;
@@ -87,18 +89,20 @@ public class Tonk extends AbstractListener {
 							IRCBot.log.info("'" + recorder + "' == '" + nick + "' => " + (nick.equals(recorder) ? "true" : "false"));
 
 							String personal_record_key = "tonkrecord_" + nick;
-							int hours = GetHours(diff);
+							double hours = GetHoursDouble(diff - tonk_record_long, 2);
 
 							double tonk_record_personal = 0;
 							try {
 								tonk_record_personal = Double.parseDouble(Database.getJsonData(personal_record_key));
 							} catch (Exception ignored) {}
 
+							System.out.println("Hours added to score: " + hours);
 							tonk_record_personal += hours;
 							Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
-							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((hours > 0) ? " " + nick + " also gained " + (hours / 1000d) + " tonk points for stealing the tonk." : ""));
+                            DecimalFormat dec = new DecimalFormat("#.########");
+							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? " " + nick + " also gained " + dec.format(hours / 1000d) + " tonk points for stealing the tonk." : ""));
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
@@ -179,22 +183,30 @@ public class Tonk extends AbstractListener {
 				nick = nick.replaceAll("\\p{C}", "");
 				String data = Database.getJsonData("tonkrecord_" + nick);
 				if (data != null && !data.isEmpty()) {
-					Helper.sendMessage(target, "You currently have " + (Double.parseDouble(data) / 1000d) + " points!", nick);
+				    DecimalFormat dec = new DecimalFormat("#.########");
+					Helper.sendMessage(target, "You currently have " + dec.format(Double.parseDouble(data) / 1000d) + " points!", nick);
 				} else {
-					Helper.sendMessage(target, "I can't find any record, so you have 0 points.", nick);
+					Helper.sendMessage(target, "I can't find a record, so you have 0 points.", nick);
 				}
 			}
 		};
 	}
 
 	static int GetHours(long tonk_time) {
-		System.out.println("Record long: " + String.valueOf(tonk_time));
+		System.out.println("Record long: " + tonk_time);
 		int hours = (int)Math.floor(tonk_time / 1000d / 60d / 60d);
 		System.out.println("Hours: " + hours);
 
 		return hours;
 	}
 
+	public static double GetHoursDouble(long tonk_time, int decimals) {
+		System.out.println("Record long: " + tonk_time);
+		double hours = tonk_time / 1000d / 60d / 60d;
+		System.out.println("Hours: " + hours);
+
+		return Helper.round(hours, decimals);
+	}
 	
 	static class TonkHandler implements HttpHandler {
 		@Override
@@ -220,7 +232,8 @@ public class Tonk extends AbstractListener {
 				int count = 0;
 				while (resultSet.next()) {
 					count++;
-					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace("tonkrecord_",  "") + "</td><td>" + (Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
+					DecimalFormat dec = new DecimalFormat("#.########");
+					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace("tonkrecord_",  "") + "</td><td>" + dec.format(Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
 				}
 			}
 			catch (Exception e) {
