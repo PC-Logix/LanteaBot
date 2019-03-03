@@ -83,10 +83,11 @@ public class Tonk extends AbstractListener {
 						String tonk[] = tonk_record.split(";");
 						long tonk_record_long = Long.parseLong(tonk[0]);
 						String recorder = tonk[1].trim();
+                        boolean nick_is_recorder = nick.equals(recorder);
 
 						if (tonk_record_long < diff) {
 							IRCBot.log.info("New record");
-							IRCBot.log.info("'" + recorder + "' == '" + nick + "' => " + (nick.equals(recorder) ? "true" : "false"));
+							IRCBot.log.info("'" + recorder + "' == '" + nick + "' => " + (nick_is_recorder ? "true" : "false"));
 
 							String personal_record_key = "tonkrecord_" + nick;
 							double hours = GetHoursDouble(diff - tonk_record_long, 2);
@@ -96,21 +97,25 @@ public class Tonk extends AbstractListener {
 								tonk_record_personal = Double.parseDouble(Database.getJsonData(personal_record_key));
 							} catch (Exception ignored) {}
 
-							System.out.println("Hours added to score: " + hours);
-							tonk_record_personal += hours;
-							Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+							if (!nick_is_recorder) {
+                                System.out.println("Hours added to score: " + hours);
+                                tonk_record_personal += hours;
+                                Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+                            } else {
+							    System.out.println("No points gained because nick equals record holder");
+                            }
 
-							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
+							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
                             DecimalFormat dec = new DecimalFormat("#.########");
-							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? " " + nick + " also gained " + dec.format(hours / 1000d) + " tonk points for stealing the tonk." : ""));
+							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format(hours / 1000d) + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself.") : ""));
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
 						} else {
-							if (nick.equals(recorder)) {
+							if (nick_is_recorder) {
 								Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
 							} else {
 								IRCBot.log.info("No new record set");
-								Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + (nick.equals(recorder) ? "your own" : recorder + "'s") + " record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
+								Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + recorder + "'s record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
 								Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted! Missed by " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long - diff)) + "!");
 								Database.storeJsonData("lasttonk", String.valueOf(now));
 							}
