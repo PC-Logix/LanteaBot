@@ -30,6 +30,7 @@ import java.util.Map;
  * Created by Forecaster on 30/03/2017 for the LanteaBot project.
  */
 public class Tonk extends AbstractListener {
+    static String numberFormat = "#.########";
 	static boolean applyBonusPoints = true;
 	private Command local_command;
 	private Command reset_command;
@@ -106,7 +107,7 @@ public class Tonk extends AbstractListener {
                             }
 
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
-                            DecimalFormat dec = new DecimalFormat("#.########");
+                            DecimalFormat dec = new DecimalFormat(numberFormat);
 							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format(hours / 1000d) + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself.") : ""));
 							Database.storeJsonData("tonkrecord", diff + ";" + nick);
 							Database.storeJsonData("lasttonk", String.valueOf(now));
@@ -169,7 +170,8 @@ public class Tonk extends AbstractListener {
 
 					Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
-					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + (hours / 1000d) + " tonk points!" + ((applyBonusPoints && hours > 1) ? " plus " + ((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + (tonk_record_personal / 1000d));
+					DecimalFormat dec = new DecimalFormat(numberFormat);
+					Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + ((applyBonusPoints && hours > 1) ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
 
 					long now = new Date().getTime();
 					Database.storeJsonData("tonkrecord", "0;" + nick);
@@ -188,7 +190,7 @@ public class Tonk extends AbstractListener {
 				nick = nick.replaceAll("\\p{C}", "");
 				String data = Database.getJsonData("tonkrecord_" + nick);
 				if (data != null && !data.isEmpty()) {
-				    DecimalFormat dec = new DecimalFormat("#.########");
+				    DecimalFormat dec = new DecimalFormat(numberFormat);
 					Helper.sendMessage(target, "You currently have " + dec.format(Double.parseDouble(data) / 1000d) + " points!", nick);
 				} else {
 					Helper.sendMessage(target, "I can't find a record, so you have 0 points.", nick);
@@ -237,7 +239,7 @@ public class Tonk extends AbstractListener {
 				int count = 0;
 				while (resultSet.next()) {
 					count++;
-					DecimalFormat dec = new DecimalFormat("#.########");
+					DecimalFormat dec = new DecimalFormat(numberFormat);
 					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace("tonkrecord_",  "") + "</td><td>" + dec.format(Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
 				}
 			}
