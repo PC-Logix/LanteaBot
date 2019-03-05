@@ -54,6 +54,7 @@ dependencies {
   compile 'io.github.firemaples:microsoft-translator-java-api:0.8.3'
   compile 'com.maxmind.geoip2:geoip2:2.11.0'
   compile 'mysql:mysql-connector-java:6.0.+'
+  compile group: 'net.java.dev.inflector', name: 'inflector', version: '0.7.0'
 }
 
 version = "${versionObj.toString()}"
