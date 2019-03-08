@@ -209,6 +209,7 @@ public class Tonk extends AbstractListener {
             }
 		};
 		tonkout_command.setHelpText("Cash in your tonks!");
+		tonkout_command.registerAlias("tonktonk");
 
 		tonkpoints_command = new Command("tonkpoints") {
 			@Override
