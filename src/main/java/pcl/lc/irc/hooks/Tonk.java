@@ -30,12 +30,15 @@ import java.util.Map;
  * Created by Forecaster on 30/03/2017 for the LanteaBot project.
  */
 public class Tonk extends AbstractListener {
-    static String numberFormat = "#.########";
-	static boolean applyBonusPoints = true;
+    private static String numberFormat = "#.########";
+	private static String tonk_record_key = "tonkrecord";
+	private static String last_tonk_key = "lasttonk";
+	private static boolean applyBonusPoints = true;
 	private Command local_command;
 	private Command reset_command;
 	private Command tonkout_command;
 	private Command tonkpoints_command;
+	private Command wind_back_command;
 
 	@Override
 	protected void initHook() {
@@ -60,14 +63,14 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				nick = nick.replaceAll("\\p{C}", "");
-				String tonkin = Database.getJsonData("lasttonk");
-				String tonk_record = Database.getJsonData("tonkrecord");
+				String tonkin = Database.getJsonData(last_tonk_key);
+				String tonk_record = Database.getJsonData(tonk_record_key);
 				long now = new Date().getTime();
 				IRCBot.log.info("tonkin :" + tonkin + " tonk_record: " + tonk_record);
 				if (tonkin == "" || tonk_record == "") {
 					Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
-					Database.storeJsonData("tonkrecord", "0;" + nick);
-                    Database.storeJsonData("lasttonk", String.valueOf(now));
+					Database.storeJsonData(tonk_record_key, "0;" + nick);
+                    Database.storeJsonData(last_tonk_key, String.valueOf(now));
 					IRCBot.log.info("No previous tonk found");
 				} else {
 					long lasttonk = 0;
@@ -83,6 +86,7 @@ public class Tonk extends AbstractListener {
 					try {
 						String tonk[] = tonk_record.split(";");
 						long tonk_record_long = Long.parseLong(tonk[0]);
+						System.out.println("Tonk record long: " + tonk_record_long);
 						String recorder = tonk[1].trim();
                         boolean nick_is_recorder = nick.equals(recorder);
 
@@ -90,7 +94,10 @@ public class Tonk extends AbstractListener {
 							IRCBot.log.info("New record");
 							IRCBot.log.info("'" + recorder + "' == '" + nick + "' => " + (nick_is_recorder ? "true" : "false"));
 
-							String personal_record_key = "tonkrecord_" + nick;
+							int record_hours = GetHours(tonk_record_long) + 1;
+							System.out.println("Record hours: " + record_hours);
+
+							String personal_record_key = tonk_record_key + "_" + nick;
 							double hours = GetHoursDouble(diff - tonk_record_long, 2);
 
 							double tonk_record_personal = 0;
@@ -99,18 +106,18 @@ public class Tonk extends AbstractListener {
 							} catch (Exception ignored) {}
 
 							if (!nick_is_recorder) {
-                                System.out.println("Hours added to score: " + hours);
-                                tonk_record_personal += hours;
+                                System.out.println("Points added to score: " + hours + " * " + record_hours + " = " + (hours * record_hours));
+                                tonk_record_personal += (hours * record_hours);
                                 Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
                             } else {
-							    System.out.println("No points gained because nick equals record holder");
+							    System.out.println("No points gained because nick equals record holder (Lost: " + hours + " * " + record_hours + " = " + (hours * record_hours) + ")");
                             }
 
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
                             DecimalFormat dec = new DecimalFormat(numberFormat);
-							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format(hours / 1000d) + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself.") : ""));
-							Database.storeJsonData("tonkrecord", diff + ";" + nick);
-							Database.storeJsonData("lasttonk", String.valueOf(now));
+							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + " (" + (hours / 1000d) + " x " + record_hours + " = " + ((hours * record_hours) / 1000d) + ") tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost " + (hours / 1000d) + " x " + record_hours + " = " + ((hours * record_hours) / 1000d) + ")") : ""));
+							Database.storeJsonData(tonk_record_key, diff + ";" + nick);
+							Database.storeJsonData(last_tonk_key, String.valueOf(now));
 						} else {
 							if (nick_is_recorder) {
 								Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
@@ -118,7 +125,7 @@ public class Tonk extends AbstractListener {
 								IRCBot.log.info("No new record set");
 								Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + recorder + "'s record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time.");
 								Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted! Missed by " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long - diff)) + "!");
-								Database.storeJsonData("lasttonk", String.valueOf(now));
+								Database.storeJsonData(last_tonk_key, String.valueOf(now));
 							}
 						}
 					} catch (Exception ex) {
@@ -135,25 +142,41 @@ public class Tonk extends AbstractListener {
 				long now = new Date().getTime();
 				nick = nick.replaceAll("\\p{C}", "");
 				Helper.sendMessage(target, "Tonk reset " + nick + ", you are the record holder!");
-				Database.storeJsonData("tonkrecord", "0;" + nick);
-				Database.storeJsonData("lasttonk", String.valueOf(now));
+				Database.storeJsonData(tonk_record_key, "0;" + nick);
+				Database.storeJsonData(last_tonk_key, String.valueOf(now));
 			}
 		};
-		reset_command.setHelpText("What is tonk? Tonk is life.");
+		reset_command.setHelpText("Reset current tonk.");
 		reset_command.registerAlias("tonkreset");
+
+		wind_back_command = new Command("tonkback", 60, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try {
+					long tonk_time = Long.parseLong(Database.getJsonData(last_tonk_key));
+					tonk_time -= 1000 * 60 * 60;
+					Database.storeJsonData(last_tonk_key, String.valueOf(tonk_time));
+					Helper.sendMessage(target, "Last tonk has been rewound by one hour!");
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					Helper.sendMessage(target, "Something went wrong.");
+				}
+			}
+		};
+		reset_command.setHelpText("Used for testing.");
 
 		tonkout_command = new Command("tonkout", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
                 nick = nick.replaceAll("\\p{C}", "");
-                String tonkin = Database.getJsonData("lasttonk");
-                String tonk_record = Database.getJsonData("tonkrecord");
+                String tonkin = Database.getJsonData(last_tonk_key);
+                String tonk_record = Database.getJsonData(tonk_record_key);
                 long now = new Date().getTime();
                 IRCBot.log.info("tonkin :" + tonkin + " tonk_record: " + tonk_record);
                 if (tonkin == "" || tonk_record == "") {
                     Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
-                    Database.storeJsonData("tonkrecord", "0;" + nick);
-                    Database.storeJsonData("lasttonk", String.valueOf(now));
+                    Database.storeJsonData(tonk_record_key, "0;" + nick);
+                    Database.storeJsonData(last_tonk_key, String.valueOf(now));
                     IRCBot.log.info("No previous tonk found");
                 } else {
                     long lasttonk = 0;
@@ -174,7 +197,7 @@ public class Tonk extends AbstractListener {
 
                         if (nick_is_recorder) {
                             if (tonk_record_long < diff) {
-                                String personal_record_key = "tonkrecord_" + nick;
+                                String personal_record_key = tonk_record_key + "_" + nick;
 
                                 int hours = GetHours(tonk_record_long);
 
@@ -194,8 +217,8 @@ public class Tonk extends AbstractListener {
                                 DecimalFormat dec = new DecimalFormat(numberFormat);
                                 Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + ((applyBonusPoints && hours > 1) ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
 
-                                Database.storeJsonData("tonkrecord", "0;" + nick);
-                                Database.storeJsonData("lasttonk", String.valueOf(now));
+                                Database.storeJsonData(tonk_record_key, "0;" + nick);
+                                Database.storeJsonData(last_tonk_key, String.valueOf(now));
                             } else {
                                 Helper.sendMessage(target, "Time is fickle, but not fickle enough to let you tonk out without passing the current record.", nick);
                             }
@@ -216,7 +239,7 @@ public class Tonk extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 
 				nick = nick.replaceAll("\\p{C}", "");
-				String data = Database.getJsonData("tonkrecord_" + nick);
+				String data = Database.getJsonData(tonk_record_key + "_" + nick);
 				if (data != null && !data.isEmpty()) {
 				    DecimalFormat dec = new DecimalFormat(numberFormat);
 					Helper.sendMessage(target, "You currently have " + dec.format(Double.parseDouble(data) / 1000d) + " points!", nick);
@@ -228,17 +251,17 @@ public class Tonk extends AbstractListener {
 	}
 
 	static int GetHours(long tonk_time) {
-		System.out.println("Record long: " + tonk_time);
+//		System.out.println("Record long: " + tonk_time);
 		int hours = (int)Math.floor(tonk_time / 1000d / 60d / 60d);
-		System.out.println("Hours: " + hours);
+//		System.out.println("Hours: " + hours);
 
 		return hours;
 	}
 
 	public static double GetHoursDouble(long tonk_time, int decimals) {
-		System.out.println("Record long: " + tonk_time);
+//		System.out.println("Record long: " + tonk_time);
 		double hours = tonk_time / 1000d / 60d / 60d;
-		System.out.println("Hours: " + hours);
+//		System.out.println("Hours: " + hours);
 
 		return Helper.round(hours, decimals);
 	}
@@ -268,7 +291,7 @@ public class Tonk extends AbstractListener {
 				while (resultSet.next()) {
 					count++;
 					DecimalFormat dec = new DecimalFormat(numberFormat);
-					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace("tonkrecord_",  "") + "</td><td>" + dec.format(Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
+					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace(tonk_record_key + "_",  "") + "</td><td>" + dec.format(Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
 				}
 			}
 			catch (Exception e) {
@@ -316,6 +339,7 @@ public class Tonk extends AbstractListener {
 			reset_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonkout_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonkpoints_command.tryExecute(command, nick, target, event, copyOfRange);
+			wind_back_command.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
