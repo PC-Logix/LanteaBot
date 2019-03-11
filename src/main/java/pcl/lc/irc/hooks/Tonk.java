@@ -115,7 +115,7 @@ public class Tonk extends AbstractListener {
 
 							Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
                             DecimalFormat dec = new DecimalFormat(numberFormat);
-							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + " (" + dec.format(hours / 1000d) + " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) + ") tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost " + dec.format(hours / 1000d) + " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) + ")") : ""));
+							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + " gained!" + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + " (" + dec.format(hours / 1000d) + " x " + record_hours + ") tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost " + dec.format(hours / 1000d) + " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) + ")") : ""));
 							Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 							Database.storeJsonData(last_tonk_key, String.valueOf(now));
 						} else {
@@ -195,36 +195,44 @@ public class Tonk extends AbstractListener {
                         String recorder = tonk[1].trim();
                         boolean nick_is_recorder = nick.equals(recorder);
 
-                        if (nick_is_recorder) {
-                            if (tonk_record_long < diff) {
-                                String personal_record_key = tonk_record_key + "_" + nick;
+//                        if (nick_is_recorder) {
+                        if (tonk_record_long < diff) {
+                            String personal_record_key = tonk_record_key + "_" + nick;
 
-                                int hours = GetHours(tonk_record_long);
+                            int hours = GetHours(diff);
 
-                                double tonk_record_personal = 0;
-                                try {
-                                    tonk_record_personal = Double.parseDouble(Database.getJsonData(personal_record_key));
-                                } catch (Exception ignored) {
-                                }
-
-                                tonk_record_personal += hours;
-
-                                if (applyBonusPoints && hours > 1)
-                                    tonk_record_personal += 2d * (hours - 1);
-
-                                Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
-
-                                DecimalFormat dec = new DecimalFormat(numberFormat);
-                                Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + ((applyBonusPoints && hours > 1) ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
-
-                                Database.storeJsonData(tonk_record_key, "0;" + nick);
-                                Database.storeJsonData(last_tonk_key, String.valueOf(now));
-                            } else {
-                                Helper.sendMessage(target, "Time is fickle, but not fickle enough to let you tonk out without passing the current record.", nick);
+                            double tonk_record_personal = 0;
+                            try {
+                                tonk_record_personal = Double.parseDouble(Database.getJsonData(personal_record_key));
+                            } catch (Exception ignored) {
                             }
+
+                            tonk_record_personal += hours;
+
+                            boolean applyPoints = false;
+                            if (applyBonusPoints && hours > 1 && nick_is_recorder)
+                                applyPoints = true;
+
+                            if (applyPoints)
+                                tonk_record_personal += 2d * (hours - 1);
+
+                            Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+
+                            DecimalFormat dec = new DecimalFormat(numberFormat);
+                            if (nick_is_recorder)
+                                Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
+                            else
+                                Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points! Current score: " + dec.format(tonk_record_personal / 1000d));
+
+
+                            Database.storeJsonData(tonk_record_key, "0;" + nick);
+                            Database.storeJsonData(last_tonk_key, String.valueOf(now));
                         } else {
-                            Helper.sendMessage(target, "You are not the current record holder. It is " + recorder + ".", nick);
+                            Helper.sendMessage(target, "Time is fickle, but not fickle enough to let you tonk out without passing the current record.", nick);
                         }
+//                        } else {
+//                            Helper.sendMessage(target, "You are not the current record holder. It is " + recorder + ".", nick);
+//                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
