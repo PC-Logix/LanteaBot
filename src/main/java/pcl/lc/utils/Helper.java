@@ -363,9 +363,14 @@ public class Helper {
 	}
 	
 	public static ImmutableSortedSet<String> getNamesFromTarget(String target) {
-		Channel channel = IRCBot.bot.getUserChannelDao().getChannel(target);
-		channel.createSnapshot();
-		return channel.getUsersNicks();
+		try {
+			Channel channel = IRCBot.bot.getUserChannelDao().getChannel(target);
+			channel.createSnapshot();
+			return channel.getUsersNicks();
+		} catch (Exception e) {
+			//error handling code
+		}
+		return AntiPings;
 	}
 	
 	public static void sendAction(String target, String message) {
