@@ -210,11 +210,15 @@ public class Tonk extends AbstractListener {
                             tonk_record_personal += hours;
 
                             boolean applyPoints = false;
-                            if (applyBonusPoints && hours > 1 && nick_is_recorder)
+                            if (applyBonusPoints && hours > 1)
                                 applyPoints = true;
 
-                            if (applyPoints)
-                                tonk_record_personal += 2d * (hours - 1);
+                            if (applyPoints) {
+                                if (nick_is_recorder)
+                                    tonk_record_personal += 2d * (hours - 1);
+                                else
+                                    tonk_record_personal += (2d * (hours - 1) * 0.75d);
+                            }
 
                             Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
@@ -222,7 +226,7 @@ public class Tonk extends AbstractListener {
                             if (nick_is_recorder)
                                 Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
                             else
-                                Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points! Current score: " + dec.format(tonk_record_personal / 1000d));
+                                Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.75d) / 1000d) + " bonus points for consecutive hours! (Reduced by 25% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
 
 
                             Database.storeJsonData(tonk_record_key, "0;" + nick);
