@@ -32,6 +32,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.*;
 
 /**
@@ -70,6 +71,22 @@ public class Admin extends AbstractListener {
 	static String html;
 	@Override
 	protected void initHook() {
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Ignore(username PRIMARY KEY, time INTEGER)");
+		Database.addPreparedStatement("addIgnore", "INSERT INTO Ignore (username, time) VALUES (?, ?)");
+		Database.addPreparedStatement("removeIgnore", "DELETE FROM Ignore WHERE username = ?");
+		Database.addPreparedStatement("getIgnores", "SELECT username, time FROM Ignore;");
+		PreparedStatement statement;
+		try {
+			statement = Database.getPreparedStatement("getIgnores");
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				IRCBot.ignoredUsers.add(resultSet.getString(1));
+				//items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
+			}	
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		try {
 			httpd.registerContext("/help", new HelpHandler(), "Help");
 			InputStream htmlIn = getClass().getResourceAsStream("/html/help.html");
@@ -187,31 +204,64 @@ public class Admin extends AbstractListener {
 					}*/
 				Helper.sendMessage(target, "Authed hashmap size: " + IRCBot.authed.size(), nick);
 			}
-		}; command_flushauth.setHelpText("Prints the current ignore list, requires Bot Admin, or Channel Op");
+		}; command_flushauth.setHelpText("Prints the current authed user list, requires Bot Admin, or Channel Op");
 		command_ignore = new Command("ignore", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String user = null;
 				if (params.contains("@")) {
-					String s = IRCBot.getDiscordID(params);
+					String s = IRCBot.getDiscordID(params.replace("\"","").replaceAll("\\p{C}", ""));
+					user = s;
 					IRCBot.ignoredUsers.add(s);
 				} else {
+					user = params;
 					IRCBot.ignoredUsers.add(params);
 				}
-				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-				Config.saveProps();
+				try {
+					PreparedStatement add = Database.getPreparedStatement("addIgnore");
+					add.setString(1, user);
+					add.setInt(2, 0);
+					if (add.executeUpdate() > 0) {
+						Helper.sendMessage(target, "User added to ignore list");
+					} else {
+						Helper.sendMessage(target, "ERROR!");
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+				//Config.saveProps();
 			}
 		}; command_ignore.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
 		command_unignore = new Command("unignore", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String user = null;
 				if (params.contains("@")) {
-					String s = IRCBot.getDiscordID(params);
+					String s = IRCBot.getDiscordID(params.replace("\"","").replaceAll("\\p{C}", ""));
+					user = s;
 					IRCBot.ignoredUsers.remove(s);
 				} else {
+					user = params;
 					IRCBot.ignoredUsers.remove(params);
 				}
-				Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
-				Config.saveProps();
+
+				try {
+					PreparedStatement rem = Database.getPreparedStatement("removeIgnore");
+					rem.setString(1, user);
+					if (rem.executeUpdate() > 0) {
+						Helper.sendMessage(target, "User removed from ignore list");
+					} else {
+						Helper.sendMessage(target, "ERROR!");
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				//Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
+				//Config.saveProps();
 			}
 		}; command_unignore.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
 		command_ignorelist = new Command("ignorelist", 0, Permissions.ADMIN) {
