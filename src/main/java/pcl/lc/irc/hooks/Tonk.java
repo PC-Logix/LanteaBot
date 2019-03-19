@@ -223,6 +223,7 @@ public class Tonk extends AbstractListener {
                             Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 
                             DecimalFormat dec = new DecimalFormat(numberFormat);
+                            Helper.sendMessage(target, Curse.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + "! I hope you're happy!");
                             if (nick_is_recorder)
                                 Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
                             else
