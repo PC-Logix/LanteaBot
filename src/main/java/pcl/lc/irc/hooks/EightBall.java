@@ -32,6 +32,7 @@ public class EightBall extends AbstractListener {
 						messages.add("Ask again later");
 						messages.add("My reply is no");
 						messages.add("Outlook not so good");
+						messages.add("[ The Bowling ball doesn't answer ]");
 						Helper.sendMessage(target, messages.get(Helper.getRandomInt(0, messages.size() - 1)), nick);
 						return;
 					}
