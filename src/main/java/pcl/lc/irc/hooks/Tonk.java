@@ -196,7 +196,10 @@ public class Tonk extends AbstractListener {
                         boolean nick_is_recorder = nick.equals(recorder);
 
 //                        if (nick_is_recorder) {
-                        if (tonk_record_long < diff) {
+                        if (tonk_record_long <= 0) {
+                            Database.storeJsonData(last_tonk_key, String.valueOf(now));
+                            Helper.sendMessage(target, "You gotta tonk before you can tonk out. For this transgression the timer has been reset.", nick);
+                        } else if (tonk_record_long < diff) {
                             String personal_record_key = tonk_record_key + "_" + nick;
 
                             int hours = GetHours(diff);
