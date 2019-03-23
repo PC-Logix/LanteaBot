@@ -23,19 +23,17 @@ public class EightBall extends AbstractListener {
 		local_command = new Command("eightball", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.length() > 6) {
-					if (params.matches(".*\\?$")) {
-						ArrayList<String> messages = new ArrayList<>();
-						messages.add("Signs point to yes");
-						messages.add("Without a doubt");
-						messages.add("Reply hazy, try again");
-						messages.add("Ask again later");
-						messages.add("My reply is no");
-						messages.add("Outlook not so good");
-						messages.add("[ The Bowling ball doesn't answer ]");
-						Helper.sendMessage(target, messages.get(Helper.getRandomInt(0, messages.size() - 1)), nick);
-						return;
-					}
+				if ((params.length() > 6 && params.matches(".*\\?$")) || params.equals("^")) {
+					ArrayList<String> messages = new ArrayList<>();
+					messages.add("Signs point to yes");
+					messages.add("Without a doubt");
+					messages.add("Reply hazy, try again");
+					messages.add("Ask again later");
+					messages.add("My reply is no");
+					messages.add("Outlook not so good");
+					messages.add("[ The Bowling ball doesn't answer ]");
+					Helper.sendMessage(target, messages.get(Helper.getRandomInt(0, messages.size() - 1)), nick);
+					return;
 				}
 				Helper.sendMessage(target, "I don't think that's a question...", nick);
 			}
