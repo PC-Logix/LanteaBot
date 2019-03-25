@@ -36,7 +36,7 @@ public class Shell extends AbstractListener {
 		shell = new Command("shell", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				DiceRoll roll = Helper.rollDice("1d100");
+				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();
 
 				Item item = Inventory.getRandomItem(false);
 				if (item != null) {
