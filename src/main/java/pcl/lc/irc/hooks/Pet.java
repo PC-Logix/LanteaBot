@@ -41,7 +41,7 @@ public class Pet extends AbstractListener {
 					actions.add("pets");
 					actions.add("brushes");
 
-					DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4");
+					DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4").getFirstGroupOrNull();
 
 					int action = Helper.getRandomInt(0, actions.size() - 1);
 
