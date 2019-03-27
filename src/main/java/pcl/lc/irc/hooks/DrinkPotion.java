@@ -33,6 +33,8 @@ public class DrinkPotion extends AbstractListener {
 
 		colors.add("blue");
 		colors.add("red");
+		colors.add("röd");
+		colors.add("rød");
 		colors.add("yellow");
 		colors.add("purple");
 		colors.add("green");
@@ -59,6 +61,11 @@ public class DrinkPotion extends AbstractListener {
 		colors.add("rock");
 		colors.add("metal");
 		colors.add("copper");
+		colors.add("aqua");
+		colors.add("dirt");
+		colors.add("quicksilver");
+		colors.add("rust");
+		colors.add("coral");
 
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
@@ -84,6 +91,17 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("warpy");
 		consistencies.add("basic");
 		consistencies.add("stirring");
+		consistencies.add("bubbly");
+		consistencies.add("gloopy");
+		consistencies.add("goopy");
+		consistencies.add("slimy");
+		consistencies.add("solid");
+		consistencies.add("molten");
+		consistencies.add("fiery");
+		consistencies.add("dull");
+		consistencies.add("resonating");
+		consistencies.add("shining");
+		consistencies.add("seeping");
 
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a catgirl.");
@@ -155,6 +173,10 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("True enlightenment can be achieved by drinking another potion.");
 		effects.add("For about 5 seconds you know the location of a great treasure.");
 		effects.add("The potion was inside you all along.");
+		effects.add("You are suddenly wearings gloves you don't remember putting on.");
+		effects.add("A sudden craving for soup occupies your thoughts.");
+		effects.add("{user} suddenly forgets a randon piece of trivia.");
+		effects.add("A bird flies past that vaguely resembles someone you know.");
 	}
 
 	private void initCommands() {
