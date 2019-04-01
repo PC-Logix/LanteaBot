@@ -317,7 +317,7 @@ public class Helper {
 		else
 			targetUser = "";
 		message = StringUtils.strip(message);
-		if (message.length() > 200 && !overridePaste) {
+		if (message.length() > 255 && !overridePaste) {
 			String pasteURL = PasteUtils.paste(message, format);
 			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);
 			IRCBot.log.info("--> " +  target + " " + targetUser.replaceAll("\\p{C}", "") + " Message too long to send to channel " + pasteURL);
