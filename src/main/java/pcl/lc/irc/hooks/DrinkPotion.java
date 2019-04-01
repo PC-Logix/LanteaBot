@@ -105,8 +105,20 @@ public class DrinkPotion extends AbstractListener {
 
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a catgirl.");
+		effects.add("{user} turns into a wolfgirl.");
+		effects.add("{user} turns into a birdgirl.");
+		effects.add("{user} turns into a cowgirl.");
+		effects.add("{user} turns into a horsegirl.");
+		effects.add("{user} turns into a catboy.");
+		effects.add("{user} turns into a wolfboy.");
+		effects.add("{user} turns into a birdboy.");
+		effects.add("{user} turns into a cowboy.");
+		effects.add("{user} turns into a horseboy.");
+		effects.add("{user} turns into a bird.");
 		effects.add("{user} turns into a newt.");
 		effects.add("{user} turns into a toad.");
+		effects.add("{user} turns into a cow.");
+		effects.add("{user} turns into a horse.");
 		effects.add("{user}'s hair turns to the color of {color}.");
 		effects.add("{user}'s skin turns to the color of {color}.");
 		effects.add("{user}'s toes turn invisible.");
@@ -165,7 +177,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} looks up and sees the moon smile at them for a second.");
 		effects.add("The ghost of a plant haunts you for a while.");
 		effects.add("Three nearby pebbles suddenly shift slightly in your direction.");
-		effects.add("Any pie you eat within the next 10 minutes tastes awful.");
+		effects.add("The next pie you eat tastes slightly less good.");
 		effects.add("Sitting down suddenly sounds like a really terrible idea.");
 		effects.add("The next fork you touch tells you it's most deeply guarded secret.");
 		effects.add("A voice whispers into your ear \"Drink or be drunk\" as it fades away as you drink the potion.");
@@ -175,8 +187,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The potion was inside you all along.");
 		effects.add("You are suddenly wearings gloves you don't remember putting on.");
 		effects.add("A sudden craving for soup occupies your thoughts.");
-		effects.add("{user} suddenly forgets a randon piece of trivia.");
+		effects.add("{user} suddenly forgets a random piece of trivia.");
 		effects.add("A bird flies past that vaguely resembles someone you know.");
+		effects.add("{user} reboots for an update.");
+		effects.add("Dramatic music briefly plays in the distance.");
+		effects.add("You have a feeling that your face just appeared on a random vegetable somewhere.");
+		effects.add("The potion bottle is suddenly on fire!");
+		effects.add("Once empty the potion bottle fills with a differently colored potion");
 	}
 
 	private void initCommands() {
