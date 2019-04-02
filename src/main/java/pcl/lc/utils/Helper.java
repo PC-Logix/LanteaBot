@@ -1172,7 +1172,8 @@ public class Helper {
             "Fish",
             "Crocodile",
             "Bird",
-            "Lizard"
+            "Lizard",
+			"Fox"
 		};
 		String ret = animals[Helper.getRandomInt(0, animals.length - 1)];
 		return !lower_case ? ret : ret.toLowerCase();
