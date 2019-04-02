@@ -1165,18 +1165,17 @@ public class Helper {
 
 	public static String getRandomAnimal(boolean lower_case) {
 		String[] animals = new String[]{
-			"Pig",
-			"Horse",
-			"Cat",
-			"Dog",
-			"Fish",
-			"Crocodile",
-			"Bird"
+		    "Pig",
+            "Horse",
+            "Cat",
+            "Dog",
+            "Fish",
+            "Crocodile",
+            "Bird",
+            "Lizard"
 		};
 		String ret = animals[Helper.getRandomInt(0, animals.length - 1)];
-		if (lower_case)
-			return ret.toLowerCase();
-		return ret;
+		return !lower_case ? ret : ret.toLowerCase();
 	}
 
 	public static Matcher getMatcherFromPattern(String pattern, String input) {

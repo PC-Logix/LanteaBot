@@ -103,22 +103,12 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("shining");
 		consistencies.add("seeping");
 
+		//Valid tags: {user},{color},{consistency},{animal}
 		effects.add("{user} looks confused as nothing happens.");
-		effects.add("{user} turns into a catgirl.");
-		effects.add("{user} turns into a wolfgirl.");
-		effects.add("{user} turns into a birdgirl.");
-		effects.add("{user} turns into a cowgirl.");
-		effects.add("{user} turns into a horsegirl.");
-		effects.add("{user} turns into a catboy.");
-		effects.add("{user} turns into a wolfboy.");
-		effects.add("{user} turns into a birdboy.");
-		effects.add("{user} turns into a cowboy.");
-		effects.add("{user} turns into a horseboy.");
-		effects.add("{user} turns into a bird.");
-		effects.add("{user} turns into a newt.");
-		effects.add("{user} turns into a toad.");
-		effects.add("{user} turns into a cow.");
-		effects.add("{user} turns into a horse.");
+		effects.add("{user} turns into a {animal}girl.");
+		effects.add("{user} turns into a {animal}boy.");
+		effects.add("{user} turns into a {animal}.");
+		effects.add("{user} turns into a {animal}{animal}.");
 		effects.add("{user}'s hair turns to the color of {color}.");
 		effects.add("{user}'s skin turns to the color of {color}.");
 		effects.add("{user}'s toes turn invisible.");
@@ -295,7 +285,10 @@ public class DrinkPotion extends AbstractListener {
 			String replace_color = colors.get(Helper.getRandomInt(0, colors.size() - 1));
 			String replace_consistency = consistencies.get(Helper.getRandomInt(0, consistencies.size() - 1));
 
-			String effectp = effects.get(effect).replace("{color}", replace_color).replace("{consistency}", replace_consistency).replace("{animal}", Helper.getRandomAnimal(true));
+			String effectp = effects.get(effect)
+                    .replace("{color}", replace_color)
+                    .replace("{consistency}", replace_consistency)
+                    .replace("{animal}", Helper.getRandomAnimal(true));
 			setCombinationEffect(consistency, color, effectp);
 			return effectp;
 		}
