@@ -131,13 +131,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} grows a mustache.");
 		effects.add("{user} has a sudden but short lived desire to run around in a circle.");
 		effects.add("{user} temporarily gains the ability to summon safety pins.");
-		effects.add("{user} gains one point of strength.");
-		effects.add("{user} gains one point of agility.");
-		effects.add("{user} gains one point of speed.");
+		effects.add("{user} feels slightly stronger."); // gain 1 point of strength
+		effects.add("{user} feels slightly more agile."); // gain 1 point of agility
+		effects.add("{user} feels slightly faster."); // gain 1 point of speed
 		effects.add("{user} recovers some mana.");
-		effects.add("{user} loses one point of strength.");
-		effects.add("{user} loses one point of agility.");
-		effects.add("{user} loses one point of speed.");
+		effects.add("{user} feels slightly weaker.");
+		effects.add("{user} feels slightly less agile.");
+		effects.add("{user} feels slightly slower.");
 		effects.add("{user} gains an additional bone.");
 		effects.add("{user} is suddenly more aware of cute things nearby.");
 		effects.add("{user} loses exactly a handful of luck.");
