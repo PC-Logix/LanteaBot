@@ -63,27 +63,27 @@ public class RandomChoice extends AbstractListener {
 	@Override
 	protected void initHook() {
 		templates = new TemplateCollection();
-		templates.add(new Template("Some {choice} sounds nice"));
-		templates.add(new Template("I'm 40% {choice}!"));
-		templates.add(new Template("You *could* do {choice}, I guess."));
-		templates.add(new Template("Why not {count}?"));
-		templates.add(new Template("I sense some {choice} in your future!"));
-		templates.add(new Template("{choice} is for cool kids!"));
-		templates.add(new Template(3, "Definitely {choice}... Or maybe {other_choice}..."));
-		templates.add(new Template("If I had a gold nugget for every time someone asked me about {choice}"));
-		templates.add(new Template("The proof is in the pudding. Definitely {choice}."));
-		templates.add(new Template("I received a message from future you, said to go with {choice}."));
-		templates.add(new Template("I saw that {choice} is the best choice in a vision"));
-		templates.add(new Template("You'll want to go with {choice}."));
-		templates.add(new Template("Elementary dear Watson, {choice} is the obvious choice!"));
-		templates.add(new Template("My grandfather always told me that {choice} is the way to go!"));
-		templates.add(new Template("If I've learned anything in life it's that you always pick {choice}"));
-		templates.add(new Template("Once you get a taste of {choice} you can't stop."));
-		templates.add(new Template(3, "One the one hand, there's {choice} but then there's also {other_choice}"));
-		templates.add(new Template("Somebody once told me to roll with {choice}"));
-		templates.add(new Template("Out of these {raw_count} choices? I'd say {choice}."));
-		templates.add(new Template("I've heard {choice} is in these days"));
-		templates.add(new Template("I spy with my robotic eye something beginning with {choice}!"));
+		templates.add(new Template("Some \"{choice}\" sounds nice"));
+		templates.add(new Template("I'm 40% \"{choice}\"!"));
+		templates.add(new Template("You *could* do \"{choice}\", I guess."));
+		templates.add(new Template("Why not {count}? Okay fine. \"{choice}\"."));
+		templates.add(new Template("I sense some \"{choice}\" in your future!"));
+		templates.add(new Template("\"{choice}\" is for cool kids!"));
+		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
+		templates.add(new Template("If I had a gold nugget for every time someone asked me about \"{choice}\""));
+		templates.add(new Template("The proof is in the pudding. Definitely \"{choice}\"."));
+		templates.add(new Template("I received a message from future you, said to go with \"{choice}\"."));
+		templates.add(new Template("I saw that \"{choice}\" is the best choice in a vision"));
+		templates.add(new Template("You'll want to go with \"{choice}\"."));
+		templates.add(new Template("Elementary dear Watson, \"{choice}\" is the obvious choice!"));
+		templates.add(new Template("My grandfather always told me that \"{choice}\" is the way to go!"));
+		templates.add(new Template("If I've learned anything in life it's that you always pick \"{choice}\""));
+		templates.add(new Template("Once you get a taste of \"{choice}\" you can't stop."));
+		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
+		templates.add(new Template("Somebody once told me to roll with \"{choice}\""));
+		templates.add(new Template("Out of these {raw_count} choices? I'd say \"{choice}\"."));
+		templates.add(new Template("I've heard \"{choice}\" is in these days"));
+		templates.add(new Template("I spy with my robotic eye something beginning with \"{choice}\"!"));
 
 		local_command = new Command("choose", 0) {
 			@Override
