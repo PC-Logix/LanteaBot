@@ -180,7 +180,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You are suddenly wearings gloves you don't remember putting on.");
 		effects.add("A sudden craving for soup occupies your thoughts.");
 		effects.add("{user} suddenly forgets a random piece of trivia.");
-		effects.add("A bird flies past that vaguely resembles someone you know.");
+		effects.add("A {animal} flies past that vaguely resembles someone you know.");
 		effects.add("{user} reboots for an update.");
 		effects.add("Dramatic music briefly plays in the distance.");
 		effects.add("You have a feeling that your face just appeared on a random vegetable somewhere.");
