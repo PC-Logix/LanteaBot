@@ -1160,22 +1160,27 @@ public class Helper {
 	}
 
 	public static String getRandomAnimal() {
-		return getRandomAnimal(false);
+		return getRandomAnimal(false, false);
 	}
 
-	public static String getRandomAnimal(boolean lower_case) {
-		String[] animals = new String[]{
-		    "Pig",
-            "Horse",
-            "Cat",
-            "Dog",
-            "Fish",
-            "Crocodile",
-            "Bird",
-            "Lizard",
-			"Fox"
+	public static String getRandomAnimal(boolean lower_case, boolean plural) {
+		String[][] animals = new String[][]{
+		    new String[] {"Pig"      , "s"},
+			new String[] {"Horse"    , "s"},
+			new String[] {"Cat"      , "s"},
+			new String[] {"Dog"      , "s"},
+			new String[] {"Fish"     , ""},
+			new String[] {"Crocodile", "s"},
+			new String[] {"Bird"     , "s"},
+			new String[] {"Lizard"   , "s"},
+			new String[] {"Fox"      , "es"},
+			new String[] {"Turtle"   , "s"},
+			new String[] {"Sloth"    , "s"},
 		};
-		String ret = animals[Helper.getRandomInt(0, animals.length - 1)];
+		String[] animal = animals[Helper.getRandomInt(0, animals.length - 1)];
+		String ret = animal[0];
+		if (plural)
+			ret = animal[0].concat(animal[1]);
 		return !lower_case ? ret : ret.toLowerCase();
 	}
 

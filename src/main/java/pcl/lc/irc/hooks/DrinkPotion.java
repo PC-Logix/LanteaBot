@@ -105,7 +105,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("shining");
 		consistencies.add("seeping");
 
-		//Valid tags: {user},{color},{consistency},{animal}
+		//Valid tags: {user},{color},{consistency},{animal},{animals}
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a {animal}girl.");
 		effects.add("{user} turns into a {animal}boy.");
@@ -115,7 +115,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user}'s skin turns to the color of {color}.");
 		effects.add("{user}'s toes turn invisible.");
 		effects.add("{user}'s hair grows three times longer.");
-		effects.add("{user} gains the proportional strength of a chihuahua.");
+		effects.add("{user} gains the proportional strength of a {animal}.");
 		effects.add("{user} gains the ability to not be seen.");
 		effects.add("{user} gains knowledge about a random useless subject.");
 		effects.add("{user} gains an extra strand of hair on their face.");
@@ -186,6 +186,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You have a feeling that your face just appeared on a random vegetable somewhere.");
 		effects.add("The potion bottle is suddenly on fire!");
 		effects.add("Once empty the potion bottle fills with a differently colored potion");
+		effects.add("{user} gains the ability to talk to {animals}");
 	}
 
 	private void initCommands() {
@@ -302,7 +303,8 @@ public class DrinkPotion extends AbstractListener {
 			String effectp = effects.get(effect)
                     .replace("{color}", replace_color)
                     .replace("{consistency}", replace_consistency)
-                    .replace("{animal}", Helper.getRandomAnimal(true));
+                    .replace("{animal}", Helper.getRandomAnimal(true, false))
+                    .replace("{animals}", Helper.getRandomAnimal(true, true));
 			setCombinationEffect(consistency, color, effectp);
 			return effectp;
 		}
