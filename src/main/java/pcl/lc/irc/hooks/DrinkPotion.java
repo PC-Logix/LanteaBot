@@ -187,8 +187,17 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("Dramatic music briefly plays in the distance.");
 		effects.add("You have a feeling that your face just appeared on a random vegetable somewhere.");
 		effects.add("The potion bottle is suddenly on fire!");
-		effects.add("Once empty the potion bottle fills with a differently colored potion");
-		effects.add("{user} gains the ability to talk to {animals}");
+		effects.add("Once empty the potion bottle fills with a differently colored potion.");
+		effects.add("{user} gains the ability to talk to {animals}.");
+		effects.add("You see the sky briefly flash solid blue then go back to normal.");
+		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
+		effects.add("Suddenly there's a swarm of wasps is behind you!");
+		effects.add("When you bring the bottle down you see a plastic flamingo. It stares into your soul.");
+		effects.add("A bard starts playing a lute behind you. They don't stop.");
+		effects.add("The bottle is a sword.");
+		effects.add("The bottle is an axe.");
+		effects.add("The bottle is a spear.");
+		effects.add("The bottle is a dagger.");
 	}
 
 	private void initCommands() {
