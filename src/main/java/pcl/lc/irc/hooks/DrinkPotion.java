@@ -19,7 +19,8 @@ import java.util.*;
 public class DrinkPotion extends AbstractListener {
 	private Command local_command;
 	private Command get_random;
-	private Command count_things;
+	private Command potion_stats;
+	private Command discovered;
 	private static ArrayList<String> colors = new ArrayList<>();
 	private static ArrayList<String> consistencies = new ArrayList<>();
 	private static ArrayList<String> effects = new ArrayList<>();
@@ -31,7 +32,8 @@ public class DrinkPotion extends AbstractListener {
 		initCommands();
 		IRCBot.registerCommand(local_command);
 		IRCBot.registerCommand(get_random);
-		IRCBot.registerCommand(count_things);
+		IRCBot.registerCommand(potion_stats);
+		IRCBot.registerCommand(discovered);
 
 		colors.add("blue");
 		colors.add("red");
@@ -233,16 +235,26 @@ public class DrinkPotion extends AbstractListener {
 		get_random.registerAlias("randpotion");
 		get_random.registerAlias("gimmepotion");
 
-		count_things = new Command("countpotions", 10) {
+		potion_stats = new Command("potionstats", 10) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int color_count = colors.size();
 				int consistencies_count = consistencies.size();
 				int effect_count = effects.size();
 				int combination_count = color_count * consistencies_count;
-				Helper.sendMessage(target, "There are " + color_count + " colors, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects! Finally; " + potions.size() + " combination" + (potions.size() == 1 ? " has" : "s have") + " been found today!");
+				Helper.sendMessage(target, "There are " + color_count + " colors, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
 			}
 		};
+
+		discovered = new Command("discovered", 10) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				int potions_count = potions.size();
+				Helper.sendMessage(target, potions_count + " combination" + (potions_count == 1 ? " has" : "s have") + " been found today!");
+			}
+		};
+		discovered.registerAlias("potionsdiscovered");
+		discovered.registerAlias("discoveredpotions");
 	}
 
 	public String chan;
@@ -257,7 +269,8 @@ public class DrinkPotion extends AbstractListener {
 		target = Helper.getTarget(event);
 		local_command.tryExecute(command, nick, target, event, copyOfRange);
 		get_random.tryExecute(command, nick, target, event, copyOfRange);
-		count_things.tryExecute(command, nick, target, event, copyOfRange);
+		potion_stats.tryExecute(command, nick, target, event, copyOfRange);
+		discovered.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	public String getPotionEffect(ArrayList<String> params) {
