@@ -240,7 +240,7 @@ public class DrinkPotion extends AbstractListener {
 				int consistencies_count = consistencies.size();
 				int effect_count = effects.size();
 				int combination_count = color_count * consistencies_count;
-				Helper.sendMessage(target, "There are " + color_count + " colors, " + consistencies_count + " consistencies, and " + effect_count + " effects! That's " + combination_count + " potion combinations! And finally; " + potions.size() + " effect" + (potions.size() == 1 ? "" : "s") + " have been found today!");
+				Helper.sendMessage(target, "There are " + color_count + " colors, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects! Finally; " + potions.size() + " combination" + (potions.size() == 1 ? " has" : "s have") + " been found today!");
 			}
 		};
 	}
