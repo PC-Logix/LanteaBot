@@ -107,12 +107,14 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("shining");
 		consistencies.add("seeping");
 
-		//Valid tags: {user},{color},{consistency},{animal},{animals}
+		//Valid tags: {user},{color},{consistency},{animal},{animal2},{animals},{animals2}
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a {animal}girl.");
 		effects.add("{user} turns into a {animal}boy.");
 		effects.add("{user} turns into a {animal}.");
-		effects.add("{user} turns into a {animal}{animal}.");
+		effects.add("{user} turns into a {animal}{animal2}.");
+		effects.add("{user} turns into a {animal}{animal2}girl.");
+		effects.add("{user} turns into a {animal}{animal2}boy.");
 		effects.add("{user}'s hair turns to the color of {color}.");
 		effects.add("{user}'s skin turns to the color of {color}.");
 		effects.add("{user}'s toes turn invisible.");
@@ -326,7 +328,9 @@ public class DrinkPotion extends AbstractListener {
                     .replace("{color}", replace_color)
                     .replace("{consistency}", replace_consistency)
                     .replace("{animal}", Helper.getRandomAnimal(true, false))
-                    .replace("{animals}", Helper.getRandomAnimal(true, true));
+                    .replace("{animal2}", Helper.getRandomAnimal(true, false))
+                    .replace("{animals}", Helper.getRandomAnimal(true, true))
+                    .replace("{animals2}", Helper.getRandomAnimal(true, true));
 			setCombinationEffect(consistency, color, effectp);
 			return effectp;
 		}
