@@ -238,6 +238,14 @@ public class DrinkPotion extends AbstractListener {
 			}
 		};
 		local_command.setHelpText("Drink a potion with a certain consistency and color and something might happen.");
+		local_command.registerAlias("chug");
+		local_command.registerAlias("toast");
+		local_command.registerAlias("sip");
+		local_command.registerAlias("ingest");
+		local_command.registerAlias("consume");
+		local_command.registerAlias("use");
+		local_command.registerAlias("absorb");
+		local_command.registerAlias("engross");
 
 		get_random = new Command("randompotion", 10) {
 			@Override
