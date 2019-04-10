@@ -191,7 +191,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The potion bottle is suddenly on fire!");
 		effects.add("Once empty the potion bottle fills with a differently colored potion.");
 		effects.add("{user} gains the ability to talk to {animals}.");
-		effects.add("You see the sky briefly flash solid blue then go back to normal.");
+		effects.add("You see the sky briefly flash solid dark blue then go back to normal.");
 		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
 		effects.add("Suddenly there's a swarm of wasps is behind you!");
 		effects.add("When you bring the bottle down you see a plastic flamingo. It stares into your soul.");
@@ -200,6 +200,10 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The bottle is an axe.");
 		effects.add("The bottle is a spear.");
 		effects.add("The bottle is a dagger.");
+		effects.add("A genie appears out of the empty bottle, turns it into a pie, then vanishes.");
+		effects.add("You think \"What if, like, *we* are the potions man?\", you then realize that makes no sense at all.");
+		effects.add("After drinking the potion you notice a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
+		effects.add("You forget the location of a great tresure.");
 	}
 
 	private void initCommands() {
