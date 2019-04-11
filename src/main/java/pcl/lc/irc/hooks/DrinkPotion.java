@@ -107,24 +107,24 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("shining");
 		consistencies.add("seeping");
 
-		//Valid tags: {user},{color},{consistency},{animal},{animal2},{animals},{animals2}
+		//Valid tags: {user},{color},{consistency},{transformation},{transformation2},{transformations},{transformations2}
 		effects.add("{user} looks confused as nothing happens.");
-		effects.add("{user} turns into a {animal}girl.");
-		effects.add("{user} turns into a {animal}boy.");
-		effects.add("{user} turns into a {animal}.");
-		effects.add("{user} turns into a {animal}{animal2}.");
-		effects.add("{user} turns into a {animal}{animal2}girl.");
-		effects.add("{user} turns into a {animal}{animal2}boy.");
+		effects.add("{user} turns into a {transformation}girl.");
+		effects.add("{user} turns into a {transformation}boy.");
+		effects.add("{user} turns into a {transformation}.");
+		effects.add("{user} turns into a {transformation}{transformation2}.");
+		effects.add("{user} turns into a {transformation}{transformation2}girl.");
+		effects.add("{user} turns into a {transformation}{transformation2}boy.");
 		effects.add("{user}'s hair turns to the color of {color}.");
 		effects.add("{user}'s skin turns to the color of {color}.");
 		effects.add("{user}'s toes turn invisible.");
 		effects.add("{user}'s hair grows three times longer.");
-		effects.add("{user} gains the proportional strength of a {animal}.");
+		effects.add("{user} gains the proportional strength of a {transformation}.");
 		effects.add("{user} gains the ability to not be seen.");
 		effects.add("{user} gains knowledge about a random useless subject.");
 		effects.add("{user} gains an extra strand of hair on their face.");
 		effects.add("{user} grows whiskers.");
-		effects.add("{user} grows a tail from a {animal}.");
+		effects.add("{user} grows a tail from a {transformation}.");
 		effects.add("{user} shrinks by a negligible amount.");
 		effects.add("{user} grows slightly.");
 		effects.add("{user} suddenly craves pie.");
@@ -184,13 +184,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You are suddenly wearings gloves you don't remember putting on.");
 		effects.add("A sudden craving for soup occupies your thoughts.");
 		effects.add("{user} suddenly forgets a random piece of trivia.");
-		effects.add("A {animal} flies past that vaguely resembles someone you know.");
+		effects.add("A {transformation} flies past that vaguely resembles someone you know.");
 		effects.add("{user} reboots for an update.");
 		effects.add("Dramatic music briefly plays in the distance.");
 		effects.add("You have a feeling that your face just appeared on a random vegetable somewhere.");
 		effects.add("The potion bottle is suddenly on fire!");
 		effects.add("Once empty the potion bottle fills with a differently colored potion.");
-		effects.add("{user} gains the ability to talk to {animals}.");
+		effects.add("{user} gains the ability to talk to {transformations}.");
 		effects.add("You see the sky briefly flash solid dark blue then go back to normal.");
 		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
 		effects.add("Suddenly there's a swarm of wasps is behind you!");
@@ -250,7 +250,8 @@ public class DrinkPotion extends AbstractListener {
 		get_random = new Command("randompotion", 10) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendMessage(target, "You get a " + getRandomPotion(), nick);
+			    String[] potion = getRandomPotion();
+				Helper.sendMessage(target, "You get a " + potion[0] + " " + potion[1] + " potion" + (potion[2] == "new" ? " (New!)" : ""), nick);
 			}
 		};
 		get_random.setHelpText("Get a random potion");
@@ -339,10 +340,10 @@ public class DrinkPotion extends AbstractListener {
 			String effectp = effects.get(effect)
                     .replace("{color}", replace_color)
                     .replace("{consistency}", replace_consistency)
-                    .replace("{animal}", Helper.getRandomAnimal(true, false))
-                    .replace("{animal2}", Helper.getRandomAnimal(true, false))
-                    .replace("{animals}", Helper.getRandomAnimal(true, true))
-                    .replace("{animals2}", Helper.getRandomAnimal(true, true));
+                    .replace("{transformation}", Helper.getRandomTransformation(true, false))
+                    .replace("{transformation2}", Helper.getRandomTransformation(true, false))
+                    .replace("{transformations}", Helper.getRandomTransformation(true, true))
+                    .replace("{transformations2}", Helper.getRandomTransformation(true, true));
 			setCombinationEffect(consistency, color, effectp);
 			return effectp;
 		}
@@ -372,10 +373,11 @@ public class DrinkPotion extends AbstractListener {
 		return potions.get(key);
 	}
 
-	public static String getRandomPotion() {
+	public static String[] getRandomPotion() {
 		int color = Helper.getRandomInt(0, colors.size() - 1);
 		int consistency = Helper.getRandomInt(0, consistencies.size() - 1);
-
-		return consistencies.get(consistency) + " " + colors.get(color) + " potion";
+		String col = colors.get(color);
+		String con = consistencies.get(consistency);
+		return new String[] { con, col, potions.containsKey(con + "," + col) ? "" : "new" };
 	}
 }

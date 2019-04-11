@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import org.jvnet.inflector.Noun;
 import org.pircbotx.Channel;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericChannelUserEvent;
@@ -1159,28 +1160,34 @@ public class Helper {
 		return name;
 	}
 
-	public static String getRandomAnimal() {
-		return getRandomAnimal(false, false);
+	public static String getRandomTransformation() {
+		return getRandomTransformation(false, false);
 	}
 
-	public static String getRandomAnimal(boolean lower_case, boolean plural) {
-		String[][] animals = new String[][]{
-		    new String[] {"Pig"      , "s"},
-			new String[] {"Horse"    , "s"},
-			new String[] {"Cat"      , "s"},
-			new String[] {"Dog"      , "s"},
-			new String[] {"Fish"     , ""},
-			new String[] {"Crocodile", "s"},
-			new String[] {"Bird"     , "s"},
-			new String[] {"Lizard"   , "s"},
-			new String[] {"Fox"      , "es"},
-			new String[] {"Turtle"   , "s"},
-			new String[] {"Sloth"    , "s"},
+	public static String getRandomTransformation(boolean lower_case, boolean plural) {
+		String[] animals = new String[]{
+		    "Pig"      ,
+			"Horse"    ,
+			"Cat"      ,
+			"Dog"      ,
+			"Fish"     ,
+			"Crocodile",
+			"Bird"     ,
+			"Lizard"   ,
+			"Fox"      ,
+			"Turtle"   ,
+			"Sloth"    ,
+            "Wolf"     ,
+            "Robot"    ,
+            "Golem"    ,
+            "Unicorn"  ,
+            "Dryad"    ,
+            "Dragon"   ,
+            "Dragon"   ,
 		};
-		String[] animal = animals[Helper.getRandomInt(0, animals.length - 1)];
-		String ret = animal[0];
+		String ret = animals[Helper.getRandomInt(0, animals.length - 1)];
 		if (plural)
-			ret = animal[0].concat(animal[1]);
+			ret = Noun.pluralOf(ret);
 		return !lower_case ? ret : ret.toLowerCase();
 	}
 
