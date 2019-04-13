@@ -1,14 +1,22 @@
 package pcl.lc.irc.hooks;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.joda.time.DateTime;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.httpd.httpd;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -30,6 +38,7 @@ public class DrinkPotion extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
+        httpd.registerContext("/potions", new PotionHandler(), "Potions");
 		IRCBot.registerCommand(local_command);
 		IRCBot.registerCommand(get_random);
 		IRCBot.registerCommand(potion_stats);
@@ -205,6 +214,12 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("After drinking the potion you notice a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
 		effects.add("You forget the location of a great tresure.");
 	}
+    static String html;
+
+    public DrinkPotion() throws IOException {
+        InputStream htmlIn = getClass().getResourceAsStream("/html/potions.html");
+        html = CharStreams.toString(new InputStreamReader(htmlIn, Charsets.UTF_8));
+    }
 
 	private void initCommands() {
 		local_command = new Command("drink", 0) {
@@ -380,4 +395,52 @@ public class DrinkPotion extends AbstractListener {
 		String con = consistencies.get(consistency);
 		return new String[] { con, col, potions.containsKey(con + "," + col) ? "" : "new" };
 	}
+
+    static class PotionHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+
+            String target = t.getRequestURI().toString();
+            String response = "";
+
+            String potionShelf = "<table><tr><th>Potion</th><th>Effect</th></tr>";
+            try {
+                Iterator it = potions.entrySet().iterator();
+                while (it.hasNext()) {
+                    HashMap.Entry pair = (HashMap.Entry)it.next();
+                    String[] potion = pair.getKey().toString().split(",");
+                    String consistency = consistencies.get(Integer.parseInt(potion[0]));
+                    String color = colors.get(Integer.parseInt(potion[1]));
+                    potionShelf += "<tr><td>" + color.substring(0, 1).toUpperCase() + color.substring(1) + " " + consistency.substring(0,1).toUpperCase() + consistency.substring(1) + " Potion</td><td>" + pair.getValue().toString().replace("{user}", "User") + "</td></tr>";
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            potionShelf += "</table>";
+            List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
+
+
+            String navData = "";
+            Iterator it = httpd.pages.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                navData += "<div class=\"innertube\"><h1><a href=\""+ pair.getValue() +"\">"+ pair.getKey() +"</a></h1></div>";
+            }
+
+            // convert String into InputStream
+            InputStream is = new ByteArrayInputStream(html.getBytes());
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#POTIONS#", potionShelf)
+                            .replace("#NAVIGATION#", navData)+"\n";
+                }
+            }
+            t.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = t.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+    }
 }
