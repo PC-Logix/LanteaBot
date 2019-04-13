@@ -13,10 +13,12 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -277,23 +279,31 @@ public class DrinkPotion extends AbstractListener {
 		potion_stats = new Command("potionstats", 10) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				int color_count = colors.size();
-				int consistencies_count = consistencies.size();
-				int effect_count = effects.size();
-				int combination_count = color_count * consistencies_count;
-				Helper.sendMessage(target, "There are " + color_count + " colors, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
+				if (Config.httpdEnable.equals("true")){
+					Helper.sendMessage(target, "Potion shelf: " + httpd.getBaseDomain() + "/potions", nick);
+				} else {
+					int color_count = colors.size();
+					int consistencies_count = consistencies.size();
+					int effect_count = effects.size();
+					int combination_count = color_count * consistencies_count;
+					Helper.sendMessage(target, "There are " + color_count + " colors, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
+				}
 			}
 		};
 
 		discovered = new Command("discovered", 10) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				int potions_count = potions.size();
-				Helper.sendMessage(target, potions_count + " combination" + (potions_count == 1 ? " has" : "s have") + " been found today!");
+				if (Config.httpdEnable.equals("true")){
+					Helper.sendMessage(target, "Potion shelf: " + httpd.getBaseDomain() + "/potions", nick);
+				} else {
+					int potions_count = potions.size();
+					Helper.sendMessage(target, potions_count + " combination" + (potions_count == 1 ? " has" : "s have") + " been found today!");
+				}
 			}
 		};
-		discovered.registerAlias("potionsdiscovered");
-		discovered.registerAlias("discoveredpotions");
+		potion_stats.registerAlias("potionsdiscovered");
+		potion_stats.registerAlias("discoveredpotions");
 	}
 
 	public String chan;
@@ -403,7 +413,16 @@ public class DrinkPotion extends AbstractListener {
             String target = t.getRequestURI().toString();
             String response = "";
 
-            String potionShelf = "<table><tr><th>Potion</th><th>Effect</th></tr>";
+            int colorcount = colors.size();
+            int concount = consistencies.size();
+            int combinations = colorcount * concount;
+            int potioncount = potions.size();
+            int effectcount = effects.size();
+            float ratio = (float)effectcount / (float)combinations;
+            DecimalFormat format = new DecimalFormat("#.###");
+            String potionShelf = "<div>There are <b>" + colorcount + "</b> colors and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
+					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion.</div>" +
+					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th></tr>";
             try {
                 Iterator it = potions.entrySet().iterator();
                 while (it.hasNext()) {
@@ -411,7 +430,7 @@ public class DrinkPotion extends AbstractListener {
                     String[] potion = pair.getKey().toString().split(",");
                     String consistency = consistencies.get(Integer.parseInt(potion[0]));
                     String color = colors.get(Integer.parseInt(potion[1]));
-                    potionShelf += "<tr><td>" + color.substring(0, 1).toUpperCase() + color.substring(1) + " " + consistency.substring(0,1).toUpperCase() + consistency.substring(1) + " Potion</td><td>" + pair.getValue().toString().replace("{user}", "User") + "</td></tr>";
+                    potionShelf += "<tr><td>" + consistency.substring(0,1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + pair.getValue().toString().replace("{user}", "User") + "</td></tr>";
                 }
             }
             catch (Exception e) {
