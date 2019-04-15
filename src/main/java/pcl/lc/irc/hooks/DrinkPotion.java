@@ -214,7 +214,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("A genie appears out of the empty bottle, turns it into a pie, then vanishes.");
 		effects.add("You think \"What if, like, *we* are the potions man?\", you then realize that makes no sense at all.");
 		effects.add("After drinking the potion you notice a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
-		effects.add("You forget the location of a great tresure.");
+		effects.add("You forget the location of a great treasure.");
 	}
     static String html;
 
