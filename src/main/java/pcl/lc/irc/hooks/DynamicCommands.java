@@ -56,6 +56,7 @@ public class DynamicCommands extends AbstractListener {
 	private Command addhelp;
 	private Command print;
 	private Command edit;
+	private Command alias;
 	
 	public String luasb;
 
@@ -308,6 +309,13 @@ public class DynamicCommands extends AbstractListener {
 				local_command_edit.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
+
+		alias = new Command("alias", 0, Permissions.ADMIN) {
+            @Override
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+                Helper.sendMessage(target, "To add an alias create a dynamic command with one or more commands to execute between two % like %command%.");
+            }
+        };
 
 		base_command.registerSubCommand(add);
 		base_command.registerSubCommand(del);
