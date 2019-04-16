@@ -81,6 +81,8 @@ public class DrinkPotion extends AbstractListener {
 		colors.add("quicksilver");
 		colors.add("rust");
 		colors.add("coral");
+		colors.add("transparent");
+		colors.add("water");
 
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
@@ -117,6 +119,8 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("resonating");
 		consistencies.add("shining");
 		consistencies.add("seeping");
+		consistencies.add("smooth");
+		consistencies.add("soft");
 
 		//Valid tags: {user},{color},{consistency},{transformation},{transformation2},{transformations},{transformations2}
 		effects.add("{user} looks confused as nothing happens.");
