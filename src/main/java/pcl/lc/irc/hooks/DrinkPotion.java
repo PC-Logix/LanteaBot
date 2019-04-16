@@ -34,7 +34,7 @@ public class DrinkPotion extends AbstractListener {
 	private static ArrayList<String> colors = new ArrayList<>();
 	private static ArrayList<String> consistencies = new ArrayList<>();
 	private static ArrayList<String> effects = new ArrayList<>();
-	private static HashMap<String, String> potions = new HashMap<>();
+	private static HashMap<String, EffectEntry> potions = new HashMap<>();
 	private static String day_of_potioning = "";
 
 	@Override
@@ -257,10 +257,10 @@ public class DrinkPotion extends AbstractListener {
 						}
 					}
 
-					String effect = getPotionEffect(params).replace("{user}", nick);
+					EffectEntry effect = getPotionEffect(params, nick);
 
 					if (effect != null) {
-						Helper.sendMessage(target, effect);
+						Helper.sendMessage(target, effect.toString().replace("{user}", nick));
 					}
 					else
 						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
@@ -338,7 +338,8 @@ public class DrinkPotion extends AbstractListener {
 		discovered.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
-	public String getPotionEffect(ArrayList<String> params) {
+	public EffectEntry getPotionEffect(ArrayList<String> params, String user) {
+		EffectEntry effectEntry;
 		boolean is_potion = false;
 		int color = -1;
 		int consistency = -1;
@@ -366,9 +367,9 @@ public class DrinkPotion extends AbstractListener {
 		tryResetPotionList();
 
 		if (combinationHasEffect(consistency, color)) {
-			String effect = getCombinationEffect(consistency, color);
-			System.out.println("Effect recorded for " + consistency + "," + color + ": " + effect);
-			return effect;
+			effectEntry = getCombinationEffect(consistency, color);
+			System.out.println("Effect recorded for " + consistency + "," + color + ": " + effectEntry);
+			return effectEntry;
 		} else {
 			int effect = Helper.getRandomInt(0, effects.size() - 1);
 			System.out.println("No effect recorded for " + consistency + "," + color + ", Assign " + effect);
@@ -383,8 +384,9 @@ public class DrinkPotion extends AbstractListener {
                     .replace("{transformation2}", Helper.getRandomTransformation(true, false))
                     .replace("{transformations}", Helper.getRandomTransformation(true, true))
                     .replace("{transformations2}", Helper.getRandomTransformation(true, true));
-			setCombinationEffect(consistency, color, effectp);
-			return effectp;
+			effectEntry = new EffectEntry(effectp, user);
+			setCombinationEffect(consistency, color, effectEntry);
+			return effectEntry;
 		}
 	}
 
@@ -408,12 +410,13 @@ public class DrinkPotion extends AbstractListener {
 		return false;
 	}
 
-	private void setCombinationEffect(int consistency, int color, String effect) {
+	private void setCombinationEffect(int consistency, int color, EffectEntry effect) {
 		String key = consistency + "," + color;
+
 		potions.put(key, effect);
 	}
 
-	private String getCombinationEffect(int consistency, int color) {
+	private EffectEntry getCombinationEffect(int consistency, int color) {
 		String key = consistency + "," + color;
 		return potions.get(key);
 	}
@@ -444,7 +447,7 @@ public class DrinkPotion extends AbstractListener {
             DecimalFormat format = new DecimalFormat("#.###");
             String potionShelf = "<div>There are <b>" + colorcount + "</b> colors and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion.</div>" +
-					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th></tr>";
+					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>";
             try {
                 Iterator it = potions.entrySet().iterator();
                 while (it.hasNext()) {
@@ -452,7 +455,8 @@ public class DrinkPotion extends AbstractListener {
                     String[] potion = pair.getKey().toString().split(",");
                     String consistency = consistencies.get(Integer.parseInt(potion[0]));
                     String color = colors.get(Integer.parseInt(potion[1]));
-                    potionShelf += "<tr><td>" + consistency.substring(0,1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + pair.getValue().toString().replace("{user}", "User") + "</td></tr>";
+					EffectEntry entry = (EffectEntry)pair.getValue();
+					potionShelf += "<tr><td>" + consistency.substring(0,1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
                 }
             }
             catch (Exception e) {
@@ -484,4 +488,19 @@ public class DrinkPotion extends AbstractListener {
             os.close();
         }
     }
+}
+
+class EffectEntry {
+	String Effect;
+	String Discoverer;
+
+	EffectEntry(String effect, String discoverer) {
+		Effect = effect;
+		Discoverer = discoverer;
+	}
+
+	@Override
+	public String toString() {
+		return Effect;
+	}
 }
