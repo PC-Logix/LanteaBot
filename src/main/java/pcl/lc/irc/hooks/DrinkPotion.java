@@ -205,7 +205,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You see the sky briefly flash solid dark blue then go back to normal.");
 		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
 		effects.add("Suddenly there's a swarm of wasps is behind you!");
-		effects.add("When you bring the bottle down you see a plastic flamingo. It stares into your soul.");
+		effects.add("When you bring the bottle down you see a {color} colored plastic flamingo. It stares into your soul.");
 		effects.add("A bard starts playing a lute behind you. They don't stop.");
 		effects.add("The bottle is a sword.");
 		effects.add("The bottle is an axe.");
