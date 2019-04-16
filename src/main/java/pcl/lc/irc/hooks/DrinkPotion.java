@@ -348,9 +348,7 @@ public class DrinkPotion extends AbstractListener {
 			return null;
 		}
 
-		if (day_of_potioning.equals(DateTime.now().toString("yyyy-MM-dd"))) {
-			resetPotionList();
-		}
+		tryResetPotionList();
 
 		if (combinationHasEffect(consistency, color)) {
 			String effect = getCombinationEffect(consistency, color);
@@ -372,6 +370,12 @@ public class DrinkPotion extends AbstractListener {
                     .replace("{transformations2}", Helper.getRandomTransformation(true, true));
 			setCombinationEffect(consistency, color, effectp);
 			return effectp;
+		}
+	}
+
+	private static void tryResetPotionList() {
+		if (day_of_potioning.equals(DateTime.now().toString("yyyy-MM-dd"))) {
+			resetPotionList();
 		}
 	}
 
@@ -411,9 +415,7 @@ public class DrinkPotion extends AbstractListener {
         @Override
         public void handle(HttpExchange t) throws IOException {
 
-			if (day_of_potioning.equals(DateTime.now().toString("yyyy-MM-dd"))) {
-				resetPotionList();
-			}
+        	tryResetPotionList();
 
             String target = t.getRequestURI().toString();
             String response = "";
