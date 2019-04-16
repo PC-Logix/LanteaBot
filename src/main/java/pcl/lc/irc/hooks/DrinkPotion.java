@@ -375,7 +375,7 @@ public class DrinkPotion extends AbstractListener {
 		}
 	}
 
-	private void resetPotionList() {
+	private static void resetPotionList() {
 		System.out.println("Resetting potion list!");
 		potions = new HashMap<>();
 		day_of_potioning = DateTime.now().toString("yyyy-MM-dd");
@@ -410,6 +410,10 @@ public class DrinkPotion extends AbstractListener {
     static class PotionHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
+
+			if (day_of_potioning.equals(DateTime.now().toString("yyyy-MM-dd"))) {
+				resetPotionList();
+			}
 
             String target = t.getRequestURI().toString();
             String response = "";
