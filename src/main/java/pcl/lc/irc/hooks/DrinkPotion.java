@@ -211,10 +211,25 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The bottle is an axe.");
 		effects.add("The bottle is a spear.");
 		effects.add("The bottle is a dagger.");
+		effects.add("The bottle is a bow.");
+		effects.add("The bottle is a trident.");
+		effects.add("The bottle is a sling.");
 		effects.add("A genie appears out of the empty bottle, turns it into a pie, then vanishes.");
 		effects.add("You think \"What if, like, *we* are the potions man?\", you then realize that makes no sense at all.");
 		effects.add("After drinking the potion you notice a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
 		effects.add("You forget the location of a great treasure.");
+		effects.add("Oh no, you got a potion, there's probably a boss fight coming!");
+		effects.add("Who needs internal organs anyway? There's an acidic tinge to the potion...");
+		effects.add("You feel much better!");
+		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows you.");
+		effects.add("The potion contained a computer virus! But your anti-virus routines destroy it.");
+		effects.add("The potion contained a computer virus! It just changed your background...");
+		effects.add("The bottle splits into two revealing a smaller {color} {consistency} potion.");
+		effects.add("A tiny genie appears, gives you the thumbs up and poofs away.");
+		effects.add("You feel chill.");
+		effects.add("You feel the need to smash sometimes for some reason.");
+		effects.add("You feel the need to use the \"shell\" command.");
+		effects.add("You feel the need to use the \"fling\" command.");
 	}
     static String html;
 
