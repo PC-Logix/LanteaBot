@@ -211,13 +211,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("Suddenly there's a swarm of wasps is behind you!");
 		effects.add("When you bring the bottle down you see a {color} colored plastic flamingo. It stares into your soul.");
 		effects.add("A bard starts playing a lute behind you. They don't stop.");
-		effects.add("The bottle is a sword.");
-		effects.add("The bottle is an axe.");
-		effects.add("The bottle is a spear.");
-		effects.add("The bottle is a dagger.");
-		effects.add("The bottle is a bow.");
-		effects.add("The bottle is a trident.");
-		effects.add("The bottle is a sling.");
+		effects.add("The bottle turns into a sword.");
+		effects.add("The bottle turns into an axe.");
+		effects.add("The bottle turns into a spear.");
+		effects.add("The bottle turns into a dagger.");
+		effects.add("The bottle turns into a bow.");
+		effects.add("The bottle turns into a trident.");
+		effects.add("The bottle turns into a sling.");
 		effects.add("A genie appears out of the empty bottle, turns it into a pie, then vanishes.");
 		effects.add("You think \"What if, like, *we* are the potions man?\", you then realize that makes no sense at all.");
 		effects.add("After drinking the potion you notice a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
@@ -234,6 +234,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You feel the need to smash sometimes for some reason.");
 		effects.add("You feel the need to use the \"shell\" command.");
 		effects.add("You feel the need to use the \"fling\" command.");
+		effects.add("The bottle turns into a pie.");
 	}
     static String html;
 
