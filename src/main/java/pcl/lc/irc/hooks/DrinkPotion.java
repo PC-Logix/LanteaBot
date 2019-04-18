@@ -124,12 +124,12 @@ public class DrinkPotion extends AbstractListener {
 
 		//Valid tags: {user},{color},{consistency},{transformation},{transformation2},{transformations},{transformations2}
 		effects.add("{user} looks confused as nothing happens.");
-		effects.add("{user} turns into a {transformation}girl.");
-		effects.add("{user} turns into a {transformation}boy.");
+		effects.add("{user} turns into a {transformation} girl.");
+		effects.add("{user} turns into a {transformation} boy.");
 		effects.add("{user} turns into a {transformation}.");
-		effects.add("{user} turns into a {transformation}{transformation2}.");
-		effects.add("{user} turns into a {transformation}{transformation2}girl.");
-		effects.add("{user} turns into a {transformation}{transformation2}boy.");
+		effects.add("{user} turns into a {transformation} {transformation2}.");
+		effects.add("{user} turns into a {transformation} {transformation2} girl.");
+		effects.add("{user} turns into a {transformation} {transformation2} boy.");
 		effects.add("{user}'s hair turns to the color of {color}.");
 		effects.add("{user}'s skin turns to the color of {color}.");
 		effects.add("{user}'s toes turn invisible.");
