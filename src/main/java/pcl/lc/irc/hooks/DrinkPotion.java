@@ -235,6 +235,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You feel the need to use the \"shell\" command.");
 		effects.add("You feel the need to use the \"fling\" command.");
 		effects.add("The bottle turns into a pie.");
+		effects.add("The bottle turns into a piece of bacon.");
+		effects.add("The bottle turns into an apple.");
 	}
     static String html;
 

@@ -1183,7 +1183,11 @@ public class Helper {
             "Unicorn"  ,
             "Dryad"    ,
             "Dragon"   ,
-            "Dragon"   ,
+            "Fairy"    ,
+            "Spaghetti",
+            "Water"    ,
+            "Lava"     ,
+            "Shark"    ,
 		};
 		String ret = animals[Helper.getRandomInt(0, animals.length - 1)];
 		if (plural)
