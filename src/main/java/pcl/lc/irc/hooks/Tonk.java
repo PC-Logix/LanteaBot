@@ -308,7 +308,7 @@ public class Tonk extends AbstractListener {
 				while (resultSet.next()) {
 					count++;
 					DecimalFormat dec = new DecimalFormat(numberFormat);
-					tonkLeaders += "<tr><td>" + resultSet.getString(1).replace(tonk_record_key + "_",  "") + "</td><td>" + dec.format(Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
+					tonkLeaders += "<tr><td>#" + count + " " + resultSet.getString(1).replace(tonk_record_key + "_",  "") + "</td><td>" + dec.format(Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
 				}
 			}
 			catch (Exception e) {
