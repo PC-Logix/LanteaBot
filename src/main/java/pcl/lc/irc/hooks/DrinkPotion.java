@@ -135,7 +135,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user}'s toes turn invisible.");
 		effects.add("{user}'s hair grows three times longer.");
 		effects.add("{user} gains the proportional strength of a {transformation}.");
-		effects.add("{user} gains the ability to not be seen.");
+		effects.add("{user} now knows how not to be seen.");
 		effects.add("{user} gains knowledge about a random useless subject.");
 		effects.add("{user} gains an extra strand of hair on their face.");
 		effects.add("{user} grows whiskers.");
