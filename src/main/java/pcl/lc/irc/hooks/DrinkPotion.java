@@ -20,6 +20,8 @@ import pcl.lc.utils.Helper;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Forecaster
@@ -31,7 +33,7 @@ public class DrinkPotion extends AbstractListener {
 	private Command get_random;
 	private Command potion_stats;
 	private Command discovered;
-	private static ArrayList<String> colors = new ArrayList<>();
+	private static ArrayList<Color> colors = new ArrayList<>();
 	private static ArrayList<String> consistencies = new ArrayList<>();
 	private static ArrayList<String> effects = new ArrayList<>();
 	private static HashMap<String, EffectEntry> potions = new HashMap<>();
@@ -46,43 +48,43 @@ public class DrinkPotion extends AbstractListener {
 		IRCBot.registerCommand(potion_stats);
 		IRCBot.registerCommand(discovered);
 
-		colors.add("blue");
-		colors.add("red");
-		colors.add("röd");
-		colors.add("rød");
-		colors.add("yellow");
-		colors.add("purple");
-		colors.add("green");
-		colors.add("cyan");
-		colors.add("tan");
-		colors.add("black");
-		colors.add("white");
-		colors.add("pink");
-		colors.add("gold");
-		colors.add("silver");
-		colors.add("tomato");
-		colors.add("lime");
-		colors.add("citrus");
-		colors.add("strawberry");
-		colors.add("chocolate");
-		colors.add("orange");
-		colors.add("tuna");
-		colors.add("salmon");
-		colors.add("rainbow");
-		colors.add("void");
-		colors.add("ocean");
-		colors.add("grass");
-		colors.add("sky");
-		colors.add("rock");
-		colors.add("metal");
-		colors.add("copper");
-		colors.add("aqua");
-		colors.add("dirt");
-		colors.add("quicksilver");
-		colors.add("rust");
-		colors.add("coral");
-		colors.add("transparent");
-		colors.add("water");
+		colors.add(new Color("blue", "a"));
+		colors.add(new Color("red", "a"));
+		colors.add(new Color("röd", "a"));
+		colors.add(new Color("rød", "a"));
+		colors.add(new Color("yellow", "a"));
+		colors.add(new Color("purple", "a"));
+		colors.add(new Color("green", "a"));
+		colors.add(new Color("cyan", "a"));
+		colors.add(new Color("tan", "a"));
+		colors.add(new Color("black", "a"));
+		colors.add(new Color("white", "a"));
+		colors.add(new Color("pink", "a"));
+		colors.add(new Color("gold", "a", "a {color} colored {item}"));
+		colors.add(new Color("silver", "a", "a {color} colored {item}"));
+		colors.add(new Color("tomato", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("lime", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("citrus", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("strawberry", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("chocolate", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("orange", "an"));
+		colors.add(new Color("tuna", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("salmon", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("rainbow", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("void", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("ocean", "an", "an {color} colored {item}", "the color of the {color}"));
+		colors.add(new Color("grass", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("sky", "a", "a {color} colored {item}", "the color of the {color}"));
+		colors.add(new Color("rock", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("metal", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("copper", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("aqua", "an", "an {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("dirt", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("quicksilver", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("rust", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("coral", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("transparent", "a", "a {color} {item}", "the color of {color}"));
+		colors.add(new Color("water", "a", "a {color} colored {item}", "the color of {color}"));
 
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
@@ -122,7 +124,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("smooth");
 		consistencies.add("soft");
 
-		//Valid tags: {user},{color},{consistency},{transformation},{transformation2},{transformations},{transformations2}
+		//Valid tags: {user},{color},{turn_color},{color:item},{consistency},{transformation},{transformation2},{transformations},{transformations2}
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a {transformation} girl.");
 		effects.add("{user} turns into a {transformation} boy.");
@@ -130,8 +132,11 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} turns into a {transformation} {transformation2}.");
 		effects.add("{user} turns into a {transformation} {transformation2} girl.");
 		effects.add("{user} turns into a {transformation} {transformation2} boy.");
-		effects.add("{user}'s hair turns to the color of {color}.");
-		effects.add("{user}'s skin turns to the color of {color}.");
+		effects.add("{user}'s hair turn {turn_color}.");
+		effects.add("{user}'s skin turn {turn_color}.");
+		effects.add("{user}'s nails turn {turn_color}.");
+		effects.add("{user}'s bones turn {turn_color}.");
+		effects.add("{user}'s clothes turn {turn_color}.");
 		effects.add("{user}'s toes turn invisible.");
 		effects.add("{user}'s hair grows three times longer.");
 		effects.add("{user} gains the proportional strength of a {transformation}.");
@@ -147,7 +152,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} feels a strong urge to recycle the potion bottle.");
 		effects.add("{user}'s bed is suddenly slightly less comfortable.");
 		effects.add("{user} gains a negligible amount of luck.");
-		effects.add("{user} realizes this was actually a {color} {consistency} potion.");
+		effects.add("{user} realizes this was actually a {consistency} {color} potion.");
 		effects.add("{user} remembers an important appointment.");
 		effects.add("{user} grows a mustache.");
 		effects.add("{user} has a sudden but short lived desire to run around in a circle.");
@@ -162,14 +167,11 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} gains an additional bone.");
 		effects.add("{user} is suddenly more aware of cute things nearby.");
 		effects.add("{user} loses exactly a handful of luck.");
-		effects.add("{user}'s clothes turn the color of {color}.");
 		effects.add("{user}'s pockets suddenly contain a number of marbles.");
 		effects.add("{user}'s favourite hat is suddenly on fire.");
 		effects.add("{user} has a single tear roll down their cheek for some reason.");
 		effects.add("{user}'s nose vanish for one minute.");
 		effects.add("{user} feels like a champion!");
-		effects.add("{user}'s nail turns to the color of {color}.");
-		effects.add("{user}'s bones turn blue.");
 		effects.add("{user} feels a sudden surge of static electricity.");
 		effects.add("{user}'s shoes are now slightly too large.");
 		effects.add("{user} is now Borg.");
@@ -209,7 +211,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You see the sky briefly flash solid dark blue then go back to normal.");
 		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
 		effects.add("Suddenly there's a swarm of wasps behind you!");
-		effects.add("When you bring the bottle down you see a {color} colored plastic flamingo. It stares into your soul.");
+		effects.add("When you bring the bottle down you see {color:plastic flamingo}. It stares into your soul.");
 		effects.add("A bard starts playing a lute behind you. They don't stop.");
 		effects.add("The bottle turns into a sword.");
 		effects.add("The bottle turns into an axe.");
@@ -228,7 +230,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows you.");
 		effects.add("The potion contained a computer virus! But your anti-virus routines destroy it.");
 		effects.add("The potion contained a computer virus! It just changed your background...");
-		effects.add("The bottle splits into two revealing a smaller {color} {consistency} potion.");
+		effects.add("The bottle splits into two revealing a smaller {consistency} {color} potion.");
 		effects.add("A tiny genie appears, gives you the thumbs up and poofs away.");
 		effects.add("You feel chill.");
 		effects.add("You feel the need to smash sometimes for some reason.");
@@ -249,31 +251,33 @@ public class DrinkPotion extends AbstractListener {
 		local_command = new Command("drink", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (params.size() > 0) {
-					if (params.get(0).equals("^")) {
-						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-							if (entry.getValue().get(0).equals(target)) {
-								if (entry.getValue().get(2).toLowerCase().contains("potion")) {
-									String[] words = entry.getValue().get(2).split(" ");
-									params = new ArrayList<>();
-									params.addAll(Arrays.asList(words));
-									break;
-								}
-							}
-						}
-					}
+			    try {
+                    if (params.size() > 0) {
+                        if (params.get(0).equals("^")) {
+                            List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+                            for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+                                if (entry.getValue().get(0).equals(target)) {
+                                    if (entry.getValue().get(2).toLowerCase().contains("potion")) {
+                                        String[] words = entry.getValue().get(2).split(" ");
+                                        params = new ArrayList<>();
+                                        params.addAll(Arrays.asList(words));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-					EffectEntry effect = getPotionEffect(params, nick);
+                        EffectEntry effect = getPotionEffect(params, nick);
 
-					if (effect != null) {
-						Helper.sendMessage(target, effect.toString().replace("{user}", nick));
-					}
-					else
-						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
-				}
-				else
-					Helper.sendMessage(target, "Drink what?");
+                        if (effect != null) {
+                            Helper.sendMessage(target, effect.toString().replace("{user}", nick));
+                        } else
+                            Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
+                    } else
+                        Helper.sendMessage(target, "Drink what?");
+                } catch (Exception ex) {
+			        ex.printStackTrace();
+                }
 			}
 		};
 		local_command.setHelpText("Drink a potion with a certain consistency and color and something might happen.");
@@ -351,12 +355,12 @@ public class DrinkPotion extends AbstractListener {
 		int color = -1;
 		int consistency = -1;
 
-		System.out.println(params.toString());
+		System.out.println("Params: " + params.toString());
 
 		for (String param : params) {
 			param = param.toLowerCase();
-			if (color == -1 && colors.indexOf(param) != -1)
-				color = colors.indexOf(param);
+			if (color == -1 && ColorExists(param))
+				color = GetColorIndexByName(param);
 			if (consistency == -1 && consistencies.indexOf(param) != -1)
 				consistency = consistencies.indexOf(param);
 			if (param.replace(".", "").equals("potion"))
@@ -381,16 +385,30 @@ public class DrinkPotion extends AbstractListener {
 			int effect = Helper.getRandomInt(0, effects.size() - 1);
 			System.out.println("No effect recorded for " + consistency + "," + color + ", Assign " + effect);
 
-			String replace_color = colors.get(Helper.getRandomInt(0, colors.size() - 1));
-			String replace_consistency = consistencies.get(Helper.getRandomInt(0, consistencies.size() - 1));
+			String replace_color = getRandomColor().getName();
+			String turn_color = getRandomColor().turnsTo();
+			String replace_consistency = getRandomConsistency();
 
 			String effectp = effects.get(effect)
                     .replace("{color}", replace_color)
+                    .replace("{turn_color}", turn_color)
                     .replace("{consistency}", replace_consistency)
                     .replace("{transformation}", Helper.getRandomTransformation(true, false))
                     .replace("{transformation2}", Helper.getRandomTransformation(true, false))
                     .replace("{transformations}", Helper.getRandomTransformation(true, true))
                     .replace("{transformations2}", Helper.getRandomTransformation(true, true));
+			try {
+                Pattern pattern = Pattern.compile("\\{color:(.*)}");
+                Matcher matcher = pattern.matcher(effectp);
+                while (matcher.find()) {
+                    String color_item = matcher.group(1);
+                    effectp = effectp.replace(matcher.group(0), colors.get(Helper.getRandomInt(0, colors.size() - 1)).colorItem(color_item));
+                }
+            } catch (Exception ex) {
+			    ex.printStackTrace();
+            }
+
+			System.out.println("Effectp: " + effectp);
 			effectEntry = new EffectEntry(effectp, user);
 			setCombinationEffect(consistency, color, effectEntry);
 			return effectEntry;
@@ -431,7 +449,7 @@ public class DrinkPotion extends AbstractListener {
 	public static String[] getRandomPotion() {
 		int color = Helper.getRandomInt(0, colors.size() - 1);
 		int consistency = Helper.getRandomInt(0, consistencies.size() - 1);
-		String col = colors.get(color);
+		String col = colors.get(color).getName();
 		String con = consistencies.get(consistency);
 		return new String[] { con, col, potions.containsKey(con + "," + col) ? "" : "new" };
 	}
@@ -461,7 +479,7 @@ public class DrinkPotion extends AbstractListener {
                     HashMap.Entry pair = (HashMap.Entry)it.next();
                     String[] potion = pair.getKey().toString().split(",");
                     String consistency = consistencies.get(Integer.parseInt(potion[0]));
-                    String color = colors.get(Integer.parseInt(potion[1]));
+                    String color = colors.get(Integer.parseInt(potion[1])).getName();
 					EffectEntry entry = (EffectEntry)pair.getValue();
 					potionShelf += "<tr><td>" + consistency.substring(0,1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
                 }
@@ -495,6 +513,43 @@ public class DrinkPotion extends AbstractListener {
             os.close();
         }
     }
+
+    private static boolean ColorExists(String color) {
+        for (Color c : colors) {
+            if (c != null && c.Name != null && c.Name.equals(color.toLowerCase()))
+                return true;
+        }
+        return false;
+    }
+
+    private static Color FindColorByName(String color) {
+	    for (Color c : colors) {
+	        if (c != null && c.Name != null && c.Name.equals(color.toLowerCase()))
+	            return c;
+        }
+	    return null;
+    }
+
+    private static int GetColorIndexByName(String color) {
+	    Color col = null;
+        for (Color c : colors) {
+            if (c != null && c.Name != null && c.Name.equals(color.toLowerCase()))
+                col = c;
+        }
+        return colors.indexOf(col);
+    }
+
+    private static Color getRandomColor() {
+	    int index = Helper.getRandomInt(0, colors.size() - 1);
+//	    System.out.println("Found color index " + index);
+	    return colors.get(index);
+    }
+
+    private static String getRandomConsistency() {
+	    int index = Helper.getRandomInt(0, consistencies.size() - 1);
+//	    System.out.println("Found consistency index " + index);
+	    return consistencies.get(index);
+    }
 }
 
 class EffectEntry {
@@ -510,4 +565,63 @@ class EffectEntry {
 	public String toString() {
 		return Effect;
 	}
+}
+
+class Color {
+    String Prefix;
+    String Name;
+    String ItemPattern; //e.g. "{color} {item}" or "{item} the color of {color}"
+    String TurnPattern; //e.g. "thing turns {color}" or "thing turns the color of {color}"
+
+    Color (String name) {
+        this(name, null, null, null);
+    }
+
+    Color (String name, String prefix) {
+        this(name, prefix, null, null);
+    }
+
+    Color (String name, String prefix, String itemPattern) {
+        this(name, prefix, itemPattern, null);
+    }
+
+    Color(String name, String prefix, String itemPattern, String turnPattern) {
+        Name = name;
+        System.out.println("Name: " + Name);
+        Prefix = (prefix == null ? "" : prefix);
+        if (itemPattern == null || itemPattern.isEmpty())
+            ItemPattern = Prefix + (Prefix.equals("") ? "" : " ") + "{color} {item}";
+        else
+            ItemPattern = itemPattern;
+        if (turnPattern == null || turnPattern.isEmpty())
+            TurnPattern = "{color}";
+        else
+            TurnPattern = turnPattern;
+    }
+
+    @Override
+    public String toString() {
+        return Name;
+    }
+
+    public String getName() {
+        return getName(false);
+    }
+
+    public String getName(boolean prefix) {
+        System.out.println("getname: " + Name);
+        return (prefix ? Prefix + " " + Name : Name);
+    }
+
+    public String colorItem(String itemName) {
+        if (ItemPattern != null && !ItemPattern.equals("")) {
+            return ItemPattern.replace("{color}", Name).replace("{item}", itemName);
+        }
+        return itemName;
+    }
+
+    public String turnsTo() {
+        System.out.println("Turntoname: " + Name);
+        return TurnPattern.replace("{color}", Name);
+    }
 }
