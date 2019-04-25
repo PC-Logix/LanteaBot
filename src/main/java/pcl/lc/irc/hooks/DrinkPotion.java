@@ -85,6 +85,7 @@ public class DrinkPotion extends AbstractListener {
 		colors.add(new Color("coral", "a", "a {color} colored {item}", "the color of {color}"));
 		colors.add(new Color("transparent", "a", "a {color} {item}", "the color of {color}"));
 		colors.add(new Color("water", "a", "a {color} colored {item}", "the color of {color}"));
+		colors.add(new Color("weather", "a");
 
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
