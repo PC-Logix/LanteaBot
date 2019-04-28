@@ -6,12 +6,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.jvnet.inflector.Noun;
 import org.pircbotx.Channel;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericChannelUserEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.hooks.DrinkPotion;
+import pcl.lc.irc.hooks.Inventory;
+import pcl.lc.utils.db_items.InventoryItem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1159,40 +1161,58 @@ public class Helper {
 		}
 		return name;
 	}
+	private static String[][] animals = new String[][]{
+			new String[] {"A", "Pig"      , "s"  , null},
+			new String[] {"A", "Horse"    , "s"  , null},
+			new String[] {"A", "Cat"      , "s"  , null},
+			new String[] {"A", "Dog"      , "s"  , null},
+			new String[] {"A", "Fish"     , ""   , null},
+			new String[] {"A", "Crocodile", "s"  , null},
+			new String[] {"A", "Bird"     , "s"  , null},
+			new String[] {"A", "Lizard"   , "s"  , null},
+			new String[] {"A", "Fox"      , "es" , null},
+			new String[] {"A", "Turtle"   , "s"  , null},
+			new String[] {"A", "Sloth"    , "s"  , null},
+			new String[] {"A", "Wolf"     , "ves", "1"},
+			new String[] {"A", "Robot"    , "s"  , null},
+			new String[] {"A", "Golem"    , "s"  , null},
+			new String[] {"A", "Unicorn"  , "s"  , null},
+			new String[] {"A", "Dryad"    , "s"  , null},
+			new String[] {"A", "Dragon"   , "s"  , null},
+			new String[] {"A", "Fairy"    , "ies", "1"},
+			new String[] {"" , "Spaghetti", ""   , null},
+			new String[] {"" , "Water"    , ""   , null},
+			new String[] {"" , "Lava"     , ""   , null},
+			new String[] {"A", "Shark"    , "s"  , null},
+	};
 
-	public static String getRandomTransformation() {
-		return getRandomTransformation(false, false);
+	public static String getTransformationByIndex(int index) {
+		return getTransformationByIndex(index, false, false, false);
 	}
 
-	public static String getRandomTransformation(boolean lower_case, boolean plural) {
-		String[] animals = new String[]{
-		    "Pig"      ,
-			"Horse"    ,
-			"Cat"      ,
-			"Dog"      ,
-			"Fish"     ,
-			"Crocodile",
-			"Bird"     ,
-			"Lizard"   ,
-			"Fox"      ,
-			"Turtle"   ,
-			"Sloth"    ,
-            "Wolf"     ,
-            "Robot"    ,
-            "Golem"    ,
-            "Unicorn"  ,
-            "Dryad"    ,
-            "Dragon"   ,
-            "Fairy"    ,
-            "Spaghetti",
-            "Water"    ,
-            "Lava"     ,
-            "Shark"    ,
-		};
-		String ret = animals[Helper.getRandomInt(0, animals.length - 1)];
-		if (plural)
-			ret = Noun.pluralOf(ret);
+	public static String getTransformationByIndex(int index, boolean lower_case, boolean prefix, boolean plural) {
+		String ret = "";
+		try {
+			String[] transformation = animals[index];
+			if (!plural)
+				ret = (prefix ? transformation[0] + " " : "") + transformation[1];
+			else {
+				if (transformation[3] != null)
+					ret = transformation[1].substring(0, transformation[1].length() - Integer.parseInt(transformation[3])) + transformation[2];
+				else
+					ret = transformation[1] + transformation[2];
+			}
+		} catch (Exception ignored) {}
 		return !lower_case ? ret : ret.toLowerCase();
+	}
+
+	public static String getRandomTransformation() {
+		return getRandomTransformation(false, false, false);
+	}
+
+	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural) {
+		int index = Helper.getRandomInt(0, animals.length - 1);
+		return getTransformationByIndex(index, lower_case, prefix, plural);
 	}
 
 	public static Matcher getMatcherFromPattern(String pattern, String input) {
@@ -1276,4 +1296,51 @@ public class Helper {
         double scale = Math.pow(10, places);
         return Math.round(value * scale) / scale;
     }
+
+	//Valid tags: {user},{color},{turn_color},{color:item},{consistency},{p_transformation},{transformation},{transformation2},{transformations},{transformations2}
+    private static String[] warp_locations = new String[] {
+    		"You end up at home.",
+			"You end up in a dimension populated by {transformations}.",
+			"You end up in a dimension populated by {transformation} girls.",
+			"You end up in a dimension populated by {transformation} boys.",
+			"You end up in a dimension populated by {transformation} {transformation2} girls.",
+			"You end up in a dimension populated by {transformation} {transformation2} boys.",
+			"You end up in a dimension populated by {transformation} {transformations2}.",
+			"You end up in a dimension inhabited by {p_transformation}.",
+			"You end up in a dimension entirely filled with {consistency} {color} potion.",
+			"You end up in a dimension ruled by {item}.",
+			"You end up in a dimension that is just an endless field of flowers.",
+			"You end up in a frozen world.",
+			"You end up in a dry world.",
+	};
+
+	public static String getWarpLocationByIndex(int index) {
+		return getWarpLocationByIndex(index, false);
+	}
+
+	public static String getWarpLocationByIndex(int index, boolean lower_case) {
+		String replace_color = DrinkPotion.getRandomColor().getName();
+		String turn_color = DrinkPotion.getRandomColor().turnsTo();
+		String replace_consistency = DrinkPotion.getRandomConsistency();
+		String ret = warp_locations[index]
+				.replace("{item}", Inventory.getRandomItem().item_name)
+				.replace("{color}", replace_color)
+				.replace("{turn_color}", turn_color)
+				.replace("{consistency}", replace_consistency)
+				.replace("{transformation}", Helper.getRandomTransformation(true, false, false))
+				.replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
+				.replace("{transformations}", Helper.getRandomTransformation(true, false, true))
+				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
+				.replace("{p_transformation}", Helper.getRandomTransformation(true, true, false));
+		return !lower_case ? ret : ret.toLowerCase();
+	}
+
+	public static String getRandomWarpLocation() {
+		return getRandomWarpLocation(false);
+	}
+
+    public static String getRandomWarpLocation(boolean lower_case) {
+		int index = Helper.getRandomInt(0, warp_locations.length - 1);
+		return getWarpLocationByIndex(index, lower_case);
+	}
 }
