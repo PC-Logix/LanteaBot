@@ -1300,6 +1300,7 @@ public class Helper {
 	//Valid tags: {user},{color},{turn_color},{color:item},{consistency},{p_transformation},{transformation},{transformation2},{transformations},{transformations2}
     private static String[] warp_locations = new String[] {
     		"You end up at home.",
+    		"You end up in your bed.",
 			"You end up in a dimension populated by {transformations}.",
 			"You end up in a dimension populated by {transformation} girls.",
 			"You end up in a dimension populated by {transformation} boys.",
@@ -1312,6 +1313,9 @@ public class Helper {
 			"You end up in a dimension that is just an endless field of flowers.",
 			"You end up in a frozen world.",
 			"You end up in a dry world.",
+			"You end up in a world inhabited by mimes.",
+			"You end up in a world inhabited by bards.",
+			"You end up in a world inhabited by clowns.",
 	};
 
 	public static String getWarpLocationByIndex(int index) {

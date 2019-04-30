@@ -233,7 +233,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The potion contained a computer virus! But your anti-virus routines destroy it.");
 		effects.add("The potion contained a computer virus! It just changed your background...");
 		effects.add("The bottle splits into two revealing a smaller {consistency} {color} potion.");
-		effects.add("A tiny genie appears, gives you the thumbs up and poofs away.");
+		effects.add("A tiny genie appears, gives you a thumbs up and poofs away.");
 		effects.add("You feel chill.");
 		effects.add("You feel the need to smash sometimes for some reason.");
 		effects.add("You feel the need to use the \"shell\" command.");
@@ -241,6 +241,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The bottle turns into a pie.");
 		effects.add("The bottle turns into a piece of bacon.");
 		effects.add("The bottle turns into an apple.");
+		effects.add("A bard behind you suddenly stops playing. They were most likely eaten by a monster.");
 	}
     static String html;
 
