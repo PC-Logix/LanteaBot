@@ -479,8 +479,13 @@ public class DrinkPotion extends AbstractListener {
             int effectcount = effects.size();
             float ratio = (float)effectcount / (float)combinations;
             DecimalFormat format = new DecimalFormat("#.###");
+            ArrayList<String> unique_effects_discovered = new ArrayList<>();
+            for (String item : effects)
+            	if (!unique_effects_discovered.contains(item))
+            		unique_effects_discovered.add(item);
+            int unique_effect_count = unique_effects_discovered.size();
             String potionShelf = "<div>There are <b>" + colorcount + "</b> colorEntries and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
-					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion.</div>" +
+					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. " + unique_effect_count + " unique effects " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>";
             try {
                 Iterator it = potions.entrySet().iterator();
