@@ -61,31 +61,31 @@ public class DrinkPotion extends AbstractListener {
 		colorEntries.add(new ColorEntry("black", "a"));
 		colorEntries.add(new ColorEntry("white", "a"));
 		colorEntries.add(new ColorEntry("pink", "a"));
-		colorEntries.add(new ColorEntry("gold", "a", "a {color} colored {item}"));
-		colorEntries.add(new ColorEntry("silver", "a", "a {color} colored {item}"));
-		colorEntries.add(new ColorEntry("tomato", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("lime", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("citrus", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("strawberry", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("chocolate", "a", "a {color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("gold", "a", "{color} colored {item}"));
+		colorEntries.add(new ColorEntry("silver", "a", "{color} colored {item}"));
+		colorEntries.add(new ColorEntry("tomato", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("lime", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("citrus", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("strawberry", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("chocolate", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("orange", "an"));
-		colorEntries.add(new ColorEntry("tuna", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("salmon", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("rainbow", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("void", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("ocean", "an", "an {color} colored {item}", "the color of the {color}"));
-		colorEntries.add(new ColorEntry("grass", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("sky", "a", "a {color} colored {item}", "the color of the {color}"));
-		colorEntries.add(new ColorEntry("rock", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("metal", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("copper", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("aqua", "an", "an {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("dirt", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("quicksilver", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("rust", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("coral", "a", "a {color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("transparent", "a", "a {color} {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("water", "a", "a {color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("tuna", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("salmon", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("rainbow", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("void", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("ocean", "an", "{color} colored {item}", "the color of the {color}"));
+		colorEntries.add(new ColorEntry("grass", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("sky", "a", "{color} colored {item}", "the color of the {color}"));
+		colorEntries.add(new ColorEntry("rock", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("metal", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("copper", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("aqua", "an", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("dirt", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("quicksilver", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("rust", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("coral", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("transparent", "a", "{color} {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("water", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("weather", "a"));
 
 		consistencies.add("viscous");
@@ -126,7 +126,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("smooth");
 		consistencies.add("soft");
 
-		//Valid tags: {user},{color},{turn_color},{color:item},{consistency},{transformation},{transformation2},{transformations},{transformations2}
+		//Valid tags: {user},{color},{turn_color},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2}
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a {transformation} girl.");
 		effects.add("{user} turns into a {transformation} boy.");
@@ -169,7 +169,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} gains an additional bone.");
 		effects.add("{user} is suddenly more aware of cute things nearby.");
 		effects.add("{user} loses exactly a handful of luck.");
-		effects.add("{user}'s pockets suddenly contain a number of marbles.");
+		effects.add("{user}'s pockets suddenly contain a number of {color:marbles:}.");
 		effects.add("{user}'s favourite hat is suddenly on fire.");
 		effects.add("{user} has a single tear roll down their cheek for some reason.");
 		effects.add("{user}'s nose vanish for one minute.");
@@ -213,7 +213,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You see the sky briefly flash solid dark blue then go back to normal.");
 		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
 		effects.add("Suddenly there's a swarm of wasps behind you!");
-		effects.add("When you bring the bottle down you see {color:plastic flamingo}. It stares into your soul.");
+		effects.add("When you bring the bottle down you see {color:plastic flamingo:p}. It stares into your soul.");
 		effects.add("A bard starts playing a lute behind you. They don't stop.");
 		effects.add("The bottle turns into a sword.");
 		effects.add("The bottle turns into an axe.");
@@ -401,11 +401,14 @@ public class DrinkPotion extends AbstractListener {
                     .replace("{transformations}", Helper.getRandomTransformation(true, false, true))
                     .replace("{transformations2}", Helper.getRandomTransformation(true, false, true));
 			try {
-                Pattern pattern = Pattern.compile("\\{color:(.*)}");
+                Pattern pattern = Pattern.compile("\\{color:(.*):(p?)}");
                 Matcher matcher = pattern.matcher(effectp);
                 while (matcher.find()) {
                     String color_item = matcher.group(1);
-                    effectp = effectp.replace(matcher.group(0), colorEntries.get(Helper.getRandomInt(0, colorEntries.size() - 1)).colorItem(color_item));
+                    boolean use_prefix = false;
+                    if (matcher.group(2).equals("p"))
+                        use_prefix = true;
+                    effectp = effectp.replace(matcher.group(0), getRandomColor().colorItem(color_item, use_prefix));
                 }
             } catch (Exception ex) {
 			    ex.printStackTrace();

@@ -23,7 +23,7 @@ public class ColorEntry {
         System.out.println("Name: " + Name);
         Prefix = (prefix == null ? "" : prefix);
         if (itemPattern == null || itemPattern.isEmpty())
-            ItemPattern = Prefix + (Prefix.equals("") ? "" : " ") + "{color} {item}";
+            ItemPattern = "{color} {item}";
         else
             ItemPattern = itemPattern;
         if (turnPattern == null || turnPattern.isEmpty())
@@ -47,8 +47,12 @@ public class ColorEntry {
     }
 
     public String colorItem(String itemName) {
+        return colorItem(itemName, true);
+    }
+
+    public String colorItem(String itemName, boolean use_prefix) {
         if (ItemPattern != null && !ItemPattern.equals("")) {
-            return ItemPattern.replace("{color}", Name).replace("{item}", itemName);
+            return (use_prefix && !Prefix.isEmpty() ? Prefix + " " : "" ) + ItemPattern.replace("{color}", Name).replace("{item}", itemName);
         }
         return itemName;
     }
