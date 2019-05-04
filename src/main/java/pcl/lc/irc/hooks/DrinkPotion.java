@@ -242,6 +242,9 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The bottle turns into a piece of bacon.");
 		effects.add("The bottle turns into an apple.");
 		effects.add("A bard behind you suddenly stops playing. They were most likely eaten by a monster.");
+		effects.add("Gravity reverses for {user] for a second.");
+		effects.add("{user} now has a mullet for 30 minutes.");
+		effects.add("The next remote you look for is extra hard to find.");
 	}
     static String html;
 
