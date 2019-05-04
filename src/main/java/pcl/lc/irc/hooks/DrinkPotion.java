@@ -271,7 +271,13 @@ public class DrinkPotion extends AbstractListener {
                                     }
                                 }
                             }
-                        }
+                        } else if (params.get(0).equals("random")) {
+                        	String[] potion = getRandomPotion();
+                        	boolean is_new = potion[2].equals("new");
+                        	potion[2] = "potion";
+                        	Helper.sendMessage(target, "You drink a " + potion[0] + " " + potion[1] + " potion" + (is_new ? " (New!)" : "") + ". " + getPotionEffect(potion, nick).toString().replace("{user}", nick));
+                        	return;
+						}
 
                         EffectEntry effect = getPotionEffect(params, nick);
 
@@ -353,6 +359,10 @@ public class DrinkPotion extends AbstractListener {
 		get_random.tryExecute(command, nick, target, event, copyOfRange);
 		potion_stats.tryExecute(command, nick, target, event, copyOfRange);
 		discovered.tryExecute(command, nick, target, event, copyOfRange);
+	}
+
+	public EffectEntry getPotionEffect(String[] params, String user) {
+		return getPotionEffect(new ArrayList<>(Arrays.asList(params)), user);
 	}
 
 	public EffectEntry getPotionEffect(ArrayList<String> params, String user) {
@@ -455,11 +465,12 @@ public class DrinkPotion extends AbstractListener {
 		return potions.get(key);
 	}
 
+	/**
+	 * @return String[] Returns three values: consistency, color and "" or "new" (whether potion has been generated already today)
+	 */
 	public static String[] getRandomPotion() {
-		int color = Helper.getRandomInt(0, colorEntries.size() - 1);
-		int consistency = Helper.getRandomInt(0, consistencies.size() - 1);
-		String col = colorEntries.get(color).getName();
-		String con = consistencies.get(consistency);
+		String col = getRandomColor().Name;
+		String con = getRandomConsistency();
 		return new String[] { con, col, potions.containsKey(con + "," + col) ? "" : "new" };
 	}
 
@@ -488,7 +499,7 @@ public class DrinkPotion extends AbstractListener {
 			}
             int unique_effect_count = unique_effects_discovered.size();
             String potionShelf = "<div>There are <b>" + colorcount + "</b> colorEntries and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
-					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. " + unique_effect_count + " unique effects " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
+					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. <b>" + unique_effect_count + "</b> unique effect" + (unique_effect_count == 1 ? "" : "s") + " " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>";
             try {
 				for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
