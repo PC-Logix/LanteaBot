@@ -480,23 +480,24 @@ public class DrinkPotion extends AbstractListener {
             float ratio = (float)effectcount / (float)combinations;
             DecimalFormat format = new DecimalFormat("#.###");
             ArrayList<String> unique_effects_discovered = new ArrayList<>();
-            for (String item : effects)
-            	if (!unique_effects_discovered.contains(item))
-            		unique_effects_discovered.add(item);
+
+			for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
+				String[] potion = stringEffectEntryEntry.getKey().toString().split(",");
+				if (!unique_effects_discovered.contains(potion[1]))
+					unique_effects_discovered.add(potion[1]);
+			}
             int unique_effect_count = unique_effects_discovered.size();
             String potionShelf = "<div>There are <b>" + colorcount + "</b> colorEntries and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. " + unique_effect_count + " unique effects " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>";
             try {
-                Iterator it = potions.entrySet().iterator();
-                while (it.hasNext()) {
-                    HashMap.Entry pair = (HashMap.Entry)it.next();
-                    String[] potion = pair.getKey().toString().split(",");
-                    String consistency = consistencies.get(Integer.parseInt(potion[0]));
-                    String color = colorEntries.get(Integer.parseInt(potion[1])).getName();
-					EffectEntry entry = (EffectEntry)pair.getValue();
-					potionShelf += "<tr><td>" + consistency.substring(0,1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
-                }
+				for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
+					String[] potion = stringEffectEntryEntry.getKey().toString().split(",");
+					String consistency = consistencies.get(Integer.parseInt(potion[0]));
+					String color = colorEntries.get(Integer.parseInt(potion[1])).getName();
+					EffectEntry entry = (EffectEntry) stringEffectEntryEntry.getValue();
+					potionShelf += "<tr><td>" + consistency.substring(0, 1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
+				}
             }
             catch (Exception e) {
                 e.printStackTrace();
