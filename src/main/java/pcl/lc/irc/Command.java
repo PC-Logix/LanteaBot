@@ -203,7 +203,7 @@ public class Command {
 		}
 	}
 
-	private boolean hasAlias(String alias) {
+	public boolean hasAlias(String alias) {
 		return this.aliases.contains(alias.replace(Config.commandprefix, ""));
 	}
 
@@ -335,5 +335,10 @@ public class Command {
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {}
 	public void onExecuteFail(Command command, String nick, String target, long timeout) {
 		Helper.sendNotice(nick, getCannotExecuteReason(timeout), nick);
+	}
+
+	@Override
+	public String toString() {
+		return "'" + command + "' aliases: " + aliases.toString();
 	}
 }
