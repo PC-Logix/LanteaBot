@@ -28,13 +28,17 @@ public class Aliases extends AbstractListener {
 		local_command = new Command("aliases", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				boolean didTheThing = false;
 				for (String param : params) {
 					for (Map.Entry<String, Command> cmd : IRCBot.commands.entrySet()) {
 						if (cmd.getKey().equals(param) || cmd.getValue().hasAlias(param)) {
 							Helper.sendMessage(target, cmd.getValue().toString(), nick);
+							didTheThing = true;
 						}
 					}
 				}
+				if (!didTheThing)
+					Helper.sendMessage(target, "No commands found matching, or with alias matching argument" + (params.size() == 1 ? "" : "s") + ".");
 			}
 		};
 		local_command.setHelpText("Get aliases for a command, or find the root command for an alias");
