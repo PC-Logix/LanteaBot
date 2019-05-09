@@ -1316,6 +1316,7 @@ public class Helper {
 			"You end up in a world inhabited by mimes.",
 			"You end up in a world inhabited by bards.",
 			"You end up in a world inhabited by clowns.",
+			"You end up at the location of a great treasure. The treasure of friendship!",
 	};
 
 	public static String getWarpLocationByIndex(int index) {
@@ -1327,7 +1328,7 @@ public class Helper {
 		String turn_color = DrinkPotion.getRandomColor().turnsTo();
 		String replace_consistency = DrinkPotion.getRandomConsistency();
 		String ret = warp_locations[index]
-				.replace("{item}", Inventory.getRandomItem().getNameRaw())
+				.replace("{item}", Inventory.getRandomItem().item_name)
 				.replace("{color}", replace_color)
 				.replace("{turn_color}", turn_color)
 				.replace("{consistency}", replace_consistency)
