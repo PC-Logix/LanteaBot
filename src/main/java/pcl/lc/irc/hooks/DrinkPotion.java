@@ -61,6 +61,22 @@ public class DrinkPotion extends AbstractListener {
 		colorEntries.add(new ColorEntry("black", "a"));
 		colorEntries.add(new ColorEntry("white", "a"));
 		colorEntries.add(new ColorEntry("pink", "a"));
+		colorEntries.add(new ColorEntry("metal", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("copper", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("iron", "an", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("stainless steel", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("aluminium", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("titanium", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("adamantium", "an", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("unobtanium", "an", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("tiberium", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("ruby", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("emerald", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("saphire", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("amethyst", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("diamond", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("spice", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("radiation", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("gold", "a", "{color} colored {item}"));
 		colorEntries.add(new ColorEntry("silver", "a", "{color} colored {item}"));
 		colorEntries.add(new ColorEntry("tomato", "a", "{color} colored {item}", "the color of {color}"));
@@ -77,14 +93,11 @@ public class DrinkPotion extends AbstractListener {
 		colorEntries.add(new ColorEntry("grass", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("sky", "a", "{color} colored {item}", "the color of the {color}"));
 		colorEntries.add(new ColorEntry("rock", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("metal", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("copper", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("aqua", "an", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("dirt", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("quicksilver", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("rust", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("coral", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("transparent", "a", "{color} {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("transparent", "a", "{color} {item}", "{color}"));
 		colorEntries.add(new ColorEntry("water", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("weather", "a"));
 
@@ -245,6 +258,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("Gravity reverses for {user] for a second.");
 		effects.add("{user} now has a mullet for 30 minutes.");
 		effects.add("The next remote you look for is extra hard to find.");
+		effects.add("You get a sudden Spice infusion. You can see the universe. [Spice Addiction +1]");
+		effects.add("Your radiation level goes up by 2.");
 	}
     static String html;
 
@@ -277,7 +292,10 @@ public class DrinkPotion extends AbstractListener {
                         	potion[2] = "potion";
                         	Helper.sendMessage(target, "You drink a " + potion[0] + " " + potion[1] + " potion" + (is_new ? " (New!)" : "") + ". " + getPotionEffect(potion, nick).toString().replace("{user}", nick));
                         	return;
-						}
+						} else if (params.get(0).equals("everything")) {
+                            Helper.sendMessage(target, nick + " explodes.");
+                            return;
+                        }
 
                         EffectEntry effect = getPotionEffect(params, nick);
 
