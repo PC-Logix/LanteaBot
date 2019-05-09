@@ -1328,7 +1328,7 @@ public class Helper {
 		String turn_color = DrinkPotion.getRandomColor().turnsTo();
 		String replace_consistency = DrinkPotion.getRandomConsistency();
 		String ret = warp_locations[index]
-				.replace("{item}", Inventory.getRandomItem().item_name)
+				.replace("{item}", Inventory.getRandomItem().getNameRaw())
 				.replace("{color}", replace_color)
 				.replace("{turn_color}", turn_color)
 				.replace("{consistency}", replace_consistency)
