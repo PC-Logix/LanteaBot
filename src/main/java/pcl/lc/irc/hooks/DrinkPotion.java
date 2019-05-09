@@ -138,6 +138,8 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("seeping");
 		consistencies.add("smooth");
 		consistencies.add("soft");
+		consistencies.add("oxidised");
+		consistencies.add("mutable");
 
 		//Valid tags: {user},{color},{turn_color},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2}
 		effects.add("{user} looks confused as nothing happens.");
@@ -416,7 +418,13 @@ public class DrinkPotion extends AbstractListener {
 			System.out.println("Effect recorded for " + consistency + "," + color + ": " + effectEntry);
 			return effectEntry;
 		} else {
-			int effect = Helper.getRandomInt(0, effects.size() - 1);
+		    int min = 0;
+		    int max = effects.size() - 1;
+		    if (consistencies.get(consistency).equals("mutable")) {
+		        min = 1;
+		        max = 6;
+            }
+			int effect = Helper.getRandomInt(min, max);
 			System.out.println("No effect recorded for " + consistency + "," + color + ", Assign " + effect);
 
 			String replace_color = getRandomColor().getName();
