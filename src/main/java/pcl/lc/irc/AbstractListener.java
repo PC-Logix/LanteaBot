@@ -73,22 +73,24 @@ public abstract class AbstractListener extends ListenerAdapter
 	@Override
 	public void onMessage(final MessageEvent event) {
 		String[] splitMessage = event.getMessage().split(" ");
-		if (splitMessage[0].startsWith(Config.commandprefix)) {
-			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
-				handleCommand(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
-				handleMessage(event.getUser().getNick(), event, Arrays.copyOfRange(splitMessage, 0, splitMessage.length));
+		String nickClean = event.getUser().getNick().replaceAll("\\p{C}", "");
+		String nick = event.getUser().getNick();
+		if (splitMessage[0].startsWith(Config.commandprefix) || splitMessage[0].startsWith(IRCBot.ournick)) {
+			if (!IRCBot.isIgnored(nickClean)) {
+				handleCommand(nick, event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
+				handleMessage(nick, event, Arrays.copyOfRange(splitMessage, 0, splitMessage.length));
 			}
-		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")"))) {
-			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
-			if (!IRCBot.isIgnored(sender.replaceAll("\\p{C}", ""))) {
+		} else if (Config.parseBridgeCommandsFromUsers.contains(nick) && (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")"))) {
+			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1).replaceAll("\\p{C}", "");
+			if (!IRCBot.isIgnored(sender)) {
 				if (splitMessage[1].startsWith(Config.commandprefix)) {
-					handleCommand(sender.replaceAll("\\p{C}", ""), event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
+					handleCommand(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 				}
-				handleMessage(sender.replaceAll("\\p{C}", ""), event, Arrays.copyOfRange(splitMessage,1,splitMessage.length));
+				handleMessage(sender, event, Arrays.copyOfRange(splitMessage,1,splitMessage.length));
 			}
 		} else {
-			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
-				handleMessage(event.getUser().getNick(), event, Arrays.copyOfRange(splitMessage, 0, splitMessage.length));
+			if (!IRCBot.isIgnored(nickClean)) {
+				handleMessage(nick, event, Arrays.copyOfRange(splitMessage, 0, splitMessage.length));
 			}
 		}
 	}
@@ -96,11 +98,13 @@ public abstract class AbstractListener extends ListenerAdapter
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
 		String[] splitMessage = event.getMessage().split(" ");
+		String nickClean = event.getUser().getNick().replaceAll("\\p{C}", "");
+		String nick = event.getUser().getNick();
 		if (splitMessage[0].startsWith(Config.commandprefix)) {
-			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
-				handleCommand(event.getUser().getNick(), event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
+			if (!IRCBot.isIgnored(nickClean)) {
+				handleCommand(nick, event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
-		} else if ((splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
+		} else if (Config.parseBridgeCommandsFromUsers.contains(nickClean) && (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
 			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
 			if (!IRCBot.isIgnored(sender.replaceAll("\\p{C}", ""))) {
 				handleMessage(sender, event, Arrays.copyOfRange(splitMessage,2,splitMessage.length));

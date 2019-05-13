@@ -11,7 +11,9 @@ import pcl.lc.utils.GoogleSearch;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class Config {
 
@@ -40,6 +42,7 @@ public class Config {
 	static String adminProps = null;
 	public static String weatherAPI = null;
 	public static String yuriWebAPI = null;
+	public static List<String> parseBridgeCommandsFromUsers = null;
 
 	public static String mysqlDbHost = null;
 	public static String mysqlDbPort = null;
@@ -120,6 +123,7 @@ public class Config {
 			AzureTextAPI = prop.getProperty("AzureTextAPI", "");
 			weatherAPI = prop.getProperty("WeatherAPI", "");
 			yuriWebAPI = prop.getProperty("yuriWebAPI", "");
+			parseBridgeCommandsFromUsers = Arrays.asList(prop.getProperty("parseBridgeCommandsFromUsers", "").split(","));
 
 			mysqlDbHost = prop.getProperty("mysqlDbHost", "");
 			mysqlDbPort = prop.getProperty("mysqlDbPort", "");
