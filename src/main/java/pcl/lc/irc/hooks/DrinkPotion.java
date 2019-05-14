@@ -429,9 +429,9 @@ public class DrinkPotion extends AbstractListener {
 			int effect = Helper.getRandomInt(min, max);
 			System.out.println("No effect recorded for " + consistency + "," + color + ", Assign " + effect);
 
-			String replace_color = getRandomColor().getName();
-			String turn_color = getRandomColor().turnsTo();
-			String replace_consistency = getRandomConsistency();
+			String replace_color = getColor().getName();
+			String turn_color = getColor().turnsTo();
+			String replace_consistency = getConsistency();
 
 			String effectp = effects.get(effect)
                     .replace("{color}", replace_color)
@@ -449,7 +449,7 @@ public class DrinkPotion extends AbstractListener {
                     boolean use_prefix = false;
                     if (matcher.group(2).equals("p"))
                         use_prefix = true;
-                    effectp = effectp.replace(matcher.group(0), getRandomColor().colorItem(color_item, use_prefix));
+                    effectp = effectp.replace(matcher.group(0), getColor().colorItem(color_item, use_prefix));
                 }
             } catch (Exception ex) {
 			    ex.printStackTrace();
@@ -497,9 +497,11 @@ public class DrinkPotion extends AbstractListener {
 	 * @return String[] Returns three values: consistency, color and "" or "new" (whether potion has been generated already today)
 	 */
 	public static String[] getRandomPotion() {
-		String col = getRandomColor().Name;
-		String con = getRandomConsistency();
-		return new String[] { con, col, potions.containsKey(con + "," + col) ? "" : "new" };
+		int coli = getRandomColorIndex();
+		int coni = getRandomConsistencyIndex();
+		String col = getColor(coli).Name;
+		String con = getConsistency(coni);
+		return new String[] { con, col, potions.containsKey(coni + "," + coli) ? "" : "new" };
 	}
 
     static class PotionHandler implements HttpHandler {
@@ -593,15 +595,27 @@ public class DrinkPotion extends AbstractListener {
         return colorEntries.indexOf(col);
     }
 
-    public static ColorEntry getRandomColor() {
-	    int index = Helper.getRandomInt(0, colorEntries.size() - 1);
-//	    System.out.println("Found color index " + index);
+    public static int getRandomColorIndex() {
+		return Helper.getRandomInt(0, colorEntries.size() - 1);
+	}
+
+	public static ColorEntry getColor() {
+		return getColor(getRandomColorIndex());
+	}
+
+    public static ColorEntry getColor(int index) {
 	    return colorEntries.get(index);
     }
 
-    public static String getRandomConsistency() {
-	    int index = Helper.getRandomInt(0, consistencies.size() - 1);
-//	    System.out.println("Found consistency index " + index);
+    public static int getRandomConsistencyIndex() {
+		return Helper.getRandomInt(0, consistencies.size() - 1);
+	}
+
+	public static String getConsistency() {
+		return getConsistency(getRandomConsistencyIndex());
+	}
+
+    public static String getConsistency(int index) {
 	    return consistencies.get(index);
     }
 }

@@ -13,7 +13,6 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.hooks.DrinkPotion;
 import pcl.lc.irc.hooks.Inventory;
-import pcl.lc.utils.db_items.InventoryItem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1324,9 +1323,9 @@ public class Helper {
 	}
 
 	public static String getWarpLocationByIndex(int index, boolean lower_case) {
-		String replace_color = DrinkPotion.getRandomColor().getName();
-		String turn_color = DrinkPotion.getRandomColor().turnsTo();
-		String replace_consistency = DrinkPotion.getRandomConsistency();
+		String replace_color = DrinkPotion.getColor().getName();
+		String turn_color = DrinkPotion.getColor().turnsTo();
+		String replace_consistency = DrinkPotion.getConsistency();
 		String ret = warp_locations[index]
 				.replace("{item}", Inventory.getRandomItem().getNameRaw())
 				.replace("{color}", replace_color)
