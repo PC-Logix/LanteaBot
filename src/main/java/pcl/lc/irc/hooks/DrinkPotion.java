@@ -49,58 +49,68 @@ public class DrinkPotion extends AbstractListener {
 		IRCBot.registerCommand(potion_stats);
 		IRCBot.registerCommand(discovered);
 
+			//basic colors
+		colorEntries.add(new ColorEntry("black", "a"));
 		colorEntries.add(new ColorEntry("blue", "a"));
+		colorEntries.add(new ColorEntry("cyan", "a"));
+		colorEntries.add(new ColorEntry("green", "a"));
+		colorEntries.add(new ColorEntry("orange", "an"));
+		colorEntries.add(new ColorEntry("pink", "a"));
+		colorEntries.add(new ColorEntry("purple", "a"));
 		colorEntries.add(new ColorEntry("red", "a"));
 		colorEntries.add(new ColorEntry("röd", "a"));
 		colorEntries.add(new ColorEntry("rød", "a"));
-		colorEntries.add(new ColorEntry("yellow", "a"));
-		colorEntries.add(new ColorEntry("purple", "a"));
-		colorEntries.add(new ColorEntry("green", "a"));
-		colorEntries.add(new ColorEntry("cyan", "a"));
 		colorEntries.add(new ColorEntry("tan", "a"));
-		colorEntries.add(new ColorEntry("black", "a"));
 		colorEntries.add(new ColorEntry("white", "a"));
-		colorEntries.add(new ColorEntry("pink", "a"));
-		colorEntries.add(new ColorEntry("metal", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("copper", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("iron", "an", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("stainless steel", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("aluminium", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("titanium", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("yellow", "a"));
+			//metal
 		colorEntries.add(new ColorEntry("adamantium", "an", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("unobtanium", "an", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("aluminium", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("copper", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("gold", "a", "{color} colored {item}"));
+		colorEntries.add(new ColorEntry("iron", "an", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("metal", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("quicksilver", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("rust", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("silver", "a", "{color} colored {item}"));
+		colorEntries.add(new ColorEntry("stainless steel", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("tiberium", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("ruby", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("emerald", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("saphire", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("titanium", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("unobtanium", "an", "{color} colored {item}", "the color of {color}"));
+			//gems
+		colorEntries.add(new ColorEntry("amber", "an", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("amethyst", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("diamond", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("spice", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("radiation", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("gold", "a", "{color} colored {item}"));
-		colorEntries.add(new ColorEntry("silver", "a", "{color} colored {item}"));
-		colorEntries.add(new ColorEntry("tomato", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("lime", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("citrus", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("strawberry", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("emerald", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("ruby", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("sapphire", "a", "{color} colored {item}", "the color of {color}"));
+			//food
 		colorEntries.add(new ColorEntry("chocolate", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("orange", "an"));
-		colorEntries.add(new ColorEntry("tuna", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("citrus", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("lime", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("salmon", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("rainbow", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("void", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("ocean", "an", "{color} colored {item}", "the color of the {color}"));
-		colorEntries.add(new ColorEntry("grass", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("sky", "a", "{color} colored {item}", "the color of the {color}"));
-		colorEntries.add(new ColorEntry("rock", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("spice", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("strawberry", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("tomato", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("tuna", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("vanilla", "a", "{color} colored {item}", "the color of {color}"));
+			//nature
 		colorEntries.add(new ColorEntry("aqua", "an", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("dirt", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("quicksilver", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("coral", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("transparent", "a", "{color} {item}", "{color}"));
+		colorEntries.add(new ColorEntry("dirt", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("grass", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("ocean", "an", "{color} colored {item}", "the color of the {color}"));
+		colorEntries.add(new ColorEntry("rock", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("sky", "a", "{color} colored {item}", "the color of the {color}"));
 		colorEntries.add(new ColorEntry("water", "a", "{color} colored {item}", "the color of {color}"));
+			//not really colors
+		colorEntries.add(new ColorEntry("ender", "an", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("radiation", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("rainbow", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("transparent", "a", "{color} {item}", "{color}"));
+		colorEntries.add(new ColorEntry("void", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("weather", "a"));
-
+		
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
 		consistencies.add("fluffy");
