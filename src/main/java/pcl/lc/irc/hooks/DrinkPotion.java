@@ -67,9 +67,19 @@ public class DrinkPotion extends AbstractListener {
 		colorEntries.add(new ColorEntry("stainless steel", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("aluminium", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("titanium", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("adamantium", "an", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("unobtanium", "an", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("tiberium", "a", "{color} colored {item}", "the color of {color}"));
+		colorEntries.add(new ColorEntry("adamantium", "an", "{color} colored {item}", "the color of {color}")); // Marvel universe
+		colorEntries.add(new ColorEntry("unobtanium", "an", "{color} colored {item}", "the color of {color}")); // Avatar
+		colorEntries.add(new ColorEntry("tiberium", "a", "{color} colored {item}", "the color of {color}")); // Command & Conquer
+		colorEntries.add(new ColorEntry("caterium", "a", "{color} colored {item}", "the color of {color}")); // Satisfactory
+		colorEntries.add(new ColorEntry("aether", "an", "{color} colored {item}", "the color of {color}")); // Magic: The Gathering
+		colorEntries.add(new ColorEntry("bavarium", "a", "{color} colored {item}", "the color of {color}")); // Just Cause 3
+		colorEntries.add(new ColorEntry("bombastium", "a", "{color} colored {item}", "the color of {color}")); // Disney
+		colorEntries.add(new ColorEntry("dalekanium", "a", "{color} colored {item}", "the color of {color}")); // Doctor Who
+		colorEntries.add(new ColorEntry("dilithium", "a", "{color} colored {item}", "the color of {color}")); // Star Trek
+		colorEntries.add(new ColorEntry("jumbonium", "a", "{color} colored {item}", "the color of {color}")); // Futurama
+		colorEntries.add(new ColorEntry("naqahdah", "a", "{color} colored {item}", "the color of {color}")); // Stargate
+		colorEntries.add(new ColorEntry("octiron", "an", "{color} colored {item}", "the color of {color}")); // Discworld
+		colorEntries.add(new ColorEntry("redstone", "a", "{color} colored {item}", "the color of {color}")); // Minecraft
 		colorEntries.add(new ColorEntry("ruby", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("emerald", "a", "{color} colored {item}", "the color of {color}"));
 		colorEntries.add(new ColorEntry("saphire", "a", "{color} colored {item}", "the color of {color}"));
@@ -238,11 +248,11 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The bottle turns into a trident.");
 		effects.add("The bottle turns into a sling.");
 		effects.add("A genie appears out of the empty bottle, turns it into a pie, then vanishes.");
-		effects.add("You think \"What if, like, *we* are the potions man?\", you then realize that makes no sense at all.");
+		effects.add("You think \"What if, like, *we* are the potions man?\". This makes no sense whatsoever.");
 		effects.add("After drinking the potion you notice a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
 		effects.add("You forget the location of a great treasure.");
-		effects.add("Oh no, you got a potion, there's probably a boss fight coming!");
-		effects.add("Who needs internal organs anyway? There's an acidic tinge to the potion...");
+		effects.add("Oh no, you got a health potion, there's probably a boss fight coming!");
+		effects.add("There's an acidic tinge to the potion... A label on the bottle reads \"Who needs internal organs anyway?\"");
 		effects.add("You feel much better!");
 		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows you.");
 		effects.add("The potion contained a computer virus! But your anti-virus routines destroy it.");
