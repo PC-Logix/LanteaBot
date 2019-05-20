@@ -473,7 +473,7 @@ public class DrinkPotion extends AbstractListener {
 	}
 
 	private static void tryResetPotionList() {
-		if (day_of_potioning.equals(DateTime.now().toString("yyyy-MM-dd"))) {
+		if (DateTime.parse(day_of_potioning).isBefore(DateTime.now())) {
 			resetPotionList();
 		}
 	}
@@ -481,10 +481,11 @@ public class DrinkPotion extends AbstractListener {
 	private static void resetPotionList() {
 		System.out.println("Resetting potion list!");
 		potions = new HashMap<>();
-		day_of_potioning = DateTime.now().toString("yyyy-MM-dd");
+		day_of_potioning = DateTime.now().plusDays(4).toString("yyyy-MM-dd");
 	}
 
 	private boolean combinationHasEffect(int consistency, int color) {
+		tryResetPotionList();
 		System.out.println(potions.toString());
 		String key = consistency + "," + color;
 		if (potions.containsKey(key))
