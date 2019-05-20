@@ -150,6 +150,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("soft");
 		consistencies.add("oxidised");
 		consistencies.add("mutable");
+		consistencies.add("liquid");
 
 		//Valid tags: {user},{color},{turn_color},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2}
 		effects.add("{user} looks confused as nothing happens.");
