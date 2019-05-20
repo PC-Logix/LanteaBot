@@ -273,6 +273,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The next remote you look for is extra hard to find.");
 		effects.add("You get a sudden Spice infusion. You can see the universe. [Spice Addiction +1]");
 		effects.add("Your radiation level goes up by 2.");
+		effects.add("You smell something burning.");
+		effects.add("The sun turns into a giant baby face for a second. It's horrific.");
 	}
     static String html;
 
