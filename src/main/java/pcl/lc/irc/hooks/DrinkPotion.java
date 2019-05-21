@@ -476,7 +476,7 @@ public class DrinkPotion extends AbstractListener {
 	}
 
 	private static void tryResetPotionList() {
-		if (DateTime.parse(day_of_potioning).isBefore(DateTime.now())) {
+		if (day_of_potioning == null || day_of_potioning.equals("") || DateTime.parse(day_of_potioning).isBefore(DateTime.now())) {
 			resetPotionList();
 		}
 	}
