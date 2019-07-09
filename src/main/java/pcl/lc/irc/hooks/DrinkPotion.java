@@ -38,7 +38,10 @@ public class DrinkPotion extends AbstractListener {
 	private static ArrayList<String> consistencies = new ArrayList<>();
 	private static ArrayList<String> effects = new ArrayList<>();
 	private static HashMap<String, EffectEntry> potions = new HashMap<>();
+	private static ArrayList<String> limits = new ArrayList<>();
 	private static String day_of_potioning = "";
+
+	private static Boolean limitsEnabled = true;
 
 	@Override
 	protected void initHook() {
@@ -152,49 +155,49 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("mutable");
 		consistencies.add("liquid");
 
-		//Valid tags: {user},{color},{turn_color},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2}
+		//Valid tags: {user},{color},{turn_color},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		effects.add("{user} looks confused as nothing happens.");
-		effects.add("{user} turns into a {transformation} girl.");
-		effects.add("{user} turns into a {transformation} boy.");
-		effects.add("{user} turns into a {transformation}.");
-		effects.add("{user} turns into a {turn_color} {transformation} girl.");
-		effects.add("{user} turns into a {turn_color} {transformation} boy.");
-		effects.add("{user} turns into a {turn_color} {transformation}.");
-		effects.add("{user} turns into a {transformation} {transformation2}.");
-		effects.add("{user} turns into a {transformation} {transformation2} girl.");
-		effects.add("{user} turns into a {transformation} {transformation2} boy.");
-		effects.add("{user} turns into a {turn_color} {transformation} {transformation2}.");
-		effects.add("{user} turns into a {turn_color} {transformation} {transformation2} girl.");
-		effects.add("{user} turns into a {turn_color} {transformation} {transformation2} boy.");
-		effects.add("{user}'s hair turn {turn_color}.");
-		effects.add("{user}'s hair glows {turn_color}.");
-		effects.add("{user}'s skin turn {turn_color}.");
-		effects.add("{user}'s eyes turn {turn_color}.");
-		effects.add("{user}'s nails turn {turn_color}.");
-		effects.add("{user}'s bones turn {turn_color}.");
-		effects.add("{user}'s clothes turn {turn_color}.");
-		effects.add("{user}'s eyes glow {turn_color}.");
-		effects.add("{user}'s skin turn {turn_color} but with a {color} glow.");
-		effects.add("{user}'s toes turn invisible.");
-		effects.add("{user}'s hair grows three times longer.");
-		effects.add("{user} gains the proportional strength of a {transformation}.");
+		effects.add("{user} turns into a {transformation} girl{limit}.");
+		effects.add("{user} turns into a {transformation} boy{limit}.");
+		effects.add("{user} turns into a {transformation}{limit}.");
+		effects.add("{user} turns into a {turn_color} {transformation} girl{limit}.");
+		effects.add("{user} turns into a {turn_color} {transformation} boy{limit}.");
+		effects.add("{user} turns into a {turn_color} {transformation}{limit}.");
+		effects.add("{user} turns into a {transformation} {transformation2}{limit}.");
+		effects.add("{user} turns into a {transformation} {transformation2} girl{limit}.");
+		effects.add("{user} turns into a {transformation} {transformation2} boy{limit}.");
+		effects.add("{user} turns into a {turn_color} {transformation} {transformation2}{limit}.");
+		effects.add("{user} turns into a {turn_color} {transformation} {transformation2} girl{limit}.");
+		effects.add("{user} turns into a {turn_color} {transformation} {transformation2} boy{limit}.");
+		effects.add("{user}'s hair turn {turn_color}{limit}.");
+		effects.add("{user}'s hair glows {turn_color}{limit}.");
+		effects.add("{user}'s skin turn {turn_color}{limit}.");
+		effects.add("{user}'s eyes turn {turn_color}{limit}.");
+		effects.add("{user}'s nails turn {turn_color}{limit}.");
+		effects.add("{user}'s bones turn {turn_color}{limit}.");
+		effects.add("{user}'s clothes turn {turn_color}{limit}.");
+		effects.add("{user}'s eyes glow {turn_color}{limit}.");
+		effects.add("{user}'s skin turn {turn_color} but with a {color} glow{limit}.");
+		effects.add("{user}'s toes turn invisible{limit}.");
+		effects.add("{user}'s hair grows three times longer{limit}.");
+		effects.add("{user} gains the proportional strength of a {transformation}{limit}.");
 		effects.add("{user} now knows how not to be seen.");
 		effects.add("{user} gains knowledge about a random useless subject.");
-		effects.add("{user} gains an extra strand of hair on their face.");
-		effects.add("{user} grows whiskers.");
-		effects.add("{user} grows a tail from a {transformation}.");
-		effects.add("{user} shrinks by a negligible amount.");
-		effects.add("{user} grows slightly.");
+		effects.add("{user} gains an extra strand of hair on their face{limit}.");
+		effects.add("{user} grows whiskers{limit}.");
+		effects.add("{user} grows a tail from a {transformation}{limit}.");
+		effects.add("{user} shrinks by a negligible amount{limit}.");
+		effects.add("{user} grows slightly{limit}.");
 		effects.add("{user} suddenly craves pie.");
-		effects.add("{user} gains the ability to talk to bricks.");
+		effects.add("{user} gains the ability to talk to bricks{limit}.");
 		effects.add("{user} feels a strong urge to recycle the potion bottle.");
-		effects.add("{user}'s bed is suddenly slightly less comfortable.");
+		effects.add("{user}'s bed is suddenly slightly less comfortable{limit}.");
 		effects.add("{user} gains a negligible amount of luck.");
 		effects.add("{user} realizes this was actually a {consistency} {color} potion.");
 		effects.add("{user} remembers an important appointment.");
-		effects.add("{user} grows a mustache.");
-		effects.add("{user} has a sudden but short lived desire to run around in a circle.");
-		effects.add("{user} temporarily gains the ability to summon safety pins.");
+		effects.add("{user} grows a mustache{limit}.");
+		effects.add("{user} has a sudden but short lived desire to run around in a circle{limit}.");
+		effects.add("{user} gains the ability to summon safety pins{limit}.");
 		effects.add("{user} feels slightly stronger."); // gain 1 point of strength
 		effects.add("{user} feels slightly more agile."); // gain 1 point of agility
 		effects.add("{user} feels slightly faster."); // gain 1 point of speed
@@ -203,19 +206,19 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} feels slightly less agile.");
 		effects.add("{user} feels slightly slower.");
 		effects.add("{user} gains an additional bone.");
-		effects.add("{user} is suddenly more aware of cute things nearby.");
+		effects.add("{user} is suddenly more aware of cute things nearby{limit}.");
 		effects.add("{user} loses exactly a handful of luck.");
 		effects.add("{user}'s pockets suddenly contain a number of {color:marbles:}.");
 		effects.add("{user}'s favourite hat is suddenly on fire.");
 		effects.add("{user} has a single tear roll down their cheek for some reason.");
-		effects.add("{user}'s nose vanish for one minute.");
+		effects.add("{user}'s nose vanish{limit}.");
 		effects.add("{user} feels like a champion!");
 		effects.add("{user} feels a sudden surge of static electricity.");
-		effects.add("{user}'s shoes are now slightly too large.");
-		effects.add("{user} is now Borg.");
+		effects.add("{user}'s shoes are now slightly too large{limit}.");
+		effects.add("{user} is now Borg{limit}.");
 		effects.add("{user} has no memory of drinking a potion.");
-		effects.add("{user} knows the exact location of a particular molecule of oxygen for a second.");
-		effects.add("{user} thinks the empty bottle is a snake.");
+		effects.add("{user} knows the exact location of a particular molecule of oxygen{limit}.");
+		effects.add("{user} thinks the empty bottle is a snake{limit}.");
 		effects.add("{user} gets an urge to have another potion.");
 		effects.add("It tastes sweet.");
 		effects.add("It tastes sour.");
@@ -226,18 +229,18 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("A warpzone opens up next to {user}.");
 		effects.add("After the first sip the potion poofs away.");
 		effects.add("{user} looks up and sees the moon smile at them for a second.");
-		effects.add("The ghost of a plant haunts you for a while.");
+		effects.add("The ghost of a plant haunts you{limit}.");
 		effects.add("Three nearby pebbles suddenly shift slightly in your direction.");
 		effects.add("The next pie you eat tastes slightly less good.");
-		effects.add("Sitting down suddenly sounds like a really terrible idea.");
+		effects.add("Sitting down suddenly seems like a really terrible idea.");
 		effects.add("The next fork you touch tells you it's most deeply guarded secret.");
 		effects.add("A voice whispers into your ear \"Drink or be drunk\" as it fades away as you drink the potion.");
 		effects.add("You briefly feel like you have just stepped out of a car.");
 		effects.add("True enlightenment can be achieved by drinking another potion.");
-		effects.add("For about 5 seconds you know the location of a great treasure.");
+		effects.add("For about a second you know the location of a great treasure.");
 		effects.add("The potion was inside you all along.");
 		effects.add("You are suddenly wearings gloves you don't remember putting on.");
-		effects.add("A sudden craving for soup occupies your thoughts.");
+		effects.add("A sudden craving for soup occupies your thoughts{limit}.");
 		effects.add("{user} suddenly forgets a random piece of trivia.");
 		effects.add("A {transformation} flies past that vaguely resembles someone you know.");
 		effects.add("{user} reboots for an update.");
@@ -245,12 +248,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("You have a feeling that your face just appeared on a random vegetable somewhere.");
 		effects.add("The potion bottle is suddenly on fire!");
 		effects.add("Once empty the potion bottle fills with a differently colored potion.");
-		effects.add("{user} gains the ability to talk to {transformations}.");
+		effects.add("{user} gains the ability to talk to {transformations}{limit}.");
 		effects.add("You see the sky briefly flash solid dark blue then go back to normal.");
 		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
 		effects.add("Suddenly there's a swarm of wasps behind you!");
 		effects.add("When you bring the bottle down you see {color:plastic flamingo:p}. It stares into your soul.");
 		effects.add("A bard starts playing a lute behind you. They don't stop.");
+		effects.add("A bard starts playing a lute behind you{limit}.");
 		effects.add("The bottle turns into a sword.");
 		effects.add("The bottle turns into an axe.");
 		effects.add("The bottle turns into a spear.");
@@ -265,34 +269,45 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("Oh no, you got a health potion, there's probably a boss fight coming!");
 		effects.add("There's an acidic tinge to the potion... A label on the bottle reads \"Who needs internal organs anyway?\"");
 		effects.add("You feel much better!");
-		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows you.");
+		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows you{limit}.");
 		effects.add("The potion contained a computer virus! But your anti-virus routines destroy it.");
 		effects.add("The potion contained a computer virus! It just changed your background...");
 		effects.add("The bottle splits into two revealing a smaller {consistency} {color} potion.");
 		effects.add("A tiny genie appears, gives you a thumbs up and poofs away.");
 		effects.add("You feel chill.");
-		effects.add("You feel the need to smash sometimes for some reason.");
+		effects.add("You feel the need to smash.");
 		effects.add("You feel the need to use the \"shell\" command.");
 		effects.add("You feel the need to use the \"fling\" command.");
 		effects.add("The bottle turns into a pie.");
 		effects.add("The bottle turns into a piece of bacon.");
 		effects.add("The bottle turns into an apple.");
 		effects.add("A bard behind you suddenly stops playing. They were most likely eaten by a monster.");
-		effects.add("Gravity reverses for {user} for a second.");
-		effects.add("{user} now has a mullet for 30 minutes.");
+		effects.add("Gravity reverses for {user}{limit}.");
+		effects.add("{user} now has a mullet{limit}.");
 		effects.add("The next remote you look for is extra hard to find.");
 		effects.add("You get a sudden Spice infusion. You can see the universe. [Spice Addiction +1]");
-		effects.add("Your radiation level goes up by 2.");
+		effects.add("Your radiation level goes up by 2{limit}.");
 		effects.add("You smell something burning.");
 		effects.add("The sun turns into a giant baby face for a second. It's horrific.");
-		effects.add("Everything you say is now in Comic Sans.");
-		effects.add("Everything you say is now in Wingdings");
+		effects.add("Everything you say is now in Comic Sans{limit}.");
+		effects.add("Everything you say is now in Wingdings{limit}.");
 		effects.add("Your favourite cup is now upside down.");
 		effects.add("The potion bottle insults your haircut.");
 		effects.add("After drinking the potion you realize the bottle has your face on it.");
 		effects.add("Wheels are briefly square.");
 		effects.add("You hear a train whistle in the distance.");
 		effects.add("The next glass of water you have tastes like water.");
+
+		limits.add(" for 10 seconds");
+		limits.add(" for 30 seconds");
+		limits.add(" for five minutes");
+		limits.add(" for ten minutes");
+		limits.add(" for an hour");
+		limits.add(" until your next sip of water");
+		limits.add(" until the next time you hug someone");
+		limits.add(" until you say the word \"Blatherskite\"");
+		limits.add(" until you leave");
+		limits.add(" until you see a bird");
 	}
     static String html;
 
@@ -463,6 +478,7 @@ public class DrinkPotion extends AbstractListener {
 			String replace_color = getColor().getName();
 			String turn_color = getColor().turnsTo();
 			String replace_consistency = getConsistency();
+			String limit = getLimit();
 
 			String effectp = effects.get(effect)
                     .replace("{color}", replace_color)
@@ -471,7 +487,8 @@ public class DrinkPotion extends AbstractListener {
                     .replace("{transformation}", Helper.getRandomTransformation(true, false, false))
                     .replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
                     .replace("{transformations}", Helper.getRandomTransformation(true, false, true))
-                    .replace("{transformations2}", Helper.getRandomTransformation(true, false, true));
+                    .replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
+					.replace("{limit}", limit);
 			try {
                 Pattern pattern = Pattern.compile("\\{color:(.*):(p?)}");
                 Matcher matcher = pattern.matcher(effectp);
@@ -650,6 +667,18 @@ public class DrinkPotion extends AbstractListener {
     public static String getConsistency(int index) {
 	    return consistencies.get(index);
     }
+
+    public static int getRandomLimitIndex() {
+		return Helper.getRandomInt(0, limits.size() - 1);
+	}
+
+    public static String getLimit() {
+		return getLimit(getRandomLimitIndex());
+	}
+
+    public static String getLimit(int index) {
+		return limits.get(index);
+	}
 }
 
 class EffectEntry {
