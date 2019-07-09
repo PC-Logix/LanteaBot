@@ -285,6 +285,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("Your radiation level goes up by 2.");
 		effects.add("You smell something burning.");
 		effects.add("The sun turns into a giant baby face for a second. It's horrific.");
+		effects.add("Everything you say is now in Comic Sans.");
+		effects.add("Everything you say is now in Wingdings");
 	}
     static String html;
 
