@@ -287,6 +287,12 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The sun turns into a giant baby face for a second. It's horrific.");
 		effects.add("Everything you say is now in Comic Sans.");
 		effects.add("Everything you say is now in Wingdings");
+		effects.add("Your favourite cup is now upside down.");
+		effects.add("The potion bottle insults your haircut.");
+		effects.add("After drinking the potion you realize the bottle has your face on it.");
+		effects.add("Wheels are briefly square.");
+		effects.add("You hear a train whistle in the distance.");
+		effects.add("The next glass of water you have tastes like water.");
 	}
     static String html;
 
