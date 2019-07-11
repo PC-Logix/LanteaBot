@@ -42,6 +42,18 @@ public class Translator extends AbstractListener {
 		langMap.put("greek", Language.GREEK);
 		langMap.put("norwegian", Language.NORWEGIAN);
 		langMap.put("german", Language.GERMAN);
+		
+
+		langMap.put("en", Language.ENGLISH);
+		langMap.put("ru", Language.RUSSIAN);
+		langMap.put("fr", Language.FRENCH);
+		langMap.put("ja", Language.JAPANESE);
+		langMap.put("es", Language.SPANISH);
+		langMap.put("hu", Language.HUNGARIAN);
+		langMap.put("nl", Language.DUTCH);
+		langMap.put("el", Language.GREEK);
+		langMap.put("no", Language.NORWEGIAN);
+		langMap.put("de", Language.GERMAN);
 
 		initCommands();
 		String supportedLangs = "";
