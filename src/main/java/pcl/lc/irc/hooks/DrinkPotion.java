@@ -166,9 +166,9 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} turns into a {transformation} {transformation2}{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2} girl{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2} boy{limit}.");
-		effects.add("{user} turns into a {turn_color} {transformation} {transformation2}{limit}.");
-		effects.add("{user} turns into a {turn_color} {transformation} {transformation2} girl{limit}.");
-		effects.add("{user} turns into a {turn_color} {transformation} {transformation2} boy{limit}.");
+		effects.add("{user} turns into a {color} {transformation} {transformation2}{limit}.");
+		effects.add("{user} turns into a {color} {transformation} {transformation2} girl{limit}.");
+		effects.add("{user} turns into a {color} {transformation} {transformation2} boy{limit}.");
 		effects.add("{user}'s hair turn {turn_color}{limit}.");
 		effects.add("{user}'s hair glows {turn_color}{limit}.");
 		effects.add("{user}'s skin turn {turn_color}{limit}.");
