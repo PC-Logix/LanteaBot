@@ -1161,6 +1161,7 @@ public class Helper {
 		return name;
 	}
 	private static String[][] animals = new String[][]{
+			//prefix, name, suffix, remove n characters from end before applying suffix
 			new String[] {"A" , "Pig"      , "s"  , null},
 			new String[] {"A" , "Horse"    , "s"  , null},
 			new String[] {"A" , "Cat"      , "s"  , null},
@@ -1187,6 +1188,7 @@ public class Helper {
 			new String[] {"A" , "Goat"     , "s"  , null},
 			new String[] {"A" , "Sheep"    , ""   , null},
 			new String[] {"A" , "Toad"     , "s"  , null},
+			new String[] {"A" , "Sword"    , "s"  , null},
 	};
 
 	public static String getTransformationByIndex(int index) {
