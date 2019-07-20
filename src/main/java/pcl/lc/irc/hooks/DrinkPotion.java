@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpHandler;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.joda.time.DateTime;
+import org.jvnet.inflector.Noun;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
@@ -156,6 +157,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("liquid");
 
 		//Valid tags: {user},{color},{turn_color},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
+		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a {transformation} girl{limit}.");
 		effects.add("{user} turns into a {transformation} boy{limit}.");
@@ -179,7 +181,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user}'s eyes glow {turn_color}{limit}.");
 		effects.add("{user}'s skin turn {turn_color} but with a {color} glow{limit}.");
 		effects.add("{user}'s toes turn invisible{limit}.");
-		effects.add("{user}'s hair grows three times longer{limit}.");
+		effects.add("{user}'s hair grows {r:2-4:time} longer{limit}.");
 		effects.add("{user} gains the proportional strength of a {transformation}{limit}.");
 		effects.add("{user} now knows how not to be seen.");
 		effects.add("{user} gains knowledge about a random useless subject.");
@@ -225,36 +227,36 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("It tastes bitter.");
 		effects.add("It tastes salty.");
 		effects.add("{user} feels like one particular wasp has it out for them suddenly.");
-		effects.add("{user} zones out for a second.");
-		effects.add("A warpzone opens up next to {user}.");
+		effects.add("{user} zones out for {r:1-10:minute}.");
+		effects.add("A warpzone opens up next to {user}. (Use %warp)");
 		effects.add("After the first sip the potion poofs away.");
 		effects.add("{user} looks up and sees the moon smile at them for a second.");
 		effects.add("The ghost of a plant haunts you{limit}.");
-		effects.add("Three nearby pebbles suddenly shift slightly in your direction.");
-		effects.add("The next pie you eat tastes slightly less good.");
+		effects.add("{r:2-5:} nearby pebbles suddenly shift slightly in {user}'s direction.");
+		effects.add("The next pie {user} eats tastes slightly less good.");
 		effects.add("Sitting down suddenly seems like a really terrible idea.");
-		effects.add("The next fork you touch tells you it's most deeply guarded secret.");
-		effects.add("A voice whispers into your ear \"Drink or be drunk\" as it fades away as you drink the potion.");
-		effects.add("You briefly feel like you have just stepped out of a car.");
+		effects.add("The next fork {user} touches tells them it's most deeply guarded secret.");
+		effects.add("A voice whispers into {user}'s ear \"Drink or be drunk\" as it fades away as they drink the potion.");
+		effects.add("{user} briefly feel like they have just stepped out of a car.");
 		effects.add("True enlightenment can be achieved by drinking another potion.");
-		effects.add("For about a second you know the location of a great treasure.");
+		effects.add("For about a second {user} knows the location of a great treasure.");
 		effects.add("The potion was inside you all along.");
-		effects.add("You are suddenly wearings gloves you don't remember putting on.");
-		effects.add("A sudden craving for soup occupies your thoughts{limit}.");
+		effects.add("{user} is suddenly wearings gloves they don't remember putting on.");
+		effects.add("A sudden craving for soup occupies {user}'s thoughts{limit}.");
 		effects.add("{user} suddenly forgets a random piece of trivia.");
-		effects.add("A {transformation} flies past that vaguely resembles someone you know.");
-		effects.add("{user} reboots for an update.");
+		effects.add("A {transformation} flies past that vaguely resembles someone {user} knows.");
+		effects.add("{user} reboots for an update for {r:1-10:minute}.");
 		effects.add("Dramatic music briefly plays in the distance.");
-		effects.add("You have a feeling that your face just appeared on a random vegetable somewhere.");
+		effects.add("{user} has a feeling that their face just appeared on a random vegetable somewhere.");
 		effects.add("The potion bottle is suddenly on fire!");
 		effects.add("Once empty the potion bottle fills with a differently colored potion.");
 		effects.add("{user} gains the ability to talk to {transformations}{limit}.");
-		effects.add("You see the sky briefly flash solid dark blue then go back to normal.");
-		effects.add("When you drink the last drop, a bucket of water materializes above your head and dumps it contents over you, then vanishes. The water does not.");
-		effects.add("Suddenly there's a swarm of wasps behind you!");
-		effects.add("When you bring the bottle down you see {color:plastic flamingo:p}. It stares into your soul.");
-		effects.add("A bard starts playing a lute behind you. They don't stop.");
-		effects.add("A bard starts playing a lute behind you{limit}.");
+		effects.add("{user} sees the sky briefly flash solid dark blue then go back to normal.");
+		effects.add("When {user} drinks the last drop, a bucket of water materializes above their head and dumps it contents over them, then vanishes. The water does not.");
+		effects.add("Suddenly there's a swarm of wasps behind {user} that chase them for {r:30-60:second}!");
+		effects.add("When {user} brings the bottle down they see {color:plastic flamingo:p}. It stares into their soul.");
+		effects.add("A bard starts playing a lute behind {user}. They don't stop.");
+		effects.add("A bard starts playing a lute behind {user}{limit}.");
 		effects.add("The bottle turns into a sword.");
 		effects.add("The bottle turns into an axe.");
 		effects.add("The bottle turns into a spear.");
@@ -263,51 +265,56 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("The bottle turns into a trident.");
 		effects.add("The bottle turns into a sling.");
 		effects.add("A genie appears out of the empty bottle, turns it into a pie, then vanishes.");
-		effects.add("You think \"What if, like, *we* are the potions man?\". This makes no sense whatsoever.");
-		effects.add("After drinking the potion you notice a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
-		effects.add("You forget the location of a great treasure.");
-		effects.add("Oh no, you got a health potion, there's probably a boss fight coming!");
+		effects.add("{user} thinks \"What if, like, *we* are the potions man?\". This makes no sense whatsoever.");
+		effects.add("After drinking the potion {user} notices a label that says \"Side effects may include giggle fits and excessive monologuing.\"");
+		effects.add("{user} forgets the location of a great treasure.");
+		effects.add("Oh no, {user} got a health potion, there's probably a boss fight coming!");
 		effects.add("There's an acidic tinge to the potion... A label on the bottle reads \"Who needs internal organs anyway?\"");
-		effects.add("You feel much better!");
-		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows you{limit}.");
-		effects.add("The potion contained a computer virus! But your anti-virus routines destroy it.");
-		effects.add("The potion contained a computer virus! It just changed your background...");
+		effects.add("{user} feels much better!");
+		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows {user}{limit}.");
+		effects.add("The potion contained a computer virus! But {user}'s anti-virus routines destroy it.");
+		effects.add("The potion contained a computer virus! It just changed {user}'s background...");
 		effects.add("The bottle splits into two revealing a smaller {consistency} {color} potion.");
-		effects.add("A tiny genie appears, gives you a thumbs up and poofs away.");
-		effects.add("You feel chill.");
-		effects.add("You feel the need to smash.");
-		effects.add("You feel the need to use the \"shell\" command.");
-		effects.add("You feel the need to use the \"fling\" command.");
+		effects.add("A tiny genie appears, gives {user} a thumbs up, and poofs away.");
+		effects.add("{user} feels chill.");
+		effects.add("{user} feels the need to smash.");
+		effects.add("{user} feels the need to use the \"shell\" command.");
+		effects.add("{user} feels the need to use the \"fling\" command.");
 		effects.add("The bottle turns into a pie.");
 		effects.add("The bottle turns into a piece of bacon.");
 		effects.add("The bottle turns into an apple.");
-		effects.add("A bard behind you suddenly stops playing. They were most likely eaten by a monster.");
+		effects.add("A bard behind {user} suddenly stops playing. They were most likely eaten by a monster.");
 		effects.add("Gravity reverses for {user}{limit}.");
 		effects.add("{user} now has a mullet{limit}.");
-		effects.add("The next remote you look for is extra hard to find.");
-		effects.add("You get a sudden Spice infusion. You can see the universe. [Spice Addiction +1]");
-		effects.add("Your radiation level goes up by 2{limit}.");
-		effects.add("You smell something burning.");
+		effects.add("The next remote {user} looks for is extra hard to find.");
+		effects.add("{user} gets a sudden Spice infusion. {user} can see the universe. [Spice Addiction +1]");
+		effects.add("{user}'s radiation level goes up by 2{limit}.");
+		effects.add("{user} smells something burning.");
 		effects.add("The sun turns into a giant baby face for a second. It's horrific.");
-		effects.add("Everything you say is now in Comic Sans{limit}.");
-		effects.add("Everything you say is now in Wingdings{limit}.");
-		effects.add("Your favourite cup is now upside down.");
-		effects.add("The potion bottle insults your haircut.");
+		effects.add("Everything {user} says is now in Comic Sans{limit}.");
+		effects.add("Everything {user} says is now in Wingdings{limit}.");
+		effects.add("{user}'s favourite cup is now upside down.");
+		effects.add("The potion bottle insults {user}'s haircut.");
 		effects.add("After drinking the potion you realize the bottle has your face on it.");
 		effects.add("Wheels are briefly square.");
-		effects.add("You hear a train whistle in the distance.");
-		effects.add("The next glass of water you have tastes like water.");
+		effects.add("{user} hears a train whistle in the distance.");
+		effects.add("The next glass of water {user} has tastes like water.");
 
-		limits.add(" for 10 seconds");
-		limits.add(" for 30 seconds");
-		limits.add(" for five minutes");
-		limits.add(" for ten minutes");
-		limits.add(" for an hour");
-		limits.add(" until your next sip of water");
-		limits.add(" until the next time you hug someone");
-		limits.add(" until you say the word \"Blatherskite\"");
-		limits.add(" until you leave");
-		limits.add(" until you see a bird");
+		//Never end with punctuation
+		limits.add(" for {r:1-60:second}");
+		limits.add(" for {r:2-60:minute}");
+		limits.add(" for {r:2-5:hour}");
+		limits.add(" until their next sip of water");
+		limits.add(" until the next time they hug someone");
+		limits.add(" until they say the word \"Blatherskite\"");
+		limits.add(" until they leave");
+		limits.add(" until they see a bird");
+		limits.add(" for {r:1-10:moon}");
+		limits.add(" until Sozin's Comet returns");
+		limits.add(" until they see a unicorn");
+		limits.add(" until they find true love");
+		limits.add(" until they see a star fall");
+		limits.add(" until they eat a pie");
 	}
     static String html;
 
@@ -502,6 +509,18 @@ public class DrinkPotion extends AbstractListener {
             } catch (Exception ex) {
 			    ex.printStackTrace();
             }
+			try {
+				Pattern pattern = Pattern.compile("\\{r:(\\d\\d?\\d?)-(\\d\\d?\\d?):(.*?)}");
+				Matcher matcher = pattern.matcher(effectp);
+				while (matcher.find()) {
+					int num_min = Integer.parseInt(matcher.group(1));
+					int num_max = Integer.parseInt(matcher.group(2));
+					int value = Helper.getRandomInt(num_min, num_max);
+					effectp = effectp.replace(matcher.group(0), value + (!matcher.group(3).equals("") ? " " + Noun.pluralOf(matcher.group(3), value) : ""));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 
 			System.out.println("Effectp: " + effectp);
 			effectEntry = new EffectEntry(effectp, user);
@@ -572,7 +591,7 @@ public class DrinkPotion extends AbstractListener {
             ArrayList<String> unique_effects_discovered = new ArrayList<>();
 
 			for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
-				String[] potion = stringEffectEntryEntry.getKey().toString().split(",");
+				String[] potion = stringEffectEntryEntry.getKey().split(",");
 				if (!unique_effects_discovered.contains(potion[1]))
 					unique_effects_discovered.add(potion[1]);
 			}
@@ -582,10 +601,10 @@ public class DrinkPotion extends AbstractListener {
 					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>";
             try {
 				for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
-					String[] potion = stringEffectEntryEntry.getKey().toString().split(",");
+					String[] potion = stringEffectEntryEntry.getKey().split(",");
 					String consistency = consistencies.get(Integer.parseInt(potion[0]));
 					String color = colorEntries.get(Integer.parseInt(potion[1])).getName();
-					EffectEntry entry = (EffectEntry) stringEffectEntryEntry.getValue();
+					EffectEntry entry = stringEffectEntryEntry.getValue();
 					potionShelf += "<tr><td>" + consistency.substring(0, 1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
 				}
             }
