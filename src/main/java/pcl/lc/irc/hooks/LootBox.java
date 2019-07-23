@@ -35,7 +35,7 @@ public class LootBox extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("lootbox", 120) {
+		local_command = new Command("lootbox", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int rarity_value = Helper.rollDice("1d100").getSum();
@@ -70,7 +70,16 @@ public class LootBox extends AbstractListener {
 					String[] potion = DrinkPotion.getRandomPotion();
 					item_name = potion[0] + " " + potion[1] + " potion";
 				}
-				Helper.sendMessage(target, "You get a loot box! It contains " + item_name + "! (" + rarity_perc + "%)", nick);
+				String prefix = "You get a loot box! It contains {item}";
+				if (!params.equals("")) {
+					prefix = "You stab ";
+					if (!params.startsWith("the ") && !params.startsWith("a ") && !params.startsWith("one ")) {
+						prefix += "the ";
+					}
+					prefix += params + "! It dropped {item}!";
+				}
+				String item_string = item_name + " (" + rarity_perc + "%)";
+				Helper.sendMessage(target, prefix.replace("{item}", item_string), nick);
 			}
 		};
 		local_command.setHelpText("Get a loot box! What could be inside!");
