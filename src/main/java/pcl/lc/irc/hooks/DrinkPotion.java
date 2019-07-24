@@ -328,38 +328,35 @@ public class DrinkPotion extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 			    try {
-                    if (params.size() > 0) {
-                        if (params.get(0).equals("^")) {
-                            List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-                            for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-                                if (entry.getValue().get(0).equals(target)) {
-                                    if (entry.getValue().get(2).toLowerCase().contains("potion")) {
-                                        String[] words = entry.getValue().get(2).split(" ");
-                                        params = new ArrayList<>();
-                                        params.addAll(Arrays.asList(words));
-                                        break;
-                                    }
+                    if (params.get(0).equals("^")) {
+                        List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+                        for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+                            if (entry.getValue().get(0).equals(target)) {
+                                if (entry.getValue().get(2).toLowerCase().contains("potion")) {
+                                    String[] words = entry.getValue().get(2).split(" ");
+                                    params = new ArrayList<>();
+                                    params.addAll(Arrays.asList(words));
+                                    break;
                                 }
                             }
-                        } else if (params.get(0).equals("random")) {
-                        	String[] potion = getRandomPotion();
-                        	boolean is_new = potion[2].equals("new");
-                        	potion[2] = "potion";
-                        	Helper.sendMessage(target, "You drink a " + potion[0] + " " + potion[1] + " potion" + (is_new ? " (New!)" : "") + ". " + getPotionEffect(potion, nick).toString().replace("{user}", nick));
-                        	return;
-						} else if (params.get(0).equals("everything")) {
-                            Helper.sendMessage(target, nick + " explodes.");
-                            return;
                         }
+                    } else if (params.get(0).equals("random") || params.size() == 0) {
+                    	String[] potion = getRandomPotion();
+                    	boolean is_new = potion[2].equals("new");
+                    	potion[2] = "potion";
+                    	Helper.sendMessage(target, "You drink a " + potion[0] + " " + potion[1] + " potion" + (is_new ? " (New!)" : "") + ". " + getPotionEffect(potion, nick).toString().replace("{user}", nick));
+                    	return;
+					} else if (params.get(0).equals("everything")) {
+                        Helper.sendMessage(target, nick + " explodes.");
+                        return;
+                    }
 
-                        EffectEntry effect = getPotionEffect(params, nick);
+                    EffectEntry effect = getPotionEffect(params, nick);
 
-                        if (effect != null) {
-                            Helper.sendMessage(target, effect.toString().replace("{user}", nick));
-                        } else
-                            Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
+                    if (effect != null) {
+                        Helper.sendMessage(target, effect.toString().replace("{user}", nick));
                     } else
-                        Helper.sendMessage(target, "Drink what?");
+                        Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
                 } catch (Exception ex) {
 			        ex.printStackTrace();
                 }
