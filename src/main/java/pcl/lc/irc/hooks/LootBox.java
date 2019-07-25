@@ -72,11 +72,7 @@ public class LootBox extends AbstractListener {
 				}
 				String prefix = "You get a loot box! It contains {item}";
 				if (!params.equals("")) {
-					prefix = "You stab ";
-					if (!params.startsWith("the ") && !params.startsWith("a ") && !params.startsWith("one ")) {
-						prefix += "the ";
-					}
-					prefix += params + "! It dropped {item}!";
+					prefix = "You stab " + params + "! It dropped {item}!";
 				}
 				String item_string = item_name + " (" + rarity_perc + "%)";
 				Helper.sendMessage(target, prefix.replace("{item}", item_string), nick);
