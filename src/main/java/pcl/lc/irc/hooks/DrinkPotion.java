@@ -162,15 +162,15 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} turns into a {transformation} girl{limit}.");
 		effects.add("{user} turns into a {transformation} boy{limit}.");
 		effects.add("{user} turns into a {transformation}{limit}.");
-		effects.add("{user} turns into a {color} {transformation} girl{limit}.");
-		effects.add("{user} turns into a {color} {transformation} boy{limit}.");
-		effects.add("{user} turns into a {color} {transformation}{limit}.");
+		effects.add("{user} turns into {color_p} {transformation} girl{limit}.");
+		effects.add("{user} turns into {color_p} {transformation} boy{limit}.");
+		effects.add("{user} turns into {color_p} {transformation}{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2}{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2} girl{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2} boy{limit}.");
-		effects.add("{user} turns into a {color} {transformation} {transformation2}{limit}.");
-		effects.add("{user} turns into a {color} {transformation} {transformation2} girl{limit}.");
-		effects.add("{user} turns into a {color} {transformation} {transformation2} boy{limit}.");
+		effects.add("{user} turns into {color_p} {transformation} {transformation2}{limit}.");
+		effects.add("{user} turns into {color_p} {transformation} {transformation2} girl{limit}.");
+		effects.add("{user} turns into {color_p} {transformation} {transformation2} boy{limit}.");
 		effects.add("{user}'s hair turn {turn_color}{limit}.");
 		effects.add("{user}'s hair glows {turn_color}{limit}.");
 		effects.add("{user}'s skin turn {turn_color}{limit}.");
@@ -480,12 +480,14 @@ public class DrinkPotion extends AbstractListener {
 			System.out.println("No effect recorded for " + consistency + "," + color + ", Assign " + effect);
 
 			String replace_color = getColor().getName();
+			String replace_color_prefix = getColor().getName(true);
 			String turn_color = getColor().turnsTo();
 			String replace_consistency = getConsistency();
 			String limit = getLimit();
 
 			String effectp = effects.get(effect)
                     .replace("{color}", replace_color)
+                    .replace("{color_p}", replace_color_prefix)
                     .replace("{turn_color}", turn_color)
                     .replace("{consistency}", replace_consistency)
                     .replace("{transformation}", Helper.getRandomTransformation(true, false, false))
