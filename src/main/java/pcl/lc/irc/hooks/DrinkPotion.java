@@ -374,6 +374,7 @@ public class DrinkPotion extends AbstractListener {
 		local_command.registerAlias("quaff");
 		local_command.registerAlias("skull");
 		local_command.registerAlias("down");
+		local_command.registerAlias("slurp");
 
 		get_random = new Command("randompotion", 10) {
 			@Override
