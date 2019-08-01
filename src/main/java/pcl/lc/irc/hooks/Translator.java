@@ -33,26 +33,33 @@ public class Translator extends AbstractListener {
 	protected void initHook() {
 		langMap = new HashMap<String, Language>();
 		langMap.put("english", Language.ENGLISH);
-		langMap.put("russian", Language.RUSSIAN);
-		langMap.put("french", Language.FRENCH);
-		langMap.put("japanese", Language.JAPANESE);
-		langMap.put("spanish", Language.SPANISH);
-		langMap.put("hungarian", Language.HUNGARIAN);
-		langMap.put("dutch", Language.DUTCH);
-		langMap.put("greek", Language.GREEK);
-		langMap.put("norwegian", Language.NORWEGIAN);
-		langMap.put("german", Language.GERMAN);
-		
-
 		langMap.put("en", Language.ENGLISH);
+		
+		langMap.put("russian", Language.RUSSIAN);
 		langMap.put("ru", Language.RUSSIAN);
+		
+		langMap.put("french", Language.FRENCH);
 		langMap.put("fr", Language.FRENCH);
+		
+		langMap.put("japanese", Language.JAPANESE);
 		langMap.put("ja", Language.JAPANESE);
+		
+		langMap.put("spanish", Language.SPANISH);
 		langMap.put("es", Language.SPANISH);
+		
+		langMap.put("hungarian", Language.HUNGARIAN);
 		langMap.put("hu", Language.HUNGARIAN);
+		
+		langMap.put("dutch", Language.DUTCH);
 		langMap.put("nl", Language.DUTCH);
+		
+		langMap.put("greek", Language.GREEK);
 		langMap.put("el", Language.GREEK);
+		
+		langMap.put("norwegian", Language.NORWEGIAN);
 		langMap.put("no", Language.NORWEGIAN);
+		
+		langMap.put("german", Language.GERMAN);
 		langMap.put("de", Language.GERMAN);
 
 		initCommands();
