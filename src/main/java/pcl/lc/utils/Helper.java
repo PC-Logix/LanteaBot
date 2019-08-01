@@ -1190,9 +1190,9 @@ public class Helper {
 			new String[] {"A" , "Toad"     , "s"  , null},
 			new String[] {"A" , "Sword"    , "s"  , null},
 			new String[] {"A" , "Bear"     , "s"  , null},
-			new String[] {"A" , "Platypus" , "i"  , 2},
+			new String[] {"A" , "Platypus" , "i"  , "2"},
 			new String[] {"A" , "Frog"     , "s"  , null},
-			new String[] {"A" , "Octopus"  , "i"  , 3},
+			new String[] {"A" , "Octopus"  , "i"  , "3"},
 	};
 
 	public static String getTransformationByIndex(int index) {
