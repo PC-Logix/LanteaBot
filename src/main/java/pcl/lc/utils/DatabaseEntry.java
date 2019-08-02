@@ -124,7 +124,7 @@ public class DatabaseEntry {
 
 		if (value == null)
 			str_value = "null";
-		else if (value.getClass() == int.class)
+		else if (value.getClass() == int.class || value instanceof Integer)
 			str_value = String.valueOf(value);
 		else if (value.getClass() == double.class)
 			str_value = String.valueOf(value);
@@ -135,7 +135,7 @@ public class DatabaseEntry {
 		else if (value.getClass() == boolean.class)
 			str_value = (boolean) value ? "1" : "0";
 		else
-			str_value = "'" + StringEscapeUtils.escapeHtml4((String) value) + "'";
+			str_value = "'" + StringEscapeUtils.escapeHtml4(value.toString()) + "'";
 
 		query = String.format(query, table, field, str_value);
 
