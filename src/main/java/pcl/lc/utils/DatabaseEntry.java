@@ -124,7 +124,7 @@ public class DatabaseEntry {
 
 		if (value == null)
 			str_value = "null";
-		else if (value.getClass() == int.class)
+		else if (value.getClass() == int.class || value instanceof Integer)
 			str_value = String.valueOf(value);
 		else if (value.getClass() == double.class)
 			str_value = String.valueOf(value);
