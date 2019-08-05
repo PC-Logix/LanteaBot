@@ -119,14 +119,14 @@ public class Tonk extends AbstractListener {
 							Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 							Database.storeJsonData(last_tonk_key, String.valueOf(now));
 						} else {
-							if (nick_is_recorder) {
-								Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
-							} else {
+//							if (nick_is_recorder) {
+//								Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
+//							} else {
 								IRCBot.log.info("No new record set");
 								Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + recorder + "'s record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time. " +
 								Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted! Missed by " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long - diff)) + "!");
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
-							}
+//							}
 						}
 					} catch (Exception ex) {
 						IRCBot.log.info(ex.getClass() + ": " + ex.getMessage());
@@ -298,6 +298,17 @@ public class Tonk extends AbstractListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+
+			response += "<div>" +
+					"<ul>" +
+					"<li>Tonk is a game about timing, patience and opportunity, mixed with an idle game.</li>" +
+					"<li>To tonk successfully you must have waited past the current record. Trying to Tonk too early resets the timer.</li>" +
+					"<li>Tonking successfully gives you points depending on the difference between the old record and your new record, unless you held the previous record.</li>" +
+					"<li>Instead of Tonking you can Tonkout, this works the same as Tonk, except after claiming the new record, the entire record is converted to points.</li>" +
+					"<li>If the number of hours in the record is over 2 hours you get bonus points, with a multiplier based on the number of hours in the record minus 1.</li>" +
+					"<li>If you held the previous record you get 100% of the multiplied bonus, if not you get 50%.</li>" +
+					"</ul>" +
+					"</div>";
 			
 			
 			String tonkLeaders = "<table>";
