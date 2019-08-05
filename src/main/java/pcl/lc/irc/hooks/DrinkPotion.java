@@ -307,7 +307,7 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until their next sip of water");
 		limits.add(" until the next time they hug someone");
 		limits.add(" until they say the word \"Blatherskite\"");
-		limits.add(" until they leave");
+		limits.add(" until they leave the computer");
 		limits.add(" until they see a bird");
 		limits.add(" for {r:1-10:moon}");
 		limits.add(" until Sozin's Comet returns");

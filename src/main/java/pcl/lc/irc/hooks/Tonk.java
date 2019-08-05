@@ -59,7 +59,7 @@ public class Tonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("tonk", 60) {
+		local_command = new Command("tonk", 900) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				nick = nick.replaceAll("\\p{C}", "");
@@ -165,7 +165,7 @@ public class Tonk extends AbstractListener {
 		};
 		reset_command.setHelpText("Used for testing.");
 
-		tonkout_command = new Command("tonkout", 60) {
+		tonkout_command = new Command("tonkout", 900) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
                 nick = nick.replaceAll("\\p{C}", "");
