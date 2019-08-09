@@ -416,6 +416,10 @@ public class DrinkPotion extends AbstractListener {
 		};
 		potion_stats.registerAlias("potionsdiscovered");
 		potion_stats.registerAlias("discoveredpotions");
+		potion_stats.registerAlias("potions");
+		potion_stats.registerAlias("potionshelf");
+		potion_stats.registerAlias("potionlist");
+		potion_stats.registerAlias("listpotions");
 	}
 
 	public String chan;
