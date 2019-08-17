@@ -16,7 +16,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.ColorEntry;
+import pcl.lc.utils.AppearanceEntry;
 import pcl.lc.utils.Helper;
 
 import java.io.*;
@@ -35,7 +35,7 @@ public class DrinkPotion extends AbstractListener {
 	private Command get_random;
 	private Command potion_stats;
 	private Command discovered;
-	private static ArrayList<ColorEntry> colorEntries = new ArrayList<>();
+	private static ArrayList<AppearanceEntry> appearanceEntries = new ArrayList<>();
 	private static ArrayList<String> consistencies = new ArrayList<>();
 	private static ArrayList<String> effects = new ArrayList<>();
 	private static HashMap<String, EffectEntry> potions = new HashMap<>();
@@ -53,67 +53,70 @@ public class DrinkPotion extends AbstractListener {
 		IRCBot.registerCommand(potion_stats);
 		IRCBot.registerCommand(discovered);
 
-		colorEntries.add(new ColorEntry("blue", "a"));
-		colorEntries.add(new ColorEntry("red", "a"));
-		colorEntries.add(new ColorEntry("röd", "a"));
-		colorEntries.add(new ColorEntry("rød", "a"));
-		colorEntries.add(new ColorEntry("yellow", "a"));
-		colorEntries.add(new ColorEntry("purple", "a"));
-		colorEntries.add(new ColorEntry("green", "a"));
-		colorEntries.add(new ColorEntry("cyan", "a"));
-		colorEntries.add(new ColorEntry("tan", "a"));
-		colorEntries.add(new ColorEntry("black", "a"));
-		colorEntries.add(new ColorEntry("white", "a"));
-		colorEntries.add(new ColorEntry("pink", "a"));
-		colorEntries.add(new ColorEntry("metal", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("copper", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("iron", "an", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("stainless steel", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("aluminium", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("titanium", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("adamantium", "an", "{color} colored {item}", "the color of {color}")); // Marvel universe
-		colorEntries.add(new ColorEntry("unobtanium", "an", "{color} colored {item}", "the color of {color}")); // Avatar
-		colorEntries.add(new ColorEntry("tiberium", "a", "{color} colored {item}", "the color of {color}")); // Command & Conquer
-		colorEntries.add(new ColorEntry("caterium", "a", "{color} colored {item}", "the color of {color}")); // Satisfactory
-		colorEntries.add(new ColorEntry("aether", "an", "{color} colored {item}", "the color of {color}")); // Magic: The Gathering
-		colorEntries.add(new ColorEntry("bavarium", "a", "{color} colored {item}", "the color of {color}")); // Just Cause 3
-		colorEntries.add(new ColorEntry("bombastium", "a", "{color} colored {item}", "the color of {color}")); // Disney
-		colorEntries.add(new ColorEntry("dalekanium", "a", "{color} colored {item}", "the color of {color}")); // Doctor Who
-		colorEntries.add(new ColorEntry("dilithium", "a", "{color} colored {item}", "the color of {color}")); // Star Trek
-		colorEntries.add(new ColorEntry("jumbonium", "a", "{color} colored {item}", "the color of {color}")); // Futurama
-		colorEntries.add(new ColorEntry("naqahdah", "a", "{color} colored {item}", "the color of {color}")); // Stargate
-		colorEntries.add(new ColorEntry("octiron", "an", "{color} colored {item}", "the color of {color}")); // Discworld
-		colorEntries.add(new ColorEntry("redstone", "a", "{color} colored {item}", "the color of {color}")); // Minecraft
-		colorEntries.add(new ColorEntry("ruby", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("emerald", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("saphire", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("amethyst", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("diamond", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("spice", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("radiation", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("gold", "a", "{color} colored {item}"));
-		colorEntries.add(new ColorEntry("silver", "a", "{color} colored {item}"));
-		colorEntries.add(new ColorEntry("tomato", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("lime", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("citrus", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("strawberry", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("chocolate", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("orange", "an"));
-		colorEntries.add(new ColorEntry("tuna", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("salmon", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("rainbow", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("void", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("ocean", "an", "{color} colored {item}", "the color of the {color}"));
-		colorEntries.add(new ColorEntry("grass", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("sky", "a", "{color} colored {item}", "the color of the {color}"));
-		colorEntries.add(new ColorEntry("rock", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("aqua", "an", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("dirt", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("quicksilver", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("coral", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("transparent", "a", "{color} {item}", "{color}"));
-		colorEntries.add(new ColorEntry("water", "a", "{color} colored {item}", "the color of {color}"));
-		colorEntries.add(new ColorEntry("weather", "a"));
+		appearanceEntries.add(new AppearanceEntry("blue", "a"));
+		appearanceEntries.add(new AppearanceEntry("red", "a"));
+		appearanceEntries.add(new AppearanceEntry("röd", "a"));
+		appearanceEntries.add(new AppearanceEntry("rød", "a"));
+		appearanceEntries.add(new AppearanceEntry("yellow", "a"));
+		appearanceEntries.add(new AppearanceEntry("purple", "a"));
+		appearanceEntries.add(new AppearanceEntry("green", "a"));
+		appearanceEntries.add(new AppearanceEntry("cyan", "a"));
+		appearanceEntries.add(new AppearanceEntry("tan", "a"));
+		appearanceEntries.add(new AppearanceEntry("black", "a"));
+		appearanceEntries.add(new AppearanceEntry("white", "a"));
+		appearanceEntries.add(new AppearanceEntry("pink", "a"));
+		appearanceEntries.add(new AppearanceEntry("metal", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("copper", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("iron", "an", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("stainless steel", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("aluminium", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("titanium", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("adamantium", "an", "{appearance} colored {item}", "the color of {appearance}")); // Marvel universe
+		appearanceEntries.add(new AppearanceEntry("unobtanium", "an", "{appearance} colored {item}", "the color of {appearance}")); // Avatar
+		appearanceEntries.add(new AppearanceEntry("tiberium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Command & Conquer
+		appearanceEntries.add(new AppearanceEntry("caterium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Satisfactory
+		appearanceEntries.add(new AppearanceEntry("aether", "an", "{appearance} colored {item}", "the color of {appearance}")); // Magic: The Gathering
+		appearanceEntries.add(new AppearanceEntry("bavarium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Just Cause 3
+		appearanceEntries.add(new AppearanceEntry("bombastium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Disney
+		appearanceEntries.add(new AppearanceEntry("dalekanium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Doctor Who
+		appearanceEntries.add(new AppearanceEntry("dilithium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Star Trek
+		appearanceEntries.add(new AppearanceEntry("jumbonium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Futurama
+		appearanceEntries.add(new AppearanceEntry("naqahdah", "a", "{appearance} colored {item}", "the color of {appearance}")); // Stargate
+		appearanceEntries.add(new AppearanceEntry("octiron", "an", "{appearance} colored {item}", "the color of {appearance}")); // Discworld
+		appearanceEntries.add(new AppearanceEntry("redstone", "a", "{appearance} colored {item}", "the color of {appearance}")); // Minecraft
+		appearanceEntries.add(new AppearanceEntry("ruby", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("emerald", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("saphire", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("amethyst", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("diamond", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("spice", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("radiation", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("gold", "a", "{appearance} colored {item}"));
+		appearanceEntries.add(new AppearanceEntry("silver", "a", "{appearance} colored {item}"));
+		appearanceEntries.add(new AppearanceEntry("tomato", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("lime", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("citrus", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("strawberry", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("chocolate", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("orange", "an"));
+		appearanceEntries.add(new AppearanceEntry("tuna", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("salmon", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("rainbow", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("void", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("ocean", "an", "{appearance} colored {item}", "the color of the {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("grass", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("sky", "a", "{appearance} colored {item}", "the color of the {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("rock", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("aqua", "an", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("dirt", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("quicksilver", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("coral", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("transparent", "a", "{appearance} {item}", "{appearance}"));
+		appearanceEntries.add(new AppearanceEntry("water", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("weather", "a"));
+		appearanceEntries.add(new AppearanceEntry("aegisalt", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("violet", "a"));
+		appearanceEntries.add(new AppearanceEntry("crimson", "a"));
 
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
@@ -156,30 +159,30 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("mutable");
 		consistencies.add("liquid");
 
-		//Valid tags: {user},{color},{turn_color},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
+		//Valid tags: {user},{appearance},{turn_appearance},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a {transformation} girl{limit}.");
 		effects.add("{user} turns into a {transformation} boy{limit}.");
 		effects.add("{user} turns into a {transformation}{limit}.");
-		effects.add("{user} turns into {color_p} {transformation} girl{limit}.");
-		effects.add("{user} turns into {color_p} {transformation} boy{limit}.");
-		effects.add("{user} turns into {color_p} {transformation}{limit}.");
+		effects.add("{user} turns into {appearance_p} {transformation} girl{limit}.");
+		effects.add("{user} turns into {appearance_p} {transformation} boy{limit}.");
+		effects.add("{user} turns into {appearance_p} {transformation}{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2}{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2} girl{limit}.");
 		effects.add("{user} turns into a {transformation} {transformation2} boy{limit}.");
-		effects.add("{user} turns into {color_p} {transformation} {transformation2}{limit}.");
-		effects.add("{user} turns into {color_p} {transformation} {transformation2} girl{limit}.");
-		effects.add("{user} turns into {color_p} {transformation} {transformation2} boy{limit}.");
-		effects.add("{user}'s hair turn {turn_color}{limit}.");
-		effects.add("{user}'s hair glows {turn_color}{limit}.");
-		effects.add("{user}'s skin turn {turn_color}{limit}.");
-		effects.add("{user}'s eyes turn {turn_color}{limit}.");
-		effects.add("{user}'s nails turn {turn_color}{limit}.");
-		effects.add("{user}'s bones turn {turn_color}{limit}.");
-		effects.add("{user}'s clothes turn {turn_color}{limit}.");
-		effects.add("{user}'s eyes glow {turn_color}{limit}.");
-		effects.add("{user}'s skin turn {turn_color} but with a {color} glow{limit}.");
+		effects.add("{user} turns into {appearance_p} {transformation} {transformation2}{limit}.");
+		effects.add("{user} turns into {appearance_p} {transformation} {transformation2} girl{limit}.");
+		effects.add("{user} turns into {appearance_p} {transformation} {transformation2} boy{limit}.");
+		effects.add("{user}'s hair turn {turn_appearance}{limit}.");
+		effects.add("{user}'s hair glows {turn_appearance}{limit}.");
+		effects.add("{user}'s skin turn {turn_appearance}{limit}.");
+		effects.add("{user}'s eyes turn {turn_appearance}{limit}.");
+		effects.add("{user}'s nails turn {turn_appearance}{limit}.");
+		effects.add("{user}'s bones turn {turn_appearance}{limit}.");
+		effects.add("{user}'s clothes turn {turn_appearance}{limit}.");
+		effects.add("{user}'s eyes glow {turn_appearance}{limit}.");
+		effects.add("{user}'s skin turn {turn_appearance} but with a {appearance} glow{limit}.");
 		effects.add("{user}'s toes turn invisible{limit}.");
 		effects.add("{user}'s hair grows {r:2-4:time} longer{limit}.");
 		effects.add("{user} gains the proportional strength of a {transformation}{limit}.");
@@ -195,7 +198,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} feels a strong urge to recycle the potion bottle.");
 		effects.add("{user}'s bed is suddenly slightly less comfortable{limit}.");
 		effects.add("{user} gains a negligible amount of luck.");
-		effects.add("{user} realizes this was actually a {consistency} {color} potion.");
+		effects.add("{user} realizes this was actually a {consistency} {appearance} potion.");
 		effects.add("{user} remembers an important appointment.");
 		effects.add("{user} grows a mustache{limit}.");
 		effects.add("{user} has a sudden but short lived desire to run around in a circle{limit}.");
@@ -274,7 +277,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("A tiny cloud appears with a ridiculous smile on it. It follows {user}{limit}.");
 		effects.add("The potion contained a computer virus! But {user}'s anti-virus routines destroy it.");
 		effects.add("The potion contained a computer virus! It just changed {user}'s background...");
-		effects.add("The bottle splits into two revealing a smaller {consistency} {color} potion.");
+		effects.add("The bottle splits into two revealing a smaller {consistency} {appearance} potion.");
 		effects.add("A tiny genie appears, gives {user} a thumbs up, and poofs away.");
 		effects.add("{user} feels chill.");
 		effects.add("{user} feels the need to smash.");
@@ -356,7 +359,7 @@ public class DrinkPotion extends AbstractListener {
                     if (effect != null) {
                         Helper.sendMessage(target, effect.toString().replace("{user}", nick));
                     } else
-                        Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
+                        Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
                 } catch (Exception ex) {
 			        ex.printStackTrace();
                 }
@@ -394,11 +397,11 @@ public class DrinkPotion extends AbstractListener {
 				if (Config.httpdEnable.equals("true")){
 					Helper.sendMessage(target, "Potion shelf: " + httpd.getBaseDomain() + "/potions", nick);
 				} else {
-					int color_count = colorEntries.size();
+					int color_count = appearanceEntries.size();
 					int consistencies_count = consistencies.size();
 					int effect_count = effects.size();
 					int combination_count = color_count * consistencies_count;
-					Helper.sendMessage(target, "There are " + color_count + " colorEntries, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
+					Helper.sendMessage(target, "There are " + color_count + " appearanceEntries, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
 				}
 			}
 		};
@@ -439,36 +442,37 @@ public class DrinkPotion extends AbstractListener {
 	}
 
 	public EffectEntry getPotionEffect(ArrayList<String> params, String user) {
+		String sparams = String.join(" ", params);
 		EffectEntry effectEntry;
 		boolean is_potion = false;
-		int color = -1;
+		int appearance = -1;
 		int consistency = -1;
 
 		System.out.println("Params: " + params.toString());
 
-		for (String param : params) {
-			param = param.toLowerCase();
-			if (color == -1 && ColorExists(param))
-				color = GetColorIndexByName(param);
-			if (consistency == -1 && consistencies.indexOf(param) != -1)
-				consistency = consistencies.indexOf(param);
-			if (param.replace(".", "").equals("potion"))
-				is_potion = true;
-		}
+		AppearanceEntry app = FindAppearanceInString(sparams);
+		if (app != null)
+			appearance = GetAppearanceIndexByName(app.Name);
 
-		System.out.println("ColorEntry: " + color);
+		String con = FindConsistencyInString(sparams);
+		if (con != null)
+			consistency = consistencies.indexOf(con);
+
+		is_potion = sparams.contains("potion");
+
+		System.out.println("AppearanceEntry: " + appearance);
 		System.out.println("Consistency: " + consistency);
 		System.out.println("Has_potion: " + is_potion);
 
-		if (!is_potion || color == -1 || consistency == -1) {
+		if (!is_potion || appearance == -1 || consistency == -1) {
 			return null;
 		}
 
 		tryResetPotionList();
 
-		if (combinationHasEffect(consistency, color)) {
-			effectEntry = getCombinationEffect(consistency, color);
-			System.out.println("Effect recorded for " + consistency + "," + color + ": " + effectEntry);
+		if (combinationHasEffect(consistency, appearance)) {
+			effectEntry = getCombinationEffect(consistency, appearance);
+			System.out.println("Effect recorded for " + consistency + "," + appearance + ": " + effectEntry);
 			return effectEntry;
 		} else {
 		    int min = 0;
@@ -478,18 +482,18 @@ public class DrinkPotion extends AbstractListener {
 		        max = 6;
             }
 			int effect = Helper.getRandomInt(min, max);
-			System.out.println("No effect recorded for " + consistency + "," + color + ", Assign " + effect);
+			System.out.println("No effect recorded for " + consistency + "," + appearance + ", Assign " + effect);
 
-			String replace_color = getColor().getName();
-			String replace_color_prefix = getColor().getName(true);
-			String turn_color = getColor().turnsTo();
+			String replace_appearance = getAppearance().getName();
+			String replace_appearance_prefix = getAppearance().getName(true);
+			String turn_appearance = getAppearance().turnsTo();
 			String replace_consistency = getConsistency();
 			String limit = getLimit();
 
 			String effectp = effects.get(effect)
-                    .replace("{color}", replace_color)
-                    .replace("{color_p}", replace_color_prefix)
-                    .replace("{turn_color}", turn_color)
+                    .replace("{appearance}", replace_appearance)
+                    .replace("{appearance_p}", replace_appearance_prefix)
+                    .replace("{turn_appearance}", turn_appearance)
                     .replace("{consistency}", replace_consistency)
                     .replace("{transformation}", Helper.getRandomTransformation(true, false, false))
                     .replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
@@ -497,14 +501,14 @@ public class DrinkPotion extends AbstractListener {
                     .replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
 					.replace("{limit}", limit);
 			try {
-                Pattern pattern = Pattern.compile("\\{color:(.*):(p?)}");
+                Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
                 Matcher matcher = pattern.matcher(effectp);
                 while (matcher.find()) {
                     String color_item = matcher.group(1);
                     boolean use_prefix = false;
                     if (matcher.group(2).equals("p"))
                         use_prefix = true;
-                    effectp = effectp.replace(matcher.group(0), getColor().colorItem(color_item, use_prefix));
+                    effectp = effectp.replace(matcher.group(0), getAppearance().appearanceItem(color_item, use_prefix));
                 }
             } catch (Exception ex) {
 			    ex.printStackTrace();
@@ -524,7 +528,7 @@ public class DrinkPotion extends AbstractListener {
 
 			System.out.println("Effectp: " + effectp);
 			effectEntry = new EffectEntry(effectp, user);
-			setCombinationEffect(consistency, color, effectEntry);
+			setCombinationEffect(consistency, appearance, effectEntry);
 			return effectEntry;
 		}
 	}
@@ -541,23 +545,22 @@ public class DrinkPotion extends AbstractListener {
 		day_of_potioning = DateTime.now().plusDays(4).toString("yyyy-MM-dd");
 	}
 
-	private boolean combinationHasEffect(int consistency, int color) {
+	private boolean combinationHasEffect(int consistency, int appearance) {
 		tryResetPotionList();
 		System.out.println(potions.toString());
-		String key = consistency + "," + color;
+		String key = consistency + "," + appearance;
 		if (potions.containsKey(key))
 			return true;
 		return false;
 	}
 
-	private void setCombinationEffect(int consistency, int color, EffectEntry effect) {
-		String key = consistency + "," + color;
-
+	private void setCombinationEffect(int consistency, int appearance, EffectEntry effect) {
+		String key = consistency + "," + appearance;
 		potions.put(key, effect);
 	}
 
-	private EffectEntry getCombinationEffect(int consistency, int color) {
-		String key = consistency + "," + color;
+	private EffectEntry getCombinationEffect(int consistency, int appearance) {
+		String key = consistency + "," + appearance;
 		return potions.get(key);
 	}
 
@@ -565,11 +568,11 @@ public class DrinkPotion extends AbstractListener {
 	 * @return String[] Returns three values: consistency, color and "" or "new" (whether potion has been generated already today)
 	 */
 	public static String[] getRandomPotion() {
-		int coli = getRandomColorIndex();
+		int coli = getRandomAppearanceIndex();
 		int coni = getRandomConsistencyIndex();
-		String col = getColor(coli).Name;
+		String app = getAppearance(coli).Name;
 		String con = getConsistency(coni);
-		return new String[] { con, col, potions.containsKey(coni + "," + coli) ? "" : "new" };
+		return new String[] { con, app, potions.containsKey(coni + "," + coli) ? "" : "new" };
 	}
 
     static class PotionHandler implements HttpHandler {
@@ -581,9 +584,9 @@ public class DrinkPotion extends AbstractListener {
             String target = t.getRequestURI().toString();
             String response = "";
 
-            int colorcount = colorEntries.size();
+            int appearancecount = appearanceEntries.size();
             int concount = consistencies.size();
-            int combinations = colorcount * concount;
+            int combinations = appearancecount * concount;
             int potioncount = potions.size();
             int effectcount = effects.size();
             float ratio = (float)effectcount / (float)combinations;
@@ -596,16 +599,17 @@ public class DrinkPotion extends AbstractListener {
 					unique_effects_discovered.add(potion[1]);
 			}
             int unique_effect_count = unique_effects_discovered.size();
-            String potionShelf = "<div>There are <b>" + colorcount + "</b> colors and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
+            String potionShelf = "<div>There are <b>" + appearancecount + "</b> appearances and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. <b>" + unique_effect_count + "</b> unique effect" + (unique_effect_count == 1 ? "" : "s") + " " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
+					"<div style='margin-top: 6px;'>A valid potion string (for use with <b>" + Config.commandprefix + "drink</b>) needs an appearance keyword, consistency keyword and the word \"<b>potion</b>\" in it.</div>" +
 					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>";
             try {
 				for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
 					String[] potion = stringEffectEntryEntry.getKey().split(",");
 					String consistency = consistencies.get(Integer.parseInt(potion[0]));
-					String color = colorEntries.get(Integer.parseInt(potion[1])).getName();
+					String appearance = appearanceEntries.get(Integer.parseInt(potion[1])).getName();
 					EffectEntry entry = stringEffectEntryEntry.getValue();
-					potionShelf += "<tr><td>" + consistency.substring(0, 1).toUpperCase() + consistency.substring(1) + " " + color.substring(0, 1).toUpperCase() + color.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
+					potionShelf += "<tr><td>" + consistency.substring(0, 1).toUpperCase() + consistency.substring(1) + " " + appearance.substring(0, 1).toUpperCase() + appearance.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
 				}
             }
             catch (Exception e) {
@@ -614,6 +618,18 @@ public class DrinkPotion extends AbstractListener {
             potionShelf += "</table>";
             List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
 
+			String entries = "";
+			for (AppearanceEntry appearanceEntry : appearanceEntries) {
+				String name = appearanceEntry.getName();
+				entries += "<div>" + name.substring(0, 1).toUpperCase() + name.substring(1) + "</div>";
+			}
+			potionShelf += "<div style='margin-top: 10px;'>" + MakeJavascriptContainer("Show/hide appearances (" + appearanceEntries.size() + ")", entries) + "</div>";
+
+			entries = "";
+			for (String consistancy : consistencies) {
+				entries += "<div>" + consistancy.substring(0, 1).toUpperCase() + consistancy.substring(1) + "</div>";
+			}
+			potionShelf += "<div style='margin-top: 10px;'>" + MakeJavascriptContainer("Show/hide consistencies (" + consistencies.size() + ")", entries) + "</div>";
 
             String navData = "";
             Iterator it = httpd.pages.entrySet().iterator();
@@ -638,41 +654,49 @@ public class DrinkPotion extends AbstractListener {
         }
     }
 
-    private static boolean ColorExists(String color) {
-        for (ColorEntry c : colorEntries) {
-            if (c != null && c.Name != null && c.Name.equals(color.toLowerCase()))
+    private static boolean AppearanceExists(String appearance) {
+        for (AppearanceEntry c : appearanceEntries) {
+            if (c != null && c.Name != null && c.Name.equals(appearance.toLowerCase()))
                 return true;
         }
         return false;
     }
 
-    private static ColorEntry FindColorByName(String color) {
-	    for (ColorEntry c : colorEntries) {
-	        if (c != null && c.Name != null && c.Name.equals(color.toLowerCase()))
+    private static AppearanceEntry FindAppearanceInString(String string) {
+		for (AppearanceEntry c : appearanceEntries) {
+			if (string.toLowerCase().contains(c.Name))
+				return c;
+		}
+		return null;
+	}
+
+    private static AppearanceEntry FindAppearanceByName(String appearance) {
+	    for (AppearanceEntry c : appearanceEntries) {
+	        if (c != null && c.Name != null && c.Name.equals(appearance.toLowerCase()))
 	            return c;
         }
 	    return null;
     }
 
-    private static int GetColorIndexByName(String color) {
-	    ColorEntry col = null;
-        for (ColorEntry c : colorEntries) {
-            if (c != null && c.Name != null && c.Name.equals(color.toLowerCase()))
+    private static int GetAppearanceIndexByName(String appearance) {
+	    AppearanceEntry col = null;
+        for (AppearanceEntry c : appearanceEntries) {
+            if (c != null && c.Name != null && c.Name.equals(appearance.toLowerCase()))
                 col = c;
         }
-        return colorEntries.indexOf(col);
+        return appearanceEntries.indexOf(col);
     }
 
-    public static int getRandomColorIndex() {
-		return Helper.getRandomInt(0, colorEntries.size() - 1);
+    public static int getRandomAppearanceIndex() {
+		return Helper.getRandomInt(0, appearanceEntries.size() - 1);
 	}
 
-	public static ColorEntry getColor() {
-		return getColor(getRandomColorIndex());
+	public static AppearanceEntry getAppearance() {
+		return getAppearance(getRandomAppearanceIndex());
 	}
 
-    public static ColorEntry getColor(int index) {
-	    return colorEntries.get(index);
+    public static AppearanceEntry getAppearance(int index) {
+	    return appearanceEntries.get(index);
     }
 
     public static int getRandomConsistencyIndex() {
@@ -687,6 +711,14 @@ public class DrinkPotion extends AbstractListener {
 	    return consistencies.get(index);
     }
 
+    private static String FindConsistencyInString(String string) {
+		for (String c : consistencies) {
+			if (string.toLowerCase().contains(c))
+				return c;
+		}
+		return null;
+	}
+
     public static int getRandomLimitIndex() {
 		return Helper.getRandomInt(0, limits.size() - 1);
 	}
@@ -697,6 +729,10 @@ public class DrinkPotion extends AbstractListener {
 
     public static String getLimit(int index) {
 		return limits.get(index);
+	}
+
+	private static String MakeJavascriptContainer(String label, String contents) {
+		return "<div><span style='cursor: pointer;' onclick='if (this.parentElement.children[1].style.display != \"none\") { this.parentElement.children[1].style.display = \"none\"; } else { this.parentElement.children[1].style.display = null; }'>" + label + "</span><div style='display: none;'>" + contents + "</div></div>";
 	}
 }
 

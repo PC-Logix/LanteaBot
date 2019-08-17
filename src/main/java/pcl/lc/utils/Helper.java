@@ -1306,7 +1306,7 @@ public class Helper {
         return Math.round(value * scale) / scale;
     }
 
-	//Valid tags: {user},{color},{turn_color},{color:item},{consistency},{p_transformation},{transformation},{transformation2},{transformations},{transformations2}
+	//Valid tags: {user},{appearance},{turn_appearance},{appearance:item},{consistency},{p_transformation},{transformation},{transformation2},{transformations},{transformations2}
     private static String[] warp_locations = new String[] {
     		"You end up at home.",
     		"You end up in your bed.",
@@ -1317,7 +1317,7 @@ public class Helper {
 			"You end up in a dimension populated by {transformation} {transformation2} boys.",
 			"You end up in a dimension populated by {transformation} {transformations2}.",
 			"You end up in a dimension inhabited by {p_transformation}.",
-			"You end up in a dimension entirely filled with {consistency} {color} potion.",
+			"You end up in a dimension entirely filled with {consistency} {appearance} potion.",
 			"You end up in a dimension ruled by {item}.",
 			"You end up in a dimension that is just an endless field of flowers.",
 			"You end up in a frozen world.",
@@ -1333,13 +1333,13 @@ public class Helper {
 	}
 
 	public static String getWarpLocationByIndex(int index, boolean lower_case) {
-		String replace_color = DrinkPotion.getColor().getName();
-		String turn_color = DrinkPotion.getColor().turnsTo();
+		String replace_appearance = DrinkPotion.getAppearance().getName();
+		String turn_appearance = DrinkPotion.getAppearance().turnsTo();
 		String replace_consistency = DrinkPotion.getConsistency();
 		String ret = warp_locations[index]
 				.replace("{item}", Inventory.getRandomItem().getNameRaw())
-				.replace("{color}", replace_color)
-				.replace("{turn_color}", turn_color)
+				.replace("{appearance}", replace_appearance)
+				.replace("{turn_appearance}", turn_appearance)
 				.replace("{consistency}", replace_consistency)
 				.replace("{transformation}", Helper.getRandomTransformation(true, false, false))
 				.replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
