@@ -1193,6 +1193,7 @@ public class Helper {
 			new String[] {"A" , "Platypus" , "i"  , "2"},
 			new String[] {"A" , "Frog"     , "s"  , null},
 			new String[] {"A" , "Octopus"  , "i"  , "3"},
+			new String[] {"A" , "Unicorn"  , "s"  , null},
 	};
 
 	public static String getTransformationByIndex(int index) {
