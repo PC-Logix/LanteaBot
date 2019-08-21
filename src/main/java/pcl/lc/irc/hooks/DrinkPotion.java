@@ -338,17 +338,24 @@ public class DrinkPotion extends AbstractListener {
 						Helper.sendMessage(target, "You drink a " + potion[0] + " " + potion[1] + " potion" + (is_new ? " (New!)" : "") + ". " + getPotionEffect(potion, nick).toString().replace("{user}", nick));
 						return;
 					} else if (params.get(0).equals("^")) {
-                        List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-                        for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-                            if (entry.getValue().get(0).equals(target)) {
-                                if (entry.getValue().get(2).toLowerCase().contains("potion")) {
-                                    String[] words = entry.getValue().get(2).split(" ");
-                                    params = new ArrayList<>();
-                                    params.addAll(Arrays.asList(words));
-                                    break;
-                                }
-                            }
-                        }
+						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+							if (entry.getValue().get(0).equals(target)) {
+								if (entry.getValue().get(2).toLowerCase().contains("potion")) {
+									String[] words = entry.getValue().get(2).split(" ");
+									params = new ArrayList<>();
+									params.addAll(Arrays.asList(words));
+									break;
+								}
+							}
+						}
+					} else if (params.get(0).equals("water")) {
+						String[] potion = getRandomPotion();
+						Helper.sendMessage(target, "You drink some water. Wait... this isn't water... it's a " + potion[0] + " " + potion[1] + " potion!");
+						return;
+					} else if (params.get(0).equals("soda")) {
+			    		Helper.sendMessage(target, "It's fizzy.", nick);
+			    		return;
                     } else if (params.get(0).equals("everything")) {
                         Helper.sendMessage(target, nick + " explodes.");
                         return;
