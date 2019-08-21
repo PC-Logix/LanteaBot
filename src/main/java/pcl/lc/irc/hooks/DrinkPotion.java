@@ -159,7 +159,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("mutable");
 		consistencies.add("liquid");
 
-		//Valid tags: {user},{appearance},{turn_appearance},{color:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
+		//Valid tags: {user},{appearance},{turn_appearance},{appearance:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into a {transformation} girl{limit}.");
@@ -213,7 +213,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} gains an additional bone.");
 		effects.add("{user} is suddenly more aware of cute things nearby{limit}.");
 		effects.add("{user} loses exactly a handful of luck.");
-		effects.add("{user}'s pockets suddenly contain a number of {color:marbles:}.");
+		effects.add("{user}'s pockets suddenly contain a number of {appearance:marbles:}.");
 		effects.add("{user}'s favourite hat is suddenly on fire.");
 		effects.add("{user} has a single tear roll down their cheek for some reason.");
 		effects.add("{user}'s nose vanish{limit}.");
@@ -252,12 +252,12 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("Dramatic music briefly plays in the distance.");
 		effects.add("{user} has a feeling that their face just appeared on a random vegetable somewhere.");
 		effects.add("The potion bottle is suddenly on fire!");
-		effects.add("Once empty the potion bottle fills with a differently colored potion.");
+		effects.add("Once empty the potion bottle fills with a different potion.");
 		effects.add("{user} gains the ability to talk to {transformations}{limit}.");
 		effects.add("{user} sees the sky briefly flash solid dark blue then go back to normal.");
 		effects.add("When {user} drinks the last drop, a bucket of water materializes above their head and dumps it contents over them, then vanishes. The water does not.");
 		effects.add("Suddenly there's a swarm of wasps behind {user} that chase them for {r:30-60:second}!");
-		effects.add("When {user} brings the bottle down they see {color:plastic flamingo:p}. It stares into their soul.");
+		effects.add("When {user} brings the bottle down they see {appearance:plastic flamingo:p}. It stares into their soul.");
 		effects.add("A bard starts playing a lute behind {user}. They don't stop.");
 		effects.add("A bard starts playing a lute behind {user}{limit}.");
 		effects.add("The bottle turns into a sword.");
@@ -365,7 +365,7 @@ public class DrinkPotion extends AbstractListener {
                 }
 			}
 		};
-		local_command.setHelpText("Drink a potion with a certain consistency and color and something might happen.");
+		local_command.setHelpText("Drink a potion with a certain consistency and appearance and something might happen.");
 		local_command.registerAlias("chug");
 		local_command.registerAlias("toast");
 		local_command.registerAlias("sip");
@@ -397,11 +397,11 @@ public class DrinkPotion extends AbstractListener {
 				if (Config.httpdEnable.equals("true")){
 					Helper.sendMessage(target, "Potion shelf: " + httpd.getBaseDomain() + "/potions", nick);
 				} else {
-					int color_count = appearanceEntries.size();
+					int apperance_count = appearanceEntries.size();
 					int consistencies_count = consistencies.size();
 					int effect_count = effects.size();
-					int combination_count = color_count * consistencies_count;
-					Helper.sendMessage(target, "There are " + color_count + " appearanceEntries, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
+					int combination_count = apperance_count * consistencies_count;
+					Helper.sendMessage(target, "There are " + apperance_count + " appearanceEntries, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
 				}
 			}
 		};
@@ -508,11 +508,11 @@ public class DrinkPotion extends AbstractListener {
                 Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
                 Matcher matcher = pattern.matcher(effectp);
                 while (matcher.find()) {
-                    String color_item = matcher.group(1);
+                    String appearance_item = matcher.group(1);
                     boolean use_prefix = false;
                     if (matcher.group(2).equals("p"))
                         use_prefix = true;
-                    effectp = effectp.replace(matcher.group(0), getAppearance().appearanceItem(color_item, use_prefix));
+                    effectp = effectp.replace(matcher.group(0), getAppearance().appearanceItem(appearance_item, use_prefix));
                 }
             } catch (Exception ex) {
 			    ex.printStackTrace();
@@ -569,7 +569,7 @@ public class DrinkPotion extends AbstractListener {
 	}
 
 	/**
-	 * @return String[] Returns three values: consistency, color and "" or "new" (whether potion has been generated already today)
+	 * @return String[] Returns three values: consistency, appearance and "" or "new" (whether potion has been generated already today)
 	 */
 	public static String[] getRandomPotion() {
 		int coli = getRandomAppearanceIndex();
