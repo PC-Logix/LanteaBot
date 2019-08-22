@@ -86,7 +86,7 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("redstone", "a", "{appearance} colored {item}", "the color of {appearance}")); // Minecraft
 		appearanceEntries.add(new AppearanceEntry("ruby", "a", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("emerald", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("saphire", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("sapphire", "a", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("amethyst", "a", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("diamond", "a", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("spice", "a", "{appearance} colored {item}", "the color of {appearance}"));
