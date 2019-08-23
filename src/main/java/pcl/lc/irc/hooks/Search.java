@@ -9,6 +9,8 @@ import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class Search extends AbstractListener {
 	private Command urban;
 	private Command ann;
 	private Command youtube;
+	private Command lmgtfy;
 	private Command g;
 	private Command yt;
 	private Command wik;
@@ -77,6 +80,7 @@ public class Search extends AbstractListener {
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; youtube.setHelpText("Searches YouTube and returns the first result");
+		
 		IRCBot.registerCommand(search);
 		search.registerSubCommand(google);
 		search.registerSubCommand(curseForge);
@@ -114,6 +118,19 @@ public class Search extends AbstractListener {
 				urban.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
+
+		lmgtfy = new Command("lmgtfy", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try {
+					Helper.sendMessage(target, "https://lmgtfy.com/?q=" + URLEncoder.encode(params, "UTF-8"), nick, true);
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		
 	}
 
 	private List<SearchResult> performSearch(String filter, String terms) {
@@ -155,5 +172,6 @@ public class Search extends AbstractListener {
 		wik.tryExecute(command, nick, target, event, copyOfRange);
 		cf.tryExecute(command, nick, target, event, copyOfRange);
 		urb.tryExecute(command, nick, target, event, copyOfRange);
+		lmgtfy.tryExecute(command, nick, target, event, copyOfRange);
 	}
 }
