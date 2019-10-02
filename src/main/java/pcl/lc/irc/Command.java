@@ -6,6 +6,7 @@ import pcl.lc.utils.Helper;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Command {
@@ -204,7 +205,7 @@ public class Command {
 	}
 
 	public boolean hasAlias(String alias) {
-		return this.aliases.contains(alias.replace(Config.commandprefix, ""));
+		return this.aliases.contains(alias.replaceFirst(Pattern.quote(Config.commandprefix), ""));
 	}
 
 	public void registerSubCommand(Command command) {
@@ -277,7 +278,7 @@ public class Command {
 		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
 			return false;
 		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
-			int aliasIndex = aliases.indexOf(command.replace(Config.commandprefix, ""));
+			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
 			if (aliasIndex != -1) {
 				ArrayList<String> forcedParams = new ArrayList<>();
 				if (!this.aliasesFixedArguments.get(aliasIndex).isEmpty())
