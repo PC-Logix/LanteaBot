@@ -41,11 +41,13 @@ public class LootBox extends AbstractListener {
 				int rarity_value = Helper.rollDice("1d100").getSum();
 				String item_name;
 				String rarity = "Normal";
-				int rarity_perc = 100;
+				String rarity_str = "??";
+				int rarity_perc;
 				for (Map.Entry<Integer, String> rar : rarities.entrySet()) {
 					if (rarity_value < rar.getKey()) {
 						rarity = rar.getValue();
 						rarity_perc = rar.getKey();
+						rarity_str = rarity_perc == 100 ? "Junk" : rarity_perc + "%";
 					}
 				}
 				if (rarity == "Normal") {
@@ -58,9 +60,9 @@ public class LootBox extends AbstractListener {
 						boolean curse = (rarity == "Cursed");
 						String[] strings = Helper.solvePrefixes(item.getNameRaw());
 						if (strings != null)
-							item_name = strings[0] + " " + rarity + " " + strings[1] + "! (" + rarity_perc + "%)";
+							item_name = strings[0] + " " + rarity + " " + strings[1] + "! (" + rarity_str + ")";
 						else
-							item_name = "a " + rarity + " " + item.getNameWithoutPrefix() + "! (" + rarity_perc + "%)";
+							item_name = "a " + rarity + " " + item.getNameWithoutPrefix() + "! (" + rarity_str + ")";
 						String added_by = (curse ? "The Curse (" + item.getAdded_by() + ")" : item.getAdded_by());
 						Inventory.addRawItem(new Item(0, item_name, item.getUsesLeft() + 15, false, added_by, item.getAddedRaw(), nick, curse));
 						item.destroy();
@@ -74,7 +76,7 @@ public class LootBox extends AbstractListener {
 				if (!params.equals("")) {
 					prefix = "You stab " + params + "! It dropped {item}!";
 				}
-				String item_string = item_name + " (" + rarity_perc + "%)";
+				String item_string = item_name + " (" + rarity_str + ")";
 				Helper.sendMessage(target, prefix.replace("{item}", item_string), nick);
 			}
 		};
