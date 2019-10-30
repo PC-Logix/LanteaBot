@@ -101,7 +101,8 @@ public class Admin extends AbstractListener {
 				Config.prop.setProperty("commandprefix", params);
 				Config.commandprefix = params;
 				Config.saveProps();
-				event.respond("Prefix changed to " + params);
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.sendMessage(target, "Prefix changed to " + params);
 			}
 		}; command_prefix.setHelpText("Changes the prefix that the bot responds to, requires Bot Admin");
 		command_join = new Command("join", 0, Permissions.ADMIN) {
@@ -112,10 +113,12 @@ public class Admin extends AbstractListener {
 					addChannel.setString(1, params);
 					addChannel.executeUpdate();
 					event.getBot().sendIRC().joinChannel(params);
-					event.getBot().sendIRC().notice(target, "Joined channel " + params);
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "Joined channel " + params);
 				} catch (Exception e) {
 					e.printStackTrace();
-					event.getBot().sendIRC().notice(target, "Something went wrong!");
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "Something went wrong!");
 				}
 			}
 		}; command_join.setHelpText("Joins the channel supplied in the first arg, requires Bot Admin");
@@ -127,10 +130,12 @@ public class Admin extends AbstractListener {
 					removeChannel.setString(1, params);
 					removeChannel.executeUpdate();
 					event.getBot().getUserChannelDao().getChannel(params).send().part();
-					event.getBot().sendIRC().notice(target, "Left channel " + params);
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "Left channel " + params);
 				} catch (Exception e) {
 					e.printStackTrace();
-					event.getBot().sendIRC().notice(target, "Something went wrong!");
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target,  "Something went wrong!");
 				}
 			}
 		}; command_part.setHelpText("Parts the channel supplied in the first arg, requires Bot Admin, or Channel Op");
@@ -142,7 +147,8 @@ public class Admin extends AbstractListener {
 					//IRCBot.httpServer.stop();
 				}
 				//WikiChangeWatcher.stop();
-				event.respond("Exiting");
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.sendMessage(target, "Exiting");
 				System.exit(1);
 			}
 		}; command_shutdown.setHelpText("Stops the bot, requires Bot Admin");
@@ -172,18 +178,21 @@ public class Admin extends AbstractListener {
 		command_hashcount = new Command("hashcount", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.messages.size(), nick);
 			}
 		}; command_hashcount.setHelpText("Gets the current size of the hash table for various things, Requires Bot Admin");
 		command_usercount = new Command("usercount", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.users.size(), nick);
 			}
 		}; command_usercount.setHelpText("Count users");
 		command_authcount = new Command("authcount", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.authed.size(), nick);
 			}
 		}; command_authcount.setHelpText("Count authed users");
@@ -191,6 +200,7 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				IRCBot.messages.clear();
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Hashmap size: " + IRCBot.messages.size(), nick);
 			}
 		}; command_flushhash.setHelpText("Flushes the hash table used for various things, requires Bot Admin");
@@ -202,6 +212,7 @@ public class Admin extends AbstractListener {
 				/*for(Channel chan : event.getBot().getUserBot().getChannels()) {
 						IRCBot.bot.sendRaw().rawLineNow("who " + chan.getName() + " %an");
 					}*/
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Authed hashmap size: " + IRCBot.authed.size(), nick);
 			}
 		}; command_flushauth.setHelpText("Prints the current authed user list, requires Bot Admin, or Channel Op");
@@ -222,8 +233,10 @@ public class Admin extends AbstractListener {
 					add.setString(1, user);
 					add.setInt(2, 0);
 					if (add.executeUpdate() > 0) {
+					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendMessage(target, "User added to ignore list");
 					} else {
+					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendMessage(target, "ERROR!");
 					}
 				} catch (Exception e) {
@@ -251,8 +264,10 @@ public class Admin extends AbstractListener {
 					PreparedStatement rem = Database.getPreparedStatement("removeIgnore");
 					rem.setString(1, user);
 					if (rem.executeUpdate() > 0) {
+					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendMessage(target, "User removed from ignore list");
 					} else {
+					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendMessage(target, "ERROR!");
 					}
 				} catch (Exception e) {
@@ -267,6 +282,7 @@ public class Admin extends AbstractListener {
 		command_ignorelist = new Command("ignorelist", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Ignored Users: " + IRCBot.ignoredUsers.toString(), nick);
 			}
 		}; command_ignorelist.setHelpText("Prints the list of ignored users");
@@ -292,12 +308,14 @@ public class Admin extends AbstractListener {
 					Map.Entry pair = (Map.Entry)it.next();
 					listString += pair.getKey() + ", ";
 				}
-				event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.sendMessage(target, "Current commands: " + listString.replaceAll(", $", ""));
 			}
 		}; command_commands.setHelpText("List commands");
 		command_charset = new Command("charset", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Default Charset=" + Charset.defaultCharset(), nick);
 			}
 		}; command_charset.setHelpText("Current default charset");
@@ -306,7 +324,8 @@ public class Admin extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Runtime rt = Runtime.getRuntime();
 				long m0 = rt.totalMemory() - rt.freeMemory();
-				event.respond("Used RAM: " + FormatUtils.convertToStringRepresentation(m0));
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.sendMessage(target, "Used RAM: " + FormatUtils.convertToStringRepresentation(m0));
 			}
 		}; command_ram.setHelpText("Current ram");
 		command_restart = new Command("restart", 0, Permissions.ADMIN) {
@@ -322,6 +341,7 @@ public class Admin extends AbstractListener {
 		command_test = new Command("test", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Success", nick);
 			}
 
@@ -336,6 +356,7 @@ public class Admin extends AbstractListener {
 		command_listadmins = new Command("listadmins", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			    Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, IRCBot.getInstance().getOps().toString(), nick);
 			}
 		}; command_listadmins.setHelpText("List current admins");
@@ -343,6 +364,7 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (Config.httpdEnable.equals("true") && params.size() == 0){
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Command list: " + httpd.getBaseDomain() + "/help", nick);
 				} else {
 					if (params.size() == 0) {
@@ -369,8 +391,10 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if(IRCBot.authed.containsKey(event.getUser().getNick())) {
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Authenticated to Nickserv account " + IRCBot.authed.get(event.getUser().getNick()), nick);
 				} else {
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Nope.", nick);
 				}
 			}
@@ -382,6 +406,7 @@ public class Admin extends AbstractListener {
 					String newOpNick = params.get(0);
 					User newOp = event.getBot().getUserChannelDao().getUser(newOpNick);
 					if (!newOp.isVerified()) {
+					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendMessage(target, "User " + newOpNick + " is not a registered user.", nick);
 						return;
 					}

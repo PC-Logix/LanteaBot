@@ -309,7 +309,7 @@ public class Helper {
 			if (!findMatch.equals("false")) {
 				String[] parts = findMatch.split(" ");
 				for (String part : parts) {
-					message = message.replace(part, antiPing(part));
+					message = message.replaceAll("(?i)"+part, antiPing(part));
 				}
 			}
 		}
