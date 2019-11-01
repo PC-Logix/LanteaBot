@@ -200,7 +200,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("{user} gains a negligible amount of luck.");
 		effects.add("{user} realizes this was actually a {consistency} {appearance} potion.");
 		effects.add("{user} remembers an important appointment.");
-		effects.add("{user} grows a mustache{limit}.");
+		effects.add("An incredibly fake looking mustache is stuck to {user}'s face{limit}.");
 		effects.add("{user} has a sudden but short lived desire to run around in a circle{limit}.");
 		effects.add("{user} gains the ability to summon safety pins{limit}.");
 		effects.add("{user} feels slightly stronger."); // gain 1 point of strength
