@@ -176,11 +176,9 @@ public class WhoPinged extends AbstractListener {
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		String message = String.join(" ", args).trim();
 		try {
-			//Pings(whowaspinged, whopinged, message, time, channel)
-			String findMatch = Helper.stringContainsItemFromList(message, event.getChannel().getUsersNicks());
-			if (!findMatch.equals("false")) {
-				String[] parts = findMatch.split(" ");
-				for (String part : parts) {
+			String[] parts = message.split(" ");
+			for (String part : parts) {
+				if (Helper.stringContainsItemFromList(part, event.getChannel().getUsersNicks())) {
 					if (event.getUser().getNick().equalsIgnoreCase("corded")) {
 						sender = "@"+sender;
 					}

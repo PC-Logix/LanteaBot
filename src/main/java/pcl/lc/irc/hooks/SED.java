@@ -115,11 +115,13 @@ public class SED extends AbstractListener {
 										continue;
 									}
 									if (AntiPings != null && !AntiPings.isEmpty()) {
-										String findMatch = Helper.stringContainsItemFromList(newMessage, AntiPings);
-										if (!findMatch.equals("false")) {
-											String[] parts = findMatch.split(" ");
-											for (String part : parts) {
-												newMessage = newMessage.replace(part, Helper.antiPing(part));
+										String[] parts = message.split(" ");
+										for (String part : parts) {
+											System.out.println(part);
+											if (Helper.stringContainsItemFromList(part, AntiPings)) {
+												if (!Helper.isValidURL(part)) {
+													message = message.replaceAll("(?i)"+part, Helper.antiPing(part));
+												}
 											}
 										}
 									}

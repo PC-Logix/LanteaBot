@@ -319,10 +319,9 @@ public class Helper {
 	
 	public static void sendMessage(String target, String message, String targetUser, Enum format, boolean overridePaste){
 		if (AntiPings != null && !AntiPings.isEmpty()) {
-			String findMatch = stringContainsItemFromList(message, AntiPings);
-			if (!findMatch.equals("false")) {
-				String[] parts = findMatch.split(" ");
-				for (String part : parts) {
+			String[] parts = message.split(" ");
+			for (String part : parts) {
+				if (stringContainsItemFromList(part, AntiPings)) {
 					if (!isValidURL(part)) {
 						message = message.replaceAll("(?i)"+part, antiPing(part));
 					}
@@ -370,11 +369,12 @@ public class Helper {
 	
 	public static void sendAction(String target, String message) {
 		if (AntiPings != null && !AntiPings.isEmpty()) {
-			String findMatch = Helper.stringContainsItemFromList(message, AntiPings);
-			if (!findMatch.equals("false")) {
-				String[] parts = findMatch.split(" ");
-				for (String part : parts) {
-					message = message.replace(part, antiPing(part));
+			String[] parts = message.split(" ");
+			for (String part : parts) {
+				if (stringContainsItemFromList(part, AntiPings)) {
+					if (!isValidURL(part)) {
+						message = message.replaceAll("(?i)"+part, antiPing(part));
+					}
 				}
 			}
 		}
@@ -389,19 +389,18 @@ public class Helper {
 		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + cannotExecuteReason);
 	}
 	
-	public static String stringContainsItemFromList(String inputStr, ImmutableSortedSet<String> items)
+	public static Boolean stringContainsItemFromList(String inputStr, ImmutableSortedSet<String> items)
 	{
 		UnmodifiableIterator<String> itr = items.iterator();
 		String out = "";
 		while(itr.hasNext()) {
 			String match = itr.next();
 			if(isContain(inputStr,match)){
-				out += match + " ";
+				//out += match + " ";
+				return true;
 			}
 		}
-		if (out.equals(""))
-			out = "false";
-		return out;
+		return false;
 	}
 	
     private static boolean isContain(String source, String subItem){

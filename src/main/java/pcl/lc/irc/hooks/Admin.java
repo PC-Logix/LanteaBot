@@ -364,6 +364,7 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (Config.httpdEnable.equals("true") && params.size() == 0){
+				    Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Command list: " + httpd.getBaseDomain() + "/help", nick);
 				} else {
 					if (params.size() == 0) {
