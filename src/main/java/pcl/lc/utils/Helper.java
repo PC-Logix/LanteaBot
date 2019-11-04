@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -303,13 +304,28 @@ public class Helper {
 		sendMessage(target.trim(), message, targetUser, PasteUtils.Formats.NONE, false);
 	}
 	
+	public static boolean isValidURL(String urlString)
+	{
+	    try
+	    {
+	        URL url = new URL(urlString);
+	        url.toURI();
+	        return true;
+	    } catch (Exception exception)
+	    {
+	        return false;
+	    }
+	}
+	
 	public static void sendMessage(String target, String message, String targetUser, Enum format, boolean overridePaste){
 		if (AntiPings != null && !AntiPings.isEmpty()) {
 			String findMatch = stringContainsItemFromList(message, AntiPings);
 			if (!findMatch.equals("false")) {
 				String[] parts = findMatch.split(" ");
 				for (String part : parts) {
-					message = message.replaceAll("(?i)"+part, antiPing(part));
+					if (!isValidURL(part)) {
+						message = message.replaceAll("(?i)"+part, antiPing(part));
+					}
 				}
 			}
 		}
