@@ -115,8 +115,24 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("water", "a", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("weather", "a"));
 		appearanceEntries.add(new AppearanceEntry("aegisalt", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("cerulium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("ferozium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("moonstone", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("rubium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("solarium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("violium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("automato", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("avesmingo", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("boneboo", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("coralcreep", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("currentcorn", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("oculemon", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("pearlpeas", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("pussplum", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("toxictop", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
 		appearanceEntries.add(new AppearanceEntry("violet", "a"));
 		appearanceEntries.add(new AppearanceEntry("crimson", "a"));
+		appearanceEntries.add(new AppearanceEntry("grathnode ", "a", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
 
 		consistencies.add("viscous");
 		consistencies.add("cloudy");
@@ -158,6 +174,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add("oxidised");
 		consistencies.add("mutable");
 		consistencies.add("liquid");
+		consistencies.add("smelly");
 
 		//Valid tags: {user},{appearance},{turn_appearance},{appearance:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
