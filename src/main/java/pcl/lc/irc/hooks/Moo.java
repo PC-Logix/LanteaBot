@@ -4,8 +4,6 @@
 package pcl.lc.irc.hooks;
 
 import com.google.common.collect.Lists;
-import jdk.nashorn.internal.runtime.regexp.RegExp;
-import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
@@ -17,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static pcl.lc.irc.hooks.Flip.flip;
 
 /**
  * @author Forecaster

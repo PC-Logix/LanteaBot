@@ -9,6 +9,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.DiceRoll;
+import pcl.lc.utils.DiceRollResult;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
@@ -51,7 +52,7 @@ public class Pet extends AbstractListener {
 						 Helper.sendMessage(target,"Don't pet yourself in public.", nick);
 					}
 					else if (Helper.doInteractWith(params)) {
-						int[] heal = {0,0,0};
+						DiceRollResult heal = new DiceRollResult();
 						if (item != null)
 							heal = item.getHealing();
 						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);

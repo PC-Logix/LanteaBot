@@ -9,6 +9,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.DiceRoll;
+import pcl.lc.utils.DiceRollResult;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
@@ -42,7 +43,7 @@ public class Fling extends AbstractListener {
 					DiceRoll hit = Helper.rollDice("1d100").getFirstGroupOrNull();
 					int itemDamage = 0;
 					if (hit != null && hit.getSum() > 20) {
-						int[] dmg = item.getDamage();
+						DiceRollResult dmg = item.getDamage();
 						Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits " + user + " " + Helper.get_hit_place() + ". They take " + Item.stringifyDamageResult(dmg) + ".");
 						itemDamage = 1;
 					}

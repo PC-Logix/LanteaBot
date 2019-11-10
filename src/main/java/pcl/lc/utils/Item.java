@@ -11,6 +11,8 @@ import java.sql.ResultSet;
  * Created by Forecaster on 12/03/2017 for the LanteaBot project.
  */
 public class Item {
+	public static int maxItemNameLength = 70;
+
 	private int id;
 	private String name;
 	private int uses_left;
@@ -278,29 +280,30 @@ public class Item {
 		return this.is_favourite;
 	}
 
-	public int[] getGenericRoll()
+	public DiceRollResult getGenericRoll()
 	{
-		return getGenericRoll(0);
+		return getGenericRoll(new DiceRollBonusCollection());
 	}
 
-	public int[] getGenericRoll(int bonus)
+	public DiceRollResult getGenericRoll(DiceRollBonusCollection bonus)
 	{
-		return getGenericRoll(4, bonus);
+		return getGenericRoll(1, getDiceSizeFromItemName(), bonus);
 	}
 
-	public int[] getGenericRoll(int diceSize, int bonus)
+	public static DiceRollResult getGenericRoll(int diceAmount, int diceSize, DiceRollBonusCollection bonus)
 	{
-		return getGenericRoll(diceSize, bonus, 0);
+		return getGenericRoll(diceAmount, diceSize, bonus, 0);
 	}
 
-	public int[] getGenericRoll(int diceSize, int bonus, int minValue)
+	public static DiceRollResult getGenericRoll(int diceAmount, int diceSize, DiceRollBonusCollection bonus, int minValue)
 	{
-		int[] result = new int[4];
-		int diceRoll = Helper.rollDice(Math.max(1, (this.uses_left / 2)) + "d" + diceSize).getSum();
-		result[0] = (bonus == Integer.MIN_VALUE ? 0 : Math.max(minValue, diceRoll + bonus)); //Result
-		result[1] = diceRoll;
-		result[2] = bonus;
-		result[3] = minValue; //Minimum Value
+		DiceRollResult result = new DiceRollResult();
+		int diceRoll = Helper.rollDice(diceAmount + "d" + diceSize).getSum();
+		result.rollResult = diceRoll;
+		result.bonus = bonus;
+		result.minValue = minValue; //Minimum Value
+		result.diceAmount = diceAmount;
+		result.diceSize = diceSize;
 		return result;
 	}
 
@@ -308,69 +311,69 @@ public class Item {
 	 * Default dice size 4
 	 * @return int
 	 */
-	public int[] getDamage()
+	public DiceRollResult getDamage()
 	{
-		return getDamage(4);
+		return getDamage(1, getDiceSizeFromItemName());
 	}
 
-	public int[] getDamage(int diceSize)
+	public DiceRollResult getDamage(int diceAmount, int diceSize)
 	{
-		return getDamage(diceSize, 0);
+		return getDamage(diceAmount, diceSize, 0);
 	}
 
-	public int[] getDamage(int diceSize, int minDamage)
+	public DiceRollResult getDamage(int diceAmount, int diceSize, int minDamage)
 	{
-		return getGenericRoll(diceSize, Helper.getOffensiveItemBonus(this), minDamage);
-	}
-
-	/**
-	 * Default dice size 4
-	 * @return int
-	 */
-	public int[] getDamageRecution()
-	{
-		return getDamageReduction(4);
-	}
-
-	public int[] getDamageReduction(int diceSize)
-	{
-		return getDamageReduction(diceSize, 0);
-	}
-
-	public int[] getDamageReduction(int diceSize, Integer minDamageReduction)
-	{
-		return getGenericRoll(diceSize, Helper.getDefensiveItemBonus(this), minDamageReduction);
+		return getGenericRoll(diceAmount, diceSize, DiceRollBonusCollection.getOffensiveItemBonus(this), minDamage);
 	}
 
 	/**
 	 * Default dice size 4
 	 * @return int
 	 */
-	public int[] getHealing()
+	public DiceRollResult getDamageRecution()
+	{
+		return getDamageReduction(1, getDiceSizeFromItemName());
+	}
+
+	public DiceRollResult getDamageReduction(int diceAmount, int diceSize)
+	{
+		return getDamageReduction(diceAmount, diceSize, 0);
+	}
+
+	public DiceRollResult getDamageReduction(int diceAmount, int diceSize, Integer minDamageReduction)
+	{
+		return getGenericRoll(diceAmount, diceSize, DiceRollBonusCollection.getDefensiveItemBonus(this), minDamageReduction);
+	}
+
+	/**
+	 * Default dice size 4
+	 * @return int
+	 */
+	public DiceRollResult getHealing()
 	{
 		return getHealing(4);
 	}
 
-	public int[] getHealing(int diceSize)
+	public DiceRollResult getHealing(int diceSize)
 	{
 		return getHealing(diceSize, 0);
 	}
 
-	public int[] getHealing(int diceSize, int minHealing)
+	public DiceRollResult getHealing(int diceSize, int minHealing)
 	{
-		return getGenericRoll(diceSize, Helper.getHealingItemBonus(this), minHealing);
+		return getGenericRoll(1, diceSize, DiceRollBonusCollection.getHealingItemBonus(this), minHealing);
 	}
 
 	/**
 	 * "{damage} damage (Minimum|{diceRoll}+|-{bonus})"
-	 * @param input int[] The result array from one of the get____Roll methods
+	 * @param input DiceRollResult The result from one of the get____Roll methods
 	 * @return String
 	 */
-	public static String stringifyDamageResult(int[] input)
+	public static String stringifyDamageResult(DiceRollResult input)
 	{
-		if (getResult(input) == 0)
+		if (input.rollResult == 0)
 			return "no damage" + getParenthesis(input);
-		return getResult(input) + " damage" + getParenthesis(input);
+		return input.rollResult + " damage" + getParenthesis(input);
 	}
 
 	/**
@@ -380,11 +383,11 @@ public class Item {
 	 * @param input int[] The result array from one of the get____Roll methods
 	 * @return String
 	 */
-	public static String stringifyDamageReductionResult(int[] input)
+	public static String stringifyDamageReductionResult(DiceRollResult input)
 	{
-		if (getResult(input) == 0)
+		if (input.rollResult == 0)
 			return "no damage reduction" + getParenthesis(input);
-		return "damage reduced by " + getResult(input) + getParenthesis(input);
+		return "damage reduced by " + input.rollResult + getParenthesis(input);
 	}
 
 	/**
@@ -394,41 +397,31 @@ public class Item {
 	 * @param input int[] The result array from one of the get____Roll methods
 	 * @return String
 	 */
-	public static String stringifyHealingResult(int[] input)
+	public static String stringifyHealingResult(DiceRollResult input)
 	{
-		if (getResult(input) == 0)
+		if (input.rollResult == 0)
 			return "no health gained" + getParenthesis(input);
-		return getResult(input) + " health gained" + getParenthesis(input);
+		return input.rollResult + " health gained" + getParenthesis(input);
 	}
 
-	public static int getResult(int[] input)
+	public static String getParenthesis(DiceRollResult input)
 	{
-		return input[0];
-	}
-
-	public static int getDiceRoll(int[] input)
-	{
-		return input[1];
-	}
-
-	public static int getBonus(int[] input)
-	{
-		return input[2];
-	}
-
-	public static int getMinValue(int[] input)
-	{
-		return input[3];
-	}
-
-	public static String getParenthesis(int[] input)
-	{
-		if (getBonus(input) == 0)
+		if (input.bonus.size() == 0)
 			return "";
-		if (getBonus(input) == Integer.MIN_VALUE)
+		if (input.bonus.incapable)
 			return " (Incapable)";
-		if (getResult(input) == getMinValue(input))
+		if (input.rollResult == input.minValue)
 			return " (Minimum)";
-		return " (" + getDiceRoll(input) + (getBonus(input) < 0 ? "" : "+") + getBonus(input) + ")";
+		return " (" + input.rollResult + (input.bonus.size() < 0 ? "" : "+") + input.bonus + ")";
+	}
+
+	public static int getDiceSizeFromItemName(String itemName) {
+		double diceSize = Math.floor(((double)itemName.length() / (double)maxItemNameLength) * 6) * 2;
+		System.out.println("DiceSize: " + diceSize);
+		return Math.max(4, (int)diceSize);
+	}
+
+	public int getDiceSizeFromItemName() {
+		return getDiceSizeFromItemName(this.name);
 	}
 }

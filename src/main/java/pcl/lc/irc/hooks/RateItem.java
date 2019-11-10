@@ -5,6 +5,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.DiceRollBonusCollection;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -33,38 +34,38 @@ public class RateItem extends AbstractListener {
 					sb.append(str).append(" ");
 				String itemName = sb.toString().trim();
 				if (params.size() > 1) {
-					int bonus = 0;
+					DiceRollBonusCollection bonus;
 					switch (params.get(0)) {
 						case "attack":
 						case "att":
-							bonus = Helper.getOffensiveItemBonus(itemName);
-							if (bonus == Integer.MIN_VALUE)
+							bonus = DiceRollBonusCollection.getOffensiveItemBonus(itemName);
+							if (bonus.incapable)
 								Helper.sendMessage(target, "This item cannot do damage.");
-							else if (bonus == 0)
+							else if (bonus.size() == 0)
 								Helper.sendMessage(target, "This has no attack bonus");
 							else
-								Helper.sendMessage(target, "This has an attack bonus of " + (bonus > 0 ? "+" : "") + bonus + "!");
+								Helper.sendMessage(target, "This has an attack bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
 							return;
 						case "defense":
 						case "def":
-							bonus = Helper.getDefensiveItemBonus(itemName);
-							if (bonus == Integer.MIN_VALUE)
+							bonus = DiceRollBonusCollection.getDefensiveItemBonus(itemName);
+							if (bonus.incapable)
 								Helper.sendMessage(target, "This item cannot block damage.");
-							else if (bonus == 0)
+							else if (bonus.size() == 0)
 								Helper.sendMessage(target, "This has no damage reduction bonus");
 							else
-								Helper.sendMessage(target, "This has a damage reduction bonus of " + (bonus > 0 ? "+" : "") + bonus + "!");
+								Helper.sendMessage(target, "This has a damage reduction bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
 							return;
 						case "healing":
 						case "heal":
 						case "health":
-							bonus = Helper.getHealingItemBonus(itemName);
-							if (bonus == Integer.MIN_VALUE)
+							bonus = DiceRollBonusCollection.getHealingItemBonus(itemName);
+							if (bonus.incapable)
 								Helper.sendMessage(target, "This item cannot heal.");
-							else if (bonus == 0)
+							else if (bonus.size() == 0)
 								Helper.sendMessage(target, "This has no healing bonus");
 							else
-								Helper.sendMessage(target, "This has an healing bonus of " + (bonus > 0 ? "+" : "") + bonus + "!");
+								Helper.sendMessage(target, "This has an healing bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
 					}
 				}
 				else if (params.size() == 0)

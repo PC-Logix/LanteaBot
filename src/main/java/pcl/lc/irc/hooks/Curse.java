@@ -58,7 +58,7 @@ public class Curse extends AbstractListener {
 				if (curses.size() == 0)
 					Helper.sendMessage(target, "I don't know any curses...");
 				else
-					Helper.sendMessage(target, getRandomCurse() + Helper.getRandomExlamations(true, false), nick);
+					Helper.sendMessage(target, getRandomCurse() + Helper.getRandomExclamations(true, false), nick);
 			}
 		};
 		local_command.registerAlias("curses");

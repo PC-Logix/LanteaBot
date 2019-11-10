@@ -430,7 +430,7 @@ public class Inventory extends AbstractListener {
 				e.printStackTrace();
 			}
 			try {
-				if (item.length() > 70)
+				if (item.length() > Item.maxItemNameLength)
 				{
 					PreparedStatement get = Database.getPreparedStatement("getCompressedSentences");
 					ResultSet result = get.executeQuery();

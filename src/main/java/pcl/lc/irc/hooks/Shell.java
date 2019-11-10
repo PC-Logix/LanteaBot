@@ -9,6 +9,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.DiceRoll;
+import pcl.lc.utils.DiceRollResult;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
@@ -55,16 +56,16 @@ public class Shell extends AbstractListener {
 					String strike = "Seems it was a dud...";
 					try {
 						if (roll != null && roll.getSum() < hitChance) {
-							int[] dmg1 = item.getDamage(6, 4);
-							int[] dmg2 = item.getDamage(4, 2);
-							int[] dmg3 = item.getDamage(4, 2);
-							strike = "It strikes " + user + ". They take " + Item.stringifyDamageResult(dmg1) + ". " + userSecondary + " and " + userTertiary + " stood too close and take " + Item.getResult(dmg2) + Item.getParenthesis(dmg2) + " and " + Item.getResult(dmg3) + Item.getParenthesis(dmg3) + " damage respectively.";
+							DiceRollResult dmg1 = item.getDamage(1, 6, 4);
+							DiceRollResult dmg2 = item.getDamage(1, 4, 2);
+							DiceRollResult dmg3 = item.getDamage(1, 4, 2);
+							strike = "It strikes " + user + ". They take " + Item.stringifyDamageResult(dmg1) + ". " + userSecondary + " and " + userTertiary + " stood too close and take " + dmg2.rollResult + Item.getParenthesis(dmg2) + " and " + dmg3.rollResult + Item.getParenthesis(dmg3) + " damage respectively.";
 							itemDamage = 1;
 						} else {
-							int[] dmg1 = item.getDamage(4, 2);
-							int[] dmg2 = item.getDamage(4, 2);
-							int[] dmg3 = item.getDamage(4, 2);
-							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + Item.getResult(dmg1) + Item.getParenthesis(dmg1) + ", " + Item.getResult(dmg2) + Item.getParenthesis(dmg2) + " and " + Item.getResult(dmg3) + Item.getParenthesis(dmg3) + " splash damage respectively.";
+							DiceRollResult dmg1 = item.getDamage(1, 4, 2);
+							DiceRollResult dmg2 = item.getDamage(1, 4, 2);
+							DiceRollResult dmg3 = item.getDamage(1, 4, 2);
+							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + dmg1.rollResult + Item.getParenthesis(dmg1) + ", " + dmg2.rollResult + Item.getParenthesis(dmg2) + " and " + dmg3.rollResult + Item.getParenthesis(dmg3) + " splash damage respectively.";
 							itemDamage = 2;
 						}
 					} catch (NullPointerException ignored) {}
