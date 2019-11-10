@@ -20,18 +20,18 @@ import java.util.HashMap;
 @SuppressWarnings("rawtypes")
 public class Attack extends AbstractListener {
 	private Command local_command;
-	private HashMap<String, AttackType> actions;
+	private HashMap<String, ActionType> actions;
 
 	@Override
 	protected void initHook() {
 		actions = new HashMap<>();
-		actions.put("stab", new AttackType("Stabbing", "Stabbed", "Stab"));
-		actions.put("hit", new AttackType("Hitting", "Hit", "Hit"));
-		actions.put("shiv", new AttackType("Shivving", "Shivved", "Shiv"));
-		actions.put("strike", new AttackType("Striking", "Struck", "Strike"));
-		actions.put("slap", new AttackType("Slapping", "Slapped", "Slap"));
-		actions.put("poke", new AttackType("Poking", "Poked", "Poke"));
-		actions.put("prod", new AttackType("Prodding", "Prodded", "Prod"));
+		actions.put("stab", new ActionType("Stabbing", "Stabbed", "Stab"));
+		actions.put("hit", new ActionType("Hitting", "Hit", "Hit"));
+		actions.put("shiv", new ActionType("Shivving", "Shivved", "Shiv"));
+		actions.put("strike", new ActionType("Striking", "Struck", "Strike"));
+		actions.put("slap", new ActionType("Slapping", "Slapped", "Slap"));
+		actions.put("poke", new ActionType("Poking", "Poked", "Poke"));
+		actions.put("prod", new ActionType("Prodding", "Prodded", "Prod"));
 
 		local_command = new Command("attack", 0) {
 			@Override
@@ -79,7 +79,7 @@ public class Attack extends AbstractListener {
 							dmgString = "no damage";
 						else
 							dmgString += " damage";
-						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).attackNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + dust);
+						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + dust);
 //						Helper.sendAction(target,Helper.antiPing(actions.get(action)) + "s " + attackTarget + (item != null ? " with " + item.getName() : "") + " doing " + Item.stringifyDamageResult(dmg) + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);

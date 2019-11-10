@@ -8,12 +8,11 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.DiceRoll;
-import pcl.lc.utils.DiceRollResult;
-import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
+import pcl.lc.utils.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author Caitlyn
@@ -22,12 +21,17 @@ import java.util.ArrayList;
 @SuppressWarnings("rawtypes")
 public class Pet extends AbstractListener {
 	private Command local_command;
+	private HashMap<String, ActionType> actions;
 
 	@Override
 	protected void initHook() {
+		actions = new HashMap<>();
+		actions.put("pets", new ActionType("Petting", "Petting", "Pet"));
+		actions.put("brushes", new ActionType("Brusing", "Brushing", "Brush"));
+
 		local_command = new Command("pet", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				try
 				{
 					Item item = Inventory.getRandomItem(false);
@@ -36,26 +40,32 @@ public class Pet extends AbstractListener {
 						dust = item.decrementUses(false, true, false);
 					}
 
-					params = params.trim();
+					String petTarget = String.join(" ", params);
 
-					ArrayList<String> actions = new ArrayList<>();
-					actions.add("pets");
-					actions.add("brushes");
+					String[] keys = actions.keySet().toArray(new String[0]);
+					ActionType petAction = actions.get(keys[Helper.getRandomInt(0, keys.length - 1)]);
 
-					DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4").getFirstGroupOrNull();
+//					DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4").getFirstGroupOrNull();
 
-					int action = Helper.getRandomInt(0, actions.size() - 1);
-
-					if (params == "")
+					if (petTarget.equals(""))
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					 else if (nick.equals(params)) {
+					 else if (nick.equals(petTarget)) {
 						 Helper.sendMessage(target,"Don't pet yourself in public.", nick);
 					}
-					else if (Helper.doInteractWith(params)) {
+					else if (Helper.doInteractWith(petTarget)) {
 						DiceRollResult heal = new DiceRollResult();
-						if (item != null)
+						if (item != null) {
 							heal = item.getHealing();
-						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);
+							heal.bonus = DiceRollBonusCollection.getHealingItemBonus(item);
+						} else
+							heal = Item.getGenericRoll(1, 4, new DiceRollBonusCollection());
+						String healString = heal.getResultString();
+						if (healString == null)
+							healString = "no hit points";
+						else
+							healString += " hit points";
+						Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + dust);
+//						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);
 					}
 					else
 						Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
