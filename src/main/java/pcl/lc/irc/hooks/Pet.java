@@ -37,7 +37,9 @@ public class Pet extends AbstractListener {
 					Item item = Inventory.getRandomItem(false);
 					String dust = "";
 					if (item != null) {
-						dust = item.decrementUses(false, true, false);
+						dust = item.decrementUses(false, true, true);
+						if (!dust.equals(""))
+							dust = " " + dust;
 					}
 
 					String petTarget = String.join(" ", params);
@@ -64,7 +66,7 @@ public class Pet extends AbstractListener {
 							healString = "no hit points";
 						else
 							healString += " hit points";
-						Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + dust);
+						Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + "!" + dust);
 //						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);
 					}
 					else
