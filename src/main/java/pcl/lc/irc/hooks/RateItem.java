@@ -17,6 +17,9 @@ import java.util.ArrayList;
 @SuppressWarnings("rawtypes")
 public class RateItem extends AbstractListener {
 	private Command local_command;
+	private Command sub_command_attack;
+	private Command sub_command_defense;
+	private Command sub_command_healing;
 
 	@Override
 	protected void initHook() {
@@ -27,53 +30,68 @@ public class RateItem extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("rateitem", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				int number = 0;
-				StringBuilder sb = new StringBuilder();
-				for (String str : params.subList(1, params.size()))
-					sb.append(str).append(" ");
-				String itemName = sb.toString().trim();
-				if (params.size() > 1) {
-					DiceRollBonusCollection bonus;
-					switch (params.get(0)) {
-						case "attack":
-						case "att":
-							bonus = DiceRollBonusCollection.getOffensiveItemBonus(itemName);
-							if (bonus.incapable)
-								Helper.sendMessage(target, "This item cannot do damage.");
-							else if (bonus.size() == 0)
-								Helper.sendMessage(target, "This has no attack bonus");
-							else
-								Helper.sendMessage(target, "This has an attack bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
-							return;
-						case "defense":
-						case "def":
-							bonus = DiceRollBonusCollection.getDefensiveItemBonus(itemName);
-							if (bonus.incapable)
-								Helper.sendMessage(target, "This item cannot block damage.");
-							else if (bonus.size() == 0)
-								Helper.sendMessage(target, "This has no damage reduction bonus");
-							else
-								Helper.sendMessage(target, "This has a damage reduction bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
-							return;
-						case "healing":
-						case "heal":
-						case "health":
-							bonus = DiceRollBonusCollection.getHealingItemBonus(itemName);
-							if (bonus.incapable)
-								Helper.sendMessage(target, "This item cannot heal.");
-							else if (bonus.size() == 0)
-								Helper.sendMessage(target, "This has no healing bonus");
-							else
-								Helper.sendMessage(target, "This has an healing bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
-					}
-				}
-				else if (params.size() == 0)
-					Helper.sendMessage(target, "Parameter one should be 'att', 'def' or 'heal' followed by an item name");
-				else
-					Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
-			}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+                Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
+            }
 		};
+
+		sub_command_attack = new Command("attack") {
+		    @Override
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String itemName) {
+		        if (itemName.length() == 0) {
+                    Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
+                    return;
+                }
+                DiceRollBonusCollection bonus = DiceRollBonusCollection.getOffensiveItemBonus(itemName);
+                if (bonus.incapable)
+                    Helper.sendMessage(target, "This item is incapable of doing damage.");
+                else if (bonus.size() == 0)
+                    Helper.sendMessage(target, "This has no attack bonus");
+                else
+                    Helper.sendMessage(target, "This has an attack bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
+            }
+        };
+		sub_command_attack.registerAlias("att");
+
+        sub_command_defense = new Command("defense") {
+		    @Override
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String itemName) {
+                if (itemName.length() == 0) {
+                    Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
+                    return;
+                }
+                DiceRollBonusCollection bonus = DiceRollBonusCollection.getDefensiveItemBonus(itemName);
+                if (bonus.incapable)
+                    Helper.sendMessage(target, "This item is incapable of blocking damage.");
+                else if (bonus.size() == 0)
+                    Helper.sendMessage(target, "This has no damage reduction bonus");
+                else
+                    Helper.sendMessage(target, "This has a damage reduction bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
+            }
+        };
+		sub_command_defense.registerAlias("def");
+
+        sub_command_healing = new Command("healing") {
+		    @Override
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String itemName) {
+                if (itemName.length() == 0) {
+                    Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
+                    return;
+                }
+                DiceRollBonusCollection bonus = DiceRollBonusCollection.getHealingItemBonus(itemName);
+                if (bonus.incapable)
+                    Helper.sendMessage(target, "This item is incapable of healing.");
+                else if (bonus.size() == 0)
+                    Helper.sendMessage(target, "This has no healing bonus");
+                else
+                    Helper.sendMessage(target, "This has a healing bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
+            }
+        };
+		sub_command_healing.registerAlias("heal");
+
+		local_command.registerSubCommand(sub_command_attack);
+		local_command.registerSubCommand(sub_command_defense);
+		local_command.registerSubCommand(sub_command_healing);
 	}
 
 	public String chan;
