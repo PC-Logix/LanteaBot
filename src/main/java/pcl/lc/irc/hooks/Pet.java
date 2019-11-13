@@ -53,9 +53,8 @@ public class Pet extends AbstractListener {
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
 					 else if (nick.equals(petTarget)) {
 						 Helper.sendMessage(target,"Don't pet yourself in public.", nick);
-					}
-					else if (Helper.doInteractWith(petTarget)) {
-						DiceRollResult heal = new DiceRollResult();
+					} else {
+						DiceRollResult heal;
 						if (item != null) {
 							heal = item.getHealing();
 							heal.bonus = DiceRollBonusCollection.getHealingItemBonus(item);
@@ -69,8 +68,6 @@ public class Pet extends AbstractListener {
 						Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + "!" + dust);
 //						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);
 					}
-					else
-						Helper.sendMessage(target,"I'm not going to pet myself in public. It'd be rude.", nick);
 				}
 				catch (Exception e)
 				{
