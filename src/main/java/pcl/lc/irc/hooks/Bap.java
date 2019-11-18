@@ -30,11 +30,18 @@ public class Bap extends AbstractListener {
 					if (Helper.doInteractWith(params)) {
 						Item item = Inventory.getRandomItem(false);
 						if (item != null)
-							Helper.sendAction(target, "baps " + params + " with " + item.getName(true));
-						else
-							Helper.sendAction(target, "baps " + params);
+							if (nick.equals(params))
+								Helper.sendAction(target, nick + " baps themselves with " + item.getName(true) + "!");
+							else
+								Helper.sendAction(target, nick + " baps " + params + " with " + item.getName(true) + "!");
+						else {
+							if (nick.equals(params))
+								Helper.sendAction(target, nick + "baps themselves!");
+							else
+								Helper.sendAction(target, nick + "baps " + params + "!");
+						}
 					} else {
-						Helper.sendAction(target, "smacks " + nick);
+						Helper.sendAction(target, "smacks " + nick + "!");
 					}
 				}
 				else
