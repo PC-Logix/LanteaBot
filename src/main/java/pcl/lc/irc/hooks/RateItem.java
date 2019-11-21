@@ -7,8 +7,7 @@ import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.DiceRollBonusCollection;
 import pcl.lc.utils.Helper;
-
-import java.util.ArrayList;
+import pcl.lc.utils.Item;
 
 /**
  * @author Forecaster
@@ -20,6 +19,17 @@ public class RateItem extends AbstractListener {
 	private Command sub_command_attack;
 	private Command sub_command_defense;
 	private Command sub_command_healing;
+
+    private Item makeItem(String itemName) {
+        Item item = null;
+        try {
+            item = new Item(0, itemName, 1, false, "", 0, "", false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
+        }
+        return item;
+    }
 
 	@Override
 	protected void initHook() {
@@ -42,13 +52,14 @@ public class RateItem extends AbstractListener {
                     Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
                     return;
                 }
+                Item item = makeItem(itemName);
                 DiceRollBonusCollection bonus = DiceRollBonusCollection.getOffensiveItemBonus(itemName);
                 if (bonus.incapable)
                     Helper.sendMessage(target, "This item is incapable of doing damage.");
                 else if (bonus.size() == 0)
-                    Helper.sendMessage(target, "This has no attack bonus");
+                    Helper.sendMessage(target, "This item's damage die is a d" + item.getDiceSizeFromItemName() + "! It has no attack bonuses.");
                 else
-                    Helper.sendMessage(target, "This has an attack bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
+                    Helper.sendMessage(target, "This item's damage die is a d" + item.getDiceSizeFromItemName() + "! It has an attack bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
             }
         };
 		sub_command_attack.registerAlias("att");
@@ -60,13 +71,14 @@ public class RateItem extends AbstractListener {
                     Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
                     return;
                 }
+                Item item = makeItem(itemName);
                 DiceRollBonusCollection bonus = DiceRollBonusCollection.getDefensiveItemBonus(itemName);
                 if (bonus.incapable)
                     Helper.sendMessage(target, "This item is incapable of blocking damage.");
                 else if (bonus.size() == 0)
-                    Helper.sendMessage(target, "This has no damage reduction bonus");
+                    Helper.sendMessage(target, "This item's damage reduction die is a d" + item.getDiceSizeFromItemName() + "! It has no reduction bonus");
                 else
-                    Helper.sendMessage(target, "This has a damage reduction bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
+                    Helper.sendMessage(target, "This item's damage reduction die is a d" + item.getDiceSizeFromItemName() + "! It has a reduction bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
             }
         };
 		sub_command_defense.registerAlias("def");
@@ -78,13 +90,14 @@ public class RateItem extends AbstractListener {
                     Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
                     return;
                 }
+                Item item = makeItem(itemName);
                 DiceRollBonusCollection bonus = DiceRollBonusCollection.getHealingItemBonus(itemName);
                 if (bonus.incapable)
                     Helper.sendMessage(target, "This item is incapable of healing.");
                 else if (bonus.size() == 0)
-                    Helper.sendMessage(target, "This has no healing bonus");
+                    Helper.sendMessage(target, "This item's healing die is a d" + item.getDiceSizeFromItemName() + "! It has no healing bonus");
                 else
-                    Helper.sendMessage(target, "This has a healing bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
+                    Helper.sendMessage(target, "This item's healing die is a d" + item.getDiceSizeFromItemName() + "! It has a healing bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
             }
         };
 		sub_command_healing.registerAlias("heal");
