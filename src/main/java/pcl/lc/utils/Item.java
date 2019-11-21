@@ -351,17 +351,17 @@ public class Item {
 	 */
 	public DiceRollResult getHealing()
 	{
-		return getHealing(4);
+		return getHealing(1, getDiceSizeFromItemName());
 	}
 
-	public DiceRollResult getHealing(int diceSize)
+	public DiceRollResult getHealing(int diceAmount, int diceSize)
 	{
-		return getHealing(diceSize, 0);
+		return getHealing(diceAmount, diceSize, 0);
 	}
 
-	public DiceRollResult getHealing(int diceSize, int minHealing)
+	public DiceRollResult getHealing(int diceAmount, int diceSize, int minHealing)
 	{
-		return getGenericRoll(1, diceSize, DiceRollBonusCollection.getHealingItemBonus(this), minHealing);
+		return getGenericRoll(diceAmount, diceSize, DiceRollBonusCollection.getHealingItemBonus(this), minHealing);
 	}
 
 	/**
