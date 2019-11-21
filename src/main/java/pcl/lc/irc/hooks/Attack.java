@@ -21,17 +21,26 @@ import java.util.HashMap;
 public class Attack extends AbstractListener {
 	private Command local_command;
 	private HashMap<String, ActionType> actions;
+	private static String STAB = "stab";
+	private static String HIT = "hit";
+	private static String SHIV = "shiv";
+	private static String STRIKE = "strike";
+	private static String SLAP = "slap";
+	private static String POKE = "poke";
+	private static String PROD = "prod";
+	private static String BITE = "bite";
 
 	@Override
 	protected void initHook() {
 		actions = new HashMap<>();
-		actions.put("stab", new ActionType("Stabbing", "Stabbed", "Stab"));
-		actions.put("hit", new ActionType("Hitting", "Hit", "Hit"));
-		actions.put("shiv", new ActionType("Shivving", "Shivved", "Shiv"));
-		actions.put("strike", new ActionType("Striking", "Struck", "Strike"));
-		actions.put("slap", new ActionType("Slapping", "Slapped", "Slap"));
-		actions.put("poke", new ActionType("Poking", "Poked", "Poke"));
-		actions.put("prod", new ActionType("Prodding", "Prodded", "Prod"));
+		actions.put(STAB, new ActionType("Stabbing", "Stabbed", "Stab"));
+		actions.put(HIT, new ActionType("Hitting", "Hit", "Hit"));
+		actions.put(SHIV, new ActionType("Shivving", "Shivved", "Shiv"));
+		actions.put(STRIKE, new ActionType("Striking", "Struck", "Strike"));
+		actions.put(SLAP, new ActionType("Slapping", "Slapped", "Slap"));
+		actions.put(POKE, new ActionType("Poking", "Poked", "Poke"));
+		actions.put(PROD, new ActionType("Prodding", "Prodded", "Prod"));
+		actions.put(BITE, new ActionType("Biting", "Bit", "Bite"));
 
 		local_command = new Command("attack", 0) {
 			@Override
@@ -49,7 +58,15 @@ public class Attack extends AbstractListener {
 						message += " " + aParam;
 					}
 
-					Item item = Inventory.getRandomItem(false);
+					if (!actions.containsKey(method.toLowerCase())) {
+						Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
+						return;
+					}
+
+					Item item = null;
+					if (!actions.get(method.toLowerCase()).equals(actions.get(BITE))) //Don't get item on bite attack
+						item = Inventory.getRandomItem(false);
+
 					String dust = "";
 					if (item != null) {
 						dust = item.decrementUses(false, true, true);
@@ -57,10 +74,6 @@ public class Attack extends AbstractListener {
 							dust = " " + dust;
 					}
 
-					if (!actions.containsKey(method.toLowerCase())) {
-						Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
-						return;
-					}
 					//action = Helper.getRandomInt(0, actions.size() - 1);
 
 					String attackTarget = message.trim();
@@ -73,9 +86,11 @@ public class Attack extends AbstractListener {
 						if (item != null) {
 							dmg = item.getDamage();
 							dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
-						}
-						else
+						} else if (actions.get(method.toLowerCase()).equals(actions.get(BITE))) {
+							dmg = Item.getGenericRoll(1, 6, new DiceRollBonusCollection());
+						} else {
 							dmg = Item.getGenericRoll(1, 4, new DiceRollBonusCollection());
+						}
 						String dmgString = dmg.getResultString();
 						if (dmgString == null)
 							dmgString = "no damage";
@@ -87,9 +102,7 @@ public class Attack extends AbstractListener {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target,"uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + dust);
 					}
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
