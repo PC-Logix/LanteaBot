@@ -136,6 +136,8 @@ public class DiceRollBonusCollection {
         plusTwo.add("Chicken ");
         plusTwo.add("Nuclear ");
         plusTwo.add("Hippo");
+        plusTwo.add("Sacred ");
+        plusTwo.add("Holy ");
 
         searchForBonuses(bonuses, plusTwo, itemName, 2);
 
@@ -200,6 +202,8 @@ public class DiceRollBonusCollection {
         plusTwo.add("Robust ");
         plusTwo.add("Super");
         plusTwo.add("Magic");
+        plusTwo.add("Sacred ");
+        plusTwo.add("Holy ");
 
         searchForBonuses(bonuses, plusTwo, itemName, 2);
 
@@ -223,6 +227,10 @@ public class DiceRollBonusCollection {
         noHeal.add("Corrupt");
         noHeal.add("Fake");
         noHeal.add("Replica ");
+        noHeal.add("Desecrated ");
+        noHeal.add("Undead ");
+        noHeal.add("Dead ");
+        noHeal.add("Disease");
 
         for (String str : noHeal)
             if (itemName.contains(str.toLowerCase()))
@@ -266,6 +274,8 @@ public class DiceRollBonusCollection {
         plusTwo.add("Friendly ");
         plusTwo.add("Magic");
         plusTwo.add("Super");
+        plusTwo.add("Sacred ");
+        plusTwo.add("Holy ");
 
         searchForBonuses(bonuses, plusTwo, itemName, 2);
 
