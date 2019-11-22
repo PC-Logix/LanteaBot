@@ -179,15 +179,15 @@ public class DrinkPotion extends AbstractListener {
 		//Valid tags: {user},{appearance},{turn_appearance},{appearance:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
 		effects.add("{user} looks confused as nothing happens.");
-		effects.add("{user} turns into {transformation} girl{limit}.");
-		effects.add("{user} turns into {transformation} boy{limit}.");
-		effects.add("{user} turns into {transformation}{limit}.");
+		effects.add("{user} turns into {transformation_p} girl{limit}.");
+		effects.add("{user} turns into {transformation_p} boy{limit}.");
+		effects.add("{user} turns into {transformation_p}{limit}.");
 		effects.add("{user} turns into {appearance_p} {transformation} girl{limit}.");
 		effects.add("{user} turns into {appearance_p} {transformation} boy{limit}.");
 		effects.add("{user} turns into {appearance_p} {transformation}{limit}.");
-		effects.add("{user} turns into {transformation} {transformation2}{limit}.");
-		effects.add("{user} turns into {transformation} {transformation2} girl{limit}.");
-		effects.add("{user} turns into {transformation} {transformation2} boy{limit}.");
+		effects.add("{user} turns into {transformation_p} {transformation2}{limit}.");
+		effects.add("{user} turns into {transformation_p} {transformation2} girl{limit}.");
+		effects.add("{user} turns into {transformation_p} {transformation2} boy{limit}.");
 		effects.add("{user} turns into {appearance_p} {transformation} {transformation2}{limit}.");
 		effects.add("{user} turns into {appearance_p} {transformation} {transformation2} girl{limit}.");
 		effects.add("{user} turns into {appearance_p} {transformation} {transformation2} boy{limit}.");
@@ -523,9 +523,11 @@ public class DrinkPotion extends AbstractListener {
                     .replace("{appearance_p}", replace_appearance_prefix)
                     .replace("{turn_appearance}", turn_appearance)
                     .replace("{consistency}", replace_consistency)
-                    .replace("{transformation}", Helper.getRandomTransformation(true, true, false))
+                    .replace("{transformation}", Helper.getRandomTransformation(true, false, false))
+                    .replace("{transformation_p}", Helper.getRandomTransformation(true, true, false))
                     .replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
                     .replace("{transformations}", Helper.getRandomTransformation(true, true, true))
+                    .replace("{transformations_p}", Helper.getRandomTransformation(true, false, true))
                     .replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
 					.replace("{limit}", limit);
 			try {
