@@ -8,8 +8,10 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.DiceRoll;
 import pcl.lc.utils.DiceRollGroup;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.MathParseExpression;
 
 /**
  * @author Caitlyn
@@ -24,17 +26,19 @@ public class Dice extends AbstractListener {
 		local_command = new Command("dice", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String s = params.trim();
-				try {
-					DiceRollGroup group = new DiceRollGroup(s);
-					Helper.sendMessage(target, group.getResultString());
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, e.getMessage());
-				}
+				params = DiceRoll.rollDiceInString(params);
+				MathParseExpression exp = new MathParseExpression(params);
+
+				if (params.equals(String.valueOf(exp.result)))
+					Helper.sendMessage(target, String.valueOf(exp.result));
+				else
+					Helper.sendMessage(target, params + " => " + exp.result);
 			}
-		}; local_command.setHelpText("Rolls dice. (eg 1d20)");
+		}; local_command.setHelpText("Rolls dice and solves mathematical expressions using + - * and /, and even both at the same time.. (Dice are expressed as eg 1d20 or d20)");
 		local_command.registerAlias("roll");
+		local_command.registerAlias("math");
+		local_command.registerAlias("expression");
+		local_command.registerAlias("exp");
 		IRCBot.registerCommand(local_command);
 	}
 

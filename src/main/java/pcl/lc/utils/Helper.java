@@ -1136,4 +1136,8 @@ public class Helper {
 		int index = Helper.getRandomInt(0, warp_locations.length - 1);
 		return getWarpLocationByIndex(index, lower_case);
 	}
+
+	public static String replaceSubstring(String string, String replace, int startIndex, int endIndex) {
+		return string.substring(0, startIndex) + replace + string.substring(endIndex);
+	}
 }

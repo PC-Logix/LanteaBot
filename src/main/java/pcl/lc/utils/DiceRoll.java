@@ -15,22 +15,23 @@ public class DiceRoll {
     private int sum;
 
     public DiceRoll(String dice) throws Exception {
-        final String regex = "(\\d\\d?\\d?)d(\\d\\d?\\d?)";
+        final String regex = "(\\d*)d(\\d+)";
 
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(dice);
 
         if (matcher.matches()) {
-            Integer num_dice = Math.min(100, Integer.valueOf(matcher.group(1)));
-            Integer dice_size = Integer.valueOf(matcher.group(2));
+            int num_dice = (matcher.group(1).equals("") ? 1 : Integer.valueOf(matcher.group(1)));
+            num_dice = Math.min(100, num_dice);
+            int dice_size = Integer.valueOf(matcher.group(2));
 
-            Integer sum = 0;
+            int sum = 0;
             ArrayList<Integer> results = new ArrayList<>(100);
-            for (Integer i = 0; i < num_dice; i++)
+            for (int i = 0; i < num_dice; i++)
             {
-                Integer steps = Helper.getRandomInt(1, dice_size);
-                Integer gone = 0;
-                Integer result;
+                int steps = Helper.getRandomInt(1, dice_size);
+                int gone = 0;
+                int result;
                 for (result = 1; gone < steps; gone++)
                 {
                     if (Objects.equals(result, dice_size))
@@ -63,7 +64,6 @@ public class DiceRoll {
         else
             this.sum = sum;
         this.resultString = results.toString();
-        System.out.println(this.resultString);
     }
 
     public String getResultString() {
@@ -85,6 +85,50 @@ public class DiceRoll {
     @Override
     public String toString() {
         return this.resultString;
+    }
+
+    public static String rollDiceInString(String input) {
+        return rollDiceInString(input, 100);
+    }
+
+    public static String rollDiceInString(String input, int maxIteration) {
+        int i = 0;
+        Pattern dicePattern = Pattern.compile("(\\d*)d(\\d+)");
+
+        while (i < maxIteration) {
+            Matcher matcher = dicePattern.matcher(input);
+
+            if (!matcher.find())
+                break;
+            int startIndex = matcher.start();
+            int endIndex = matcher.end();
+            if (!matcher.group(1).equals("")) {
+                try {
+                    DiceRoll roll = new DiceRoll(matcher.group(1) + "d" + matcher.group(2));
+                    ArrayList<Integer> results = roll.getResults();
+                    ArrayList<String> resultsConverted = new ArrayList<>();
+                    for (Integer in : results) {
+                        resultsConverted.add(String.valueOf(in));
+                    }
+                    String insert = "";
+                    if (Integer.parseInt(matcher.group(1)) > 1)
+                        insert = "[" + String.join(",", resultsConverted) + "]";
+                    else if (Integer.parseInt(matcher.group(1)) == 0)
+                        insert = "0";
+                    else
+                        insert = String.valueOf(roll.getSum());
+                    input = Helper.replaceSubstring(input, insert, startIndex, endIndex);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try { input = Helper.replaceSubstring(input, String.valueOf(new DiceRoll(matcher.group(0)).getSum()), startIndex, endIndex); } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            i++;
+        }
+        return input;
     }
 }
 
