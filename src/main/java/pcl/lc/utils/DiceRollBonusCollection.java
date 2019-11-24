@@ -57,7 +57,7 @@ public class DiceRollBonusCollection {
     private static DiceRollBonusCollection searchForBonuses(DiceRollBonusCollection bonusCollection, List<String> matchCollection, String itemName, int modifier) {
         for (String str : matchCollection)
             if (itemName.contains(str.toLowerCase()))
-                bonusCollection.addBonus(str, modifier);
+                bonusCollection.addBonus(str.trim(), modifier);
         return bonusCollection;
     }
 
