@@ -373,6 +373,9 @@ public class DrinkPotion extends AbstractListener {
 					} else if (params.get(0).equals("soda")) {
 			    		Helper.sendMessage(target, "It's fizzy.", nick);
 			    		return;
+					} else if (params.get(0).equals("coffee")) {
+			    		Helper.sendMessage(target, "It's hot and bitter.", nick);
+			    		return;
                     } else if (params.get(0).equals("everything")) {
                         Helper.sendMessage(target, nick + " explodes.");
                         return;
