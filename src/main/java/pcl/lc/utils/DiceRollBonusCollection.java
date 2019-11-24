@@ -78,6 +78,8 @@ public class DiceRollBonusCollection {
         noDamage.add("Fake");
         noDamage.add("Artificial ");
         noDamage.add("Replica ");
+        noDamage.add("False");
+        noDamage.add("Uncharged ");
 
         for (String str : noDamage)
             if (itemName.contains(str.toLowerCase()))
@@ -85,6 +87,8 @@ public class DiceRollBonusCollection {
 
         List<String> minusTwo = new ArrayList<>();
         minusTwo.add("broken ");
+        minusTwo.add("Slime");
+        minusTwo.add("Gooey ");
 
         searchForBonuses(bonuses, minusTwo, itemName, -2);
 
@@ -101,7 +105,6 @@ public class DiceRollBonusCollection {
         minusOne.add("Defeat ");
         minusOne.add("Depress");
         minusOne.add("Artificial ");
-        minusOne.add("Power");
         minusOne.add("Damaged ");
 
         searchForBonuses(bonuses, minusOne, itemName, -1);
@@ -111,11 +114,12 @@ public class DiceRollBonusCollection {
         plusOne.add("Blunt ");
         plusOne.add("Pointy ");
         plusOne.add("Charged ");
-        plusOne.add("Kitten ");
+        plusOne.add("Cat ");
         plusOne.add("Poison");
         plusOne.add("Double ");
         plusOne.add("Bees ");
         plusOne.add("Military grade ");
+        plusOne.add("Power");
         plusOne.add("Shark ");
         plusOne.add("Bear ");
         plusOne.add("Tiger ");
@@ -128,7 +132,7 @@ public class DiceRollBonusCollection {
         plusTwo.add("Weighted ");
         plusTwo.add("Dangerous");
         plusTwo.add("Special ");
-        plusTwo.add("Cat ");
+        plusTwo.add("Kitten ");
         plusTwo.add("Super ");
         plusTwo.add("Magic");
         plusTwo.add("Orbital ");
@@ -160,6 +164,8 @@ public class DiceRollBonusCollection {
         noDefense.add("Artificial ");
         noDefense.add("Replica ");
         noDefense.add("Fake");
+        noDefense.add("False");
+        noDefense.add("Uncharged ");
 
         for (String str : noDefense)
             if (itemName.contains(str.toLowerCase()))
@@ -181,8 +187,8 @@ public class DiceRollBonusCollection {
         minusOne.add("Defeat");
         minusOne.add("Depress");
         minusOne.add("Artificial ");
-        minusOne.add("Power");
         minusOne.add("Damaged ");
+        minusOne.add("Hurt ");
 
         searchForBonuses(bonuses, minusOne, itemName, -1);
 
@@ -193,6 +199,7 @@ public class DiceRollBonusCollection {
         plusOne.add("Charged ");
         plusOne.add("Defensive ");
         plusOne.add("Military grade ");
+        plusOne.add("Power");
 
         searchForBonuses(bonuses, plusOne, itemName, 1);
 
@@ -231,6 +238,10 @@ public class DiceRollBonusCollection {
         noHeal.add("Undead ");
         noHeal.add("Dead ");
         noHeal.add("Disease");
+        noHeal.add("False");
+        noHeal.add("Uncharged ");
+        noHeal.add("Unpowered ");
+        noHeal.add("Un-powered ");
 
         for (String str : noHeal)
             if (itemName.contains(str.toLowerCase()))
@@ -271,7 +282,6 @@ public class DiceRollBonusCollection {
 
         List<String> plusTwo = new ArrayList<>();
         plusTwo.add("Healthy ");
-        plusTwo.add("Friendly ");
         plusTwo.add("Magic");
         plusTwo.add("Super");
         plusTwo.add("Sacred ");
