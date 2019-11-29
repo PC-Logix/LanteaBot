@@ -8,10 +8,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.DiceRoll;
-import pcl.lc.utils.DiceRollResult;
-import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
+import pcl.lc.utils.*;
 
 /**
  * @author Forecaster
@@ -44,7 +41,14 @@ public class Fling extends AbstractListener {
 					int itemDamage = 0;
 					if (hit != null && hit.getSum() > 20) {
 						DiceRollResult dmg = item.getDamage();
-						Helper.sendAction(target, "flings " + item.getName() + " in a random direction. It hits " + user + " " + Helper.get_hit_place() + ". They take " + Item.stringifyDamageResult(dmg) + ".");
+						dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
+
+						String dmgString = dmg.getResultString();
+						if (dmgString == null)
+							dmgString = "no damage";
+						else
+							dmgString += " damage";
+						Helper.sendMessage(target, nick + " flings " + item.getName() + " in a random direction. It hits " + user + " " + Helper.get_hit_place() + ". They take " + dmgString + "!");
 						itemDamage = 1;
 					}
 					else {
