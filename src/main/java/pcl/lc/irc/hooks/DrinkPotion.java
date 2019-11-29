@@ -7,8 +7,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.joda.time.DateTime;
-import org.jvnet.inflector.Noun;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
@@ -16,14 +14,12 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.utils.AppearanceEntry;
-import pcl.lc.utils.Helper;
+import pcl.lc.utils.*;
+import pcl.lc.utils.Exceptions.InvalidPotionException;
 
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Forecaster
@@ -35,12 +31,15 @@ public class DrinkPotion extends AbstractListener {
 	private Command get_random;
 	private Command potion_stats;
 	private Command discovered;
-	private static ArrayList<AppearanceEntry> appearanceEntries = new ArrayList<>();
-	private static ArrayList<String> consistencies = new ArrayList<>();
-	private static ArrayList<String> effects = new ArrayList<>();
-	private static HashMap<String, EffectEntry> potions = new HashMap<>();
-	private static ArrayList<String> limits = new ArrayList<>();
-	private static String day_of_potioning = "";
+	private Command splash;
+	public static ArrayList<AppearanceEntry> appearanceEntries = new ArrayList<>();
+	public static ArrayList<AppearanceEntry> consistencies = new ArrayList<>();
+	public static ArrayList<String> effects = new ArrayList<>();
+	public static HashMap<String, EffectEntry> potions = new HashMap<>();
+	public static ArrayList<String> limits = new ArrayList<>();
+	public static String day_of_potioning = "";
+
+	public static int daysPotionsLast = 4;
 
 	private static Boolean limitsEnabled = true;
 
@@ -52,6 +51,7 @@ public class DrinkPotion extends AbstractListener {
 		IRCBot.registerCommand(get_random);
 		IRCBot.registerCommand(potion_stats);
 		IRCBot.registerCommand(discovered);
+		IRCBot.registerCommand(splash);
 
 		appearanceEntries.add(new AppearanceEntry("blue", "a"));
 		appearanceEntries.add(new AppearanceEntry("red", "a"));
@@ -134,47 +134,47 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("crimson", "a"));
 		appearanceEntries.add(new AppearanceEntry("grathnode ", "a", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
 
-		consistencies.add("viscous");
-		consistencies.add("cloudy");
-		consistencies.add("fluffy");
-		consistencies.add("thick");
-		consistencies.add("smelly");
-		consistencies.add("fragrant");
-		consistencies.add("light");
-		consistencies.add("shiny");
-		consistencies.add("porous");
-		consistencies.add("ripe");
-		consistencies.add("muddy");
-		consistencies.add("shimmering");
-		consistencies.add("gloomy");
-		consistencies.add("prickly");
-		consistencies.add("sour");
-		consistencies.add("salty");
-		consistencies.add("sweet");
-		consistencies.add("runny");
-		consistencies.add("boiling");
-		consistencies.add("freezing");
-		consistencies.add("sedimented");
-		consistencies.add("warpy");
-		consistencies.add("basic");
-		consistencies.add("stirring");
-		consistencies.add("bubbly");
-		consistencies.add("gloopy");
-		consistencies.add("goopy");
-		consistencies.add("slimy");
-		consistencies.add("solid");
-		consistencies.add("molten");
-		consistencies.add("fiery");
-		consistencies.add("dull");
-		consistencies.add("resonating");
-		consistencies.add("shining");
-		consistencies.add("seeping");
-		consistencies.add("smooth");
-		consistencies.add("soft");
-		consistencies.add("oxidised");
-		consistencies.add("mutable");
-		consistencies.add("liquid");
-		consistencies.add("smelly");
+		consistencies.add(new AppearanceEntry("viscous", "a"));
+		consistencies.add(new AppearanceEntry("cloudy", "a"));
+		consistencies.add(new AppearanceEntry("fluffy", "a"));
+		consistencies.add(new AppearanceEntry("thick", "a"));
+		consistencies.add(new AppearanceEntry("smelly", "a"));
+		consistencies.add(new AppearanceEntry("fragrant", "a"));
+		consistencies.add(new AppearanceEntry("light", "a"));
+		consistencies.add(new AppearanceEntry("shiny", "a"));
+		consistencies.add(new AppearanceEntry("porous", "a"));
+		consistencies.add(new AppearanceEntry("ripe", "a"));
+		consistencies.add(new AppearanceEntry("muddy", "a"));
+		consistencies.add(new AppearanceEntry("shimmering", "a"));
+		consistencies.add(new AppearanceEntry("gloomy", "a"));
+		consistencies.add(new AppearanceEntry("prickly", "a"));
+		consistencies.add(new AppearanceEntry("sour", "a"));
+		consistencies.add(new AppearanceEntry("salty", "a"));
+		consistencies.add(new AppearanceEntry("sweet", "a"));
+		consistencies.add(new AppearanceEntry("runny", "a"));
+		consistencies.add(new AppearanceEntry("boiling", "a"));
+		consistencies.add(new AppearanceEntry("freezing", "a"));
+		consistencies.add(new AppearanceEntry("sedimented", "a"));
+		consistencies.add(new AppearanceEntry("warpy", "a"));
+		consistencies.add(new AppearanceEntry("basic", "a"));
+		consistencies.add(new AppearanceEntry("stirring", "a"));
+		consistencies.add(new AppearanceEntry("bubbly", "a"));
+		consistencies.add(new AppearanceEntry("gloopy", "a"));
+		consistencies.add(new AppearanceEntry("goopy", "a"));
+		consistencies.add(new AppearanceEntry("slimy", "a"));
+		consistencies.add(new AppearanceEntry("solid", "a"));
+		consistencies.add(new AppearanceEntry("molten", "a"));
+		consistencies.add(new AppearanceEntry("fiery", "a"));
+		consistencies.add(new AppearanceEntry("dull", "a"));
+		consistencies.add(new AppearanceEntry("resonating", "a"));
+		consistencies.add(new AppearanceEntry("shining", "a"));
+		consistencies.add(new AppearanceEntry("seeping", "a"));
+		consistencies.add(new AppearanceEntry("smooth", "a"));
+		consistencies.add(new AppearanceEntry("soft", "a"));
+		consistencies.add(new AppearanceEntry("oxidised", "an"));
+		consistencies.add(new AppearanceEntry("mutable", "a"));
+		consistencies.add(new AppearanceEntry("liquid", "a"));
+		consistencies.add(new AppearanceEntry("smelly", "a"));
 
 		//Valid tags: {user},{appearance},{turn_appearance},{appearance:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
@@ -347,12 +347,11 @@ public class DrinkPotion extends AbstractListener {
 		local_command = new Command("drink", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				PotionEntry potion;
 			    try {
 			    	if (params.size() == 0 || params.get(0).equals("random")) {
-						String[] potion = getRandomPotion();
-						boolean is_new = potion[2].equals("new");
-						potion[2] = "potion";
-						Helper.sendMessage(target, "You drink a " + potion[0] + " " + potion[1] + " potion" + (is_new ? " (New!)" : "") + ". " + getPotionEffect(potion, nick).toString().replace("{user}", nick));
+						potion = PotionHelper.getRandomPotion();
+						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + ". " + potion.getEffect(nick).toString().replace("{user}", nick));
 						return;
 					} else if (params.get(0).equals("^")) {
 						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
@@ -367,8 +366,8 @@ public class DrinkPotion extends AbstractListener {
 							}
 						}
 					} else if (params.get(0).equals("water")) {
-						String[] potion = getRandomPotion();
-						Helper.sendMessage(target, "You drink some water. Wait... this isn't water... it's a " + potion[0] + " " + potion[1] + " potion!");
+						potion = PotionHelper.getRandomPotion();
+						Helper.sendMessage(target, "You drink some water. Wait... this isn't water... it's " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion!");
 						return;
 					} else if (params.get(0).equals("soda")) {
 			    		Helper.sendMessage(target, "It's fizzy.", nick);
@@ -381,12 +380,19 @@ public class DrinkPotion extends AbstractListener {
                         return;
                     }
 
-                    EffectEntry effect = getPotionEffect(params, nick);
+			    	try {
+			    		potion = new PotionEntry();
+			    		potion.setFromCommandParameters(params);
 
-                    if (effect != null) {
-                        Helper.sendMessage(target, effect.toString().replace("{user}", nick));
-                    } else
-                        Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
+                    	EffectEntry effect = potion.getEffect(nick);
+
+                    	if (effect != null)
+							Helper.sendMessage(target, (potion.isNew ? "(New!) " : "") + effect.toString().replace("{user}", nick));
+                    	else
+                    		Helper.sendMessage(target, "Due to some series of events I couldn't find any effect for this potion.");
+			    	} catch (InvalidPotionException ex) {
+						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
+					}
                 } catch (Exception ex) {
 			        ex.printStackTrace();
                 }
@@ -406,11 +412,44 @@ public class DrinkPotion extends AbstractListener {
 		local_command.registerAlias("down");
 		local_command.registerAlias("slurp");
 
+		splash = new Command("splash", 10) {
+            @Override
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+                try {
+                    if (params.size() == 0) {
+                        Helper.sendAction(target, "flicks a toothpick at " + nick);
+                    } else {
+                        String targetUser = params.get(0);
+                        PotionEntry potion;
+                        if (params.size() == 1 || params.get(1).equals("random")) {
+                            potion = PotionHelper.getRandomPotion();
+                            EffectEntry effect = potion.getEffect(nick);
+                            Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + targetUser + ". " + effect.toString().replace("{user}", targetUser));
+                        } else {
+                        	try {
+								potion = new PotionEntry();
+								potion.setFromCommandParameters(params);
+
+								EffectEntry effect = potion.getEffect(nick);
+
+								if (effect != null)
+									Helper.sendMessage(target, effect.toString().replace("{user}", targetUser));
+							} catch (InvalidPotionException ex) {
+                        		Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
+							}
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        };
+
 		get_random = new Command("randompotion", 10) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    String[] potion = getRandomPotion();
-				Helper.sendMessage(target, "You get a " + potion[0] + " " + potion[1] + " potion" + (potion[2] == "new" ? " (New!)" : ""), nick);
+			    PotionEntry potion = PotionHelper.getRandomPotion();
+				Helper.sendMessage(target, "You get " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : ""), nick);
 			}
 		};
 		get_random.setHelpText("Get a random potion");
@@ -466,153 +505,14 @@ public class DrinkPotion extends AbstractListener {
 		get_random.tryExecute(command, nick, target, event, copyOfRange);
 		potion_stats.tryExecute(command, nick, target, event, copyOfRange);
 		discovered.tryExecute(command, nick, target, event, copyOfRange);
-	}
-
-	public EffectEntry getPotionEffect(String[] params, String user) {
-		return getPotionEffect(new ArrayList<>(Arrays.asList(params)), user);
-	}
-
-	public EffectEntry getPotionEffect(ArrayList<String> params, String user) {
-		String sparams = String.join(" ", params);
-		EffectEntry effectEntry;
-		boolean is_potion = false;
-		int appearance = -1;
-		int consistency = -1;
-
-		System.out.println("Params: " + params.toString());
-
-		AppearanceEntry app = FindAppearanceInString(sparams);
-		if (app != null)
-			appearance = GetAppearanceIndexByName(app.Name);
-
-		String con = FindConsistencyInString(sparams);
-		if (con != null)
-			consistency = consistencies.indexOf(con);
-
-		is_potion = sparams.contains("potion");
-
-		System.out.println("AppearanceEntry: " + appearance);
-		System.out.println("Consistency: " + consistency);
-		System.out.println("Has_potion: " + is_potion);
-
-		if (!is_potion || appearance == -1 || consistency == -1) {
-			return null;
-		}
-
-		tryResetPotionList();
-
-		if (combinationHasEffect(consistency, appearance)) {
-			effectEntry = getCombinationEffect(consistency, appearance);
-			System.out.println("Effect recorded for " + consistency + "," + appearance + ": " + effectEntry);
-			return effectEntry;
-		} else {
-		    int min = 0;
-		    int max = effects.size() - 1;
-		    if (consistencies.get(consistency).equals("mutable")) {
-		        min = 1;
-		        max = 6;
-            }
-			int effect = Helper.getRandomInt(min, max);
-			System.out.println("No effect recorded for " + consistency + "," + appearance + ", Assign " + effect);
-
-			String replace_appearance = getAppearance().getName();
-			String replace_appearance_prefix = getAppearance().getName(true);
-			String turn_appearance = getAppearance().turnsTo();
-			String replace_consistency = getConsistency();
-			String limit = getLimit();
-
-			String effectp = effects.get(effect)
-                    .replace("{appearance}", replace_appearance)
-                    .replace("{appearance_p}", replace_appearance_prefix)
-                    .replace("{turn_appearance}", turn_appearance)
-                    .replace("{consistency}", replace_consistency)
-                    .replace("{transformation}", Helper.getRandomTransformation(true, false, false))
-                    .replace("{transformation_p}", Helper.getRandomTransformation(true, true, false))
-                    .replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
-                    .replace("{transformations}", Helper.getRandomTransformation(true, true, true))
-                    .replace("{transformations_p}", Helper.getRandomTransformation(true, false, true))
-                    .replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
-					.replace("{limit}", limit);
-			try {
-                Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
-                Matcher matcher = pattern.matcher(effectp);
-                while (matcher.find()) {
-                    String appearance_item = matcher.group(1);
-                    boolean use_prefix = false;
-                    if (matcher.group(2).equals("p"))
-                        use_prefix = true;
-                    effectp = effectp.replace(matcher.group(0), getAppearance().appearanceItem(appearance_item, use_prefix));
-                }
-            } catch (Exception ex) {
-			    ex.printStackTrace();
-            }
-			try {
-				Pattern pattern = Pattern.compile("\\{r:(\\d\\d?\\d?)-(\\d\\d?\\d?):(.*?)}");
-				Matcher matcher = pattern.matcher(effectp);
-				while (matcher.find()) {
-					int num_min = Integer.parseInt(matcher.group(1));
-					int num_max = Integer.parseInt(matcher.group(2));
-					int value = Helper.getRandomInt(num_min, num_max);
-					effectp = effectp.replace(matcher.group(0), value + (!matcher.group(3).equals("") ? " " + Noun.pluralOf(matcher.group(3), value) : ""));
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			System.out.println("Effectp: " + effectp);
-			effectEntry = new EffectEntry(effectp, user);
-			setCombinationEffect(consistency, appearance, effectEntry);
-			return effectEntry;
-		}
-	}
-
-	private static void tryResetPotionList() {
-		if (day_of_potioning == null || day_of_potioning.equals("") || DateTime.parse(day_of_potioning).isBefore(DateTime.now())) {
-			resetPotionList();
-		}
-	}
-
-	private static void resetPotionList() {
-		System.out.println("Resetting potion list!");
-		potions = new HashMap<>();
-		day_of_potioning = DateTime.now().plusDays(4).toString("yyyy-MM-dd");
-	}
-
-	private boolean combinationHasEffect(int consistency, int appearance) {
-		tryResetPotionList();
-		System.out.println(potions.toString());
-		String key = consistency + "," + appearance;
-		if (potions.containsKey(key))
-			return true;
-		return false;
-	}
-
-	private void setCombinationEffect(int consistency, int appearance, EffectEntry effect) {
-		String key = consistency + "," + appearance;
-		potions.put(key, effect);
-	}
-
-	private EffectEntry getCombinationEffect(int consistency, int appearance) {
-		String key = consistency + "," + appearance;
-		return potions.get(key);
-	}
-
-	/**
-	 * @return String[] Returns three values: consistency, appearance and "" or "new" (whether potion has been generated already today)
-	 */
-	public static String[] getRandomPotion() {
-		int coli = getRandomAppearanceIndex();
-		int coni = getRandomConsistencyIndex();
-		String app = getAppearance(coli).Name;
-		String con = getConsistency(coni);
-		return new String[] { con, app, potions.containsKey(coni + "," + coli) ? "" : "new" };
+		splash.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
     static class PotionHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
 
-        	tryResetPotionList();
+        	PotionHelper.tryResetPotionList();
 
             String target = t.getRequestURI().toString();
             String response = "";
@@ -639,7 +539,7 @@ public class DrinkPotion extends AbstractListener {
             try {
 				for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
 					String[] potion = stringEffectEntryEntry.getKey().split(",");
-					String consistency = consistencies.get(Integer.parseInt(potion[0]));
+					String consistency = consistencies.get(Integer.parseInt(potion[0])).getName();
 					String appearance = appearanceEntries.get(Integer.parseInt(potion[1])).getName();
 					EffectEntry entry = stringEffectEntryEntry.getValue();
 					potionShelf += "<tr><td>" + consistency.substring(0, 1).toUpperCase() + consistency.substring(1) + " " + appearance.substring(0, 1).toUpperCase() + appearance.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
@@ -659,8 +559,8 @@ public class DrinkPotion extends AbstractListener {
 			potionShelf += "<div style='margin-top: 10px;'>" + MakeJavascriptContainer("Show/hide appearances (" + appearanceEntries.size() + ")", entries) + "</div>";
 
 			entries = "";
-			for (String consistancy : consistencies) {
-				entries += "<div>" + consistancy.substring(0, 1).toUpperCase() + consistancy.substring(1) + "</div>";
+			for (AppearanceEntry consistancy : consistencies) {
+				entries += "<div>" + consistancy.getName().substring(0, 1).toUpperCase() + consistancy.getName().substring(1) + "</div>";
 			}
 			potionShelf += "<div style='margin-top: 10px;'>" + MakeJavascriptContainer("Show/hide consistencies (" + consistencies.size() + ")", entries) + "</div>";
 
@@ -695,14 +595,6 @@ public class DrinkPotion extends AbstractListener {
         return false;
     }
 
-    private static AppearanceEntry FindAppearanceInString(String string) {
-		for (AppearanceEntry c : appearanceEntries) {
-			if (string.toLowerCase().contains(c.Name))
-				return c;
-		}
-		return null;
-	}
-
     private static AppearanceEntry FindAppearanceByName(String appearance) {
 	    for (AppearanceEntry c : appearanceEntries) {
 	        if (c != null && c.Name != null && c.Name.equals(appearance.toLowerCase()))
@@ -720,66 +612,8 @@ public class DrinkPotion extends AbstractListener {
         return appearanceEntries.indexOf(col);
     }
 
-    public static int getRandomAppearanceIndex() {
-		return Helper.getRandomInt(0, appearanceEntries.size() - 1);
-	}
-
-	public static AppearanceEntry getAppearance() {
-		return getAppearance(getRandomAppearanceIndex());
-	}
-
-    public static AppearanceEntry getAppearance(int index) {
-	    return appearanceEntries.get(index);
-    }
-
-    public static int getRandomConsistencyIndex() {
-		return Helper.getRandomInt(0, consistencies.size() - 1);
-	}
-
-	public static String getConsistency() {
-		return getConsistency(getRandomConsistencyIndex());
-	}
-
-    public static String getConsistency(int index) {
-	    return consistencies.get(index);
-    }
-
-    private static String FindConsistencyInString(String string) {
-		for (String c : consistencies) {
-			if (string.toLowerCase().contains(c))
-				return c;
-		}
-		return null;
-	}
-
-    public static int getRandomLimitIndex() {
-		return Helper.getRandomInt(0, limits.size() - 1);
-	}
-
-    public static String getLimit() {
-		return getLimit(getRandomLimitIndex());
-	}
-
-    public static String getLimit(int index) {
-		return limits.get(index);
-	}
-
 	private static String MakeJavascriptContainer(String label, String contents) {
 		return "<div><span style='cursor: pointer;' onclick='if (this.parentElement.children[1].style.display != \"none\") { this.parentElement.children[1].style.display = \"none\"; } else { this.parentElement.children[1].style.display = null; }'>" + label + "</span><div style='display: none;'>" + contents + "</div></div>";
 	}
 }
 
-class EffectEntry {
-	String Effect;
-	String Discoverer;
-
-	EffectEntry(String effect, String discoverer) {
-		Effect = effect;
-		Discoverer = discoverer;
-	}
-
-	@Override
-	public String toString() {
-		return Effect;
-	}
-}

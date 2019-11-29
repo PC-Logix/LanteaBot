@@ -7,6 +7,8 @@ import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
+import pcl.lc.utils.PotionEntry;
+import pcl.lc.utils.PotionHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,8 +71,8 @@ public class LootBox extends AbstractListener {
 					}
 				}
 				if (item_name.contains("randompotion")) {
-					String[] potion = DrinkPotion.getRandomPotion();
-					item_name = potion[0] + " " + potion[1] + " potion";
+					PotionEntry potion = PotionHelper.getRandomPotion();
+					item_name = potion.consistency.getName() + " " + potion.appearance.getName() + " potion";
 				}
 				String prefix = "You get a loot box! It contains {item}";
 				if (!params.equals("")) {

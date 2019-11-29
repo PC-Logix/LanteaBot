@@ -1112,9 +1112,9 @@ public class Helper {
 	}
 
 	public static String getWarpLocationByIndex(int index, boolean lower_case) {
-		String replace_appearance = DrinkPotion.getAppearance().getName();
-		String turn_appearance = DrinkPotion.getAppearance().turnsTo();
-		String replace_consistency = DrinkPotion.getConsistency();
+		String replace_appearance = PotionHelper.getAppearance().getName();
+		String turn_appearance = PotionHelper.getAppearance().turnsTo();
+		String replace_consistency = PotionHelper.getConsistency().getName();
 		String ret = warp_locations[index]
 				.replace("{item}", Inventory.getRandomItem().getNameRaw())
 				.replace("{appearance}", replace_appearance)
