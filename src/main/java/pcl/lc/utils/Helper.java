@@ -1140,4 +1140,12 @@ public class Helper {
 	public static String replaceSubstring(String string, String replace, int startIndex, int endIndex) {
 		return string.substring(0, startIndex) + replace + string.substring(endIndex);
 	}
+
+	public static String reverseString(String input) {
+		ArrayList<String> newString = new ArrayList<>();
+		for (String s : input.split(" ")) {
+			newString.add(0, s);
+		}
+		return String.join(" ", newString);
+	}
 }

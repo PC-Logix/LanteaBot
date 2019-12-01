@@ -54,8 +54,10 @@ public class PotionHelper {
 	}
 
 	public static AppearanceEntry findAppearanceInString(String string) {
+		string = Helper.reverseString(string).toLowerCase();
+		System.out.println(string);
 		for (AppearanceEntry c : DrinkPotion.appearanceEntries) {
-			if (string.toLowerCase().contains(c.Name))
+			if (string.contains(c.Name))
 				return c;
 		}
 		return null;
@@ -66,8 +68,10 @@ public class PotionHelper {
 	}
 
 	public static AppearanceEntry findConsistencyInString(String string) {
+		string = Helper.reverseString(string).toLowerCase();
+		System.out.println(string);
 		for (AppearanceEntry c : DrinkPotion.consistencies) {
-			if (string.toLowerCase().contains(c.getName().toLowerCase()))
+			if (string.contains(c.getName().toLowerCase()))
 				return c;
 		}
 		return null;

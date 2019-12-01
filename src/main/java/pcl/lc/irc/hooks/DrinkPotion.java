@@ -445,24 +445,36 @@ public class DrinkPotion extends AbstractListener {
                             potion = PotionHelper.getRandomPotion();
                             EffectEntry effect = potion.getEffect(nick);
                             Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
-                        } else {
-							if (specialFluids.containsKey(potionString)) {
-								Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), nick, splashTarget));
-								return;
+                            return;
+						} else if (potionString.equals("^")) {
+							List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+							for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+								if (entry.getValue().get(0).equals(target)) {
+									System.out.println(entry.getValue().get(2));
+									if (entry.getValue().get(2).toLowerCase().contains("potion")) {
+										potionString = entry.getValue().get(2);
+										break;
+									}
+								}
 							}
+						}
 
-                        	try {
-								potion = new PotionEntry();
-								potion.setFromCommandParameters(potionString);
+						if (specialFluids.containsKey(potionString)) {
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), nick, splashTarget));
+							return;
+						}
 
-								EffectEntry effect = potion.getEffect(nick);
+                        try {
+							potion = new PotionEntry();
+							potion.setFromCommandParameters(potionString);
 
-								if (effect != null)
-									Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
-							} catch (InvalidPotionException ex) {
-                        		Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
-							}
-                        }
+							EffectEntry effect = potion.getEffect(nick);
+
+							if (effect != null)
+								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
+						} catch (InvalidPotionException ex) {
+                        	Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
+						}
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
