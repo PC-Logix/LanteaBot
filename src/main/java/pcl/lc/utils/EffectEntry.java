@@ -9,6 +9,11 @@ public class EffectEntry {
 		Discoverer = discoverer;
 	}
 
+	public EffectEntry(String effect) {
+		Effect = effect;
+		Discoverer = "";
+	}
+
 	@Override
 	public String toString() {
 		return Effect;

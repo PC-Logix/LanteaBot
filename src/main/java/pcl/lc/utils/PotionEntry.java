@@ -65,24 +65,8 @@ public class PotionEntry {
 				int effect = Helper.getRandomInt(min, max);
 				System.out.println("No effect recorded for " + PotionHelper.getConsistencyIndexByName(consistency.getName()) + "," + PotionHelper.getAppearanceIndexByName(appearance.getName()) + ", Assign " + effect);
 
-				String replace_appearance = PotionHelper.getAppearance().getName();
-				String replace_appearance_prefix = PotionHelper.getAppearance().getName(true);
-				String turn_appearance = PotionHelper.getAppearance().turnsTo();
-				String replace_consistency = PotionHelper.getConsistency().getName();
-				String limit = PotionHelper.getLimit();
+				String effectp = PotionHelper.replaceParamsInEffectString(DrinkPotion.effects.get(effect));
 
-				String effectp = DrinkPotion.effects.get(effect)
-						.replace("{appearance}", replace_appearance)
-						.replace("{appearance_p}", replace_appearance_prefix)
-						.replace("{turn_appearance}", turn_appearance)
-						.replace("{consistency}", replace_consistency)
-						.replace("{transformation}", Helper.getRandomTransformation(true, false, false))
-						.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false))
-						.replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
-						.replace("{transformations}", Helper.getRandomTransformation(true, true, true))
-						.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true))
-						.replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
-						.replace("{limit}", limit);
 				try {
 					Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
 					Matcher matcher = pattern.matcher(effectp);

@@ -38,6 +38,7 @@ public class DrinkPotion extends AbstractListener {
 	public static HashMap<String, EffectEntry> potions = new HashMap<>();
 	public static ArrayList<String> limits = new ArrayList<>();
 	public static String day_of_potioning = "";
+	public static HashMap<String, ArrayList<EffectEntry>> specialFluids = new HashMap<>();
 
 	public static int daysPotionsLast = 4;
 
@@ -176,7 +177,7 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add(new AppearanceEntry("liquid", "a"));
 		consistencies.add(new AppearanceEntry("smelly", "a"));
 
-		//Valid tags: {user},{appearance},{turn_appearance},{appearance:<item>:p},{consistency},{transformation},{transformation2},{transformations},{transformations2},{limit}
+		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
 		effects.add("{user} looks confused as nothing happens.");
 		effects.add("{user} turns into {transformation_p} girl{limit}.");
@@ -248,7 +249,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("It tastes salty.");
 		effects.add("{user} feels like one particular wasp has it out for them suddenly.");
 		effects.add("{user} zones out for {r:1-10:minute}.");
-		effects.add("A warpzone opens up next to {user}. (Use %warp)");
+		effects.add("A warpzone opens up next to {user}. (Use " + Config.commandprefix + "warp)");
 		effects.add("After the first sip the potion poofs away.");
 		effects.add("{user} looks up and sees the moon smile at them for a second.");
 		effects.add("The ghost of a plant haunts you{limit}.");
@@ -298,8 +299,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add("A tiny genie appears, gives {user} a thumbs up, and poofs away.");
 		effects.add("{user} feels chill.");
 		effects.add("{user} feels the need to smash.");
-		effects.add("{user} feels the need to use the \"shell\" command.");
-		effects.add("{user} feels the need to use the \"fling\" command.");
+		effects.add("{user} feels the need to use \"" + Config.commandprefix + "shell\".");
+		effects.add("{user} feels the need to use \"" + Config.commandprefix + "fling\".");
 		effects.add("The bottle turns into a pie.");
 		effects.add("The bottle turns into a piece of bacon.");
 		effects.add("The bottle turns into an apple.");
@@ -335,6 +336,23 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they find true love");
 		limits.add(" until they see a star fall");
 		limits.add(" until they eat a pie");
+
+		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
+		specialFluids.put("water", new ArrayList<>(Arrays.asList(
+				new EffectEntry("You drink some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"),
+				new EffectEntry("You splash {target} with some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"))));
+		specialFluids.put("soda", new ArrayList<>(Arrays.asList(
+				new EffectEntry("You have some soda. It's fizzy and sweet."),
+				new EffectEntry("You splash {target} with some soda. It's fizzy and sticky."))));
+		specialFluids.put("coffee", new ArrayList<>(Arrays.asList(
+				new EffectEntry("You have some coffee. It's hot and bitter."),
+				new EffectEntry("You splash {target} with coffee. It's scalding hot! {target} takes 1d6 damage!"))));
+		specialFluids.put("everything", new ArrayList<>(Arrays.asList(
+				new EffectEntry("{user} explodes!"),
+				new EffectEntry("You fail to lift the container containing all the potions. It's too heavy."))));
+		specialFluids.put("antidote", new ArrayList<>(Arrays.asList(
+				new EffectEntry("{user} reverts to their original state before drinking any potions."),
+				new EffectEntry("You splash {target} with some antidote. {target} reverts to their original state before drinking any potions."))));
 	}
     static String html;
 
@@ -365,23 +383,12 @@ public class DrinkPotion extends AbstractListener {
 								}
 							}
 						}
-					} else if (params.get(0).equals("water")) {
-						potion = PotionHelper.getRandomPotion();
-						Helper.sendMessage(target, "You drink some water. Wait... this isn't water... it's " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion!");
-						return;
-					} else if (params.get(0).equals("soda")) {
-			    		Helper.sendMessage(target, "It's fizzy.", nick);
-			    		return;
-					} else if (params.get(0).equals("coffee")) {
-			    		Helper.sendMessage(target, "It's hot and bitter.", nick);
-			    		return;
-                    } else if (params.get(0).equals("everything")) {
-                        Helper.sendMessage(target, nick + " explodes.");
-                        return;
-                    } else if (params.get(0).equals("antidote")) {
-                        Helper.sendMessage(target, nick + " revers to their original state before drinking any potions.");
-			    	    return;
-                    }
+					} else {
+			    		if (specialFluids.containsKey(params.get(0))) {
+			    			Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick, ""));
+			    			return;
+						}
+					}
 
 			    	try {
 			    		potion = new PotionEntry();
@@ -417,26 +424,41 @@ public class DrinkPotion extends AbstractListener {
 
 		splash = new Command("splash", 10) {
             @Override
-            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
                 try {
-                    if (params.size() == 0) {
-                        Helper.sendAction(target, "flicks a toothpick at " + nick);
+                    if (params.length() == 0) {
+                        Helper.sendMessage(target, "Try " + Config.commandprefix + this.getCommand() + " <target>[ with <potion>]");
                     } else {
-                        String targetUser = params.get(0);
+                    	String[] split = params.split("with");
+
+                    	String splashTarget;
+                    	String potionString = null;
+                    	if (split.length == 1) {
+							splashTarget = params;
+						} else {
+                    		splashTarget = split[0].trim();
+                    		potionString = split[1].trim();
+						}
+
                         PotionEntry potion;
-                        if (params.size() == 1 || params.get(1).equals("random")) {
+                        if (potionString == null || potionString.equals("random")) {
                             potion = PotionHelper.getRandomPotion();
                             EffectEntry effect = potion.getEffect(nick);
-                            Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + targetUser + ". " + effect.toString().replace("{user}", targetUser));
+                            Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
                         } else {
+							if (specialFluids.containsKey(potionString)) {
+								Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), nick, splashTarget));
+								return;
+							}
+
                         	try {
 								potion = new PotionEntry();
-								potion.setFromCommandParameters(params);
+								potion.setFromCommandParameters(potionString);
 
 								EffectEntry effect = potion.getEffect(nick);
 
 								if (effect != null)
-									Helper.sendMessage(target, effect.toString().replace("{user}", targetUser));
+									Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
 							} catch (InvalidPotionException ex) {
                         		Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
 							}

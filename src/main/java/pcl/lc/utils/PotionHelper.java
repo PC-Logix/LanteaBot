@@ -126,4 +126,37 @@ public class PotionHelper {
 		}
 		return -1;
 	}
+
+	public static String replaceParamsInEffectString(String effect, String nickUser) {
+		effect = replaceParamsInEffectString(effect);
+		return effect.replaceAll("\\{user}", nickUser);
+	}
+
+	public static String replaceParamsInEffectString(String effect, String nickUser, String targetUser) {
+		effect = replaceParamsInEffectString(effect);
+		return effect.replaceAll("\\{user}", nickUser)
+				.replaceAll("\\{target}", targetUser);
+	}
+
+	public static String replaceParamsInEffectString(String effect) {
+		String replace_appearance = PotionHelper.getAppearance().getName();
+		String replace_appearance_prefix = PotionHelper.getAppearance().getName(true);
+		String turn_appearance = PotionHelper.getAppearance().turnsTo();
+		String replace_consistency = PotionHelper.getConsistency().getName();
+		String replace_consistency_prefix = PotionHelper.getConsistency().getName(true);
+		String limit = PotionHelper.getLimit();
+
+		return effect.replace("{appearance}", replace_appearance)
+				.replace("{appearance_p}", replace_appearance_prefix)
+				.replace("{turn_appearance}", turn_appearance)
+				.replace("{consistency}", replace_consistency)
+				.replace("{consistency_p}", replace_consistency_prefix)
+				.replace("{transformation}", Helper.getRandomTransformation(true, false, false))
+				.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false))
+				.replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
+				.replace("{transformations}", Helper.getRandomTransformation(true, true, true))
+				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true))
+				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
+				.replace("{limit}", limit);
+	}
 }
