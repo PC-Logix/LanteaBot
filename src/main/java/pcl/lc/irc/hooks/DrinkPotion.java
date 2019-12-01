@@ -378,6 +378,9 @@ public class DrinkPotion extends AbstractListener {
                     } else if (params.get(0).equals("everything")) {
                         Helper.sendMessage(target, nick + " explodes.");
                         return;
+                    } else if (params.get(0).equals("antidote")) {
+                        Helper.sendMessage(target, nick + " revers to their original state before drinking any potions.");
+			    	    return;
                     }
 
 			    	try {
