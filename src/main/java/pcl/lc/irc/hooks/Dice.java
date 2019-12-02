@@ -27,6 +27,11 @@ public class Dice extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				params = DiceRoll.rollDiceInString(params);
+				if (params.contains("=>")) {
+					Helper.sendMessage(target, params);
+					return;
+				}
+
 				MathParseExpression exp = new MathParseExpression(params);
 
 				if (params.equals(String.valueOf(exp.result)))
@@ -34,7 +39,7 @@ public class Dice extends AbstractListener {
 				else
 					Helper.sendMessage(target, params + " => " + exp.result);
 			}
-		}; local_command.setHelpText("Rolls dice and solves mathematical expressions using + - * and /, and even both at the same time.. (Dice are expressed as eg 1d20 or d20)");
+		}; local_command.setHelpText("Rolls dice and solves mathematical expressions using + - * and /, and even both at the same time.. (Dice are expressed as eg 1d20 or d20 and supports the following additional parameters which can be chained in this order: k# or kh# - keep highest # of results, kl# - keep lowest # of results, ! or !! - ! rolls exploding dice separately and !! adds the result onto the original dice, <# - count results equal to or lower than # as successes, ># - count results equal to or higher than # as successes.)");
 		local_command.registerAlias("roll");
 		local_command.registerAlias("math");
 		local_command.registerAlias("expression");

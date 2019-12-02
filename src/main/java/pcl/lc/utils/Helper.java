@@ -1136,4 +1136,12 @@ public class Helper {
 		}
 		return String.join(" ", newString);
 	}
+
+	public static ArrayList<String> covertIntegerListToStringList(ArrayList<Integer> input) {
+		ArrayList<String> converted = new ArrayList<>();
+		for (Integer in : input) {
+			converted.add(String.valueOf(in));
+		}
+		return converted;
+	}
 }

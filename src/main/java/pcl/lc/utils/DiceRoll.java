@@ -1,54 +1,108 @@
 package pcl.lc.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+enum ExplodeMode {
+    NONE,
+    EXPLODE_SEPARATE,
+    EXPLODE_SUMMARIZE
+}
+
+enum SuccessMode {
+    NONE,
+    HIGHER,
+    LOWER
+}
 
 /**
  * A class for returning dice roll results
  * Created by Forecaster on 2017-03-10.
  */
 public class DiceRoll {
+    public int diceCount;
+    public int diceSize;
     private ArrayList<Integer> results;
     private String resultString;
     private int sum;
+    public ExplodeMode explodeMode;
 
     public DiceRoll(String dice) throws Exception {
+        this(getDiceCountFromString(dice), getDiceSizeFromString(dice));
+    }
+
+    public DiceRoll(int diceSize) {
+        this(1, diceSize);
+    }
+
+    public DiceRoll(int diceCount, int diceSize) {
+        this(diceCount, diceSize, ExplodeMode.NONE);
+    }
+
+    public DiceRoll(int diceCount, int diceSize, ExplodeMode explodeMode) {
+        this.diceCount = diceCount;
+        this.diceSize = diceSize;
+        this.explodeMode = explodeMode;
+        int sum = 0;
+        ArrayList<Integer> results = new ArrayList<>();
+        for (int i = 0; i < diceCount; i++)
+        {
+            int steps = Helper.getRandomInt(1, diceSize);
+            int gone = 0;
+            int result;
+            for (result = 1; gone < steps; gone++)
+            {
+                if (Objects.equals(result, diceSize))
+                    result = 0;
+                result++;
+            }
+            if (result == diceSize) {
+                if (explodeMode.equals(ExplodeMode.EXPLODE_SUMMARIZE))
+                    result += new DiceRoll(1, diceSize, ExplodeMode.EXPLODE_SUMMARIZE).getSum();
+                else if (explodeMode.equals(ExplodeMode.EXPLODE_SEPARATE)) {
+                    diceCount++;
+                }
+            }
+            results.add(result);
+            sum += result;
+        }
+        SetResults(results, sum);
+    }
+
+    public DiceRoll(ArrayList<Integer> results) {
+        this.SetResults(results, null);
+    }
+
+    public static int getDiceCountFromString(String diceString) throws Exception {
         final String regex = "(\\d*)d(\\d+)";
 
         final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(dice);
+        final Matcher matcher = pattern.matcher(diceString);
 
         if (matcher.matches()) {
             int num_dice = (matcher.group(1).equals("") ? 1 : Integer.valueOf(matcher.group(1)));
             num_dice = Math.min(100, num_dice);
-            int dice_size = Integer.valueOf(matcher.group(2));
 
-            int sum = 0;
-            ArrayList<Integer> results = new ArrayList<>(100);
-            for (int i = 0; i < num_dice; i++)
-            {
-                int steps = Helper.getRandomInt(1, dice_size);
-                int gone = 0;
-                int result;
-                for (result = 1; gone < steps; gone++)
-                {
-                    if (Objects.equals(result, dice_size))
-                        result = 0;
-                    result++;
-                }
-                results.add(result);
-                sum += result;
-            }
-            SetResults(results, sum);
+            return num_dice;
         } else {
             throw new Exception("Invalid dice format (Eg 1d6)");
         }
     }
 
-    public DiceRoll(ArrayList<Integer> results) {
-        this.SetResults(results, null);
+    public static int getDiceSizeFromString(String diceString) throws Exception {
+        final String regex = "(\\d*)d(\\d+)";
+
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(diceString);
+
+        if (matcher.matches()) {
+            return Integer.valueOf(matcher.group(2));
+        } else {
+            throw new Exception("Invalid dice format (Eg 1d6)");
+        }
     }
 
     public void SetResults(ArrayList<Integer> results) { SetResults(results, null); }
@@ -93,9 +147,10 @@ public class DiceRoll {
 
     public static String rollDiceInString(String input, int maxIteration) {
         int i = 0;
-        Pattern dicePattern = Pattern.compile("(\\d*)d(\\d+)");
+        Pattern dicePattern = Pattern.compile("(\\d*)d(\\d+)(?:kh?(\\d+))?(?:kl(\\d+))?(!?!?)(?:(<?>?)(\\d+))?");
 
         while (i < maxIteration) {
+            String appendToOutput = "";
             Matcher matcher = dicePattern.matcher(input);
 
             if (!matcher.find())
@@ -104,15 +159,40 @@ public class DiceRoll {
             int endIndex = matcher.end();
             if (!matcher.group(1).equals("")) {
                 try {
-                    DiceRoll roll = new DiceRoll(matcher.group(1) + "d" + matcher.group(2));
+                    ExplodeMode explodeMode = matcher.group(5).equals("!!") ? ExplodeMode.EXPLODE_SUMMARIZE : ExplodeMode.EXPLODE_SEPARATE;
+                    DiceRoll roll = new DiceRoll(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), explodeMode);
                     ArrayList<Integer> results = roll.getResults();
+
+                    if (matcher.group(3) != null) {
+                        ArrayList<Integer>[] keepHighest = DiceRoll.keepHighest(roll, Integer.parseInt(matcher.group(3)));
+                        results = keepHighest[0];
+                        appendToOutput = " dropped [" + String.join(",", Helper.covertIntegerListToStringList(keepHighest[1])) + "]";
+                    } else if (matcher.groupCount() > 3 && matcher.group(4) != null) {
+                        ArrayList<Integer>[] keepLowest = DiceRoll.keepLowest(roll, Integer.parseInt(matcher.group(4)));
+                        results = keepLowest[0];
+                        appendToOutput = " dropped [" + String.join(",", Helper.covertIntegerListToStringList(keepLowest[1])) + "]";
+                    }
+                    if (matcher.groupCount() > 5 && matcher.group(6) != null) {
+                        SuccessMode successMode = matcher.group(6).equals(">") ? SuccessMode.HIGHER : SuccessMode.LOWER;
+                        int targetResult = Integer.parseInt(matcher.group(7));
+                        int successes = 0;
+
+                        for (Integer result : results) {
+                            if (successMode.equals(SuccessMode.HIGHER) && result >= targetResult)
+                                successes++;
+                            else if (successMode.equals(SuccessMode.LOWER) && result <= targetResult)
+                                successes++;
+                        }
+                        appendToOutput = " => " + successes + " successes";
+                    }
+
                     ArrayList<String> resultsConverted = new ArrayList<>();
                     for (Integer in : results) {
                         resultsConverted.add(String.valueOf(in));
                     }
-                    String insert = "";
+                    String insert;
                     if (Integer.parseInt(matcher.group(1)) > 1)
-                        insert = "[" + String.join(",", resultsConverted) + "]";
+                        insert = "[" + String.join(",", resultsConverted) + "]" + appendToOutput;
                     else if (Integer.parseInt(matcher.group(1)) == 0)
                         insert = "0";
                     else
@@ -129,6 +209,43 @@ public class DiceRoll {
             i++;
         }
         return input;
+    }
+
+    /** @noinspection Duplicates*/
+    public static ArrayList<Integer>[] keepHighest(DiceRoll diceRoll, int keep) {
+        ArrayList<Integer> res = diceRoll.results;
+        Collections.sort(res);
+        Collections.reverse(res);
+
+        ArrayList<Integer> keepRolls = new ArrayList<>();
+        ArrayList<Integer> dropRolls = new ArrayList<>();
+
+        for (int i = 0; i < res.size(); i++) {
+            if (i < keep)
+                keepRolls.add(res.get(i));
+            else
+                dropRolls.add(res.get(i));
+        }
+
+        return new ArrayList[] { keepRolls, dropRolls };
+    }
+
+    /** @noinspection Duplicates*/
+    public static ArrayList<Integer>[] keepLowest(DiceRoll diceRoll, int keep) {
+        ArrayList<Integer> res = diceRoll.results;
+        Collections.sort(res);
+
+        ArrayList<Integer> keepRolls = new ArrayList<>();
+        ArrayList<Integer> dropRolls = new ArrayList<>();
+
+        for (int i = 0; i < res.size(); i++) {
+            if (i < keep)
+                keepRolls.add(res.get(i));
+            else
+                dropRolls.add(res.get(i));
+        }
+
+        return new ArrayList[] { keepRolls, dropRolls };
     }
 }
 

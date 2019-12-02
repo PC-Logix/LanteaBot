@@ -25,7 +25,7 @@ public class MathParseExpression {
         steps = new ArrayList<>();
         int i = 0;
 
-        Pattern groupPattern = Pattern.compile("\\(([a-zA-Z0-9+*\\-\\d]+)\\)");
+        Pattern groupPattern = Pattern.compile("\\(([a-zA-Z+*\\-\\d]+)\\)");
 
         while (i < maxIteration) {
             Matcher matcher = groupPattern.matcher(inputString);
