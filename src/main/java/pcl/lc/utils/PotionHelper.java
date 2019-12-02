@@ -151,6 +151,8 @@ public class PotionHelper {
 		String replace_consistency_prefix = PotionHelper.getConsistency().getName(true);
 		String limit = PotionHelper.getLimit();
 
+		effect = DiceRoll.rollDiceInString(effect, true);
+
 		return effect
                 .replace("{item}", Inventory.getRandomItem().getNameRaw())
                 .replace("{appearance}", replace_appearance)

@@ -141,11 +141,20 @@ public class DiceRoll {
         return this.resultString;
     }
 
+    private static int maxIteration = 100;
     public static String rollDiceInString(String input) {
-        return rollDiceInString(input, 100);
+        return rollDiceInString(input, maxIteration);
+    }
+
+    public static String rollDiceInString(String input, boolean includeOriginalStringBeforeResult) {
+        return rollDiceInString(input, maxIteration, includeOriginalStringBeforeResult);
     }
 
     public static String rollDiceInString(String input, int maxIteration) {
+        return rollDiceInString(input, maxIteration, false);
+    }
+
+    public static String rollDiceInString(String input, int maxIteration, boolean includeOriginalStringBeforeResult) {
         int i = 0;
         Pattern dicePattern = Pattern.compile("(\\d*)d(\\d+)(?:kh?(\\d+))?(?:kl(\\d+))?(!?!?)(?:(<?>?)(\\d+))?");
 
@@ -197,7 +206,7 @@ public class DiceRoll {
                         insert = "0";
                     else
                         insert = String.valueOf(roll.getSum());
-                    input = Helper.replaceSubstring(input, insert, startIndex, endIndex);
+                    input = Helper.replaceSubstring(input, (includeOriginalStringBeforeResult ? matcher.group(0).replace("d", "d\u200B") + " => " : "") + insert, startIndex, endIndex);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
