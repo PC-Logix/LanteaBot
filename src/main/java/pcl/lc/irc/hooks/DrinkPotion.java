@@ -369,7 +369,7 @@ public class DrinkPotion extends AbstractListener {
 				new EffectEntry("You splash {user} with some soda. It's fizzy and sticky."))));
 		specialFluids.put("coffee", new ArrayList<>(Arrays.asList(
 				new EffectEntry("You have some coffee. It's hot and bitter."),
-				new EffectEntry("You splash {user} with coffee. It's scalding hot! {user} takes 1d6 damage!"))));
+				new EffectEntry("You splash {user} with coffee. It's scalding hot! {user} takes 1d6 fire damage!"))));
 		specialFluids.put("everything", new ArrayList<>(Arrays.asList(
 				new EffectEntry("{user} explodes!"),
 				new EffectEntry("You fail to lift the container containing all the potions. It's too heavy."))));
