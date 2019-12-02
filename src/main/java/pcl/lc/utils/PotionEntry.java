@@ -40,7 +40,11 @@ public class PotionEntry {
 		this.isNew = !PotionHelper.combinationHasEffect(consistency, appearance);
 	}
 
-    public EffectEntry getEffect(String user) {
+	public EffectEntry getEffect(String user) {
+        return getEffect(user, false);
+    }
+
+    public EffectEntry getEffect(String user, boolean splash) {
     	if (this.effect != null)
     		return this.effect;
     	else {
@@ -65,7 +69,18 @@ public class PotionEntry {
 				int effect = Helper.getRandomInt(min, max);
 				System.out.println("No effect recorded for " + PotionHelper.getConsistencyIndexByName(consistency.getName()) + "," + PotionHelper.getAppearanceIndexByName(appearance.getName()) + ", Assign " + effect);
 
-				String effectp = PotionHelper.replaceParamsInEffectString(DrinkPotion.effects.get(effect));
+				String effectp = null;
+
+				if (splash) {
+                    try {
+                        effectp = DrinkPotion.effects.get(effect)[1];
+                    } catch (Exception ignored) {}
+                }
+
+				if (effectp == null)
+				    effectp = DrinkPotion.effects.get(effect)[0];
+
+				effectp = PotionHelper.replaceParamsInEffectString(effectp);
 
 				try {
 					Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");

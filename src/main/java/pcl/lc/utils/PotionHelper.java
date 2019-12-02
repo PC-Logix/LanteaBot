@@ -139,8 +139,8 @@ public class PotionHelper {
 
 	public static String replaceParamsInEffectString(String effect, String nickUser, String targetUser) {
 		effect = replaceParamsInEffectString(effect);
-		return effect.replaceAll("\\{user}", nickUser)
-				.replaceAll("\\{target}", targetUser);
+		return effect.replaceAll("\\{user}", targetUser)
+				.replaceAll("\\{thrower}", nickUser);
 	}
 
 	public static String replaceParamsInEffectString(String effect) {
