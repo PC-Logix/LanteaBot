@@ -1112,19 +1112,7 @@ public class Helper {
 	}
 
 	public static String getWarpLocationByIndex(int index, boolean lower_case) {
-		String replace_appearance = PotionHelper.getAppearance().getName();
-		String turn_appearance = PotionHelper.getAppearance().turnsTo();
-		String replace_consistency = PotionHelper.getConsistency().getName();
-		String ret = warp_locations[index]
-				.replace("{item}", Inventory.getRandomItem().getNameRaw())
-				.replace("{appearance}", replace_appearance)
-				.replace("{turn_appearance}", turn_appearance)
-				.replace("{consistency}", replace_consistency)
-				.replace("{transformation}", Helper.getRandomTransformation(true, false, false))
-				.replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
-				.replace("{transformations}", Helper.getRandomTransformation(true, false, true))
-				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
-				.replace("{p_transformation}", Helper.getRandomTransformation(true, true, false));
+		String ret = PotionHelper.replaceParamsInEffectString(warp_locations[index]);
 		return !lower_case ? ret : ret.toLowerCase();
 	}
 

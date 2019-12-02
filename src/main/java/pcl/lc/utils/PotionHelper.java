@@ -3,6 +3,7 @@ package pcl.lc.utils;
 import gcardone.junidecode.App;
 import org.joda.time.DateTime;
 import pcl.lc.irc.hooks.DrinkPotion;
+import pcl.lc.irc.hooks.Inventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -150,7 +151,9 @@ public class PotionHelper {
 		String replace_consistency_prefix = PotionHelper.getConsistency().getName(true);
 		String limit = PotionHelper.getLimit();
 
-		return effect.replace("{appearance}", replace_appearance)
+		return effect
+                .replace("{item}", Inventory.getRandomItem().getNameRaw())
+                .replace("{appearance}", replace_appearance)
 				.replace("{appearance_p}", replace_appearance_prefix)
 				.replace("{turn_appearance}", turn_appearance)
 				.replace("{consistency}", replace_consistency)
