@@ -70,7 +70,7 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("copper", "a", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("iron", "an", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("stainless steel", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("aluminium", "a", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("aluminium", "an", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("titanium", "a", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("adamantium", "an", "{appearance} colored {item}", "the color of {appearance}")); // Marvel universe
 		appearanceEntries.add(new AppearanceEntry("unobtanium", "an", "{appearance} colored {item}", "the color of {appearance}")); // Avatar
