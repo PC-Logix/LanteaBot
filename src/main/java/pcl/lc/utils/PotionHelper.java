@@ -160,12 +160,13 @@ public class PotionHelper {
 				.replace("{turn_appearance}", turn_appearance)
 				.replace("{consistency}", replace_consistency)
 				.replace("{consistency_p}", replace_consistency_prefix)
-				.replace("{transformation}", Helper.getRandomTransformation(true, false, false))
-				.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false))
-				.replace("{transformation2}", Helper.getRandomTransformation(true, false, false))
-				.replace("{transformations}", Helper.getRandomTransformation(true, true, true))
-				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true))
-				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true))
+				.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true))
+				.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false, true))
+				.replace("{transformation_pc}", Helper.getRandomTransformation(true, true, false, false))
+				.replace("{transformation2}", Helper.getRandomTransformation(true, false, false, true))
+				.replace("{transformations}", Helper.getRandomTransformation(true, true, true, true))
+				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
+				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{limit}", limit);
 	}
 }

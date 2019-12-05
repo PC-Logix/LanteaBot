@@ -177,11 +177,28 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add(new AppearanceEntry("liquid", "a"));
 		consistencies.add(new AppearanceEntry("smelly", "a"));
 
-		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
-		// {r:[min]-{max]:[unit]} - Produces a random int within the range specified suffixed by the specified unit
+		//Valid tags: {user}
+		// {appearance}            - Taken from the appearanceEntries table above
+		// {appearance_p}          - Same as previous but with appropriate prefix appended before
+		// {turn_appearance}       - Taken from the appearanceEntries table above, but formatted into a 'the color of' string where appropriate
+		// {appearance:<item>:[p]} - Produced a string such as 'coral colored <item>' or 'blue <item>' as appropriate. If p is present the appropriate prefix is appended before
+		// {r:<int>-<int>:[time]}  - Generates a random int between the provided numbers. If time is not empty it is appended after the number and should be for example 'minute'. Automatically pluralized if needed.
+		// {consistency}           - Taken from the consistencies table above
+		// {consistency_p}         - Same as previous but with appropriate prefix appended before
+		// {transformation}        - A random transformation from the Helper class
+		// {transformation_p}      - A random transformation from the Helper class but with appropriate prefix appended before unless the prefix is conditional
+		// {transformation_pc}     - A random transformation from the Helper class  but with appropriate prefix appended before, even for conditional prefixes such as 'water'
+		// {transformation2}       - Same as above, but a separate random transformation
+		// {transformation2_p}     - Same as above but with appropriate prefix appended before
+		// {transformations}       - A random transformation from the Helper class but pluralized
+		// {transformations_p}     - Same as above but with appropriate prefix appended before
+		// {transformations2}      - Same as above, but a separate random transformation
+		// {transformations2_p}    - Same as above but with appropriate prefix appended before
+		// {limit}                 - A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
+		// {r:[min]-{max]:[unit]}  - Produces a random int within the range specified suffixed by the specified unit
 		effects.add(new String[] {"{user} looks confused as nothing happens."});
-		effects.add(new String[] {"{user} turns into {transformation_p} girl{limit}."});
-		effects.add(new String[] {"{user} turns into {transformation_p} boy{limit}."});
+		effects.add(new String[] {"{user} turns into {transformation_pc} girl{limit}."});
+		effects.add(new String[] {"{user} turns into {transformation_pc} boy{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_p}{limit}."});
 		effects.add(new String[] {"{user} turns into {appearance_p} {transformation} girl{limit}."});
 		effects.add(new String[] {"{user} turns into {appearance_p} {transformation} boy{limit}."});
@@ -344,7 +361,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"{user} hears a train whistle in the distance."});
 		effects.add(new String[] {"The next glass of water {user} has tastes like {appearance}."});
 
-		//Never end with punctuation
+		//Never end with punctuation and always start with a space
+		//See above for valid tags
 		limits.add(" for {r:1-60:second}");
 		limits.add(" for {r:2-60:minute}");
 		limits.add(" for {r:2-5:hour}");

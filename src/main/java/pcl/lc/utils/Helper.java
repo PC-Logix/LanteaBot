@@ -958,9 +958,9 @@ public class Helper {
 			new String[] {"A" , "Dryad"    , "s"  , null},
 			new String[] {"A" , "Dragon"   , "s"  , null},
 			new String[] {"A" , "Fairy"    , "ies", "1"},
-			new String[] {""  , "Spaghetti", ""   , null},
-			new String[] {""  , "Water"    , ""   , null},
-			new String[] {""  , "Lava"     , ""   , null},
+			new String[] {"A*", "Spaghetti", ""   , null},
+			new String[] {"A*", "Water"    , ""   , null},
+			new String[] {"A*", "Lava"     , ""   , null},
 			new String[] {"A" , "Shark"    , "s"  , null},
 			new String[] {"An", "Otter"    , "s"  , null},
 			new String[] {"A" , "Goat"     , "s"  , null},
@@ -975,16 +975,16 @@ public class Helper {
 	};
 
 	public static String getTransformationByIndex(int index) {
-		return getTransformationByIndex(index, false, false, false);
+		return getTransformationByIndex(index, false, false, false, true);
 	}
 
-	public static String getTransformationByIndex(int index, boolean lower_case, boolean prefix, boolean plural) {
+	public static String getTransformationByIndex(int index, boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes) {
 		String ret = "";
 		try {
 			String[] transformation = animals[index];
-			if (!plural)
-				ret = (prefix ? transformation[0] + " " : "") + transformation[1];
-			else {
+			if (!plural) {
+				ret = (prefix && !transformation[0].equals("") && !(ignoreConditionalPrefixes && transformation[0].contains("*")) ? transformation[0].replaceAll("\\*", "") + " " : "") + transformation[1];
+			} else {
 				if (transformation[3] != null)
 					ret = transformation[1].substring(0, transformation[1].length() - Integer.parseInt(transformation[3])) + transformation[2];
 				else
@@ -995,12 +995,12 @@ public class Helper {
 	}
 
 	public static String getRandomTransformation() {
-		return getRandomTransformation(false, false, false);
+		return getRandomTransformation(false, false, false, true);
 	}
 
-	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural) {
+	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes) {
 		int index = Helper.getRandomInt(0, animals.length - 1);
-		return getTransformationByIndex(index, lower_case, prefix, plural);
+		return getTransformationByIndex(index, lower_case, prefix, plural, ignoreConditionalPrefixes);
 	}
 
 	public static Matcher getMatcherFromPattern(String pattern, String input) {
