@@ -31,4 +31,12 @@ public class FormatUtils {
 	        divider > 1 ? (double) value / (double) divider : (double) value;
 	    return new DecimalFormat("#,##0.#").format(result) + " " + unit;
 	}
+
+	public static String fmt(float d)
+	{
+		if(d == (long) d)
+			return String.format("%d",(long)d);
+		else
+			return String.format("%s",d);
+	}
 }
