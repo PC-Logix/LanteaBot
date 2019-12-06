@@ -49,26 +49,31 @@ public class DiceRoll {
         this.explodeMode = explodeMode;
         int sum = 0;
         ArrayList<Integer> results = new ArrayList<>();
-        for (int i = 0; i < diceCount; i++)
-        {
-            int steps = Helper.getRandomInt(1, diceSize);
-            int gone = 0;
-            int result;
-            for (result = 1; gone < steps; gone++)
-            {
-                if (Objects.equals(result, diceSize))
-                    result = 0;
-                result++;
+        if (diceSize == 1) {
+            for (int i = 0; i < diceCount; i++) {
+                results.add(1);
+                sum += 1;
             }
-            if (result == diceSize) {
-                if (explodeMode.equals(ExplodeMode.EXPLODE_SUMMARIZE))
-                    result += new DiceRoll(1, diceSize, ExplodeMode.EXPLODE_SUMMARIZE).getSum();
-                else if (explodeMode.equals(ExplodeMode.EXPLODE_SEPARATE)) {
-                    diceCount++;
+        } else {
+            for (int i = 0; i < diceCount; i++) {
+                int steps = Helper.getRandomInt(1, diceSize);
+                int gone = 0;
+                int result;
+                for (result = 1; gone < steps; gone++) {
+                    if (Objects.equals(result, diceSize))
+                        result = 0;
+                    result++;
                 }
+                if (result == diceSize) {
+                    if (explodeMode.equals(ExplodeMode.EXPLODE_SUMMARIZE))
+                        result += new DiceRoll(1, diceSize, ExplodeMode.EXPLODE_SUMMARIZE).getSum();
+                    else if (explodeMode.equals(ExplodeMode.EXPLODE_SEPARATE)) {
+                        diceCount++;
+                    }
+                }
+                results.add(result);
+                sum += result;
             }
-            results.add(result);
-            sum += result;
         }
         SetResults(results, sum);
     }
