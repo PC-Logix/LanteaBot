@@ -43,6 +43,7 @@ public class DiceRoll {
     }
 
     public DiceRoll(int diceCount, int diceSize, ExplodeMode explodeMode) {
+        System.out.println("Roll between " + diceCount + " and " + diceSize);
         this.diceCount = diceCount;
         this.diceSize = diceSize;
         this.explodeMode = explodeMode;
@@ -168,7 +169,7 @@ public class DiceRoll {
             int endIndex = matcher.end();
             if (!matcher.group(1).equals("")) {
                 try {
-                    ExplodeMode explodeMode = matcher.group(5).equals("!!") ? ExplodeMode.EXPLODE_SUMMARIZE : ExplodeMode.EXPLODE_SEPARATE;
+                    ExplodeMode explodeMode = (matcher.group(5).equals("!!") ? ExplodeMode.EXPLODE_SUMMARIZE : (matcher.group(5).equals("!") ? ExplodeMode.EXPLODE_SEPARATE : ExplodeMode.NONE));
                     DiceRoll roll = new DiceRoll(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), explodeMode);
                     ArrayList<Integer> results = roll.getResults();
 
