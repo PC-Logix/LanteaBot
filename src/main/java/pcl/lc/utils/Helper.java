@@ -323,7 +323,7 @@ public class Helper {
 			for (String part : parts) {
 				if (stringContainsItemFromList(part, AntiPings)) {
 					if (!isValidURL(part)) {
-						message = message.replaceAll("(?i)\\Q" + part + "\\E", antiPing(part));
+						message = message.replaceAll("(?i)\\Q" + part.replaceAll("\\\\E", "\\E").replaceAll("\\\\Q", "\\Q") + "\\E", antiPing(part));
 					}
 				}
 			}
