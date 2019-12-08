@@ -20,10 +20,7 @@ import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A module for Tonking
@@ -39,6 +36,7 @@ public class Tonk extends AbstractListener {
 	private Command tonkout_command;
 	private Command tonkpoints_command;
 	private Command wind_back_command;
+	private Command tonkreseteverything_command;
 
 	@Override
 	protected void initHook() {
@@ -50,6 +48,8 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(tonkpoints_command);
 		Database.addPreparedStatement("getTonkCount", "SELECT count(*) FROM JsonData;");
 		Database.addPreparedStatement("getTonkUsers", "SELECT mykey, store FROM JsonData WHERE mykey LIKE 'tonkrecord_%' ORDER BY CAST(store AS DECIMAL) DESC;");
+		Database.addPreparedStatement("clearEverythingTonk", "DELETE FROM JsonData WHERE mykey like 'tonkrecord_%' OR mykey ='tonkrecord' OR mykey = 'lasttonk'");
+		Database.addPreparedStatement("getThreeTopTonks", "SELECT mykey, store FROM JsonData WHERE mykey like 'tonkrecord_%' ORDER BY store DESC LIMIT 3");
 	}
 	static String html;
 	
@@ -265,6 +265,30 @@ public class Tonk extends AbstractListener {
 				}
 			}
 		};
+
+		tonkreseteverything_command = new Command("tonkreseteverything", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try {
+					PreparedStatement top = Database.getPreparedStatement("getThreeTopTonks");
+					ResultSet result = top.executeQuery();
+					String prefix = "Top scores: ";
+					ArrayList<String> topList = new ArrayList<>();
+					int position = 0;
+					while (result.next()) {
+						position++;
+						topList.add("#" + position + ": " + result.getString(1).replace("tonkrecord_", ""));
+					}
+					Helper.sendMessage(target, prefix + String.join(", ", topList));
+					Helper.sendMessage(target, "Resetting the tonk scoreboard forever!");
+
+					PreparedStatement reset = Database.getPreparedStatement("clearEverythingTonk");
+					reset.executeUpdate();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
 	}
 
 	static int GetHours(long tonk_time) {
@@ -366,6 +390,7 @@ public class Tonk extends AbstractListener {
 			tonkout_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonkpoints_command.tryExecute(command, nick, target, event, copyOfRange);
 			wind_back_command.tryExecute(command, nick, target, event, copyOfRange);
+			tonkreseteverything_command.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
