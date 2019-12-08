@@ -133,7 +133,7 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("toxictop", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
 		appearanceEntries.add(new AppearanceEntry("violet", "a"));
 		appearanceEntries.add(new AppearanceEntry("crimson", "a"));
-		appearanceEntries.add(new AppearanceEntry("grathnode ", "a", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
+		appearanceEntries.add(new AppearanceEntry("grathnode", "a", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
 
 		consistencies.add(new AppearanceEntry("viscous", "a"));
 		consistencies.add(new AppearanceEntry("cloudy", "a"));
