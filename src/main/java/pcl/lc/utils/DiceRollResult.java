@@ -24,7 +24,7 @@ public class DiceRollResult {
     }
 
     public int getTotal() {
-        return rollResult + bonus.getTotal();
+        return Math.max(minValue, rollResult + bonus.getTotal());
     }
 
     public String getResultString() {

@@ -24,7 +24,7 @@ import java.util.List;
 public class Shell extends AbstractListener {
 	private List<Command> commands;
 	private Command shell;
-	int hitChance = 40; //percentage (out of 100)
+	private int hitChance = 40; //percentage (out of 100)
 
 	@Override
 	protected void initHook() {
@@ -44,7 +44,7 @@ public class Shell extends AbstractListener {
 					String user = params;
 					String userSecondary = Helper.getRandomUser(event);
 					String userTertiary = Helper.getRandomUser(event);
-					if (user == "")
+					if (user.equals(""))
 						user = Helper.getRandomUser(event);
 					else if (!Helper.doInteractWith(user))
 					{
@@ -52,27 +52,29 @@ public class Shell extends AbstractListener {
 						return;
 					}
 					int itemDamage = 0;
-					String dust = "";
+					String dust;
 					String strike = "Seems it was a dud...";
 					try {
 						if (roll != null && roll.getSum() < hitChance) {
 							DiceRollResult dmg1 = item.getDamage(1, 6, 4);
 							DiceRollResult dmg2 = item.getDamage(1, 4, 2);
 							DiceRollResult dmg3 = item.getDamage(1, 4, 2);
-							strike = "It strikes " + user + ". They take " + Item.stringifyDamageResult(dmg1) + ". " + userSecondary + " and " + userTertiary + " stood too close and take " + dmg2.rollResult + Item.getParenthesis(dmg2) + " and " + dmg3.rollResult + Item.getParenthesis(dmg3) + " damage respectively.";
+							String auxiliary_damage = (dmg2.getTotal() == dmg3.getTotal() ? dmg2.getTotal() + " damage each" : dmg2.getTotal() + Item.getParenthesis(dmg2) + ", and " + dmg3.getTotal() + Item.getParenthesis(dmg3) + " damage respectively");
+							strike = "It strikes " + user + ". They take " + Item.stringifyDamageResult(dmg1) + ". " + userSecondary + ", and " + userTertiary + " stood too close and take " + auxiliary_damage + ".";
 							itemDamage = 1;
 						} else {
 							DiceRollResult dmg1 = item.getDamage(1, 4, 2);
 							DiceRollResult dmg2 = item.getDamage(1, 4, 2);
 							DiceRollResult dmg3 = item.getDamage(1, 4, 2);
-							strike = "It strikes the ground near " + user + ", " + userSecondary + " and " + userTertiary + ". They each take " + dmg1.rollResult + Item.getParenthesis(dmg1) + ", " + dmg2.rollResult + Item.getParenthesis(dmg2) + " and " + dmg3.rollResult + Item.getParenthesis(dmg3) + " splash damage respectively.";
+							String damage = (dmg1.getTotal() == dmg2.getTotal() && dmg1.getTotal() == dmg3.getTotal() ? dmg1.getTotal() + " damage" : dmg1.getTotal() + Item.getParenthesis(dmg1) + ", " + dmg2.getTotal() + Item.getParenthesis(dmg2) + ", and " + dmg3.getTotal() + Item.getParenthesis(dmg3) + " splash damage respectively");
+							strike = "It strikes the ground near " + user + ", " + userSecondary + ", and " + userTertiary + ". They each take " + damage + ".";
 							itemDamage = 2;
 						}
 					} catch (NullPointerException ignored) {}
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendAction(target, "loads " + item.getName(false) + " into a shell and fires it. " + strike);
 					dust = item.damage(itemDamage,false, true, true);
-					if (dust != "") {
+					if (!dust.equals("")) {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target, dust);
 					}

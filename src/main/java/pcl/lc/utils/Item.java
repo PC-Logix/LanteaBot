@@ -156,7 +156,7 @@ public class Item {
 				String sentence = Inventory.getItemBreakString(Inventory.fixItemName(this.name, true), includeEndPunctuation);
 				if (capitalizeFirstWord)
 					sentence = sentence.substring(0, 1).toUpperCase() + sentence.substring(1);
-				return (includeLeadingComma ? ", " : "") + sentence + ".";
+				return (includeLeadingComma ? ", " : "") + sentence;
 			}
 			else
 				System.out.println("Error removing item (" + result + ")");
