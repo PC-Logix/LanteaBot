@@ -148,6 +148,12 @@ public class Database {
 		IRCBot.log.info("Database update ran " + counter + " queries");
 	}
 
+	/**
+	 *
+	 * @param key The key the data should be stored with, overwrites existing data if key exists
+	 * @param data The data to be stored
+	 * @return Returns true on success and false if the data could not be stored successfully
+	 */
 	public static boolean storeJsonData(String key, String data) {
 //		try {
 //			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
@@ -164,18 +170,19 @@ public class Database {
 			stmt.executeUpdate();
 
 			return true;
-		} catch (SQLException e) {
-			IRCBot.log.error("Exception is: ", e);
-			e.printStackTrace();
 		} catch (Exception e) {
 			IRCBot.log.error("Exception is: ", e);
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		IRCBot.log.error("storeJsonData false");
 		return false;
 	}
 
+	/**
+	 * Fetch JSON data from database with key
+	 * @param key The key of the requested row
+	 * @return Returns the contents of the row matching key, or an empty string if retrieval failed
+	 */
 	public static String getJsonData(String key) {
 //		try {
 //			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
