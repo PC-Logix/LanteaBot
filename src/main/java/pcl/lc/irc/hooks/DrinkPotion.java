@@ -484,7 +484,7 @@ public class DrinkPotion extends AbstractListener {
                         PotionEntry potion;
                         if (potionString == null || potionString.equals("random")) {
                             potion = PotionHelper.getRandomPotion();
-                            EffectEntry effect = potion.getEffect(nick);
+                            EffectEntry effect = potion.getEffect(nick, true);
                             Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
                             return;
 						} else if (potionString.equals("^")) {

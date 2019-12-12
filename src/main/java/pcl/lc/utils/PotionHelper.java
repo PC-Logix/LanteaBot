@@ -153,8 +153,15 @@ public class PotionHelper {
 
 		effect = DiceRoll.rollDiceInString(effect, true);
 
+		Item item = Inventory.getRandomItem();
+		String itemName;
+		if (item == null)
+			itemName = Helper.getRandomGarbageItem();
+		else
+			itemName = item.getNameRaw();
+
 		return effect
-                .replace("{item}", Inventory.getRandomItem().getNameRaw())
+                .replace("{item}", itemName)
                 .replace("{appearance}", replace_appearance)
 				.replace("{appearance_p}", replace_appearance_prefix)
 				.replace("{turn_appearance}", turn_appearance)
