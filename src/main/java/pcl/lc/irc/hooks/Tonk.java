@@ -22,6 +22,14 @@ import java.sql.ResultSet;
 import java.text.DecimalFormat;
 import java.util.*;
 
+class PreparedStatementKeys {
+	static String GET_TONK_COUNT = "getTonkCount";
+	static String GET_TONK_USERS = "getTonkUsers";
+	static String CLEAR_EVERYTHING_TONK = "clearEverythingTonk";
+	static String GET_THREE_TOP_TONKS = "getThreeTopTonks";
+	static String CLEAR_TONK_FAILS = "clearTonkFails";
+}
+
 /**
  * A module for Tonking
  * Created by Forecaster on 30/03/2017 for the LanteaBot project.
@@ -30,13 +38,16 @@ public class Tonk extends AbstractListener {
     private static String numberFormat = "#.########";
 	private static String tonk_record_key = "tonkrecord";
 	private static String last_tonk_key = "lasttonk";
+	private static String tonk_attempts_key = "tonkattempt";
 	private static boolean applyBonusPoints = true;
+	private static int maxTonkFails = 2;
 	private Command local_command;
 	private Command reset_command;
 	private Command tonkout_command;
 	private Command tonkpoints_command;
 	private Command wind_back_command;
 	private Command tonkreseteverything_command;
+	private Command tonk_attempts_remaining;
 
 	@Override
 	protected void initHook() {
@@ -46,10 +57,12 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(reset_command);
 		IRCBot.registerCommand(tonkout_command);
 		IRCBot.registerCommand(tonkpoints_command);
-		Database.addPreparedStatement("getTonkCount", "SELECT count(*) FROM JsonData;");
-		Database.addPreparedStatement("getTonkUsers", "SELECT mykey, store FROM JsonData WHERE mykey LIKE 'tonkrecord_%' ORDER BY CAST(store AS DECIMAL) DESC;");
-		Database.addPreparedStatement("clearEverythingTonk", "DELETE FROM JsonData WHERE mykey like 'tonkrecord_%' OR mykey ='tonkrecord' OR mykey = 'lasttonk'");
-		Database.addPreparedStatement("getThreeTopTonks", "SELECT mykey, store FROM JsonData WHERE mykey like 'tonkrecord_%' ORDER BY store DESC LIMIT 3");
+		IRCBot.registerCommand(tonk_attempts_remaining);
+		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_COUNT, "SELECT count(*) FROM JsonData;");
+		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_USERS, "SELECT mykey, store FROM JsonData WHERE mykey LIKE '" + tonk_record_key + "_%' ORDER BY CAST(store AS DECIMAL) DESC;");
+		Database.addPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK, "DELETE FROM JsonData WHERE mykey like '" + tonk_record_key + "_%' OR mykey ='" + tonk_record_key + "' OR mykey = '" + last_tonk_key + "'");
+		Database.addPreparedStatement(PreparedStatementKeys.GET_THREE_TOP_TONKS, "SELECT mykey, store FROM JsonData WHERE mykey like '" + tonk_record_key + "_%' ORDER BY store DESC LIMIT 3");
+		Database.addPreparedStatement(PreparedStatementKeys.CLEAR_TONK_FAILS, "DELETE FROM JsonData WHERE mykey LIKE '" + tonk_attempts_key + "_%'");
 	}
 	static String html;
 	
@@ -63,11 +76,18 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				nick = nick.replaceAll("\\p{C}", "");
+
+				int attempts = getTonkFails(nick);
+				if (attempts >= maxTonkFails) {
+					Helper.sendMessage(target, "A sad trumpet plays for an uncomfortably long time...");
+					return;
+				}
+
 				String tonkin = Database.getJsonData(last_tonk_key);
 				String tonk_record = Database.getJsonData(tonk_record_key);
 				long now = new Date().getTime();
 				IRCBot.log.info("tonkin :" + tonkin + " tonk_record: " + tonk_record);
-				if (tonkin == "" || tonk_record == "") {
+				if (tonkin.equals("") || tonk_record.equals("")) {
 					Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
 					Database.storeJsonData(tonk_record_key, "0;" + nick);
                     Database.storeJsonData(last_tonk_key, String.valueOf(now));
@@ -84,7 +104,7 @@ public class Tonk extends AbstractListener {
 					long diff = now - lasttonk;
 
 					try {
-						String tonk[] = tonk_record.split(";");
+						String[] tonk = tonk_record.split(";");
 						long tonk_record_long = Long.parseLong(tonk[0]);
 						System.out.println("Tonk record long: " + tonk_record_long);
 						String recorder = tonk[1].trim();
@@ -118,6 +138,7 @@ public class Tonk extends AbstractListener {
 							Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + ( record_hours > 1 ? " (" + dec.format(hours / 1000d) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + dec.format(hours / 1000d) + (record_hours > 1 ? " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) : "") + ")") : ""));
 							Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 							Database.storeJsonData(last_tonk_key, String.valueOf(now));
+							Database.getPreparedStatement(PreparedStatementKeys.CLEAR_TONK_FAILS).executeUpdate();
 						} else {
 //							if (nick_is_recorder) {
 //								Helper.sendMessage(target, "You still hold the record " + nick + ", for now... " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)));
@@ -126,6 +147,7 @@ public class Tonk extends AbstractListener {
 								Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + recorder + "'s record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time. " +
 								Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted! Missed by " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long - diff)) + "!");
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
+								Database.storeJsonData(tonk_attempts_key + "_" + nick, String.valueOf(attempts + 1));
 //							}
 						}
 					} catch (Exception ex) {
@@ -169,11 +191,18 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
                 nick = nick.replaceAll("\\p{C}", "");
+
+				int attempts = getTonkFails(nick);
+				if (attempts >= maxTonkFails) {
+					Helper.sendMessage(target, "A sad flute plays for an uncomfortably long time...");
+					return;
+				}
+
                 String tonkin = Database.getJsonData(last_tonk_key);
                 String tonk_record = Database.getJsonData(tonk_record_key);
                 long now = new Date().getTime();
                 IRCBot.log.info("tonkin :" + tonkin + " tonk_record: " + tonk_record);
-                if (tonkin == "" || tonk_record == "") {
+                if (tonkin.equals("") || tonk_record.equals("")) {
                     Helper.sendMessage(target, "You got the first Tonk " + nick + ", but this is only the beginning.");
                     Database.storeJsonData(tonk_record_key, "0;" + nick);
                     Database.storeJsonData(last_tonk_key, String.valueOf(now));
@@ -190,7 +219,7 @@ public class Tonk extends AbstractListener {
                     long diff = now - lasttonk;
 
                     try {
-                        String tonk[] = tonk_record.split(";");
+						String[] tonk = tonk_record.split(";");
                         long tonk_record_long = Long.parseLong(tonk[0]);
                         String recorder = tonk[1].trim();
                         boolean nick_is_recorder = nick.equals(recorder);
@@ -234,10 +263,12 @@ public class Tonk extends AbstractListener {
 
                             Database.storeJsonData(tonk_record_key, "0;" + nick);
                             Database.storeJsonData(last_tonk_key, String.valueOf(now));
+                            Database.getPreparedStatement(PreparedStatementKeys.CLEAR_TONK_FAILS).executeUpdate();
                         } else {
 							Helper.sendMessage(target, "I'm sorry " + nick + ", you were not able to beat " + recorder + "'s record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " this time. " +
 							Helper.timeString(Helper.parseMilliseconds(diff)) + " were wasted! Missed by " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long - diff)) + "!");
 							Database.storeJsonData(last_tonk_key, String.valueOf(now));
+							Database.storeJsonData(tonk_attempts_key + "_" + nick, String.valueOf(attempts + 1));
                         }
 //                        } else {
 //                            Helper.sendMessage(target, "You are not the current record holder. It is " + recorder + ".", nick);
@@ -270,7 +301,7 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					PreparedStatement top = Database.getPreparedStatement("getThreeTopTonks");
+					PreparedStatement top = Database.getPreparedStatement(PreparedStatementKeys.GET_THREE_TOP_TONKS);
 					ResultSet result = top.executeQuery();
 					String prefix = "Top scores: ";
 					ArrayList<String> topList = new ArrayList<>();
@@ -282,11 +313,23 @@ public class Tonk extends AbstractListener {
 					Helper.sendMessage(target, prefix + String.join(", ", topList));
 					Helper.sendMessage(target, "Resetting the tonk scoreboard forever!");
 
-					PreparedStatement reset = Database.getPreparedStatement("clearEverythingTonk");
+					PreparedStatement reset = Database.getPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK);
 					reset.executeUpdate();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+		};
+
+		tonk_attempts_remaining = new Command("tonkattempts") {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				int attempts = maxTonkFails - getTonkFails(nick);
+
+				if (attempts <= 0)
+					Helper.sendMessage(target, "You have no attempts left. The next time someone tonks or tonks out successfully you will have " + maxTonkFails + " new attempts!");
+				else
+					Helper.sendMessage(target, "You have " + Math.max(0, attempts) + " attempts left.");
 			}
 		};
 	}
@@ -305,6 +348,14 @@ public class Tonk extends AbstractListener {
 //		System.out.println("Hours: " + hours);
 
 		return Helper.round(hours, decimals);
+	}
+
+	private static int getTonkFails(String nick) {
+		String strAttempts = Database.getJsonData(tonk_attempts_key + "_" + nick);
+		int attempts = 0;
+		if (!strAttempts.equals(""))
+			attempts = Integer.parseInt(strAttempts);
+		return attempts;
 	}
 	
 	static class TonkHandler implements HttpHandler {
@@ -333,6 +384,12 @@ public class Tonk extends AbstractListener {
                     "<li>If you held the previous record you get 100% of the multiplied bonus, if not you get 50%.</li>" +
                     "</ul>" +
                     "</div>" +
+					"<div style='margin-top:4px;'>" +
+					"<ul>" +
+					"<li>If you perform " + maxTonkFails + " mistimed tonks or tonkouts you can no longer attempt it.</li>" +
+					"<li>Once someone else tonks or tonks out successfully all attempts are reset.</li>" +
+					"</ul>" +
+					"</div>" +
                     "<table>";
 			try {
 				PreparedStatement statement = Database.getPreparedStatement("getTonkUsers");
@@ -391,6 +448,7 @@ public class Tonk extends AbstractListener {
 			tonkpoints_command.tryExecute(command, nick, target, event, copyOfRange);
 			wind_back_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonkreseteverything_command.tryExecute(command, nick, target, event, copyOfRange);
+			tonk_attempts_remaining.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
