@@ -370,7 +370,7 @@ public class Tonk extends AbstractListener {
 				int attempts = maxTonkFails - getTonkFails(nick);
 
 				if (attempts <= 0)
-					Helper.sendMessage(target, "You have no attempts left. The next time someone tonks or tonks out successfully you will have " + maxTonkFails + " new attempts!");
+					Helper.sendMessage(target, "You have no attempts left. When a successful tonk or tonkout happens everyone gets " + maxTonkFails + " new attempts.");
 				else
 					Helper.sendMessage(target, "You have " + Math.max(0, attempts) + " attempt" + (attempts == 1 ? "" : "s") + " left.");
 			}
@@ -433,7 +433,7 @@ public class Tonk extends AbstractListener {
 					"<div style='margin-top:4px;'>" +
 					"<ul>" +
 					"<li>If you perform " + maxTonkFails + " mistimed tonks or tonkouts you can no longer attempt it.</li>" +
-					"<li>When a successful tonk or tonkout happens everyone gets reset to " + maxTonkFails + " attempts.</li>" +
+					"<li>When a successful tonk or tonkout happens everyone gets " + maxTonkFails + " new attempts.</li>" +
 					"</ul>" +
 					"</div>" +
                     "<table>";
