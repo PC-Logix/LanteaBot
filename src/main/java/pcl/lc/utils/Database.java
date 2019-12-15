@@ -152,9 +152,8 @@ public class Database {
 	 *
 	 * @param key The key the data should be stored with, overwrites existing data if key exists
 	 * @param data The data to be stored
-	 * @return Returns true on success and false if the data could not be stored successfully
 	 */
-	public static boolean storeJsonData(String key, String data) {
+	public static void storeJsonData(String key, String data) throws Exception {
 //		try {
 //			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
 //		} catch (SQLException e) {
@@ -162,28 +161,19 @@ public class Database {
 //				IRCBot.log.error("Exception is: ", e);
 //				e.printStackTrace();
 //		}
-		try {
-			IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
-			PreparedStatement stmt = getPreparedStatement("storeJSON");
-			stmt.setString(1, key);
-			stmt.setString(2, data);
-			stmt.executeUpdate();
-
-			return true;
-		} catch (Exception e) {
-			IRCBot.log.error("Exception is: ", e);
-			e.printStackTrace();
-		}
-		IRCBot.log.error("storeJsonData false");
-		return false;
+		IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
+		PreparedStatement stmt = getPreparedStatement("storeJSON");
+		stmt.setString(1, key);
+		stmt.setString(2, data);
+		stmt.executeUpdate();
 	}
 
 	/**
 	 * Fetch JSON data from database with key
 	 * @param key The key of the requested row
-	 * @return Returns the contents of the row matching key, or an empty string if retrieval failed
+	 * @return Returns the contents of the row matching key, or an empty string if key was not found
 	 */
-	public static String getJsonData(String key) {
+	public static String getJsonData(String key) throws Exception {
 //		try {
 //			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
 //		} catch (SQLException e) {
@@ -191,23 +181,16 @@ public class Database {
 //				IRCBot.log.error("Exception is: ", e);
 //				e.printStackTrace();
 //		}
-		try {
-			PreparedStatement stmt = getPreparedStatement("retreiveJSON");
-			stmt.setString(1, key);
-			
-			ResultSet theResult = stmt.executeQuery();
-			if (theResult.next()) {
-				String result = theResult.getString(1);
-				IRCBot.log.info("JsonData: " + result);
-				return result;
-			}
-			IRCBot.log.error("JsonData was empty, returning empty string");
-			return "";
-		} catch (Exception e) {
-			IRCBot.log.error("Exception is: ", e);
-			e.printStackTrace();
+		PreparedStatement stmt = getPreparedStatement("retreiveJSON");
+		stmt.setString(1, key);
+
+		ResultSet theResult = stmt.executeQuery();
+		if (theResult.next()) {
+			String result = theResult.getString(1);
+			IRCBot.log.info("JsonData: " + result);
+			return result;
 		}
-		IRCBot.log.error("JsonData try/catch failed");
+		IRCBot.log.error("JsonData was empty, returning empty string");
 		return "";
 	}
 
