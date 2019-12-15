@@ -181,13 +181,18 @@ public class PhraseBan extends AbstractListener {
 					Helper.sendMessage(target, "Specify setting to set then value. Settings: 'duration'", nick);
 					return;
 				}
-				switch (params.get(0)) {
-					case "duration":
-						Database.storeJsonData("phraseban_duration", params.get(1));
-						Helper.sendMessage(target, "Setting updated!");
-						return;
-					default:
-						Helper.sendMessage(target, "Unknown setting '" + params.get(0) + "'", nick);
+				try {
+					switch (params.get(0)) {
+						case "duration":
+							Database.storeJsonData("phraseban_duration", params.get(1));
+							Helper.sendMessage(target, "Setting updated!");
+							return;
+						default:
+							Helper.sendMessage(target, "Unknown setting '" + params.get(0) + "'", nick);
+					}
+				} catch (Exception ex) {
+					Helper.sendMessage(target, "An error occurred while updating values.");
+					ex.printStackTrace();
 				}
 			}
 		};
@@ -236,7 +241,8 @@ public class PhraseBan extends AbstractListener {
 					break;
 				}
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
+			Helper.sendMessage(target, "An error occurred while updating values.");
 			e.printStackTrace();
 		}
 	}
