@@ -203,13 +203,8 @@ public class Database {
 			}
 			IRCBot.log.error("JsonData was empty, returning empty string");
 			return "";
-		} catch (SQLException e) {
-			IRCBot.log.error("Code: " + e.getErrorCode());
-			IRCBot.log.error("Exception is: ", e);
-			e.printStackTrace();
 		} catch (Exception e) {
 			IRCBot.log.error("Exception is: ", e);
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		IRCBot.log.error("JsonData try/catch failed");
