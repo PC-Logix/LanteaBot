@@ -8,7 +8,8 @@ enum Action {
     MULTIPLY,
     DIVIDE,
     ADD,
-    SUB
+    SUB,
+    EXPONENT
 }
 
 public class MathParseExpression {
@@ -54,7 +55,13 @@ public class MathParseExpression {
             if (!matcher.find())
                 break;
             float math = 0;
-            if (action.equals(Action.MULTIPLY))
+            if (action.equals(Action.EXPONENT)) {
+                int maxY = Integer.parseInt(matcher.group(2)) - 1;
+                math = Float.parseFloat(matcher.group(1)) * Float.parseFloat(matcher.group(1));
+                for (int y = 1; y < maxY; y++) {
+                    math = math * Float.parseFloat(matcher.group(1));
+                }
+            } else if (action.equals(Action.MULTIPLY))
                 math = Float.parseFloat(matcher.group(1)) * Float.parseFloat(matcher.group(2));
             else if (action.equals(Action.DIVIDE))
                 math = Float.parseFloat(matcher.group(1)) / Float.parseFloat(matcher.group(2));
@@ -79,6 +86,7 @@ public class MathParseExpression {
         Pattern findDivision = Pattern.compile("([\\d,.]+) *[/÷]+ *([\\d,.]+)");
         Pattern findSubtraction = Pattern.compile("([\\d,.]+) *[-]+ *([\\d,.]+)");
         Pattern findAddition = Pattern.compile("([\\d,.]+) *[+]+ *([\\d,.]+)");
+        Pattern findExponent = Pattern.compile("([\\d,.]+) *[\\^]+ *([\\d,.]+)");
 
         while (i < maxIteration) {
             Matcher matcher = findDiceGroups.matcher(mathString);
@@ -92,6 +100,7 @@ public class MathParseExpression {
             mathString = Helper.replaceSubstring(mathString, String.valueOf(math), matcher.start(), matcher.end());
             i++;
         }
+        mathString = doPatternSearch(mathString, findExponent, Action.EXPONENT);
         mathString = doPatternSearch(mathString, findMultiplication, Action.MULTIPLY);
         mathString = doPatternSearch(mathString, findDivision, Action.DIVIDE);
         mathString = doPatternSearch(mathString, findSubtraction, Action.SUB);
