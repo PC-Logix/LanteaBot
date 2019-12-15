@@ -75,7 +75,7 @@ public class Tonk extends AbstractListener {
 		local_command = new Command("tonk", 900) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				nick = nick.replaceAll("\\p{C}", "");
+				nick = parseNick(nick);
 
 				int attempts = getTonkFails(nick);
 				if (attempts >= maxTonkFails) {
@@ -178,7 +178,7 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				long now = new Date().getTime();
-				nick = nick.replaceAll("\\p{C}", "");
+				nick = parseNick(nick);
 				Helper.sendMessage(target, "Tonk reset " + nick + ", you are the record holder!");
 				try {
 					Database.storeJsonData(tonk_record_key, "0;" + nick);
@@ -212,7 +212,7 @@ public class Tonk extends AbstractListener {
 		tonkout_command = new Command("tonkout", 900) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-                nick = nick.replaceAll("\\p{C}", "");
+                nick = parseNick(nick);
 
 				int attempts = getTonkFails(nick);
 				if (attempts >= maxTonkFails) {
@@ -322,7 +322,7 @@ public class Tonk extends AbstractListener {
 		tonkpoints_command = new Command("tonkpoints") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				nick = nick.replaceAll("\\p{C}", "");
+				nick = parseNick(nick);
 
 				try {
 					String data = Database.getJsonData(tonk_record_key + "_" + nick);
@@ -366,6 +366,7 @@ public class Tonk extends AbstractListener {
 		tonk_attempts_remaining = new Command("tonkattempts") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				nick = parseNick(nick);
 				int attempts = maxTonkFails - getTonkFails(nick);
 
 				if (attempts <= 0)
@@ -474,6 +475,10 @@ public class Tonk extends AbstractListener {
 			os.write(response.getBytes());
 			os.close();
 		}
+	}
+
+	private String parseNick(String nick) {
+		return nick.replaceAll("\\p{C}", "");
 	}
 	
 	public String chan;
