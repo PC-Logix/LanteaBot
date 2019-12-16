@@ -178,24 +178,27 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add(new AppearanceEntry("smelly", "a"));
 
 		//Valid tags: {user}
-		// {appearance}            - Taken from the appearanceEntries table above
-		// {appearance_p}          - Same as previous but with appropriate prefix appended before
-		// {turn_appearance}       - Taken from the appearanceEntries table above, but formatted into a 'the color of' string where appropriate
-		// {appearance:<item>:[p]} - Produced a string such as 'coral colored <item>' or 'blue <item>' as appropriate. If p is present the appropriate prefix is appended before
-		// {r:<int>-<int>:[time]}  - Generates a random int between the provided numbers. If time is not empty it is appended after the number and should be for example 'minute'. Automatically pluralized if needed.
-		// {consistency}           - Taken from the consistencies table above
-		// {consistency_p}         - Same as previous but with appropriate prefix appended before
-		// {transformation}        - A random transformation from the Helper class
-		// {transformation_p}      - A random transformation from the Helper class but with appropriate prefix appended before unless the prefix is conditional
-		// {transformation_pc}     - A random transformation from the Helper class  but with appropriate prefix appended before, even for conditional prefixes such as 'water'
-		// {transformation2}       - Same as above, but a separate random transformation
-		// {transformation2_p}     - Same as above but with appropriate prefix appended before
-		// {transformations}       - A random transformation from the Helper class but pluralized
-		// {transformations_p}     - Same as above but with appropriate prefix appended before
-		// {transformations2}      - Same as above, but a separate random transformation
-		// {transformations2_p}    - Same as above but with appropriate prefix appended before
-		// {limit}                 - A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
-		// {r:[min]-{max]:[unit]}  - Produces a random int within the range specified suffixed by the specified unit
+		// {appearance}            		- Taken from the appearanceEntries table above
+		// {appearance_p}          		- Same as previous but with appropriate prefix appended before
+		// {turn_appearance}       		- Taken from the appearanceEntries table above, but formatted into a 'the color of' string where appropriate
+		// {appearance:<item>:[p]} 		- Produced a string such as 'coral colored <item>' or 'blue <item>' as appropriate. If p is present the appropriate prefix is appended before
+		// {r:<int>-<int>:[time]}  		- Generates a random int between the provided numbers. If time is not empty it is appended after the number and should be for example 'minute'. Automatically pluralized if needed.
+		// {consistency}           		- Taken from the consistencies table above
+		// {consistency_p}         		- Same as previous but with appropriate prefix appended before
+		// {transformation}        		- A random transformation from the Helper class
+		// {transformation_p}      		- A random transformation from the Helper class but with appropriate prefix appended before unless the prefix is conditional
+		// {transformation_pc}     		- A random transformation from the Helper class  but with appropriate prefix appended before, even for conditional prefixes such as 'water'
+		// {transformation2}       		- Same as above, but a separate random transformation
+		// {transformation2_p}     		- Same as above but with appropriate prefix appended before
+		// {transformations}       		- A random transformation from the Helper class but pluralized
+		// {transformations_p}     		- Same as above but with appropriate prefix appended before
+		// {transformations2}      		- Same as above, but a separate random transformation
+		// {transformations2_p}    		- Same as above but with appropriate prefix appended before
+		// {limit}                 		- A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
+		// {r:[min]-{max]:[unit]}  		- Produces a random int within the range specified suffixed by the specified unit
+		// {dodge:<DC>:<damage(ex 1d4)> - Calls for a dodge check against <DC> and either returns "{user} dodges successfully!" or "{user} fails to dodge and takes <damage> damage."
+		// {junk}						- A random garbage item from Helper all lower case with no prefix
+		// {junk_p}						- A random garbage item from Helper all lower case with prefix
 		effects.add(new String[] {"{user} looks confused as nothing happens."});
 		effects.add(new String[] {"{user} turns into {transformation_pc} girl{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_pc} boy{limit}."});
@@ -354,12 +357,16 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"Everything {user} says is now in Wingdings{limit}."});
 		effects.add(new String[] {"{user}'s favourite cup is now upside down."});
 		effects.add(new String[] {"The potion bottle insults {user}'s haircut.",
-				"A disembodied voice insults {user}'s haircut coming from the direction of {thrower}"});
+				"A disembodied voice insults {user}'s haircut coming from the direction of {trigger}"});
 		effects.add(new String[] {"After drinking the potion you realize the bottle has your face on it.",
 				"You see your face etched into one of the shards of the broken bottle."});
 		effects.add(new String[] {"Wheels are briefly square."});
 		effects.add(new String[] {"{user} hears a train whistle in the distance."});
 		effects.add(new String[] {"The next glass of water {user} has tastes like {appearance}."});
+		effects.add(new String[] {"As {user} drinks the potion they become the target of a wad of llama spit! {dodge:12:1d4}",
+				"As the potion hits {user} they become the target of a wad of llama spit! {dodge:12:1d4}"});
+		effects.add(new String[] {"As {user} drinks the potion they seem to have become magnetic and {junk_p} flies towards them! {dodge:14:1d6}",
+				"As the potion hits {user} they seem to have become magnetic and {junk_p} flies towards them! {dodge:14:1d6}"});
 
 		//Never end with punctuation and always start with a space
 		//See above for valid tags
@@ -410,7 +417,7 @@ public class DrinkPotion extends AbstractListener {
 			    try {
 			    	if (params.size() == 0 || params.get(0).equals("random")) {
 						potion = PotionHelper.getRandomPotion();
-						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + ". " + potion.getEffect(nick).toString().replace("{user}", nick));
+						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffect(nick).toString(), nick));
 						return;
 					} else if (params.get(0).equals("^")) {
 						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
@@ -426,7 +433,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 					} else {
 			    		if (specialFluids.containsKey(params.get(0))) {
-			    			Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick, ""));
+			    			Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), "", nick));
 			    			return;
 						}
 					}
@@ -438,7 +445,7 @@ public class DrinkPotion extends AbstractListener {
                     	EffectEntry effect = potion.getEffect(nick);
 
                     	if (effect != null)
-							Helper.sendMessage(target, (potion.isNew ? "(New!) " : "") + effect.toString().replace("{user}", nick));
+							Helper.sendMessage(target, (potion.isNew ? "(New!) " : "") + PotionHelper.replaceParamsInEffectString(effect.toString(), "", nick));
                     	else
                     		Helper.sendMessage(target, "Due to some series of events I couldn't find any effect for this potion.");
 			    	} catch (InvalidPotionException ex) {
@@ -485,7 +492,7 @@ public class DrinkPotion extends AbstractListener {
                         if (potionString == null || potionString.equals("random")) {
                             potion = PotionHelper.getRandomPotion();
                             EffectEntry effect = potion.getEffect(nick, true);
-                            Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
+                            Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
                             return;
 						} else if (potionString.equals("^")) {
 							List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
@@ -501,7 +508,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 
 						if (specialFluids.containsKey(potionString)) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), nick, splashTarget));
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), splashTarget, nick));
 							return;
 						}
 
@@ -512,7 +519,7 @@ public class DrinkPotion extends AbstractListener {
 							EffectEntry effect = potion.getEffect(nick);
 
 							if (effect != null) {
-								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + effect.toString().replace("{user}", splashTarget));
+								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
 							}
 						} catch (InvalidPotionException ex) {
                         	Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");

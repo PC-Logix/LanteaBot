@@ -1112,7 +1112,7 @@ public class Helper {
 	}
 
 	public static String getWarpLocationByIndex(int index, boolean lower_case) {
-		String ret = PotionHelper.replaceParamsInEffectString(warp_locations[index]);
+		String ret = PotionHelper.replaceParamsInEffectString(warp_locations[index], "");
 		return !lower_case ? ret : ret.toLowerCase();
 	}
 

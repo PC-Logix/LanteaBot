@@ -7,6 +7,8 @@ import pcl.lc.irc.hooks.Inventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PotionHelper {
 	/**
@@ -132,26 +134,22 @@ public class PotionHelper {
 		return -1;
 	}
 
-	public static String replaceParamsInEffectString(String effect, String nickUser) {
-		effect = replaceParamsInEffectString(effect);
-		return effect.replaceAll("\\{user}", nickUser);
+	/**
+	 * @param effect The effect string to replace {user} and {trigger} tags within
+	 * @param targetName The name of the target of the effect
+	 * @return Returns the effect string with name inserted
+	 */
+	public static String replaceParamsInEffectString(String effect, String targetName) {
+		return replaceParamsInEffectString(effect, targetName, "");
 	}
 
-	public static String replaceParamsInEffectString(String effect, String nickUser, String targetUser) {
-		effect = replaceParamsInEffectString(effect);
-		return effect.replaceAll("\\{user}", targetUser)
-				.replaceAll("\\{thrower}", nickUser);
-	}
-
-	public static String replaceParamsInEffectString(String effect) {
+	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
 		String replace_appearance = PotionHelper.getAppearance().getName();
 		String replace_appearance_prefix = PotionHelper.getAppearance().getName(true);
 		String turn_appearance = PotionHelper.getAppearance().turnsTo();
 		String replace_consistency = PotionHelper.getConsistency().getName();
 		String replace_consistency_prefix = PotionHelper.getConsistency().getName(true);
 		String limit = PotionHelper.getLimit();
-
-		effect = DiceRoll.rollDiceInString(effect, true);
 
 		Item item = Inventory.getRandomItem();
 		String itemName;
@@ -160,7 +158,20 @@ public class PotionHelper {
 		else
 			itemName = item.getNameRaw();
 
-		return effect
+		Pattern dodgePattern = Pattern.compile("\\{dodge:(\\d+):(\\d+d\\d+)}");
+		Matcher dodgeMatcher = dodgePattern.matcher(effect);
+		if (dodgeMatcher.find()) {
+			DiceRoll roll = new DiceRoll(1, 20);
+			String dodge = "{user} fails to dodge and takes " + dodgeMatcher.group(2) + " damage.";
+			if (roll.getSum() >= Integer.parseInt(dodgeMatcher.group(1)))
+				dodge = "{user} successfully dodged it!";
+			effect = Helper.replaceSubstring(effect, dodge, dodgeMatcher.start(), dodgeMatcher.end());
+		}
+
+		effect = DiceRoll.rollDiceInString(effect, true);
+
+		return effect.replaceAll("\\{user}", targetName)
+				.replaceAll("\\{trigger}", triggererName)
                 .replace("{item}", itemName)
                 .replace("{appearance}", replace_appearance)
 				.replace("{appearance_p}", replace_appearance_prefix)
@@ -174,6 +185,8 @@ public class PotionHelper {
 				.replace("{transformations}", Helper.getRandomTransformation(true, true, true, true))
 				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
+				.replace("{junk}", Helper.getRandomGarbageItem(false, true))
+				.replace("{junk_p)", Helper.getRandomGarbageItem(true, true))
 				.replace("{limit}", limit);
 	}
 }
