@@ -317,6 +317,7 @@ public class Helper {
 	    }
 	}
 	
+
 	public static void sendMessage(String target, String message, String targetUser, Enum format, boolean overridePaste){
 		if (AntiPings != null && !AntiPings.isEmpty()) {
 			String[] parts = message.split(" ");
@@ -334,12 +335,19 @@ public class Helper {
 		else
 			targetUser = "";
 		message = StringUtils.strip(message);
-		if (message.length() > 255 && !overridePaste) {
+		if (message.length() > 320 && !overridePaste) {
 			String pasteURL = PasteUtils.paste(message, format);
 			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);
 			IRCBot.log.info("--> " +  target + " " + targetUser.replaceAll("\\p{C}", "") + " Message too long to send to channel " + pasteURL);
 		} else {
-			IRCBot.bot.sendIRC().message(target, targetUser + message);
+			if (message.length() > 320) {
+				List<String> messages = splitString(message, 320);
+				for (String temp : messages) {
+					IRCBot.bot.sendIRC().message(target, temp);
+				}
+			} else {
+				IRCBot.bot.sendIRC().message(target, targetUser + message);
+			}
 			List<String> list = new ArrayList<String>();
 			list.add(target);
 			list.add(targetUser.replace(": ", "").replaceAll("\\p{C}", "") != "" ? targetUser.replace(": ", "").replaceAll("\\p{C}", "") : IRCBot.getOurNick());
@@ -349,6 +357,19 @@ public class Helper {
 		}
 		Helper.AntiPings = null;
 	}
+
+    public static List<String> splitString(String msg, int lineSize) {
+        List res = new ArrayList();
+
+        Pattern p = Pattern.compile("\\b.{1," + (lineSize-1) + "}\\b\\W?");
+        Matcher m = p.matcher(msg);
+
+        while(m.find()) {
+                System.out.println(m.group().trim());   // Debug
+                res.add(m.group());
+        }
+        return res;
+    }
 
 	public static boolean targetIsChannel(String target) {
 		if (target.contains("#"))
