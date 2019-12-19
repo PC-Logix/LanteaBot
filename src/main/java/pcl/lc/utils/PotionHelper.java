@@ -158,14 +158,14 @@ public class PotionHelper {
 		else
 			itemName = item.getNameRaw();
 
-		Pattern dodgePattern = Pattern.compile("\\{dodge:(\\d+):(\\d+d\\d+)}");
-		Matcher dodgeMatcher = dodgePattern.matcher(effect);
-		if (dodgeMatcher.find()) {
+		Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d+d\\d+)}");
+		Matcher evadeMatcher = evadePattern.matcher(effect);
+		if (evadeMatcher.find()) {
 			DiceRoll roll = new DiceRoll(1, 20);
-			String dodge = "{user} fails to dodge and takes " + dodgeMatcher.group(2) + " damage.";
-			if (roll.getSum() >= Integer.parseInt(dodgeMatcher.group(1)))
-				dodge = "{user} successfully dodged it!";
-			effect = Helper.replaceSubstring(effect, dodge, dodgeMatcher.start(), dodgeMatcher.end());
+			String evade = "{user} fails to evade and takes " + evadeMatcher.group(2) + " damage.";
+			if (roll.getSum() >= Integer.parseInt(evadeMatcher.group(1)))
+				evade = "{user} successfully evaded it!";
+			effect = Helper.replaceSubstring(effect, evade, evadeMatcher.start(), evadeMatcher.end());
 		}
 
 		effect = DiceRoll.rollDiceInString(effect, true);

@@ -196,7 +196,7 @@ public class DrinkPotion extends AbstractListener {
 		// {transformations2_p}    		- Same as above but with appropriate prefix appended before
 		// {limit}                 		- A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
 		// {r:[min]-{max]:[unit]}  		- Produces a random int within the range specified suffixed by the specified unit
-		// {dodge:<DC>:<damage(ex 1d4)> - Calls for a dodge check against <DC> and either returns "{user} dodges successfully!" or "{user} fails to dodge and takes <damage> damage."
+		// {evade:<DC>:<damage(ex 1d4)> - Calls for an evade check against <DC> and either returns "{user} evades successfully!" or "{user} fails to evade and takes <damage> damage."
 		// {junk}						- A random garbage item from Helper all lower case with no prefix
 		// {junk_p}						- A random garbage item from Helper all lower case with prefix
 		effects.add(new String[] {"{user} looks confused as nothing happens."});
@@ -363,10 +363,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"Wheels are briefly square."});
 		effects.add(new String[] {"{user} hears a train whistle in the distance."});
 		effects.add(new String[] {"The next glass of water {user} has tastes like {appearance}."});
-		effects.add(new String[] {"As {user} drinks the potion they become the target of a wad of llama spit! {dodge:12:1d4}",
-				"As the potion hits {user} they become the target of a wad of llama spit! {dodge:12:1d4}"});
+		effects.add(new String[] {"As {user} drinks the potion they become the target of a wad of llama spit! {evade:12:1d4}",
+				"As the potion hits {user} they become the target of a wad of llama spit! {evade:12:1d4}"});
 		effects.add(new String[] {"As {user} drinks the potion they seem to have become magnetic and {junk_p} flies towards them! {dodge:14:1d6}",
-				"As the potion hits {user} they seem to have become magnetic and {junk_p} flies towards them! {dodge:14:1d6}"});
+				"As the potion hits {user} they seem to have become magnetic and {junk_p} flies towards them! {evade:14:1d6}"});
+		effects.add(new String[] {"A swinging blade comes flying towards {user} from nowhere! {evade:16:1d8}"});
+		effects.add(new String[] {"A trapdoor suddenly opens up under {user}! There are spikes at the bottom. [evade:15:1d6}"});
+		effects.add(new String[] {"A giant boulder is rolling towards {user}! [evade:15:1d6}"});
 
 		//Never end with punctuation and always start with a space
 		//See above for valid tags
