@@ -334,14 +334,15 @@ public class Helper {
 			targetUser = Helper.antiPing(targetUser) + ": ";
 		else
 			targetUser = "";
+		int messageLimit = 320; // Max message length before it's returned as a paste or split
 		message = StringUtils.strip(message);
-		if (message.length() > 320 && !overridePaste) {
+		if (message.length() > messageLimit && !overridePaste) {
 			String pasteURL = PasteUtils.paste(message, format);
 			IRCBot.bot.sendIRC().message(target, targetUser + "Message too long to send to channel " + pasteURL);
 			IRCBot.log.info("--> " +  target + " " + targetUser.replaceAll("\\p{C}", "") + " Message too long to send to channel " + pasteURL);
 		} else {
-			if (message.length() > 320) {
-				List<String> messages = splitString(message, 320);
+			if (message.length() > messageLimit) {
+				List<String> messages = splitString(message, messageLimit);
 				for (String temp : messages) {
 					IRCBot.bot.sendIRC().message(target, temp);
 				}
