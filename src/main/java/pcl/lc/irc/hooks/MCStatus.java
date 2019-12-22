@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -44,16 +45,20 @@ public class MCStatus extends ListenerAdapter {
 					URL url = new URL("http://status.mojang.com/check");
 					JSONTokener tokener = null;
 					try {
-						tokener = new JSONTokener(url.openStream());
+				        URLConnection hc = url.openConnection();
+				        hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+
+						tokener = new JSONTokener(hc.getInputStream());
 						JSONArray root = new JSONArray(tokener);
-						String message = "";
+						System.out.println(root);
+						String message = Colors.NORMAL;
 						message = message + "Website: "			+ isUp(root.getJSONObject(0).getString("minecraft.net")) + " ";
 						message = message + "Session: "			+ isUp(root.getJSONObject(1).getString("session.minecraft.net")) + " ";
 						message = message + "Account: "			+ isUp(root.getJSONObject(2).getString("account.mojang.com")) + " ";
 						message = message + "Auth: "			+ isUp(root.getJSONObject(3).getString("authserver.mojang.com")) + " ";
 						message = message + "API: " 			+ isUp(root.getJSONObject(5).getString("api.mojang.com")) + " ";
-						message = message + "Session Server: " 	+ isUp(root.getJSONObject(6).getString("sessionserver.mojang.com")) + " ";
-						message = message + "Textures: " 		+ isUp(root.getJSONObject(8).getString("textures.minecraft.net")) + " ";
+						message = message + "Session Server: " 	+ isUp(root.getJSONObject(4).getString("sessionserver.mojang.com")) + " ";
+						message = message + "Textures: " 		+ isUp(root.getJSONObject(6).getString("textures.minecraft.net")) + " ";
 						event.respond(message);
 					} catch (IOException ex) {
 						event.respond("Server returned an error " + ex);
