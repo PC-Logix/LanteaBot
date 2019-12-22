@@ -153,6 +153,7 @@ public class PotionHelper {
 		String turn_appearance = PotionHelper.getAppearance().turnsTo();
 		String replace_consistency = PotionHelper.getConsistency().getName();
 		String replace_consistency_prefix = PotionHelper.getConsistency().getName(true);
+		String limit = PotionHelper.getLimit();
 
 		Item item = Inventory.getRandomItem();
 		String itemName;
@@ -194,6 +195,7 @@ public class PotionHelper {
 				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{junk}", Helper.getRandomGarbageItem(false, true))
-				.replace("{junk_p)", Helper.getRandomGarbageItem(true, true));
+				.replace("{junk_p)", Helper.getRandomGarbageItem(true, true))
+				.replace("{limit}", limit);
 	}
 }
