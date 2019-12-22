@@ -134,13 +134,17 @@ public class PotionHelper {
 		return -1;
 	}
 
+	public static String replaceParamsInEffectString(String effect) {
+		return replaceParamsInEffectString(effect, null);
+	}
+
 	/**
 	 * @param effect The effect string to replace {user} and {trigger} tags within
 	 * @param targetName The name of the target of the effect
 	 * @return Returns the effect string with name inserted
 	 */
 	public static String replaceParamsInEffectString(String effect, String targetName) {
-		return replaceParamsInEffectString(effect, targetName, "");
+		return replaceParamsInEffectString(effect, targetName, null);
 	}
 
 	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
@@ -149,7 +153,6 @@ public class PotionHelper {
 		String turn_appearance = PotionHelper.getAppearance().turnsTo();
 		String replace_consistency = PotionHelper.getConsistency().getName();
 		String replace_consistency_prefix = PotionHelper.getConsistency().getName(true);
-		String limit = PotionHelper.getLimit();
 
 		Item item = Inventory.getRandomItem();
 		String itemName;
@@ -170,8 +173,13 @@ public class PotionHelper {
 
 		effect = DiceRoll.rollDiceInString(effect, true);
 
-		return effect.replaceAll("\\{user}", targetName)
-				.replaceAll("\\{trigger}", triggererName)
+		if (targetName != null)
+			effect = effect.replaceAll("\\{user}", targetName);
+
+		if (triggererName != null)
+			effect = effect.replaceAll("\\{trigger}", triggererName);
+
+		return effect
                 .replace("{item}", itemName)
                 .replace("{appearance}", replace_appearance)
 				.replace("{appearance_p}", replace_appearance_prefix)
@@ -186,7 +194,6 @@ public class PotionHelper {
 				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{junk}", Helper.getRandomGarbageItem(false, true))
-				.replace("{junk_p)", Helper.getRandomGarbageItem(true, true))
-				.replace("{limit}", limit);
+				.replace("{junk_p)", Helper.getRandomGarbageItem(true, true));
 	}
 }

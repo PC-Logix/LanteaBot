@@ -80,6 +80,8 @@ public class PotionEntry {
 				if (effectp == null)
 				    effectp = DrinkPotion.effects.get(effect)[0];
 
+				effectp = PotionHelper.replaceParamsInEffectString(effectp);
+
 				try {
 					Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
 					Matcher matcher = pattern.matcher(effectp);
