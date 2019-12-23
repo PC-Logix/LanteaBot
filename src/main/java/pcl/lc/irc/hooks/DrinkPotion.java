@@ -379,14 +379,15 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until their next sip of water");
 		limits.add(" until the next time they hug someone");
 		limits.add(" until they say the word \"Blatherskite\"");
-		limits.add(" until they leave the computer");
+		limits.add(" until they exit the room");
 		limits.add(" until they see a bird");
 		limits.add(" for {r:1-10:moon}");
 		limits.add(" until Sozin's Comet returns");
 		limits.add(" until they see a unicorn");
-		limits.add(" until they find true love");
 		limits.add(" until they see a star fall");
 		limits.add(" until they eat a pie");
+		limits.add(" until they have an apple");
+		limits.add(" until they have a nap");
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		specialFluids.put("water", new ArrayList<>(Arrays.asList(
