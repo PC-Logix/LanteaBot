@@ -195,7 +195,7 @@ public class PotionHelper {
 				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{junk}", Helper.getRandomGarbageItem(false, true))
-				.replace("{junk_p)", Helper.getRandomGarbageItem(true, true))
+				.replace("{junk_p}", Helper.getRandomGarbageItem(true, true))
 				.replace("{limit}", limit);
 	}
 }

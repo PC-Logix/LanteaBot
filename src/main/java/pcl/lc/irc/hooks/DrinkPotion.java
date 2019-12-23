@@ -365,11 +365,11 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"The next glass of water {user} has tastes like {appearance}."});
 		effects.add(new String[] {"As {user} drinks the potion they become the target of a wad of llama spit! {evade:12:1d4}",
 				"As the potion hits {user} they become the target of a wad of llama spit! {evade:12:1d4}"});
-		effects.add(new String[] {"As {user} drinks the potion they seem to have become magnetic and {junk_p} flies towards them! {dodge:14:1d6}",
+		effects.add(new String[] {"As {user} drinks the potion they seem to have become magnetic and {junk_p} flies towards them! {evade:14:1d6}",
 				"As the potion hits {user} they seem to have become magnetic and {junk_p} flies towards them! {evade:14:1d6}"});
 		effects.add(new String[] {"A swinging blade comes flying towards {user} from nowhere! {evade:16:1d8}"});
-		effects.add(new String[] {"A trapdoor suddenly opens up under {user}! There are spikes at the bottom. [evade:15:1d6}"});
-		effects.add(new String[] {"A giant boulder is rolling towards {user}! [evade:15:1d6}"});
+		effects.add(new String[] {"A trapdoor suddenly opens up under {user}! There are spikes at the bottom. {evade:15:1d6}"});
+		effects.add(new String[] {"A giant boulder is rolling towards {user}! {evade:15:1d6}"});
 
 		//Never end with punctuation and always start with a space
 		//See above for valid tags
