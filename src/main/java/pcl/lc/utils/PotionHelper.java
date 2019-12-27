@@ -60,7 +60,7 @@ public class PotionHelper {
 		string = Helper.reverseString(string).toLowerCase();
 		System.out.println(string);
 		for (AppearanceEntry c : DrinkPotion.appearanceEntries) {
-			if (string.contains(c.Name))
+			if (string.contains(c.getName(false, true)))
 				return c;
 		}
 		return null;
@@ -74,7 +74,7 @@ public class PotionHelper {
 		string = Helper.reverseString(string).toLowerCase();
 		System.out.println(string);
 		for (AppearanceEntry c : DrinkPotion.consistencies) {
-			if (string.contains(c.getName().toLowerCase()))
+			if (string.contains(c.getName(false, true)))
 				return c;
 		}
 		return null;
