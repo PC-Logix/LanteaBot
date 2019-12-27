@@ -424,7 +424,7 @@ public class DrinkPotion extends AbstractListener {
 			    try {
 			    	if (params.size() == 0 || params.get(0).equals("random")) {
 						potion = PotionHelper.getRandomPotion();
-						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffect(nick).toString(), nick));
+						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffect(nick).toString(), nick));
 						return;
 					} else if (params.get(0).equals("^")) {
 						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
