@@ -412,10 +412,10 @@ public class Inventory extends AbstractListener {
 						else if (result.getBoolean(4) || result.getInt(3) == -1)
 							return "watches the summoning fizzle";
 						else {
-							Inventory.removeItem(new Item(item));
+							Inventory.removeItem(new Item(item, true));
 							Item has_blob = null;
 							try {
-								has_blob = new Item("Massive Blob");
+								has_blob = new Item("Massive Blob", true);
 							} catch (Exception ignored) {
 								System.out.println("No blob found");
 							}
@@ -473,9 +473,7 @@ public class Inventory extends AbstractListener {
 				item = item.replaceAll(" ?\\(\\*\\)", ""); //Replace any (*) to prevent spoofing preserved item marks
 				String itemEscaped = StringEscapeUtils.escapeHtml4(item);
 				addItem.setString(1, itemEscaped);
-				int length_penalty = item.length() / 20; //this is the length where the bonus turns into a penalty
-				int actual_penalty = (int) ((length_penalty < 1) ? 5 - Math.floor(length_penalty * 5) : -Math.floor(length_penalty));
-				int uses = Math.max(1, (Helper.getRandomInt(1, 4) + actual_penalty));
+				int uses = getUsesFromName(item);
 				addItem.setInt(2, uses);
 				addItem.setInt(3, (favourite) ? 1 : 0);
 				if (added_by != null)
@@ -619,6 +617,12 @@ public class Inventory extends AbstractListener {
 			}
 		}
 		return ((found_prefix && !no_prefix) ? "the " : "") + StringEscapeUtils.unescapeHtml4(item);
+	}
+
+	public static int getUsesFromName(String name) {
+		int length_penalty = name.length() / 20; //this is the length where the bonus turns into a penalty
+		int actual_penalty = (int) ((length_penalty < 1) ? 5 - Math.floor(length_penalty * 5) : -Math.floor(length_penalty));
+		return Math.max(1, (Helper.getRandomInt(1, 4) + actual_penalty));
 	}
 
 	public String chan;

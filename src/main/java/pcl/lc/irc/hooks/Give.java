@@ -42,7 +42,7 @@ public class Give extends AbstractListener {
 						item = Inventory.getRandomItem(false);
 					} else
 						try {
-							item = new Item(StringEscapeUtils.escapeHtml4(item_name));
+							item = new Item(StringEscapeUtils.escapeHtml4(item_name), true);
 						} catch (Exception e) {
 							item = null;
 						}

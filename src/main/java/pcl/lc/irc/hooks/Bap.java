@@ -26,26 +26,41 @@ public class Bap extends AbstractListener {
 		local_command = new Command("bap", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.length() > 0) {
+				if (params.length() == 0)
+					Helper.sendAction(target, "flails at the darkness");
+				else {
+					String[] split = params.split(" with ");
+					String bapTarget = split[0].trim();
+					String with = null;
+					if (split.length > 1)
+						with = split[1].trim();
+
 					if (Helper.doInteractWith(params)) {
-						Item item = Inventory.getRandomItem(false);
+						Item item = null;
+						if (with == null)
+							item = Inventory.getRandomItem(false);
+						else {
+							try {
+								item = new Item(with, false);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
 						if (item != null)
-							if (nick.equals(params))
+							if (nick.equals(bapTarget))
 								Helper.sendAction(target, nick + " baps themselves with " + item.getName(true) + "!");
 							else
-								Helper.sendAction(target, nick + " baps " + params + " with " + item.getName(true) + "!");
+								Helper.sendAction(target, nick + " baps " + bapTarget + " with " + item.getName(true) + "!");
 						else {
-							if (nick.equals(params))
-								Helper.sendAction(target, nick + "baps themselves!");
+							if (nick.equals(bapTarget))
+								Helper.sendAction(target, nick + " baps themselves!");
 							else
-								Helper.sendAction(target, nick + "baps " + params + "!");
+								Helper.sendAction(target, nick + " baps " + bapTarget + "!");
 						}
 					} else {
 						Helper.sendAction(target, "smacks " + nick + "!");
 					}
 				}
-				else
-					Helper.sendAction(target, "flails at the darkness");
 			}
 		};
 		local_command.setHelpText("Bap a fool harmlessly");

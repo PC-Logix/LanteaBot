@@ -52,20 +52,30 @@ public class Attack extends AbstractListener {
 				try
 				{
 					String method = params.remove(0);
+					if (!actions.containsKey(method.toLowerCase())) {
+						Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
+						return;
+					}
+
 					String message = "";
 					for (String aParam : params)
 					{
 						message += " " + aParam;
 					}
 
-					if (!actions.containsKey(method.toLowerCase())) {
-						Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
-						return;
-					}
+					String[] split = message.trim().split("with");
+					String attackTarget = split[0].trim();
+					String with = null;
+					if (split.length > 1)
+						with = split[1].trim();
 
 					Item item = null;
-					if (!actions.get(method.toLowerCase()).equals(actions.get(BITE))) //Don't get item on bite attack
-						item = Inventory.getRandomItem(false);
+					if (!actions.get(method.toLowerCase()).equals(actions.get(BITE))) { //Don't get item on bite attack
+						if (with == null)
+							item = Inventory.getRandomItem(false);
+						else
+							item = new Item(with, false);
+					}
 
 					String dust = "";
 					if (item != null) {
@@ -75,8 +85,6 @@ public class Attack extends AbstractListener {
 					}
 
 					//action = Helper.getRandomInt(0, actions.size() - 1);
-
-					String attackTarget = message.trim();
 
 					if (attackTarget.equals(""))
 						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));

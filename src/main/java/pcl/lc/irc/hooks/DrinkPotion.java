@@ -484,7 +484,7 @@ public class DrinkPotion extends AbstractListener {
                     if (params.length() == 0) {
                         Helper.sendMessage(target, "Try " + Config.commandprefix + this.getCommand() + " <target>[ with <potion>]");
                     } else {
-                    	String[] split = params.split("with");
+                    	String[] split = params.split(" with ");
 
                     	String splashTarget;
                     	String potionString = null;

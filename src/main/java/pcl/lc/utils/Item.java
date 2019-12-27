@@ -1,10 +1,12 @@
 package pcl.lc.utils;
 
 import com.google.api.client.util.DateTime;
+import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.hooks.Inventory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 /**
  * Item class
@@ -22,21 +24,31 @@ public class Item {
 	private String owner;
 	private boolean cursed;
 
-	public Item(String name) throws Exception {
-		PreparedStatement statement = Database.getPreparedStatement("getItemByName");
-		statement.setString(1, name);
-		ResultSet resultSet = statement.executeQuery();
-		if (resultSet.next()) {
-			this.id = resultSet.getInt(1);
-			this.name = resultSet.getString(2);
-			this.uses_left = resultSet.getInt(3);
-			this.is_favourite = resultSet.getBoolean(4);
-			this.added_by = resultSet.getString(5);
-			this.added = resultSet.getInt(6);
-			this.owner = resultSet.getString(7);
-			this.cursed = resultSet.getBoolean(8);
+	public Item(String name, boolean lookup) throws Exception {
+		if (lookup) {
+			PreparedStatement statement = Database.getPreparedStatement("getItemByName");
+			statement.setString(1, name);
+			ResultSet resultSet = statement.executeQuery();
+			if (resultSet.next()) {
+				this.id = resultSet.getInt(1);
+				this.name = resultSet.getString(2);
+				this.uses_left = resultSet.getInt(3);
+				this.is_favourite = resultSet.getBoolean(4);
+				this.added_by = resultSet.getString(5);
+				this.added = resultSet.getInt(6);
+				this.owner = resultSet.getString(7);
+				this.cursed = resultSet.getBoolean(8);
+			} else {
+				throw new Exception("No item '" + name + "' found");
+			}
 		} else {
-			throw new Exception("No item '" + name + "' found");
+			this.name = name;
+			this.uses_left = Inventory.getUsesFromName(name);
+			this.is_favourite = false;
+			this.added_by = "";
+			this.added = (int) new Timestamp(System.currentTimeMillis()).getTime();
+			this.owner = IRCBot.getOurNick();
+			this.cursed = false;
 		}
 	}
 
