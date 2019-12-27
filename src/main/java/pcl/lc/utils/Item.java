@@ -24,6 +24,10 @@ public class Item {
 	private String owner;
 	private boolean cursed;
 
+	public Item(String name) throws Exception {
+		this(name, true);
+	}
+
 	public Item(String name, boolean lookup) throws Exception {
 		if (lookup) {
 			PreparedStatement statement = Database.getPreparedStatement("getItemByName");

@@ -63,7 +63,7 @@ public class Attack extends AbstractListener {
 						message += " " + aParam;
 					}
 
-					String[] split = message.trim().split("with");
+					String[] split = message.trim().split(" with ", 2);
 					String attackTarget = split[0].trim();
 					String with = null;
 					if (split.length > 1)

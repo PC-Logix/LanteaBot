@@ -29,7 +29,7 @@ public class Bap extends AbstractListener {
 				if (params.length() == 0)
 					Helper.sendAction(target, "flails at the darkness");
 				else {
-					String[] split = params.split(" with ");
+					String[] split = params.split(" with ", 2);
 					String bapTarget = split[0].trim();
 					String with = null;
 					if (split.length > 1)

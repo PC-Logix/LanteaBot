@@ -31,10 +31,35 @@ public class Pet extends AbstractListener {
 
 		local_command = new Command("pet", 0) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				try
-				{
-					Item item = Inventory.getRandomItem(false);
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (params.length() == 0) {
+					Helper.sendAction(target, nick + " flails at nothingness...");
+					return;
+				} else {
+					String[] split = params.split(" with ", 2);
+					String petTarget = split[0].trim();
+					String with = null;
+					if (split.length > 1)
+						with = split[1].trim();
+					System.out.println("0:" + split[0]);
+					System.out.println("1:" + split[1]);
+
+					if (nick.equals(petTarget)) {
+						Helper.sendMessage(target,"Don't pet yourself in public.", nick);
+						return;
+					}
+
+					Item item = null;
+					try {
+						if (with != null)
+							item = new Item(with, false);
+						else
+							item = Inventory.getRandomItem();
+					} catch (Exception e) {
+						Helper.sendMessage(target, "I think something went wrong...");
+						e.printStackTrace();
+					}
+
 					String dust = "";
 					if (item != null) {
 						dust = item.decrementUses(false, true, true);
@@ -42,36 +67,24 @@ public class Pet extends AbstractListener {
 							dust = " " + dust;
 					}
 
-					String petTarget = String.join(" ", params);
-
 					String[] keys = actions.keySet().toArray(new String[0]);
 					ActionType petAction = actions.get(keys[Helper.getRandomInt(0, keys.length - 1)]);
 
 //					DiceRoll roll = Helper.rollDice(Math.max(1, (item != null ? item.getUsesLeft() : 1) / 2) + "d4").getFirstGroupOrNull();
 
-					if (petTarget.equals(""))
-						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					 else if (nick.equals(petTarget)) {
-						 Helper.sendMessage(target,"Don't pet yourself in public.", nick);
-					} else {
-						DiceRollResult heal;
-						if (item != null) {
-							heal = item.getHealing();
-							heal.bonus = DiceRollBonusCollection.getHealingItemBonus(item);
-						} else
-							heal = Item.getGenericRoll(1, 4, new DiceRollBonusCollection());
-						String healString = heal.getResultString();
-						if (healString == null)
-							healString = "no hit points";
-						else
-							healString += " hit points";
-						Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + "!" + dust);
-//						Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);
-					}
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
+					DiceRollResult heal;
+					if (item != null) {
+						heal = item.getHealing();
+						heal.bonus = DiceRollBonusCollection.getHealingItemBonus(item);
+					} else
+						heal = Item.getGenericRoll(1, 4, new DiceRollBonusCollection());
+					String healString = heal.getResultString();
+					if (healString == null)
+						healString = "no hit points";
+					else
+						healString += " hit points";
+					Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + "!" + dust);
+//					Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);
 				}
 			}
 		};
