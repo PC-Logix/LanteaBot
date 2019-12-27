@@ -54,133 +54,136 @@ public class DrinkPotion extends AbstractListener {
 		IRCBot.registerCommand(discovered);
 		IRCBot.registerCommand(splash);
 
-		appearanceEntries.add(new AppearanceEntry("blue", "a"));
-		appearanceEntries.add(new AppearanceEntry("red", "a"));
-		appearanceEntries.add(new AppearanceEntry("röd", "a"));
-		appearanceEntries.add(new AppearanceEntry("rød", "a"));
-		appearanceEntries.add(new AppearanceEntry("yellow", "a"));
-		appearanceEntries.add(new AppearanceEntry("purple", "a"));
-		appearanceEntries.add(new AppearanceEntry("green", "a"));
-		appearanceEntries.add(new AppearanceEntry("cyan", "a"));
-		appearanceEntries.add(new AppearanceEntry("tan", "a"));
-		appearanceEntries.add(new AppearanceEntry("black", "a"));
-		appearanceEntries.add(new AppearanceEntry("white", "a"));
-		appearanceEntries.add(new AppearanceEntry("pink", "a"));
-		appearanceEntries.add(new AppearanceEntry("metal", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("copper", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("iron", "an", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("stainless steel", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("aluminium", "an", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("titanium", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("adamantium", "an", "{appearance} colored {item}", "the color of {appearance}")); // Marvel universe
-		appearanceEntries.add(new AppearanceEntry("unobtanium", "an", "{appearance} colored {item}", "the color of {appearance}")); // Avatar
-		appearanceEntries.add(new AppearanceEntry("tiberium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Command & Conquer
-		appearanceEntries.add(new AppearanceEntry("caterium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Satisfactory
-		appearanceEntries.add(new AppearanceEntry("aether", "an", "{appearance} colored {item}", "the color of {appearance}")); // Magic: The Gathering
-		appearanceEntries.add(new AppearanceEntry("bavarium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Just Cause 3
-		appearanceEntries.add(new AppearanceEntry("bombastium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Disney
-		appearanceEntries.add(new AppearanceEntry("dalekanium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Doctor Who
-		appearanceEntries.add(new AppearanceEntry("dilithium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Star Trek
-		appearanceEntries.add(new AppearanceEntry("jumbonium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Futurama
-		appearanceEntries.add(new AppearanceEntry("naqahdah", "a", "{appearance} colored {item}", "the color of {appearance}")); // Stargate
-		appearanceEntries.add(new AppearanceEntry("octiron", "an", "{appearance} colored {item}", "the color of {appearance}")); // Discworld
-		appearanceEntries.add(new AppearanceEntry("redstone", "a", "{appearance} colored {item}", "the color of {appearance}")); // Minecraft
-		appearanceEntries.add(new AppearanceEntry("ruby", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("emerald", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("sapphire", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("amethyst", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("diamond", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("spice", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("radiation", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("gold", "a", "{appearance} colored {item}"));
-		appearanceEntries.add(new AppearanceEntry("silver", "a", "{appearance} colored {item}"));
-		appearanceEntries.add(new AppearanceEntry("tomato", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("lime", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("citrus", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("strawberry", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("chocolate", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("orange", "an"));
-		appearanceEntries.add(new AppearanceEntry("tuna", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("salmon", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("rainbow", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("void", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("ocean", "an", "{appearance} colored {item}", "the color of the {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("grass", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("sky", "a", "{appearance} colored {item}", "the color of the {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("rock", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("aqua", "an", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("dirt", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("quicksilver", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("coral", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("transparent", "a", "{appearance} {item}", "{appearance}"));
-		appearanceEntries.add(new AppearanceEntry("water", "a", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("weather", "a"));
-		appearanceEntries.add(new AppearanceEntry("aegisalt", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
-		appearanceEntries.add(new AppearanceEntry("cerulium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
-		appearanceEntries.add(new AppearanceEntry("ferozium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
-		appearanceEntries.add(new AppearanceEntry("moonstone", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
-		appearanceEntries.add(new AppearanceEntry("rubium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
-		appearanceEntries.add(new AppearanceEntry("solarium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
-		appearanceEntries.add(new AppearanceEntry("violium", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
-		appearanceEntries.add(new AppearanceEntry("automato", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("avesmingo", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("boneboo", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("coralcreep", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("currentcorn", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("oculemon", "an", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("pearlpeas", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("pussplum", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("toxictop", "a", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
-		appearanceEntries.add(new AppearanceEntry("violet", "a"));
-		appearanceEntries.add(new AppearanceEntry("crimson", "a"));
-		appearanceEntries.add(new AppearanceEntry("grathnode", "a", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
+		appearanceEntries.add(new AppearanceEntry("Blue", "A"));
+		appearanceEntries.add(new AppearanceEntry("Red", "A"));
+		appearanceEntries.add(new AppearanceEntry("Röd", "A"));
+		appearanceEntries.add(new AppearanceEntry("Rød", "A"));
+		appearanceEntries.add(new AppearanceEntry("Yellow", "A"));
+		appearanceEntries.add(new AppearanceEntry("Purple", "A"));
+		appearanceEntries.add(new AppearanceEntry("Green", "A"));
+		appearanceEntries.add(new AppearanceEntry("Cyan", "A"));
+		appearanceEntries.add(new AppearanceEntry("Tan", "A"));
+		appearanceEntries.add(new AppearanceEntry("Black", "A"));
+		appearanceEntries.add(new AppearanceEntry("White", "A"));
+		appearanceEntries.add(new AppearanceEntry("Pink", "A"));
+		appearanceEntries.add(new AppearanceEntry("Metal", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Copper", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Iron", "An", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Stainless steel", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Aluminium", "An", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Titanium", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Adamantium", "An", "{appearance} colored {item}", "the color of {appearance}")); // Marvel universe
+		appearanceEntries.add(new AppearanceEntry("Unobtanium", "An", "{appearance} colored {item}", "the color of {appearance}")); // Avatar
+		appearanceEntries.add(new AppearanceEntry("Tiberium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Command & Conquer
+		appearanceEntries.add(new AppearanceEntry("Caterium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Satisfactory
+		appearanceEntries.add(new AppearanceEntry("Aether", "An", "{appearance} colored {item}", "the color of {appearance}")); // Magic: The Gathering
+		appearanceEntries.add(new AppearanceEntry("Bavarium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Just Cause 3
+		appearanceEntries.add(new AppearanceEntry("Bombastium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Disney
+		appearanceEntries.add(new AppearanceEntry("Dalekanium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Doctor Who
+		appearanceEntries.add(new AppearanceEntry("Dilithium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Star Trek
+		appearanceEntries.add(new AppearanceEntry("Jumbonium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Futurama
+		appearanceEntries.add(new AppearanceEntry("Naqahdah", "A", "{appearance} colored {item}", "the color of {appearance}")); // Stargate
+		appearanceEntries.add(new AppearanceEntry("Octiron", "An", "{appearance} colored {item}", "the color of {appearance}")); // Discworld
+		appearanceEntries.add(new AppearanceEntry("Redstone", "A", "{appearance} colored {item}", "the color of {appearance}")); // Minecraft
+		appearanceEntries.add(new AppearanceEntry("Ruby", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Emerald", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Sapphire", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Amethyst", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Diamond", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Spice", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Radiation", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Gold", "A", "{appearance} colored {item}"));
+		appearanceEntries.add(new AppearanceEntry("Silver", "A", "{appearance} colored {item}"));
+		appearanceEntries.add(new AppearanceEntry("Tomato", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Lime", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Citrus", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Strawberry", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Chocolate", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Orange", "An"));
+		appearanceEntries.add(new AppearanceEntry("Tuna", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Salmon", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Rainbow", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Void", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Ocean", "An", "{appearance} colored {item}", "the color of the {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Grass", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Sky", "A", "{appearance} colored {item}", "the color of the {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Rock", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Aqua", "An", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Dirt", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Quicksilver", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Coral", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Transparent", "A", "{appearance} {item}", "{appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Water", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Weather", "A"));
+		appearanceEntries.add(new AppearanceEntry("Aegisalt", "An", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("Cerulium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("Ferozium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("Moonstone", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("Rubium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("Solarium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("Violium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound
+		appearanceEntries.add(new AppearanceEntry("Automato", "An", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Avesmingo", "An", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Boneboo", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Coralcreep", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Currentcorn", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Oculemon", "An", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Pearlpeas", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Pussplum", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Toxictop", "A", "{appearance} colored {item}", "the color of {appearance}")); // Starbound (food)
+		appearanceEntries.add(new AppearanceEntry("Violet", "A"));
+		appearanceEntries.add(new AppearanceEntry("Crimson", "A"));
+		appearanceEntries.add(new AppearanceEntry("Grathnode", "A", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
 
-		consistencies.add(new AppearanceEntry("viscous", "a"));
-		consistencies.add(new AppearanceEntry("cloudy", "a"));
-		consistencies.add(new AppearanceEntry("fluffy", "a"));
-		consistencies.add(new AppearanceEntry("thick", "a"));
-		consistencies.add(new AppearanceEntry("smelly", "a"));
-		consistencies.add(new AppearanceEntry("fragrant", "a"));
-		consistencies.add(new AppearanceEntry("light", "a"));
-		consistencies.add(new AppearanceEntry("shiny", "a"));
-		consistencies.add(new AppearanceEntry("porous", "a"));
-		consistencies.add(new AppearanceEntry("ripe", "a"));
-		consistencies.add(new AppearanceEntry("muddy", "a"));
-		consistencies.add(new AppearanceEntry("shimmering", "a"));
-		consistencies.add(new AppearanceEntry("gloomy", "a"));
-		consistencies.add(new AppearanceEntry("prickly", "a"));
-		consistencies.add(new AppearanceEntry("sour", "a"));
-		consistencies.add(new AppearanceEntry("salty", "a"));
-		consistencies.add(new AppearanceEntry("sweet", "a"));
-		consistencies.add(new AppearanceEntry("runny", "a"));
-		consistencies.add(new AppearanceEntry("boiling", "a"));
-		consistencies.add(new AppearanceEntry("freezing", "a"));
-		consistencies.add(new AppearanceEntry("sedimented", "a"));
-		consistencies.add(new AppearanceEntry("warpy", "a"));
-		consistencies.add(new AppearanceEntry("basic", "a"));
-		consistencies.add(new AppearanceEntry("stirring", "a"));
-		consistencies.add(new AppearanceEntry("bubbly", "a"));
-		consistencies.add(new AppearanceEntry("gloopy", "a"));
-		consistencies.add(new AppearanceEntry("goopy", "a"));
-		consistencies.add(new AppearanceEntry("slimy", "a"));
-		consistencies.add(new AppearanceEntry("solid", "a"));
-		consistencies.add(new AppearanceEntry("molten", "a"));
-		consistencies.add(new AppearanceEntry("fiery", "a"));
-		consistencies.add(new AppearanceEntry("dull", "a"));
-		consistencies.add(new AppearanceEntry("resonating", "a"));
-		consistencies.add(new AppearanceEntry("shining", "a"));
-		consistencies.add(new AppearanceEntry("seeping", "a"));
-		consistencies.add(new AppearanceEntry("smooth", "a"));
-		consistencies.add(new AppearanceEntry("soft", "a"));
-		consistencies.add(new AppearanceEntry("oxidised", "an"));
-		consistencies.add(new AppearanceEntry("mutable", "a"));
-		consistencies.add(new AppearanceEntry("liquid", "a"));
-		consistencies.add(new AppearanceEntry("smelly", "a"));
+		consistencies.add(new AppearanceEntry("Viscous", "A"));
+		consistencies.add(new AppearanceEntry("Cloudy", "A"));
+		consistencies.add(new AppearanceEntry("Fluffy", "A"));
+		consistencies.add(new AppearanceEntry("Thick", "A"));
+		consistencies.add(new AppearanceEntry("Smelly", "A"));
+		consistencies.add(new AppearanceEntry("Fragrant", "A"));
+		consistencies.add(new AppearanceEntry("Light", "A"));
+		consistencies.add(new AppearanceEntry("Shiny", "A"));
+		consistencies.add(new AppearanceEntry("Porous", "A"));
+		consistencies.add(new AppearanceEntry("Ripe", "A"));
+		consistencies.add(new AppearanceEntry("Muddy", "A"));
+		consistencies.add(new AppearanceEntry("Shimmering", "A"));
+		consistencies.add(new AppearanceEntry("Gloomy", "A"));
+		consistencies.add(new AppearanceEntry("Prickly", "A"));
+		consistencies.add(new AppearanceEntry("Sour", "A"));
+		consistencies.add(new AppearanceEntry("Salty", "A"));
+		consistencies.add(new AppearanceEntry("Sweet", "A"));
+		consistencies.add(new AppearanceEntry("Runny", "A"));
+		consistencies.add(new AppearanceEntry("Boiling", "A"));
+		consistencies.add(new AppearanceEntry("Freezing", "A"));
+		consistencies.add(new AppearanceEntry("Sedimented", "A"));
+		consistencies.add(new AppearanceEntry("Warpy", "A"));
+		consistencies.add(new AppearanceEntry("Basic", "A"));
+		consistencies.add(new AppearanceEntry("Stirring", "A"));
+		consistencies.add(new AppearanceEntry("Bubbly", "A"));
+		consistencies.add(new AppearanceEntry("Gloopy", "A"));
+		consistencies.add(new AppearanceEntry("Goopy", "A"));
+		consistencies.add(new AppearanceEntry("Slimy", "A"));
+		consistencies.add(new AppearanceEntry("Solid", "A"));
+		consistencies.add(new AppearanceEntry("Molten", "A"));
+		consistencies.add(new AppearanceEntry("Fiery", "A"));
+		consistencies.add(new AppearanceEntry("Dull", "A"));
+		consistencies.add(new AppearanceEntry("Resonating", "A"));
+		consistencies.add(new AppearanceEntry("Shining", "A"));
+		consistencies.add(new AppearanceEntry("Seeping", "A"));
+		consistencies.add(new AppearanceEntry("Smooth", "A"));
+		consistencies.add(new AppearanceEntry("Soft", "A"));
+		consistencies.add(new AppearanceEntry("Oxidised", "An"));
+		consistencies.add(new AppearanceEntry("Mutable", "A"));
+		consistencies.add(new AppearanceEntry("Liquid", "A"));
+		consistencies.add(new AppearanceEntry("Smelly", "A"));
 
 		//Valid tags: {user}
 		// {appearance}            		- Taken from the appearanceEntries table above
-		// {appearance_p}          		- Same as previous but with appropriate prefix appended before
+		// {appearance_lc}         		- Same as previous but lowercase
+		// {appearance_p}          		- Same as {appearance} but with appropriate prefix appended before
+		// {appearance_p_lc}       		- Same as previous but lowercase
 		// {turn_appearance}       		- Taken from the appearanceEntries table above, but formatted into a 'the color of' string where appropriate
+		// {turn_appearance_lc}    		- Same as previous but lowercase
 		// {appearance:<item>:[p]} 		- Produced a string such as 'coral colored <item>' or 'blue <item>' as appropriate. If p is present the appropriate prefix is appended before
 		// {r:<int>-<int>:[time]}  		- Generates a random int between the provided numbers. If time is not empty it is appended after the number and should be for example 'minute'. Automatically pluralized if needed.
 		// {consistency}           		- Taken from the consistencies table above
@@ -203,24 +206,24 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"{user} turns into {transformation_pc} girl{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_pc} boy{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_p}{limit}."});
-		effects.add(new String[] {"{user} turns into {appearance_p} {transformation} girl{limit}."});
-		effects.add(new String[] {"{user} turns into {appearance_p} {transformation} boy{limit}."});
-		effects.add(new String[] {"{user} turns into {appearance_p} {transformation}{limit}."});
+		effects.add(new String[] {"{user} turns into {appearance_p_lc} {transformation} girl{limit}."});
+		effects.add(new String[] {"{user} turns into {appearance_p_lc} {transformation} boy{limit}."});
+		effects.add(new String[] {"{user} turns into {appearance_p_lc} {transformation}{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_p} {transformation2}{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_p} {transformation2} girl{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_p} {transformation2} boy{limit}."});
-		effects.add(new String[] {"{user} turns into {appearance_p} {transformation} {transformation2}{limit}."});
-		effects.add(new String[] {"{user} turns into {appearance_p} {transformation} {transformation2} girl{limit}."});
-		effects.add(new String[] {"{user} turns into {appearance_p} {transformation} {transformation2} boy{limit}."});
-		effects.add(new String[] {"{user}'s hair turn {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s hair glows {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s skin turn {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s eyes turn {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s nails turn {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s bones turn {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s clothes turn {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s eyes glow {turn_appearance}{limit}."});
-		effects.add(new String[] {"{user}'s skin turn {turn_appearance} but with a {appearance} glow{limit}."});
+		effects.add(new String[] {"{user} turns into {appearance_p_lc} {transformation} {transformation2}{limit}."});
+		effects.add(new String[] {"{user} turns into {appearance_p_lc} {transformation} {transformation2} girl{limit}."});
+		effects.add(new String[] {"{user} turns into {appearance_p_lc} {transformation} {transformation2} boy{limit}."});
+		effects.add(new String[] {"{user}'s hair turn {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s hair glows {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s skin turn {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s eyes turn {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s nails turn {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s bones turn {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s clothes turn {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s eyes glow {turn_appearance_lc}{limit}."});
+		effects.add(new String[] {"{user}'s skin turn {turn_appearance_lc} but with a {appearance} glow{limit}."});
 		effects.add(new String[] {"{user}'s toes turn invisible{limit}."});
 		effects.add(new String[] {"{user}'s hair grows {r:2-4:time} longer{limit}."});
 		effects.add(new String[] {"{user} gains the proportional strength of a {transformation}{limit}."});
@@ -306,19 +309,19 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"A bard starts playing a lute behind {user}. They don't stop."});
 		effects.add(new String[] {"A bard starts playing a lute behind {user}{limit}."});
 		effects.add(new String[] {"The bottle turns into a sword.",
-				"A sword appears next to {user}."});
-		effects.add(new String[] {"The bottle turns into an axe.",
-				"An axe appears next to {user}."});
-		effects.add(new String[] {"The bottle turns into a spear.",
-				"A spear appears next to {user}."});
-		effects.add(new String[] {"The bottle turns into a dagger.",
-				"A dagger appears next to {user}."});
-		effects.add(new String[] {"The bottle turns into a bow.",
-				"A bow appears next to {user}."});
-		effects.add(new String[] {"The bottle turns into a trident.",
-				"A trident appears next to {user}."});
-		effects.add(new String[] {"The bottle turns into a sling.",
-				"A sling appears next to {user}."});
+				"{appearance_p} sword appears next to {user}."});
+		effects.add(new String[] {"The bottle turns into {appearance_p_lc} axe.",
+				"{appearance_p} axe appears next to {user}."});
+		effects.add(new String[] {"The bottle turns into {appearance_p_lc} spear.",
+				"{appearance_p} spear appears next to {user}."});
+		effects.add(new String[] {"The bottle turns into {appearance_p_lc} dagger.",
+				"{appearance_p} dagger appears next to {user}."});
+		effects.add(new String[] {"The bottle turns into {appearance_p_lc} bow.",
+				"{appearance_p} bow appears next to {user}."});
+		effects.add(new String[] {"The bottle turns into {appearance_p_lc} trident.",
+				"{appearance_p} trident appears next to {user}."});
+		effects.add(new String[] {"The bottle turns into {appearance_p_lc} sling.",
+				"{appearance_p} sling appears next to {user}."});
 		effects.add(new String[] {"A genie appears out of the empty bottle, turns it into a pie, then vanishes.",
 				"A genie appears out of the smashed bottle, turns it into a pie, then vanishes."});
 		effects.add(new String[] {"{user} thinks \"What if, like, *we* are the potions man?\". This makes no sense whatsoever."});

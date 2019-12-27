@@ -38,12 +38,18 @@ public class AppearanceEntry {
     }
 
     public String getName() {
-        return getName(false);
+        return getName(false, false);
     }
 
     public String getName(boolean prefix) {
-//        System.out.println("getname: " + Name);
-        return (prefix ? Prefix + " " + Name : Name);
+        return getName(prefix, false);
+    }
+
+    public String getName(boolean prefix, boolean lowercase) {
+        String str = (prefix ? Prefix + " " + Name : Name);
+        if (!lowercase)
+            return str;
+        return str.toLowerCase();
     }
 
     public String appearanceItem(String itemName) {
@@ -58,7 +64,13 @@ public class AppearanceEntry {
     }
 
     public String turnsTo() {
-//        System.out.println("Turntoname: " + Name);
-        return TurnPattern.replace("{appearance}", Name);
+        return turnsTo(false);
+    }
+
+    public String turnsTo(boolean lowercase) {
+        String str = TurnPattern.replace("{appearance}", Name);
+        if (lowercase)
+            return str.toLowerCase();
+        return str;
     }
 }

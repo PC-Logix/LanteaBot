@@ -148,13 +148,6 @@ public class PotionHelper {
 	}
 
 	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
-		String replace_appearance = PotionHelper.getAppearance().getName();
-		String replace_appearance_prefix = PotionHelper.getAppearance().getName(true);
-		String turn_appearance = PotionHelper.getAppearance().turnsTo();
-		String replace_consistency = PotionHelper.getConsistency().getName();
-		String replace_consistency_prefix = PotionHelper.getConsistency().getName(true);
-		String limit = PotionHelper.getLimit();
-
 		Item item = Inventory.getRandomItem();
 		String itemName;
 		if (item == null)
@@ -182,11 +175,16 @@ public class PotionHelper {
 
 		return effect
                 .replace("{item}", itemName)
-                .replace("{appearance}", replace_appearance)
-				.replace("{appearance_p}", replace_appearance_prefix)
-				.replace("{turn_appearance}", turn_appearance)
-				.replace("{consistency}", replace_consistency)
-				.replace("{consistency_p}", replace_consistency_prefix)
+                .replace("{appearance}", PotionHelper.getAppearance().getName(false, false))
+                .replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true))
+				.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false))
+				.replace("{appearance_p_lc}", PotionHelper.getAppearance().getName(true, true))
+				.replace("{turn_appearance}", PotionHelper.getAppearance().turnsTo())
+				.replace("{turn_appearance_lc}", PotionHelper.getAppearance().turnsTo(true))
+				.replace("{consistency}", PotionHelper.getConsistency().getName(false, false))
+				.replace("{consistency_lc}", PotionHelper.getConsistency().getName(false, true))
+				.replace("{consistency_p}", PotionHelper.getConsistency().getName(true, false))
+				.replace("{consistency_p_lc}", PotionHelper.getConsistency().getName(true, true))
 				.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true))
 				.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false, true))
 				.replace("{transformation_pc}", Helper.getRandomTransformation(true, true, false, false))
@@ -196,6 +194,6 @@ public class PotionHelper {
 				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{junk}", Helper.getRandomGarbageItem(false, true))
 				.replace("{junk_p}", Helper.getRandomGarbageItem(true, true))
-				.replace("{limit}", limit);
+				.replace("{limit}", PotionHelper.getLimit());
 	}
 }
