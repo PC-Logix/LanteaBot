@@ -28,8 +28,12 @@ public class DiceRollResult {
     }
 
     public String getResultString() {
+        return getResultString(true);
+    }
+
+    public String getResultString(boolean printBonus) {
         if (diceAmount == 0 || diceSize == 0)
             return null;
-        return diceAmount + "d" + diceSize + (bonus.size() > 0 ? " = " + rollResult + " + (" + bonus + ")" : "") + " = " + getTotal();
+        return diceAmount + "d" + diceSize + (bonus.size() > 0 && printBonus ? " => " + rollResult + " (" + bonus + ") => " + getTotal() : " => " + getTotal());
     }
 }

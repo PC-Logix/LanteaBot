@@ -728,8 +728,12 @@ public class Helper {
 			return ((GenericChannelUserEvent) event).getChannel().getName();
 		return event.getUser().getNick();
 	}
-	
+
 	public static String getRandomUser(GenericMessageEvent event) {
+		return getRandomUser(event, new ArrayList<>());
+	}
+	
+	public static String getRandomUser(GenericMessageEvent event, ArrayList<String> blacklist) {
 		if (event instanceof GenericChannelUserEvent && ((GenericChannelUserEvent) event).getChannel() != null) {
 			Channel channel = ((GenericChannelUserEvent) event).getChannel();
 			int size = channel.getUsersNicks().size();
@@ -737,7 +741,7 @@ public class Helper {
 			int i = 0;
 			for(String obj : channel.getUsersNicks())
 			{
-			    if (i == item)
+			    if (i >= item && !blacklist.contains(obj))
 			        return obj;
 			    i++;
 			}

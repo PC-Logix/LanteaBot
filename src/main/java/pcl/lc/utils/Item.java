@@ -427,7 +427,7 @@ public class Item {
 		if (input.bonus.incapable)
 			return " (Incapable)";
 		if (input.rollResult == input.minValue)
-			return " (Minimum)";
+			return " (min)";
 		return " (" + input.rollResult + (input.bonus.size() < 0 ? "" : "+") + input.bonus + ")";
 	}
 
