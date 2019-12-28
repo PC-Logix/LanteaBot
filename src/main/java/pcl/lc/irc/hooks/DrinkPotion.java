@@ -254,7 +254,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"{user} gains an additional bone."});
 		effects.add(new String[] {"{user} is suddenly more aware of cute things nearby{limit}."});
 		effects.add(new String[] {"{user} loses exactly a handful of luck."});
-		effects.add(new String[] {"{user}'s pockets suddenly contain a number of {appearance:marbles:}."});
+		effects.add(new String[] {"{user}'s pockets suddenly contain 1d10 {appearance:marbles:}."});
 		effects.add(new String[] {"{user}'s favourite hat is suddenly on fire."});
 		effects.add(new String[] {"{user} has a single tear roll down their cheek for some reason."});
 		effects.add(new String[] {"{user}'s nose vanish{limit}."});
@@ -262,10 +262,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"{user} feels a sudden surge of static electricity."});
 		effects.add(new String[] {"{user}'s shoes are now slightly too large{limit}."});
 		effects.add(new String[] {"{user} is now Borg{limit}."});
-		effects.add(new String[] {"{user} has no memory of drinking a potion."});
+		effects.add(new String[] {"{user} has no memory of drinking a potion.",
+                "{user} doesn't remember being splashed."});
 		effects.add(new String[] {"{user} knows the exact location of a particular molecule of oxygen{limit}."});
-		effects.add(new String[] {"{user} thinks the empty bottle is a snake{limit}."});
-		effects.add(new String[] {"{user} gets an urge to have another potion."});
+		effects.add(new String[] {"{user} thinks the empty bottle is a snake{limit}.",
+                "{user} thinks they're being chased by an imaginary snake{limit}"});
+		effects.add(new String[] {"{user} gets an urge to have another potion.",
+                "{user} gets the urge to drink a potion."});
 		effects.add(new String[] {"It tastes sweet.",
 				"It smells like sugar as it sticks to you."});
 		effects.add(new String[] {"It tastes sour.",
@@ -276,7 +279,7 @@ public class DrinkPotion extends AbstractListener {
 				"Nothing in particular happens."});
 		effects.add(new String[] {"{user} feels like one particular wasp has it out for them suddenly."});
 		effects.add(new String[] {"{user} zones out for {r:1-10:minute}."});
-		effects.add(new String[] {"A warp zone opens up next to {user}. (Use " + Config.commandprefix + "warp)"});
+		effects.add(new String[] {"A warp zone opens up next to {user}. (Use " + Config.commandprefix + "warp to jump in)"});
 		effects.add(new String[] {"After the first sip the potion poofs away.",
 				"{user} flinches as the potion is throw but nothing arrives to hit them..."});
 		effects.add(new String[] {"{user} looks up and sees the moon smile at them for a second."});
@@ -285,27 +288,31 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"The next pie {user} eats tastes slightly less good."});
 		effects.add(new String[] {"Sitting down suddenly seems like a really terrible idea."});
 		effects.add(new String[] {"The next fork {user} touches tells them it's most deeply guarded secret."});
-		effects.add(new String[] {"A voice whispers into {user}'s ear \"Drink or be drunk\" as it fades away as they drink the potion.",
-				"A voice whispers a secret into {user}'s ear only they can hear."});
+		effects.add(new String[] {"A voice whispers a secret into {user}'s ear only they can hear."});
 		effects.add(new String[] {"{user} briefly feel like they have just stepped out of a car."});
 		effects.add(new String[] {"True enlightenment can be achieved by drinking another potion.",
 				"{user} feels as if they should drink a potion for some reason."});
 		effects.add(new String[] {"For about a second {user} knows the location of a great treasure."});
 		effects.add(new String[] {"The potion was inside you all along."});
 		effects.add(new String[] {"{user} is suddenly wearings gloves they don't remember putting on."});
+		effects.add(new String[] {"{user} is suddenly wearings a tiny glove on each finger."});
 		effects.add(new String[] {"A sudden craving for soup occupies {user}'s thoughts{limit}."});
 		effects.add(new String[] {"{user} suddenly forgets a random piece of trivia."});
 		effects.add(new String[] {"A {transformation} flies past that vaguely resembles someone {user} knows."});
 		effects.add(new String[] {"{user} reboots for an update for {r:1-10:minute}."});
 		effects.add(new String[] {"Dramatic music briefly plays in the distance."});
 		effects.add(new String[] {"{user} has a feeling that their face just appeared on a random vegetable somewhere."});
-		effects.add(new String[] {"The potion bottle is suddenly on fire!"});
-		effects.add(new String[] {"Once empty the potion bottle fills with a different potion."});
+		effects.add(new String[] {"The potion bottle is suddenly on fire!",
+                "As the potion strikes {user} it bursts into flames!"});
+		effects.add(new String[] {"Once empty the potion bottle fills with a different potion.",
+                "{user} looks confused as nothing seems to happen..."});
 		effects.add(new String[] {"{user} gains the ability to talk to {transformations}{limit}."});
 		effects.add(new String[] {"{user} sees the sky briefly flash solid dark blue then go back to normal."});
-		effects.add(new String[] {"When {user} drinks the last drop, a bucket of water materializes above their head and dumps it contents over them, then vanishes. The water does not."});
+		effects.add(new String[] {"When {user} drinks the last drop, a bucket of water materializes above their head and dumps it contents over them, then vanishes. The water does not.",
+                "A bucket of water materializes above {user}'s head and dumps it contents over them, then vanishes. The water does not."});
 		effects.add(new String[] {"Suddenly there's a swarm of wasps behind {user} that chase them for {r:30-60:second}!"});
-		effects.add(new String[] {"When {user} brings the bottle down they see {appearance:plastic flamingo:p}. It stares into their soul."});
+		effects.add(new String[] {"When {user} brings the bottle down they see {appearance:plastic flamingo:p}. It stares into their soul.",
+                "When {user} turns around they see {appearance:plastic flamingo:p}. It stares into their soul."});
 		effects.add(new String[] {"A bard starts playing a lute behind {user}. They don't stop."});
 		effects.add(new String[] {"A bard starts playing a lute behind {user}{limit}."});
 		effects.add(new String[] {"The bottle turns into a sword.",
@@ -336,6 +343,9 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[] {"A tiny cloud appears with a ridiculous smile on it. It follows {user}{limit}."});
 		effects.add(new String[] {"The potion contained a computer virus! But {user}'s anti-virus routines destroy it."});
 		effects.add(new String[] {"The potion contained a computer virus! It just changed {user}'s background..."});
+		effects.add(new String[] {"The potion contained a computer virus! It sent a message to all your friends telling them that you love them!"});
+		effects.add(new String[] {"The potion contained a computer virus! It changed your theme to one you don't like!"});
+		effects.add(new String[] {"The potion contained a computer virus! You hear a maniacal laugh as your cursor flips upside down!"});
 		effects.add(new String[] {"The bottle splits into two revealing a smaller {consistency} {appearance} potion."});
 		effects.add(new String[] {"A tiny genie appears, gives {user} a thumbs up, and poofs away."});
 		effects.add(new String[] {"{user} feels chill."});
