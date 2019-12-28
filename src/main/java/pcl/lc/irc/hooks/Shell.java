@@ -39,9 +39,23 @@ public class Shell extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();
 
-				Item item = Inventory.getRandomItem(false);
+				String[] split = params.split(" with ", 2);
+				String shellTarget = split[0].trim();
+				String with = null;
+				if (split.length > 1)
+					with = split[1].trim();
+
+				Item item = null;
+				try {
+					if (with == null)
+						item = Inventory.getRandomItem(false);
+					else
+						item = new Item(with, false);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 				if (item != null) {
-					String user = params;
+					String user = shellTarget;
 					String userSecondary = Helper.getRandomUser(event);
 					String userTertiary = Helper.getRandomUser(event);
 					if (user.equals(""))
