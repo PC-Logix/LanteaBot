@@ -95,7 +95,7 @@ public class Shell extends AbstractListener {
 
 						if (hit) {
 							String auxiliary_damage = (dmgString2.equals(dmgString3) ? dmgString2 + " damage each" : dmgString2 + ", and " + dmgString3 + " damage respectively");
-							strike = "It strikes " + shellTarget + ". They take " + dmgString1 + " damage. " + shellTargetSecondary + ", and " + shellTargetTertriary + " stood too close and take " + auxiliary_damage + ".";
+							strike = "It strikes " + shellTarget + ". They take " + dmgString1 + " damage. " + shellTargetSecondary + " and " + shellTargetTertriary + " stood too close and take " + auxiliary_damage + ".";
 						} else {
 							String damage = (dmgString1.equals(dmgString2) && dmgString1.equals(dmgString3) ? dmgString1 + " damage each" : dmgString1 + ", " + dmgString2 + ", and " + dmgString3 + " splash damage respectively");
 							strike = "It strikes the ground near " + shellTarget + ", " + shellTargetSecondary + ", and " + shellTargetTertriary + ". They take " + damage + ".";
