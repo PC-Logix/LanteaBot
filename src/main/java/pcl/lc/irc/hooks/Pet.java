@@ -41,8 +41,6 @@ public class Pet extends AbstractListener {
 					String with = null;
 					if (split.length > 1)
 						with = split[1].trim();
-					System.out.println("0:" + split[0]);
-					System.out.println("1:" + split[1]);
 
 					if (nick.equals(petTarget)) {
 						Helper.sendMessage(target,"Don't pet yourself in public.", nick);
