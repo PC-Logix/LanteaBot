@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
 
@@ -115,7 +116,7 @@ public class Attack extends AbstractListener {
 				}
 			}
 		};
-		IRCBot.registerCommand(local_command, "Attack things with things. First argument is attack type: " + actions.toString().replace("[","").replace("]","") + " or random if invalid.");
+		IRCBot.registerCommand(local_command, "Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actions.toString().replace("[","").replace("]","") + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
 		for (String action : actions.keySet()) {
 			local_command.registerAlias(action, action);
 		}

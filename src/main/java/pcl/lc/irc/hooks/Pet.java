@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
 
@@ -87,7 +88,7 @@ public class Pet extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("stroke");
-		IRCBot.registerCommand(local_command, "Give pets");
+		IRCBot.registerCommand(local_command, "Give pets! Give hit points! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <item>] If [with <item>] is omitted tries to use a random item from the inventory.");
 	}
 
 	public String chan;

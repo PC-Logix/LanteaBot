@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
 
@@ -81,6 +82,7 @@ public class Fling extends AbstractListener {
 				}
 			}
 		};
+		local_command.setHelpText("Fling something at someone! Syntax: " + Config.commandprefix + local_command.getCommand() + " [<item> [at <target>]] If [at <target>] is omitted picks a random target from IRC user list. If <item> is omitted tries to use a random item from the inventory.");
 	}
 
 	public String chan;

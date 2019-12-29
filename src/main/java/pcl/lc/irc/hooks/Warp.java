@@ -28,7 +28,7 @@ public class Warp extends AbstractListener {
 				Helper.sendMessage(target, Helper.getRandomWarpLocation());
 			}
 		};
-		local_command.setHelpText("Go on a vacation!");
+		local_command.setHelpText("Go on a vacation! Or end up is a world made out of spaghetti...");
 	}
 
 	public String chan;

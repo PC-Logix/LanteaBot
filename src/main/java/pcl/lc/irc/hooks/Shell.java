@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
 import pcl.lc.utils.Exceptions.InvalidPotionException;
@@ -27,7 +28,7 @@ public class Shell extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(shell, "Shell a target or random user. " + hitChance + "% hit chance.");
+		IRCBot.registerCommand(shell, "Be a nuisance with your very own mortar! Syntax: " + Config.commandprefix + shell.getCommand() + " [<target>[ and <target>][ and <target>][ with <item>]]  <item> can be a valid potion string or \"random potion\". If [ with <item>] is omitted tries to use a random item from the inventory. Omitted targets are selected randomly from IRC user list.");
 	}
 
 	private void initCommands() {

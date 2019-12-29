@@ -9,10 +9,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Permissions;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -172,7 +169,7 @@ public class Tonk extends AbstractListener {
 				}
 			}
 		};
-		local_command.setHelpText("What is tonk? Tonk is life.");
+		local_command.setHelpText("What is tonk? Tonk is life. For a description of the rules see " + Config.commandprefix + "tonkleaders");
 		
 		reset_command = new Command("resettonk", 60, Permissions.ADMIN) {
 			@Override
@@ -316,7 +313,7 @@ public class Tonk extends AbstractListener {
 				}
             }
 		};
-		tonkout_command.setHelpText("Cash in your tonks!");
+		tonkout_command.setHelpText("What is tonk? Tonk is life. For a description of the rules see " + Config.commandprefix + "tonkleaders");
 		tonkout_command.registerAlias("tonktonk");
 
 		tonkpoints_command = new Command("tonkpoints") {

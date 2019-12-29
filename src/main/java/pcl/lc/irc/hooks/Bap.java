@@ -4,6 +4,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
@@ -63,7 +64,7 @@ public class Bap extends AbstractListener {
 				}
 			}
 		};
-		local_command.setHelpText("Bap a fool harmlessly");
+		local_command.setHelpText("Baps someone harmlessly without doing damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <item>] If [with <item>] is omitted tries to use a random item from the inventory.");
 	}
 
 	public String chan;
