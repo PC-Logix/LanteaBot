@@ -49,7 +49,7 @@ public class DiceRoll {
         this.explodeMode = explodeMode;
         int sum = 0;
         ArrayList<Integer> results = new ArrayList<>();
-        if (diceSize == 1) { //short circuit d1's which could produce an infinite loop locking up the bot
+        if (diceSize == 1) { //short circuit d1's which could produce an infinite loop locking up the bot when used with exploding
             for (int i = 0; i < diceCount; i++) {
                 results.add(1);
                 sum += 1;
