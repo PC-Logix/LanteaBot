@@ -9,6 +9,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
+import pcl.lc.utils.Exceptions.InvalidPotionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class Shell extends AbstractListener {
 				if (params.length() > 0) {
 					String[] split = params.split(" with ", 2);
 					shellTarget = split[0].trim();
-					if (split.length > 1)
+					if (split.length > 1 && !split[1].trim().equals(""))
 						with = split[1].trim();
 
 					String[] targets = shellTarget.split(" and ", 3);
@@ -54,6 +55,10 @@ public class Shell extends AbstractListener {
 						shellTargetTertriary = targets[2];
 				}
 
+				PotionEntry potion = PotionEntry.setFromString(with);
+                if (potion == null && with != null && with.contains("random potion"))
+				    potion = PotionHelper.getRandomPotion();
+
 				Item item = null;
 				try {
 					if (with == null)
@@ -63,7 +68,8 @@ public class Shell extends AbstractListener {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				if (item != null) {
+
+				if (item != null || potion != null) {
 					ArrayList<String> blacklist = new ArrayList<>();
 					blacklist.add(nick);
 					if (shellTarget == null)
@@ -78,36 +84,43 @@ public class Shell extends AbstractListener {
 						Helper.sendAction(target, "kicks " + nick + " into space.");
 						return;
 					}
-					int itemDamage = 0;
-					String dust;
-					String strike = "Seems it was a dud...";
-					try {
-						boolean hit = false;
-						if (roll != null && roll.getSum() < hitChance)
-							hit = true;
-						DiceRollResult dmg1 = item.getDamage(1, item.getDiceSizeFromItemName() + (hit ? 4 : 2), 4);
-						DiceRollResult dmg2 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
-						DiceRollResult dmg3 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
-						String dmgString1 = dmg1.getResultString();
-						String dmgString2 = dmg2.getResultString();
-						String dmgString3 = dmg3.getResultString();
-						itemDamage = (hit ? 1 : 2);
+					if (potion != null) {
+					    Helper.AntiPings = Helper.getNamesFromTarget(target);
+					    EffectEntry effect = potion.getEffect(nick, true);
+					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vampour. " + PotionHelper.replaceParamsInEffectString(effect.Effect, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
+                    } else {
+                        int itemDamage = 0;
+                        String dust;
+                        String strike = "Seems it was a dud...";
+                        try {
+                            boolean hit = false;
+                            if (roll != null && roll.getSum() < hitChance)
+                                hit = true;
+                            DiceRollResult dmg1 = item.getDamage(1, item.getDiceSizeFromItemName() + (hit ? 4 : 2), 4);
+                            DiceRollResult dmg2 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
+                            DiceRollResult dmg3 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
+                            String dmgString1 = dmg1.getResultString();
+                            String dmgString2 = dmg2.getResultString();
+                            String dmgString3 = dmg3.getResultString();
+                            itemDamage = (hit ? 1 : 2);
 
-						if (hit) {
-							String auxiliary_damage = (dmgString2.equals(dmgString3) ? dmgString2 + " damage each" : dmgString2 + ", and " + dmgString3 + " damage respectively");
-							strike = "It strikes " + shellTarget + ". They take " + dmgString1 + " damage. " + shellTargetSecondary + " and " + shellTargetTertriary + " stood too close and take " + auxiliary_damage + ".";
-						} else {
-							String damage = (dmgString1.equals(dmgString2) && dmgString1.equals(dmgString3) ? dmgString1 + " damage each" : dmgString1 + ", " + dmgString2 + ", and " + dmgString3 + " splash damage respectively");
-							strike = "It strikes the ground near " + shellTarget + ", " + shellTargetSecondary + ", and " + shellTargetTertriary + ". They take " + damage + ".";
-						}
-					} catch (NullPointerException ignored) {}
-					Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target, nick + " loads " + item.getName(false) + " into a shell and fires it. " + strike);
-					dust = item.damage(itemDamage,false, true, true);
-					if (!dust.equals("")) {
-						Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendAction(target, dust);
-					}
+                            if (hit) {
+                                String auxiliary_damage = (dmgString2.equals(dmgString3) ? dmgString2 + " damage each" : dmgString2 + ", and " + dmgString3 + " damage respectively");
+                                strike = "It strikes " + shellTarget + ". They take " + dmgString1 + " damage. " + shellTargetSecondary + " and " + shellTargetTertriary + " stood too close and take " + auxiliary_damage + ".";
+                            } else {
+                                String damage = (dmgString1.equals(dmgString2) && dmgString1.equals(dmgString3) ? dmgString1 + " damage each" : dmgString1 + ", " + dmgString2 + ", and " + dmgString3 + " splash damage respectively");
+                                strike = "It strikes the ground near " + shellTarget + ", " + shellTargetSecondary + ", and " + shellTargetTertriary + ". They take " + damage + ".";
+                            }
+                        } catch (NullPointerException ignored) {
+                        }
+                        Helper.AntiPings = Helper.getNamesFromTarget(target);
+                        Helper.sendMessage(target, nick + " loads " + item.getName(false) + " into a shell and fires it. " + strike);
+                        dust = item.damage(itemDamage, false, true, true);
+                        if (!dust.equals("")) {
+                            Helper.AntiPings = Helper.getNamesFromTarget(target);
+                            Helper.sendAction(target, dust);
+                        }
+                    }
 				} else {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "found nothing to load into the shell...");
@@ -120,12 +133,12 @@ public class Shell extends AbstractListener {
 	public String chan;
 	public String target = null;
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		chan = event.getChannel().getName();
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		target = Helper.getTarget(event);
 		for (Command com : commands)
 			com.tryExecute(command, nick, target, event, copyOfRange);

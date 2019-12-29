@@ -47,14 +47,14 @@ public class Weather extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		if (command.equals(Config.commandprefix + "weather") || command.equals(Config.commandprefix + "w")) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		if ((command.equalsIgnoreCase(prefix + "weather") || command.equalsIgnoreCase(prefix + "w"))) {
 			String location = "";
 			for( int i = 0; i < copyOfRange.length; i++)

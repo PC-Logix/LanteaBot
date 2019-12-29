@@ -328,7 +328,7 @@ public class DynamicCommands extends AbstractListener {
 	public String chan;
 	public String target = null;
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		target = Helper.getTarget(event);
 		if (!Helper.isEnabledHere(target, "dyncmd")) {
 			return;
@@ -344,7 +344,7 @@ public class DynamicCommands extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		chan = event.getChannel().getName();
 		target = Helper.getTarget(event);
 

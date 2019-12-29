@@ -85,7 +85,7 @@ public class xkcd extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		chan = event.getChannel().getName();
 		chanOp = Helper.isChannelOp(event);
 		permLevel = Permissions.getPermLevel(event.getUser() ,event);
@@ -148,7 +148,7 @@ public class xkcd extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		if (permLevel >= requiredPermLevel) {
 			String target = Helper.getTarget(event);
 			if (command.equalsIgnoreCase(Config.commandprefix + "xkcd")) {

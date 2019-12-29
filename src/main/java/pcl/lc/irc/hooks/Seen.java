@@ -63,14 +63,14 @@ public class Seen extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		if (command.equals(Config.commandprefix + "seen")) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		String message = "";
 		for( int i = 0; i < copyOfRange.length; i++)
 		{

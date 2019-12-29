@@ -70,12 +70,12 @@ public class Ping extends AbstractListener {
 	public String chan;
 	public String target = null;
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		chan = event.getChannel().getName();
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		target = Helper.getTarget(event);
 		ping.tryExecute(command, nick, target, event, copyOfRange);
 		msp.tryExecute(command, nick, target, event, copyOfRange);

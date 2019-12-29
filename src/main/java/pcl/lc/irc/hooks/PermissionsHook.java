@@ -34,7 +34,7 @@ public class PermissionsHook extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		String prefix = Config.commandprefix;
 		if (command.equals(prefix + "addperm")) {
 			boolean isOp = Permissions.isOp(event.getBot(), event.getUser());

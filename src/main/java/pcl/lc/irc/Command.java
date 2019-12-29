@@ -27,6 +27,8 @@ public class Command {
 	private String minRank;
 	private String helpText;
 
+	public String callingRelay = null;
+
 	public Command(String command) {
 		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, Permissions.EVERYONE);
 	}

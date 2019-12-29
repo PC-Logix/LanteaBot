@@ -28,16 +28,14 @@ public class PotionEntry {
 	}
 
     public void setFromCommandParameters(String params) throws InvalidPotionException {
-		AppearanceEntry consistency = PotionHelper.findConsistencyInString(params);
-		AppearanceEntry appearance = PotionHelper.findAppearanceInString(params);
+    	PotionEntry potion = setFromString(params);
 
-		if (consistency == null || appearance == null || !params.toLowerCase().contains("potion"))
+		if (potion == null)
 			throw new InvalidPotionException();
 
-		this.consistency = consistency;
-		this.appearance = appearance;
-
-		this.isNew = !PotionHelper.combinationHasEffect(consistency, appearance);
+		this.consistency = potion.consistency;
+		this.appearance = potion.appearance;
+		this.isNew = potion.isNew;
 	}
 
 	public EffectEntry getEffect(String user) {
@@ -114,5 +112,14 @@ public class PotionEntry {
 				return this.effect;
 			}
 		}
+	}
+
+	public static PotionEntry setFromString(String str) {
+		AppearanceEntry consistency = PotionHelper.findConsistencyInString(str);
+		AppearanceEntry appearance = PotionHelper.findAppearanceInString(str);
+
+		if (consistency == null || appearance == null || !str.toLowerCase().contains("potion"))
+			return null;
+		return new PotionEntry(consistency, appearance, !PotionHelper.combinationHasEffect(consistency, appearance));
 	}
 }

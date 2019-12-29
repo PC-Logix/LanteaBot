@@ -377,8 +377,15 @@ public class Admin extends AbstractListener {
 					} else {
 						try {
 							String l_command = params.get(0);
-							event.getBot().sendIRC().notice(nick, "help for " + l_command);
-							event.getBot().sendIRC().notice(nick, IRCBot.helpList.get(l_command));
+							if (this.callingRelay == null) {
+								event.getBot().sendIRC().notice(nick, "help for " + l_command);
+								event.getBot().sendIRC().notice(nick, IRCBot.helpList.get(l_command));
+							} else {
+								String nickClean = nick.replaceAll("\\p{C}", "");
+								System.out.println("Sending message via relay '" + this.callingRelay + "'!");
+								System.out.println(nickClean + ": help for " + l_command);
+								Helper.sendMessage(this.callingRelay, nickClean + ": Help for command '" + l_command + "': " + IRCBot.helpList.get(l_command));
+							}
 						} catch (Exception e) {
 							e.printStackTrace();
 							event.getBot().sendIRC().notice(nick, "Something went wrong!");
@@ -475,12 +482,12 @@ public class Admin extends AbstractListener {
 	public String chan;
 	public String target = null;
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		chan = event.getChannel().getName();
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		target = Helper.getTarget(event);
 		command_prefix.tryExecute(command, nick, target, event, copyOfRange);
 		command_join.tryExecute(command, nick, target, event, copyOfRange);
@@ -504,6 +511,7 @@ public class Admin extends AbstractListener {
 		command_flushauth.tryExecute(command, nick, target, event, copyOfRange);
 		command_test.tryExecute(command, nick, target, event, copyOfRange);
 		command_listadmins.tryExecute(command, nick, target, event, copyOfRange);
+		command_help.callingRelay = callingRelay;
 		command_help.tryExecute(command, nick, target, event, copyOfRange);
 		command_authed.tryExecute(command, nick, target, event, copyOfRange);
 		command_addadmin.tryExecute(command, nick, target, event, copyOfRange);

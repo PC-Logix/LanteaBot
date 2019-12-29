@@ -198,12 +198,12 @@ public class WhoPinged extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, final MessageEvent event, String command, String[] args, String callingRelay) {
 		chan = event.getChannel().getName();
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event,	String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event,	String command, String[] copyOfRange, String callingRelay) {
 		target = Helper.getTarget(event);
 		command_WhoPinged.tryExecute(command, nick, target, event, copyOfRange);
 		command_ClearPings.tryExecute(command, nick, target, event, copyOfRange);

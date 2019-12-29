@@ -17,7 +17,7 @@ public class Stats extends AbstractListener {
 
 
 	@Override
-	public void handleCommand(String sender, final MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, final MessageEvent event, String command, String[] args, String callingRelay) {
 		String prefix = Config.commandprefix;
 		if (command.equals(prefix + "stats")) {
 			if (args.length == 0) {
@@ -32,7 +32,6 @@ public class Stats extends AbstractListener {
 
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event,
-			String command, String[] copyOfRange) {		
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 	}
 }

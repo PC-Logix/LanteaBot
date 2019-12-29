@@ -117,12 +117,12 @@ public class Announcements extends AbstractListener {
 	public String chan;
 	public String target = null;
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		chan = event.getChannel().getName();
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		target = Helper.getTarget(event);
 		local_command_announce.tryExecute(command, nick, target, event, copyOfRange);
 		local_command_add.tryExecute(command, nick, target, event, copyOfRange);

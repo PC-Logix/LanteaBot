@@ -80,7 +80,7 @@ public class TimedBans extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		if ((command.equals(Config.commandprefix + "tban") || command.equals(Config.commandprefix + "timedban") || command.equals(Config.commandprefix + "tquiet")) && Permissions.hasPermission(IRCBot.bot, event, Permissions.MOD)) {
 			String type;
 			if (command.contains("ban")){

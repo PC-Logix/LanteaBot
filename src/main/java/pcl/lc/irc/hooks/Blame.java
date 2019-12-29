@@ -64,14 +64,14 @@ public class Blame extends AbstractListener {
 	public String chan;
 	public String target = null;
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		if (local_command.shouldExecute(command, event) >= 0) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		target = Helper.getTarget(event);
 		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}

@@ -57,14 +57,14 @@ public class Tell extends AbstractListener {
 	}
 
 	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args) {
+	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		if (command.equals(Config.commandprefix + "tell")) {
 			chan = event.getChannel().getName();
 		}
 	}
 
 	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange) {
+	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		String sender = nick;
 		if (command.equals(Config.commandprefix + "tell")) {
 			if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
