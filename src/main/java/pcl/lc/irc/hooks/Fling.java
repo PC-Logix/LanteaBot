@@ -28,11 +28,29 @@ public class Fling extends AbstractListener {
 		local_command = new Command("fling", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Item item = Inventory.getRandomItem(false);
+				String[] split = params.split(" at ", 2);
+				String flingTarget = null;
+				String with = null;
+				if (split.length == 1) {
+					flingTarget = split[0].trim();
+				} else {
+					with = split[0].trim();
+					flingTarget = split[1].trim();
+				}
+
+				Item item = null;
+				try {
+					if (with == null)
+						Inventory.getRandomItem(false);
+					else
+						item = new Item(with, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 				if (item != null) {
-					String user = params;
-					if (user == "")
+					String user = flingTarget;
+					if (user.equals(""))
 						user = Helper.getRandomUser(event);
 					if (!Helper.doInteractWith(user))
 						user = nick;
@@ -56,7 +74,7 @@ public class Fling extends AbstractListener {
 						itemDamage = 2;
 					}
 					String dust = item.damage(itemDamage, false, true, true);
-					if (dust != "")
+					if (!dust.equals(""))
 						Helper.sendAction(target, dust);
 				} else {
 					Helper.sendAction(target, "makes a flinging motion but realizes there was nothing there...");
