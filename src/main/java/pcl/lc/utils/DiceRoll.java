@@ -54,6 +54,10 @@ public class DiceRoll {
                 results.add(1);
                 sum += 1;
             }
+        } else if (diceSize == 0) {
+            for (int i = 0; i < diceCount; i++) {
+                results.add(0);
+            }
         } else {
             for (int i = 0; i < diceCount; i++) {
                 int steps = Helper.getRandomInt(1, diceSize);
