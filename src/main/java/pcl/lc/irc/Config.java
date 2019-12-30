@@ -133,7 +133,7 @@ public class Config {
 			mysqlDbPass = prop.getProperty("mysqlDbPass", "");
 			mysqlDbName = prop.getProperty("mysqlDbName", "");
 			
-			botGender = prop.getProperty("botGender", "");
+			botGender = prop.getProperty("botGender", "genderless");
 
 			saveProps();
 
