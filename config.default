@@ -9,6 +9,7 @@ enableSSL=false
 
 httpdport=8082
 
+botGender=genderless
 commandprefix=^
 nsaccount=
 nspass=
