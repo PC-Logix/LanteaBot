@@ -10,6 +10,8 @@ import org.pircbotx.Channel;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericChannelUserEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.hooks.DrinkPotion;
 import pcl.lc.irc.hooks.Inventory;
@@ -699,8 +701,7 @@ public class Helper {
 	}
 
 	public static String parseSelfReferral(String type) {
-		//Temp until I add the config opt
-		String gender = "female";
+		String gender = Config.botGender;
 		HashMap<String, String> genderRef = genderStrings.get(gender);
 		return genderRef.get(type);
 	}

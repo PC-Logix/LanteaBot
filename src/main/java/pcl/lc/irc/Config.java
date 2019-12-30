@@ -49,6 +49,8 @@ public class Config {
 	public static String mysqlDbUser = null;
 	public static String mysqlDbPass = null;
 	public static String mysqlDbName = null;
+	
+	public static String botGender = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
 	public static CommentedProperties prop = new CommentedProperties();
@@ -130,6 +132,8 @@ public class Config {
 			mysqlDbUser = prop.getProperty("mysqlDbUser", "");
 			mysqlDbPass = prop.getProperty("mysqlDbPass", "");
 			mysqlDbName = prop.getProperty("mysqlDbName", "");
+			
+			botGender = prop.getProperty("botGender", "");
 
 			saveProps();
 
