@@ -49,11 +49,11 @@ public class Shell extends AbstractListener {
 						with = split[1].trim();
 
 					String[] targets = shellTarget.split(" and ", 3);
-					shellTarget = targets[0];
+					shellTarget = targets[0].trim();
 					if (targets.length > 1)
-						shellTargetSecondary = targets[1];
+						shellTargetSecondary = targets[1].trim();
 					if (targets.length > 2)
-						shellTargetTertriary = targets[2];
+						shellTargetTertriary = targets[2].trim();
 				}
 
 				PotionEntry potion = PotionEntry.setFromString(with);
@@ -73,7 +73,7 @@ public class Shell extends AbstractListener {
 				if (item != null || potion != null) {
 					ArrayList<String> blacklist = new ArrayList<>();
 					blacklist.add(nick);
-					if (shellTarget == null)
+					if (shellTarget == null || shellTarget.equals(""))
 						shellTarget = Helper.getRandomUser(event, blacklist);
 					blacklist.add(shellTarget);
 					if (shellTargetSecondary == null)
@@ -88,7 +88,7 @@ public class Shell extends AbstractListener {
 					if (potion != null) {
 					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 					    EffectEntry effect = potion.getEffect(nick, true);
-					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vampour. " + PotionHelper.replaceParamsInEffectString(effect.Effect, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
+					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.Effect, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
                     } else {
                         int itemDamage = 0;
                         String dust;
