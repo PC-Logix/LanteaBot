@@ -29,7 +29,7 @@ public class Fling extends AbstractListener {
 		local_command = new Command("fling", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String[] split = params.split(" at ", 2);
+				String[] split = params.split("at ", 2);
 				String flingTarget = null;
 				String with = null;
 				if (split.length == 1) {

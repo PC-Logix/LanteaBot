@@ -43,7 +43,7 @@ public class Shell extends AbstractListener {
 				String with = null;
 
 				if (params.length() > 0) {
-					String[] split = params.split("with", 2);
+					String[] split = params.split("with ", 2);
 					shellTarget = split[0].trim();
 					if (split.length > 1 && !split[1].trim().equals(""))
 						with = split[1].trim();
