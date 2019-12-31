@@ -41,7 +41,7 @@ public class Fling extends AbstractListener {
 
 				Item item = null;
 				try {
-					if (with == null)
+					if (with == null || with.equals(""))
 						Inventory.getRandomItem(false);
 					else
 						item = new Item(with, false);
