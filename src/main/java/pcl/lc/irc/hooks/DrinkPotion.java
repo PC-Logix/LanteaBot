@@ -450,7 +450,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 					} else {
 			    		if (specialFluids.containsKey(params.get(0))) {
-			    			Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), "", nick));
+			    			Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick));
 			    			return;
 						}
 					}
@@ -462,7 +462,7 @@ public class DrinkPotion extends AbstractListener {
                     	EffectEntry effect = potion.getEffect(nick);
 
                     	if (effect != null)
-							Helper.sendMessage(target, (potion.isNew ? "(New!) " : "") + PotionHelper.replaceParamsInEffectString(effect.toString(), "", nick));
+							Helper.sendMessage(target, (potion.isNew ? "(New!) " : "") + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
                     	else
                     		Helper.sendMessage(target, "Due to some series of events I couldn't find any effect for this potion.");
 			    	} catch (InvalidPotionException ex) {
