@@ -6,6 +6,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
 
@@ -52,6 +53,7 @@ public class Bonk extends AbstractListener {
 							dmgString = "1d4 damage";
 						else
 							dmgString = "1d" + item.getDiceSizeFromItemName() + " damage";
+						dmgString = DiceRoll.rollDiceInString(dmgString);
 
 						if (item != null)
 							if (nick.equals(bonkTarget))
