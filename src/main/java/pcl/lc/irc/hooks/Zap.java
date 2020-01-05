@@ -15,7 +15,7 @@ import pcl.lc.utils.Item;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Bonk extends AbstractListener {
+public class Zap extends AbstractListener {
 	private Command local_command;
 
 	@Override
@@ -25,14 +25,14 @@ public class Bonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bonk", 0) {
+		local_command = new Command("zap", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0)
-					Helper.sendAction(target, "swings at the void");
+					Helper.sendAction(target, nick + " makes some sparks");
 				else {
 					String[] split = params.split(" with ", 2);
-					String bonkTarget = split[0].trim();
+					String zapTarget = split[0].trim();
 					String with = null;
 					if (split.length > 1)
 						with = split[1].trim();
@@ -48,35 +48,34 @@ public class Bonk extends AbstractListener {
 								e.printStackTrace();
 							}
 						}
-
-						if (with != null && with.equals("nothing"))
-						    item = null;
-
 						String dmgString;
+						if (with != null && with.equals("nothing"))
+							item = null;
+
 						if (item == null)
-							dmgString = "1d4 damage";
+							dmgString = "1d6 damage";
 						else
-							dmgString = "1d" + item.getDiceSizeFromItemName() + " damage";
+							dmgString = "1d" + (item.getDiceSizeFromItemName() + 2) + " damage";
 						dmgString = DiceRoll.rollDiceInString(dmgString);
 
 						if (item != null)
-							if (nick.equals(bonkTarget))
-								Helper.sendAction(target, nick + " bonks themselves on the head with " + item.getName(true) + " for " + dmgString + "!");
+							if (nick.equals(zapTarget))
+								Helper.sendAction(target, nick + " zaps themselves using " + item.getName(true) + " as a conductor for " + dmgString + "!");
 							else
-								Helper.sendAction(target, nick + " bonks " + bonkTarget + " on the head with " + item.getName(true) + " for " + dmgString + "!");
+								Helper.sendAction(target, nick + " zaps " + zapTarget + " using " + item.getName(true) + " as a conductor for " + dmgString + "!");
 						else {
-							if (nick.equals(bonkTarget))
-								Helper.sendAction(target, nick + " baps themselves on the head for " + dmgString + "!");
+							if (nick.equals(zapTarget))
+								Helper.sendAction(target, nick + " zaps themselves for " + dmgString + "!");
 							else
-								Helper.sendAction(target, nick + " bonks " + bonkTarget + " on the head for " + dmgString + "!");
+								Helper.sendAction(target, nick + " zaps " + zapTarget + " for " + dmgString + "!");
 						}
 					} else {
-						Helper.sendAction(target, "bonks " + nick + " on the head preemptively!");
+						Helper.sendAction(target, "zaps " + nick + "!");
 					}
 				}
 			}
 		};
-		local_command.setHelpText("Hit someone on the head! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <item>] If [with <item>] is omitted tries to use a random item from the inventory.");
+		local_command.setHelpText("Shocking! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <item>] If [with <item>] is omitted tries to use a random item from the inventory.");
 	}
 
 	public String chan;
