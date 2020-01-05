@@ -57,7 +57,7 @@ public class Bonk extends AbstractListener {
 							dmgString = "1d4 damage";
 						else
 							dmgString = "1d" + item.getDiceSizeFromItemName() + " damage";
-						dmgString = DiceRoll.rollDiceInString(dmgString);
+						dmgString = DiceRoll.rollDiceInString(dmgString, true);
 
 						if (item != null)
 							if (nick.equals(bonkTarget))
