@@ -28,7 +28,7 @@ public class Bap extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0)
-					Helper.sendAction(target, "flails at the darkness");
+					Helper.sendWorldAction(target, nick + " flails at the darkness");
 				else {
 					String[] split = params.split(" with ", 2);
 					String bapTarget = split[0].trim();
@@ -49,14 +49,14 @@ public class Bap extends AbstractListener {
 						}
 						if (item != null)
 							if (nick.equals(bapTarget))
-								Helper.sendAction(target, nick + " baps themselves with " + item.getName(true) + "!");
+								Helper.sendWorldAction(target, nick + " baps themselves with " + item.getName(true) + "!");
 							else
-								Helper.sendAction(target, nick + " baps " + bapTarget + " with " + item.getName(true) + "!");
+								Helper.sendWorldAction(target, nick + " baps " + bapTarget + " with " + item.getName(true) + "!");
 						else {
 							if (nick.equals(bapTarget))
-								Helper.sendAction(target, nick + " baps themselves!");
+								Helper.sendWorldAction(target, nick + " baps themselves!");
 							else
-								Helper.sendAction(target, nick + " baps " + bapTarget + "!");
+								Helper.sendWorldAction(target, nick + " baps " + bapTarget + "!");
 						}
 					} else {
 						Helper.sendAction(target, "smacks " + nick + "!");
