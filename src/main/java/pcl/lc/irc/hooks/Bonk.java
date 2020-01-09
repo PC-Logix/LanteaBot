@@ -29,7 +29,7 @@ public class Bonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0)
-					Helper.sendAction(target, "swings at the void");
+					Helper.sendWorldAction(target, nick + " swings at the void");
 				else {
 					String[] split = params.split(" with ", 2);
 					String bonkTarget = split[0].trim();
@@ -61,14 +61,14 @@ public class Bonk extends AbstractListener {
 
 						if (item != null)
 							if (nick.equals(bonkTarget))
-								Helper.sendAction(target, nick + " bonks themselves on the head with " + item.getName(true) + " for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " bonks themselves on the head with " + item.getName(true) + " for " + dmgString + "!");
 							else
-								Helper.sendAction(target, nick + " bonks " + bonkTarget + " on the head with " + item.getName(true) + " for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " bonks " + bonkTarget + " on the head with " + item.getName(true) + " for " + dmgString + "!");
 						else {
 							if (nick.equals(bonkTarget))
-								Helper.sendAction(target, nick + " baps themselves on the head for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " baps themselves on the head for " + dmgString + "!");
 							else
-								Helper.sendAction(target, nick + " bonks " + bonkTarget + " on the head for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " bonks " + bonkTarget + " on the head for " + dmgString + "!");
 						}
 					} else {
 						Helper.sendAction(target, "bonks " + nick + " on the head preemptively!");

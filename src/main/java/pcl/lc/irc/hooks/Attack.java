@@ -105,7 +105,7 @@ public class Attack extends AbstractListener {
 							dmgString = "no damage";
 						else
 							dmgString += " damage";
-						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
+						Helper.sendWorldAction(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
 //						Helper.sendAction(target,Helper.antiPing(actions.get(action)) + "s " + attackTarget + (item != null ? " with " + item.getName() : "") + " doing " + Item.stringifyDamageResult(dmg) + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
