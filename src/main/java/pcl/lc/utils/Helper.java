@@ -406,6 +406,22 @@ public class Helper {
 		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + message);
 		Helper.AntiPings = null;
 	}
+	
+	public static void sendWorldAction(String target, String message) {
+		if (AntiPings != null && !AntiPings.isEmpty()) {
+			String[] parts = message.split(" ");
+			for (String part : parts) {
+				if (stringContainsItemFromList(part, AntiPings)) {
+					if (!isValidURL(part)) {
+						message = message.replaceAll("(?i)"+part, antiPing(part));
+					}
+				}
+			}
+		}
+		IRCBot.bot.sendIRC().message(target, "[\u001D " + message + " \u001D]");
+		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " [ " + message + " ]");
+		Helper.AntiPings = null;
+	}
 
 
 	public static void sendNotice(String target, String cannotExecuteReason, String nick) {
