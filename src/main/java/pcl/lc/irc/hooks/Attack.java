@@ -88,7 +88,7 @@ public class Attack extends AbstractListener {
 					//action = Helper.getRandomInt(0, actions.size() - 1);
 
 					if (attackTarget.equals(""))
-						Helper.sendAction(target,"flails at nothingness" + (item != null ? " with " + item.getName() : ""));
+						Helper.sendMessage(target,nick + " flails at nothingness" + (item != null ? " with " + item.getName() : ""));
 					else if (Helper.doInteractWith(attackTarget)) {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						DiceRollResult dmg = new DiceRollResult();
@@ -105,8 +105,7 @@ public class Attack extends AbstractListener {
 							dmgString = "no damage";
 						else
 							dmgString += " damage";
-						Helper.sendWorldAction(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
-//						Helper.sendAction(target,Helper.antiPing(actions.get(action)) + "s " + attackTarget + (item != null ? " with " + item.getName() : "") + " doing " + Item.stringifyDamageResult(dmg) + dust);
+						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target,DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));

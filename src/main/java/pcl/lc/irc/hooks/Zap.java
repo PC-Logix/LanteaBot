@@ -60,14 +60,14 @@ public class Zap extends AbstractListener {
 
 						if (item != null)
 							if (nick.equals(zapTarget))
-								Helper.sendAction(target, nick + " zaps themselves using " + item.getName(true) + " as a conductor for " + dmgString + "!");
+								Helper.sendMessage(target, nick + " zaps themselves using " + item.getName(true) + " as a conductor for " + dmgString + "!");
 							else
-								Helper.sendAction(target, nick + " zaps " + zapTarget + " using " + item.getName(true) + " as a conductor for " + dmgString + "!");
+								Helper.sendMessage(target, nick + " zaps " + zapTarget + " using " + item.getName(true) + " as a conductor for " + dmgString + "!");
 						else {
 							if (nick.equals(zapTarget))
-								Helper.sendAction(target, nick + " zaps themselves for " + dmgString + "!");
+								Helper.sendMessage(target, nick + " zaps themselves for " + dmgString + "!");
 							else
-								Helper.sendAction(target, nick + " zaps " + zapTarget + " for " + dmgString + "!");
+								Helper.sendMessage(target, nick + " zaps " + zapTarget + " for " + dmgString + "!");
 						}
 					} else {
 						Helper.sendAction(target, "zaps " + nick + "!");

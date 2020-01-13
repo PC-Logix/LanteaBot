@@ -49,14 +49,14 @@ public class Bap extends AbstractListener {
 						}
 						if (item != null)
 							if (nick.equals(bapTarget))
-								Helper.sendWorldAction(target, nick + " baps themselves with " + item.getName(true) + "!");
+								Helper.sendMessage(target, nick + " baps themselves with " + item.getName(true) + "!");
 							else
-								Helper.sendWorldAction(target, nick + " baps " + bapTarget + " with " + item.getName(true) + "!");
+								Helper.sendMessage(target, nick + " baps " + bapTarget + " with " + item.getName(true) + "!");
 						else {
 							if (nick.equals(bapTarget))
-								Helper.sendWorldAction(target, nick + " baps themselves!");
+								Helper.sendMessage(target, nick + " baps themselves!");
 							else
-								Helper.sendWorldAction(target, nick + " baps " + bapTarget + "!");
+								Helper.sendMessage(target, nick + " baps " + bapTarget + "!");
 						}
 					} else {
 						Helper.sendAction(target, "smacks " + nick + "!");

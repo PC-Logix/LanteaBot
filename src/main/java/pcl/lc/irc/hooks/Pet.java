@@ -34,7 +34,7 @@ public class Pet extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0) {
-					Helper.sendAction(target, nick + " flails at nothingness...");
+					Helper.sendMessage(target, nick + " flails at nothingness...");
 					return;
 				} else {
 					String[] split = params.split(" with ", 2);
@@ -83,7 +83,6 @@ public class Pet extends AbstractListener {
 					else
 						healString += " hit points";
 					Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + "!" + dust);
-//					Helper.sendAction(target, actions.get(action) + " " + params + (item != null ? " with " + item.getName() + "." : "") + ((roll != null) ? " " + Item.stringifyHealingResult(heal) + "!" : "") + " " + dust);
 				}
 			}
 		};

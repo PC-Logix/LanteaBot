@@ -124,7 +124,7 @@ public class Shell extends AbstractListener {
                     }
 				} else {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target, "found nothing to load into the shell...");
+					Helper.sendMessage(target, nick + " found nothing to load into the shell...");
 				}
 			}
 		};
