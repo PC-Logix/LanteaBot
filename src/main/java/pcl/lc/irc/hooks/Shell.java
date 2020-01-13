@@ -119,7 +119,7 @@ public class Shell extends AbstractListener {
                         dust = item.damage(itemDamage, false, true, true);
                         if (!dust.equals("")) {
                             Helper.AntiPings = Helper.getNamesFromTarget(target);
-                            Helper.sendAction(target, dust);
+                            Helper.sendMessage(target, dust);
                         }
                     }
 				} else {

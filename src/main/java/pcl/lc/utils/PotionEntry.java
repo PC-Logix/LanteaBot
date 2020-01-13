@@ -115,6 +115,8 @@ public class PotionEntry {
 	}
 
 	public static PotionEntry setFromString(String str) {
+    	if (str == null)
+    		return null;
 		AppearanceEntry consistency = PotionHelper.findConsistencyInString(str);
 		AppearanceEntry appearance = PotionHelper.findAppearanceInString(str);
 
