@@ -71,14 +71,14 @@ public class Fling extends AbstractListener {
 						itemDamage = 1;
 					}
 					else {
-						Helper.sendMessage(target, nick + "flings " + item.getName() + " in a random direction. It hits the ground near " + user);
+						Helper.sendMessage(target, nick + " flings " + item.getName() + " in a random direction. It hits the ground near " + user);
 						itemDamage = 2;
 					}
 					String dust = item.damage(itemDamage, false, true, true);
 					if (!dust.equals(""))
 						Helper.sendAction(target, dust);
 				} else {
-					Helper.sendMessage(target, nick + "makes a flinging motion but realizes there was nothing there...");
+					Helper.sendMessage(target, nick + " makes a flinging motion but realizes there was nothing there...");
 				}
 			}
 		};
