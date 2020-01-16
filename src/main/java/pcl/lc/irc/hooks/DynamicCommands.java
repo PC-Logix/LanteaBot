@@ -91,7 +91,7 @@ public class DynamicCommands extends AbstractListener {
 			"    return_value STRING,\n" +
 			"    help STRING DEFAULT NULL\n" +
 			");\n" +
-			"CREATE UNIQUE INDEX sqlite_autoindex_Commands_1 ON Commands0d9e (command);\n" +
+			"CREATE UNIQUE INDEX sqlite_autoindex_Commands_1 ON Commands0d9e (command, return_value);\n" +
 			"INSERT INTO Commands0d9e(command, return_value, help) SELECT command, return, help FROM Commands;\n" +
 			"DROP TABLE Commands;\n" +
 			"ALTER TABLE Commands0d9e RENAME TO Commands;\n" +
