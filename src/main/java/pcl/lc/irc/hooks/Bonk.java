@@ -61,14 +61,14 @@ public class Bonk extends AbstractListener {
 
 						if (item != null)
 							if (nick.equals(bonkTarget))
-								Helper.sendMessage(target, nick + " bonks themselves on the head with " + item.getName(true) + " for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " bonks themselves on the head with " + item.getName(true) + " for " + dmgString + "!");
 							else
-								Helper.sendMessage(target, nick + " bonks " + bonkTarget + " on the head with " + item.getName(true) + " for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " bonks " + bonkTarget + " on the head with " + item.getName(true) + " for " + dmgString + "!");
 						else {
 							if (nick.equals(bonkTarget))
-								Helper.sendMessage(target, nick + " baps themselves on the head for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " baps themselves on the head for " + dmgString + "!");
 							else
-								Helper.sendMessage(target, nick + " bonks " + bonkTarget + " on the head for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " bonks " + bonkTarget + " on the head for " + dmgString + "!");
 						}
 					} else {
 						Helper.sendAction(target, "bonks " + nick + " on the head preemptively!");

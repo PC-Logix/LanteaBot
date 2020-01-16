@@ -88,7 +88,7 @@ public class Shell extends AbstractListener {
 					if (potion != null) {
 					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 					    EffectEntry effect = potion.getEffect(nick, true);
-					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.Effect, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
+					    Helper.sendWorldAction(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.Effect, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
                     } else {
                         int itemDamage = 0;
                         String dust;
@@ -115,16 +115,16 @@ public class Shell extends AbstractListener {
                         } catch (NullPointerException ignored) {
                         }
                         Helper.AntiPings = Helper.getNamesFromTarget(target);
-                        Helper.sendMessage(target, nick + " loads " + item.getName(false) + " into a shell and fires it. " + strike);
+                        Helper.sendWorldAction(target, nick + " loads " + item.getName(false) + " into a shell and fires it. " + strike);
                         dust = item.damage(itemDamage, false, true, true);
                         if (!dust.equals("")) {
                             Helper.AntiPings = Helper.getNamesFromTarget(target);
-                            Helper.sendMessage(target, dust);
+                            Helper.sendWorldAction(target, dust);
                         }
                     }
 				} else {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target, nick + " found nothing to load into the shell...");
+					Helper.sendWorldAction(target, nick + " found nothing to load into the shell...");
 				}
 			}
 		};

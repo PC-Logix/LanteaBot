@@ -29,7 +29,7 @@ public class Zap extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0)
-					Helper.sendAction(target, nick + " makes some sparks");
+					Helper.sendWorldAction(target, nick + " makes some sparks");
 				else {
 					String[] split = params.split(" with ", 2);
 					String zapTarget = split[0].trim();
@@ -60,14 +60,14 @@ public class Zap extends AbstractListener {
 
 						if (item != null)
 							if (nick.equals(zapTarget))
-								Helper.sendMessage(target, nick + " zaps themselves using " + item.getName(true) + " as a conductor for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " zaps themselves using " + item.getName(true) + " as a conductor for " + dmgString + "!");
 							else
-								Helper.sendMessage(target, nick + " zaps " + zapTarget + " using " + item.getName(true) + " as a conductor for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " zaps " + zapTarget + " using " + item.getName(true) + " as a conductor for " + dmgString + "!");
 						else {
 							if (nick.equals(zapTarget))
-								Helper.sendMessage(target, nick + " zaps themselves for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " zaps themselves for " + dmgString + "!");
 							else
-								Helper.sendMessage(target, nick + " zaps " + zapTarget + " for " + dmgString + "!");
+								Helper.sendWorldAction(target, nick + " zaps " + zapTarget + " for " + dmgString + "!");
 						}
 					} else {
 						Helper.sendAction(target, "zaps " + nick + "!");
