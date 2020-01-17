@@ -94,30 +94,38 @@ public class Search extends AbstractListener {
 				google.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
+		g.registerAlias("google");
 		yt = new Command("yt", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				youtube.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
+		yt.registerAlias("youtube");
 		wik = new Command("wiki", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				wiki.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
+		wik.registerAlias("wp");
+		wik.registerAlias("wikipedia");
 		cf = new Command("cf", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				curseForge.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
+		cf.registerAlias("curse");
+		cf.registerAlias("curseforge");
 		urb = new Command("urban", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				urban.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
+		urb.registerAlias("u");
+		urb.registerAlias("urbandictionary");
 
 		lmgtfy = new Command("lmgtfy", 0) {
 			@Override
