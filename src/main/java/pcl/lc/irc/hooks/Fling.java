@@ -42,13 +42,10 @@ public class Fling extends AbstractListener {
 						flingTarget = split[1].trim();
 					}
 
-					System.out.println("with: '" + with + "'");
-					System.out.println("flingTarget: '" + flingTarget + "'");
-
 					Item item = null;
 					try {
 						if (with.equals(""))
-							Inventory.getRandomItem(false);
+							item = Inventory.getRandomItem(false);
 						else
 							item = new Item(with, false);
 					} catch (Exception e) {
