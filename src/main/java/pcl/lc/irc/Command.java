@@ -26,6 +26,7 @@ public class Command {
 	private boolean isEnabled;
 	private String minRank;
 	private String helpText;
+	private String actualCommand;
 
 	public String callingRelay = null;
 
@@ -77,6 +78,14 @@ public class Command {
 
 	public String getHelpText() {
 		return this.helpText;
+	}
+
+	public void setActualCommand(String actialCommand) {
+		this.actualCommand = actialCommand;
+	}
+
+	public String getActualCommand() {
+		return this.actualCommand;
 	}
 
 	public void disable() {
@@ -280,6 +289,7 @@ public class Command {
 		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
 			return false;
 		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
+			this.actualCommand = command.replace(Config.commandprefix, "");
 			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
 			if (aliasIndex != -1) {
 				ArrayList<String> forcedParams = new ArrayList<>();
