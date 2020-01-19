@@ -76,6 +76,10 @@ public class LootBox extends AbstractListener {
 				}
 				String prefix = "You get a loot box! It contains {item}";
 				if (!params.equals("")) {
+					if (!Helper.doInteractWith(params)) {
+						Helper.sendAction(target, "Kicks " + nick + " into the tentacle pit.");
+						return;
+					}
 					prefix = "You stab " + params + "! It dropped {item}!";
 				}
 				String item_string = item_name + " (" + rarity_str + ")";
