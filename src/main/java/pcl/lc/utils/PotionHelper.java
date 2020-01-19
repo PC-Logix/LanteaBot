@@ -173,8 +173,13 @@ public class PotionHelper {
 		if (triggererName != null)
 			effect = effect.replaceAll("\\{trigger}", triggererName);
 
+		String junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
+		if (Helper.getRandomInt(0, 1) == 1)
+			junkoritem = Helper.getRandomGarbageItem(false, true);
+
 		return effect
                 .replace("{item}", itemName)
+                .replace("{junk_or_item}", junkoritem)
                 .replace("{appearance}", PotionHelper.getAppearance().getName(false, false))
                 .replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true))
 				.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false))

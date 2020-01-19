@@ -14,10 +14,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
-import pcl.lc.utils.Database;
-import pcl.lc.utils.Helper;
-import pcl.lc.utils.SandboxThreadFactory;
-import pcl.lc.utils.SandboxThreadGroup;
+import pcl.lc.utils.*;
 import pcl.lc.utils.db_items.CommandItem;
 import pcl.lc.utils.db_items.InventoryItem;
 
@@ -370,7 +367,7 @@ public class DynamicCommands extends AbstractListener {
 			String message = com.return_value;
 		
 			StringBuilder output;
-			String aliasPattern = "%(.*?)%";
+			String aliasPattern = "%([a-zA-Z0-9]*?)%";
 			Pattern pattern = Pattern.compile(aliasPattern);
 			Matcher matcher = pattern.matcher(message);
 
@@ -416,6 +413,9 @@ public class DynamicCommands extends AbstractListener {
 				message = message.replaceAll("\\[nick\\]", nick);
 			}
 			message = MessageFormat.format(message, (Object[]) arguments);
+
+			message = PotionHelper.replaceParamsInEffectString(message);
+
 			Helper.AntiPings = Helper.getNamesFromTarget(target);
 			System.out.println("This is what's left: '" + message.replaceAll(" ", "") + "'");
 			if (message.replaceAll(" ", "").equals(""))
