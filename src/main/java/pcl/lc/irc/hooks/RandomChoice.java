@@ -71,7 +71,7 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template("\"{choice}\" is for cool kids!"));
 		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
 		templates.add(new Template("If I had a gold nugget for every time someone asked me about \"{choice}\""));
-		templates.add(new Template("The proof is in the pudding. Definitely \"{choice}\"."));
+		templates.add(new Template("The proof is in the pudding. Definitely \"{choice}\". Now please get it out of my pudding."));
 		templates.add(new Template("I received a message from future you, said to go with \"{choice}\"."));
 		templates.add(new Template("I saw that \"{choice}\" is the best choice in a vision"));
 		templates.add(new Template("You'll want to go with \"{choice}\"."));
@@ -84,6 +84,20 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template("Out of these {raw_count} choices? I'd say \"{choice}\"."));
 		templates.add(new Template("I've heard \"{choice}\" is in these days"));
 		templates.add(new Template("I spy with my robotic eye something beginning with \"{choice}\"!"));
+		templates.add(new Template("Haven't you always gone with \"{choice}\"? Hm, maybe not."));
+		templates.add(new Template("I have a pamphlet that says never to engage in \"{choice}\", so you should definitely do it!"));
+		templates.add(new Template("Pretty sure I'd want you to go with \"{choice}\"!"));
+		templates.add(new Template("The sands of time whisper to me... they're saying \"{choice}\"."));
+		templates.add(new Template("I tried reading my tea leaves this morning. There was sometihng about death and doom. Anyway, go with \"{choice}\""));
+		templates.add(new Template("Eeny, meeny, miny, {choice}."));
+		templates.add(new Template("{choice}'os, for a complete breakfast!"));
+		templates.add(new Template("\"[choice}\", now with 30% fewer deaths caused by negligence!"));
+		templates.add(new Template("Hold on tightly! \"{choice}\" is a wild ride!"));
+		templates.add(new Template("A wizard is never late, and sometimes engages in some \"{choice}\"."));
+		templates.add(new Template("I received a telegram from a long lost relative that only read \"{choice}\". Weird."));
+		templates.add(new Template("Wait, what was the question again? Uhh... \"{choice}\"?"));
+		templates.add(new Template("I want a divorce. I'm taking half the \"{choice}\"."));
+		templates.add(new Template("Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
 
 		local_command = new Command("choose", 0) {
 			@Override
