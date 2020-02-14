@@ -158,11 +158,10 @@ public class PotionHelper {
 		Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d+d\\d+)}");
 		Matcher evadeMatcher = evadePattern.matcher(effect);
 		if (evadeMatcher.find()) {
-			DiceRoll roll = new DiceRoll(1, 20);
-			String evade = "{user} fails to evade and takes " + evadeMatcher.group(2) + " damage.";
-			if (roll.getSum() >= Integer.parseInt(evadeMatcher.group(1)))
-				evade = "{user} successfully evaded it!";
-			effect = Helper.replaceSubstring(effect, evade, evadeMatcher.start(), evadeMatcher.end());
+			DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC} and takes {damage} damage.");
+			String damage = evadeMatcher.group(2);
+			test.doCheck();
+			effect = Helper.replaceSubstring(effect, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
 		}
 
 		effect = DiceRoll.rollDiceInString(effect, true);
