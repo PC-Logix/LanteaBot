@@ -260,6 +260,7 @@ public class IRCBot {
 		//JSONStorage
 		Database.addPreparedStatement("storeJSON", "INSERT OR REPLACE INTO JsonData (mykey, store) VALUES (?, ?);");
 		Database.addPreparedStatement("retreiveJSON", "SELECT store FROM JsonData WHERE mykey = ?");
+		Database.addPreparedStatement("destroyJSON", "DELETE FROM JsonData WHERE mykey = ?");
 		return true;
 	}
 

@@ -194,6 +194,12 @@ public class Database {
 		return "";
 	}
 
+	public static void destroyJsonData(String key) throws Exception {
+		PreparedStatement stmt = getPreparedStatement("destroyJSON");
+		stmt.setString(1, key);
+		stmt.executeUpdate();
+	}
+
 	public static ResultSet ExecuteQuery(String query) throws SQLException {
 		return statement.executeQuery(query);
 	}

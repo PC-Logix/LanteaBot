@@ -45,6 +45,7 @@ public class Tonk extends AbstractListener {
 	private Command wind_back_command;
 	private Command tonkreseteverything_command;
 	private Command tonk_attempts_remaining;
+	private Command tonk_merge_scores;
 
 	@Override
 	protected void initHook() {
@@ -55,6 +56,7 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(tonkout_command);
 		IRCBot.registerCommand(tonkpoints_command);
 		IRCBot.registerCommand(tonk_attempts_remaining);
+		IRCBot.registerCommand(tonk_merge_scores);
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_COUNT, "SELECT count(*) FROM JsonData;");
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_USERS, "SELECT mykey, store FROM JsonData WHERE mykey LIKE '" + tonk_record_key + "_%' ORDER BY CAST(store AS DECIMAL) DESC;");
 		Database.addPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK, "DELETE FROM JsonData WHERE mykey like '" + tonk_record_key + "_%' OR mykey ='" + tonk_record_key + "' OR mykey = '" + last_tonk_key + "'");
@@ -194,10 +196,14 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
+					int multiplier = 1;
+					try {
+						multiplier = Math.max(1, Integer.parseInt(params));
+					} catch (Exception ignored) {}
 					long tonk_time = Long.parseLong(Database.getJsonData(last_tonk_key));
-					tonk_time -= 1000 * 60 * 60;
+					tonk_time -= 1000 * 60 * 60 * multiplier;
 					Database.storeJsonData(last_tonk_key, String.valueOf(tonk_time));
-					Helper.sendMessage(target, "Last tonk has been rewound by one hour!");
+					Helper.sendMessage(target, "Last tonk has been rewound by " + multiplier + " hour" + (multiplier == 1 ? "": "s") + "!");
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					Helper.sendMessage(target, "Something went wrong.");
@@ -276,15 +282,18 @@ public class Tonk extends AbstractListener {
 									else
 										tonk_record_personal += (2d * (hours - 1) * 0.75d);
 								}
-
+								int pre_position = getScoreboardPosition(nick);
 								Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+								int post_position = getScoreboardPosition(nick);
+
+								String position = (pre_position == post_position || pre_position == -1 ? "position #" + post_position : "position #" + post_position + " <= #" + pre_position);
 
 								DecimalFormat dec = new DecimalFormat(numberFormat);
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								if (nick_is_recorder)
-									Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", position: #" + getScoreboardPosition(nick));
+									Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", " + position);
 								else
-									Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.5d) / 1000d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", position: #" + getScoreboardPosition(nick));
+									Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.5d) / 1000d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", " + position);
 
 								Database.storeJsonData(tonk_record_key, "0;" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
@@ -335,6 +344,7 @@ public class Tonk extends AbstractListener {
 				}
 			}
 		};
+		tonkpoints_command.registerAlias("tonkscore");
 
 		tonkreseteverything_command = new Command("tonkreseteverything", 0, Permissions.ADMIN) {
 			@Override
@@ -372,6 +382,27 @@ public class Tonk extends AbstractListener {
 					Helper.sendMessage(target, "You have " + Math.max(0, attempts) + " attempt" + (attempts == 1 ? "" : "s") + " left.");
 			}
 		};
+
+		tonk_merge_scores = new Command("tonkmerge") {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
+				try {
+					String from_key = tonk_record_key + "_" + param.get(1);
+					String to_key = tonk_record_key + "_" + param.get(0);
+					double from = Double.parseDouble(Database.getJsonData(from_key));
+					double to = Double.parseDouble(Database.getJsonData(to_key));
+
+					to += from;
+					Database.storeJsonData(to_key, String.valueOf(to));
+					Database.destroyJsonData(from_key);
+					Helper.sendMessage(target, "Merge successful!");
+				} catch (Exception e) {
+					e.printStackTrace();
+					Helper.sendMessage(target, "Merge failed!");
+				}
+			}
+		};
+		tonk_merge_scores.setHelpText("Merges the score of the second name into the first name and wipes the second name from the scoreboard. Syntax: " + Config.commandprefix + tonk_merge_scores.getCommand() + " <first_name> <second_name>");
 	}
 
 	static int GetHours(long tonk_time) {
@@ -514,6 +545,7 @@ public class Tonk extends AbstractListener {
 			wind_back_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonkreseteverything_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonk_attempts_remaining.tryExecute(command, nick, target, event, copyOfRange);
+			tonk_merge_scores.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
