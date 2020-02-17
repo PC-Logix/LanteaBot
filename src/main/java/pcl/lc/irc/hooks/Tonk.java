@@ -282,9 +282,9 @@ public class Tonk extends AbstractListener {
 								DecimalFormat dec = new DecimalFormat(numberFormat);
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								if (nick_is_recorder)
-									Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
+									Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", position: #" + getScoreboardPosition(nick));
 								else
-									Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.5d) / 1000d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d));
+									Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.5d) / 1000d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", position: #" + getScoreboardPosition(nick));
 
 								Database.storeJsonData(tonk_record_key, "0;" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
@@ -401,6 +401,24 @@ public class Tonk extends AbstractListener {
 		}
 		return attempts;
 	}
+
+	private static int getScoreboardPosition(String nick) {
+		try {
+			PreparedStatement stop = Database.getPreparedStatement(PreparedStatementKeys.GET_TONK_USERS);
+			ResultSet result = stop.executeQuery();
+
+			int index = 0;
+			while (result.next()) {
+				index++;
+				String user = result.getString(1).replace(tonk_record_key + "_", "");
+				if (nick.toLowerCase().equals(user.toLowerCase()))
+					return index;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	
 	static class TonkHandler implements HttpHandler {
 		@Override
@@ -457,7 +475,7 @@ public class Tonk extends AbstractListener {
 		        Map.Entry pair = (Map.Entry)it.next();
 		        navData += "<div class=\"innertube\"><h1><a href=\""+ pair.getValue() +"\">"+ pair.getKey() +"</a></h1></div>";
 		    }
-		    
+
 			// convert String into InputStream
 			InputStream is = new ByteArrayInputStream(html.getBytes());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
