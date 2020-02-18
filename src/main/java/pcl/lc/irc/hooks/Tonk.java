@@ -110,6 +110,8 @@ public class Tonk extends AbstractListener {
 
 						long diff = now - lasttonk;
 
+						String position = "";
+
 						try {
 							String[] tonk = tonk_record.split(";");
 							long tonk_record_long = Long.parseLong(tonk[0]);
@@ -136,14 +138,18 @@ public class Tonk extends AbstractListener {
 								if (!nick_is_recorder) {
 									System.out.println("Points added to score: " + hours + " * " + record_hours + " = " + (hours * record_hours));
 									tonk_record_personal += (hours * record_hours);
+									int pre_position = getScoreboardPosition(nick);
 									Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
+									int post_position = getScoreboardPosition(nick);
+
+									position = (pre_position == post_position || pre_position == -1 ? " position #" + post_position : " position #" + post_position + " <= #" + pre_position);
 								} else {
 									System.out.println("No points gained because nick equals record holder (Lost: " + hours + " * " + record_hours + " = " + (hours * record_hours) + ")");
 								}
 
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								DecimalFormat dec = new DecimalFormat(numberFormat);
-								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + (record_hours > 1 ? " (" + dec.format(hours / 1000d) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + dec.format(hours / 1000d) + (record_hours > 1 ? " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) : "") + ")") : ""));
+								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + (record_hours > 1 ? " (" + dec.format(hours / 1000d) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + dec.format(hours / 1000d) + (record_hours > 1 ? " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) : "") + ")") : "") + position);
 								Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
 								try {
