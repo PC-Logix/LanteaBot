@@ -84,6 +84,14 @@ public class Command {
 		this.actualCommand = actialCommand;
 	}
 
+	public void setPermissionLevel(String minRank) {
+		this.minRank = minRank;
+	}
+
+	public String getPermissionLevel() {
+		return this.minRank;
+	}
+
 	public String getActualCommand() {
 		return this.actualCommand;
 	}
@@ -217,6 +225,10 @@ public class Command {
 
 	public boolean hasAlias(String alias) {
 		return this.aliases.contains(alias.replaceFirst(Pattern.quote(Config.commandprefix), ""));
+	}
+
+	public ArrayList<String> getAliases() {
+		return this.aliases;
 	}
 
 	public void registerSubCommand(Command command) {

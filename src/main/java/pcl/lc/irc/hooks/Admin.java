@@ -375,20 +375,30 @@ public class Admin extends AbstractListener {
 						}
 						event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
 					} else {
+						String nickClean = nick.replaceAll("\\p{C}", "");
 						try {
 							String l_command = params.get(0);
+							Command com = IRCBot.commands.get(l_command);
+							ArrayList<String> aliases = com.getAliases();
 							if (this.callingRelay == null) {
-								event.getBot().sendIRC().notice(nick, "help for " + l_command);
-								event.getBot().sendIRC().notice(nick, IRCBot.helpList.get(l_command));
+								event.getBot().sendIRC().notice(nick, "help for command '" + l_command + "': " + com.getHelpText());
+								event.getBot().sendIRC().notice(nick, "Required permission level: " + com.getPermissionLevel());
+								if (aliases.size() > 0)
+								event.getBot().sendIRC().notice(nick, "Aliases:  " + String.join(", ", aliases));
 							} else {
-								String nickClean = nick.replaceAll("\\p{C}", "");
-								System.out.println("Sending message via relay '" + this.callingRelay + "'!");
-								System.out.println(nickClean + ": help for " + l_command);
-								Helper.sendMessage(this.callingRelay, nickClean + ": Help for command '" + l_command + "': " + IRCBot.helpList.get(l_command));
+//								System.out.println("Sending message via relay '" + this.callingRelay + "'!");
+//								System.out.println(nickClean + ": help for " + l_command);
+								Helper.sendMessage(this.callingRelay, nickClean + ": Help for command '" + l_command + "': " + com.getHelpText());
+								Helper.sendMessage(this.callingRelay, nickClean + ": Required permission level: " + com.getPermissionLevel());
+								if (aliases.size() > 0)
+									Helper.sendMessage(this.callingRelay, nickClean + ": Aliases:  " + String.join(", ", aliases));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-							event.getBot().sendIRC().notice(nick, "Something went wrong!");
+							if (this.callingRelay == null)
+								event.getBot().sendIRC().notice(nick, "Something went wrong!");
+							else
+								Helper.sendMessage(this.callingRelay, nickClean + ": Something went wrong!");
 						}
 					}
 				}
