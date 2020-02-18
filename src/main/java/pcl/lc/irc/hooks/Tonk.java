@@ -46,6 +46,7 @@ public class Tonk extends AbstractListener {
 	private Command tonkreseteverything_command;
 	private Command tonk_attempts_remaining;
 	private Command tonk_merge_scores;
+	private Command tonk_destroy_scores;
 
 	@Override
 	protected void initHook() {
@@ -57,6 +58,7 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(tonkpoints_command);
 		IRCBot.registerCommand(tonk_attempts_remaining);
 		IRCBot.registerCommand(tonk_merge_scores);
+		IRCBot.registerCommand(tonk_destroy_scores);
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_COUNT, "SELECT count(*) FROM JsonData;");
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_USERS, "SELECT mykey, store FROM JsonData WHERE mykey LIKE '" + tonk_record_key + "_%' ORDER BY CAST(store AS DECIMAL) DESC;");
 		Database.addPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK, "DELETE FROM JsonData WHERE mykey like '" + tonk_record_key + "_%' OR mykey ='" + tonk_record_key + "' OR mykey = '" + last_tonk_key + "'");
@@ -383,7 +385,7 @@ public class Tonk extends AbstractListener {
 			}
 		};
 
-		tonk_merge_scores = new Command("tonkmerge") {
+		tonk_merge_scores = new Command("tonkmerge", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
 				try {
@@ -403,6 +405,32 @@ public class Tonk extends AbstractListener {
 			}
 		};
 		tonk_merge_scores.setHelpText("Merges the score of the second name into the first name and wipes the second name from the scoreboard. Syntax: " + Config.commandprefix + tonk_merge_scores.getCommand() + " <first_name> <second_name>");
+
+		tonk_destroy_scores = new Command("tonkdestroy", 0, Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
+				ArrayList<String> successes = new ArrayList<>();
+				ArrayList<String> failures = new ArrayList<>();
+				for (String name : param) {
+					try {
+						String key = tonk_record_key + "_" + name;
+						Database.destroyJsonData(key);
+						successes.add(name);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						failures.add(name);
+					}
+				}
+				String succ = "";
+				if (successes.size() > 0)
+					succ = "Cleared " + String.join(",", successes);
+				String fail = "";
+				if (failures.size() > 0)
+					fail = "Failed to clear " + String.join(",", failures);
+				Helper.sendMessage(target, succ + (!succ.equals("") && !fail.equals("") ? ", " : "") + fail);
+			}
+		};
+		tonk_destroy_scores.setHelpText("Wipes entries from the tonk scoreboard. Accepts as many names as arguments as will fit in a message.");
 	}
 
 	static int GetHours(long tonk_time) {
@@ -546,6 +574,7 @@ public class Tonk extends AbstractListener {
 			tonkreseteverything_command.tryExecute(command, nick, target, event, copyOfRange);
 			tonk_attempts_remaining.tryExecute(command, nick, target, event, copyOfRange);
 			tonk_merge_scores.tryExecute(command, nick, target, event, copyOfRange);
+			tonk_destroy_scores.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
