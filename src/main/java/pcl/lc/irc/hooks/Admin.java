@@ -388,8 +388,13 @@ public class Admin extends AbstractListener {
 								}
 							} else {
 								ArrayList<String> aliases = com.getAliases();
+								String helpText = "";
+								if (!com.getHelpText().equals(""))
+									helpText = com.getHelpText();
+								else
+									helpText = IRCBot.helpList.get(l_command);
 								if (this.callingRelay == null) {
-									event.getBot().sendIRC().notice(nick, "help for command '" + l_command + "': " + IRCBot.helpList.get(l_command));
+									event.getBot().sendIRC().notice(nick, "help for command '" + l_command + "': " + helpText);
 									if (com.getPermissionLevel() != null)
 										event.getBot().sendIRC().notice(nick, "Required permission level: " + com.getPermissionLevel());
 									else
@@ -399,7 +404,7 @@ public class Admin extends AbstractListener {
 								} else {
 //								System.out.println("Sending message via relay '" + this.callingRelay + "'!");
 //								System.out.println(nickClean + ": help for " + l_command);
-									Helper.sendMessage(this.callingRelay, nickClean + ": Help for command '" + l_command + "': " + IRCBot.helpList.get(l_command));
+									Helper.sendMessage(this.callingRelay, nickClean + ": Help for command '" + l_command + "': " + helpText);
 									if (com.getPermissionLevel() != null)
 										Helper.sendMessage(this.callingRelay, nickClean + ": Required permission level: " + com.getPermissionLevel());
 									else
