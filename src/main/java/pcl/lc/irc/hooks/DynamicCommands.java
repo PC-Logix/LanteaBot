@@ -117,7 +117,7 @@ public class DynamicCommands extends AbstractListener {
 					if (!IRCBot.commands.containsKey(cmd)) {
 						CommandItem item = new CommandItem(cmd, content, null);
 						item.Save();
-						event.respond("Command Added");
+						event.respond("Command Added! Don't forget to set help text with " + local_command_addhelp.getCommand() + "!");
 						IRCBot.registerCommand(cmd, "Dynamic commands module, who knows what it does?!");
 					}
 					else {

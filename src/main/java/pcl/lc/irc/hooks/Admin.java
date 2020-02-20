@@ -378,20 +378,35 @@ public class Admin extends AbstractListener {
 						String nickClean = nick.replaceAll("\\p{C}", "");
 						try {
 							String l_command = params.get(0);
-							Command com = IRCBot.commands.get(l_command);
-							ArrayList<String> aliases = com.getAliases();
-							if (this.callingRelay == null) {
-								event.getBot().sendIRC().notice(nick, "help for command '" + l_command + "': " + com.getHelpText());
-								event.getBot().sendIRC().notice(nick, "Required permission level: " + com.getPermissionLevel());
-								if (aliases.size() > 0)
-								event.getBot().sendIRC().notice(nick, "Aliases:  " + String.join(", ", aliases));
+
+							Command com = Command.findCommand(l_command);
+							if (com == null) {
+								if (this.callingRelay == null) {
+									event.getBot().sendIRC().notice(nick, "Unable to find the command '" + l_command + "'");
+								} else {
+									Helper.sendMessage(this.callingRelay, nickClean + ": Unable to find the command '" + l_command + "'");
+								}
 							} else {
+								ArrayList<String> aliases = com.getAliases();
+								if (this.callingRelay == null) {
+									event.getBot().sendIRC().notice(nick, "help for command '" + l_command + "': " + IRCBot.helpList.get(l_command));
+									if (com.getPermissionLevel() != null)
+										event.getBot().sendIRC().notice(nick, "Required permission level: " + com.getPermissionLevel());
+									else
+										event.getBot().sendIRC().notice(nick, "This is a dynamic command");
+									if (aliases.size() > 0)
+										event.getBot().sendIRC().notice(nick, "Aliases:  " + String.join(", ", aliases));
+								} else {
 //								System.out.println("Sending message via relay '" + this.callingRelay + "'!");
 //								System.out.println(nickClean + ": help for " + l_command);
-								Helper.sendMessage(this.callingRelay, nickClean + ": Help for command '" + l_command + "': " + com.getHelpText());
-								Helper.sendMessage(this.callingRelay, nickClean + ": Required permission level: " + com.getPermissionLevel());
-								if (aliases.size() > 0)
-									Helper.sendMessage(this.callingRelay, nickClean + ": Aliases:  " + String.join(", ", aliases));
+									Helper.sendMessage(this.callingRelay, nickClean + ": Help for command '" + l_command + "': " + IRCBot.helpList.get(l_command));
+									if (com.getPermissionLevel() != null)
+										Helper.sendMessage(this.callingRelay, nickClean + ": Required permission level: " + com.getPermissionLevel());
+									else
+										Helper.sendMessage(this.callingRelay, nickClean + ": This is a dynamic command");
+									if (aliases.size() > 0)
+										Helper.sendMessage(this.callingRelay, nickClean + ": Aliases:  " + String.join(", ", aliases));
+								}
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

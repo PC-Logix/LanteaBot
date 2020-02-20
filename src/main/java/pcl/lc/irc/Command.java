@@ -6,6 +6,7 @@ import pcl.lc.utils.Helper;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -365,5 +366,19 @@ public class Command {
 	@Override
 	public String toString() {
 		return "'" + command + "' aliases: " + aliases.toString();
+	}
+
+	/**
+	 * Search for a command by name or alias
+	 * @param command Command or alias
+	 * @return Returns the command if found or null otherwise
+	 */
+	public static Command findCommand(String command) {
+		AtomicReference<Command> ret = new AtomicReference<>();
+		IRCBot.commands.forEach((k,v) -> {
+			if (k.equals(command) || v.hasAlias(command))
+				ret.set(v);
+		});
+		return ret.get();
 	}
 }
