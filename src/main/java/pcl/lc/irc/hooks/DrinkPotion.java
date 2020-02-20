@@ -178,30 +178,32 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add(new AppearanceEntry("Smelly", "A"));
 
 		//Valid tags: {user}
-		// {appearance}            		- Taken from the appearanceEntries table above
-		// {appearance_lc}         		- Same as previous but lowercase
-		// {appearance_p}          		- Same as {appearance} but with appropriate prefix appended before
-		// {appearance_p_lc}       		- Same as previous but lowercase
-		// {turn_appearance}       		- Taken from the appearanceEntries table above, but formatted into a 'the color of' string where appropriate
-		// {turn_appearance_lc}    		- Same as previous but lowercase
-		// {appearance:<item>:[p]} 		- Produced a string such as 'coral colored <item>' or 'blue <item>' as appropriate. If p is present the appropriate prefix is appended before
-		// {r:<int>-<int>:[time]}  		- Generates a random int between the provided numbers. If time is not empty it is appended after the number and should be for example 'minute'. Automatically pluralized if needed.
-		// {consistency}           		- Taken from the consistencies table above
-		// {consistency_p}         		- Same as previous but with appropriate prefix appended before
-		// {transformation}        		- A random transformation from the Helper class
-		// {transformation_p}      		- A random transformation from the Helper class but with appropriate prefix appended before unless the prefix is conditional
-		// {transformation_pc}     		- A random transformation from the Helper class  but with appropriate prefix appended before, even for conditional prefixes such as 'water'
-		// {transformation2}       		- Same as above, but a separate random transformation
-		// {transformation2_p}     		- Same as above but with appropriate prefix appended before
-		// {transformations}       		- A random transformation from the Helper class but pluralized
-		// {transformations_p}     		- Same as above but with appropriate prefix appended before
-		// {transformations2}      		- Same as above, but a separate random transformation
-		// {transformations2_p}    		- Same as above but with appropriate prefix appended before
-		// {limit}                 		- A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
-		// {r:[min]-{max]:[unit]}  		- Produces a random int within the range specified suffixed by the specified unit
+		// {appearance}            			- Taken from the appearanceEntries table above
+		// {appearance_lc}         			- Same as previous but lowercase
+		// {appearance_p}          			- Same as {appearance} but with appropriate prefix appended before
+		// {appearance_p_lc}       			- Same as previous but lowercase
+		// {turn_appearance}       			- Taken from the appearanceEntries table above, but formatted into a 'the color of' string where appropriate
+		// {turn_appearance_lc}    			- Same as previous but lowercase
+		// {appearance:<item>:[p]} 			- Produced a string such as 'coral colored <item>' or 'blue <item>' as appropriate. If p is present the appropriate prefix is appended before
+		// {r:<int>-<int>:[time]}  			- Generates a random int between the provided numbers. If time is not empty it is appended after the number and should be for example 'minute'. Automatically pluralized if needed.
+		// {consistency}           			- Taken from the consistencies table above
+		// {consistency_p}         			- Same as previous but with appropriate prefix appended before
+		// {transformation}        			- A random transformation from the Helper class
+		// {transformation_p}      			- A random transformation from the Helper class but with appropriate prefix appended before unless the prefix is conditional
+		// {transformation_pc}     			- A random transformation from the Helper class  but with appropriate prefix appended before, even for conditional prefixes such as 'water'
+		// {transformation2}       			- Same as above, but a separate random transformation
+		// {transformation2_p}     			- Same as above but with appropriate prefix appended before
+		// {transformations}       			- A random transformation from the Helper class but pluralized
+		// {transformations_p}     			- Same as above but with appropriate prefix appended before
+		// {transformations2}      			- Same as above, but a separate random transformation
+		// {transformations2_p}    			- Same as above but with appropriate prefix appended before
+		// {limit}                 			- A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
+		// {r:[min]-{max]:[unit]}  			- Produces a random int within the range specified suffixed by the specified unit
 		// {evade:<DC>:<damage(ex 1d4)> - Calls for an evade check against <DC> and either returns "{user} evades successfully!" or "{user} fails to evade and takes <damage> damage."
-		// {junk}						- A random garbage item from Helper all lower case with no prefix
-		// {junk_p}						- A random garbage item from Helper all lower case with prefix
+		// {junk}												- A random garbage item from Helper all lower case with no prefix
+		// {junk_p}											- A random garbage item from Helper all lower case with prefix
+		// {codeword}										- A word used for code, or nonsense
+		// {codeword2}									- A second word
 		effects.add(new String[] {"{user} looks confused as nothing happens."});
 		effects.add(new String[] {"{user} turns into {transformation_pc} girl{limit}."});
 		effects.add(new String[] {"{user} turns into {transformation_pc} boy{limit}."});
@@ -391,7 +393,8 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" for {r:2-5:hour}");
 		limits.add(" until their next sip of water");
 		limits.add(" until the next time they hug someone");
-		limits.add(" until they say the word \"Blatherskite\"");
+		limits.add(" until they say the word \"{codeword}\"");
+		limits.add(" until they say the word \"{codeword}\" followed by \"{codeword2}\"");
 		limits.add(" until they exit the room");
 		limits.add(" until they see a bird");
 		limits.add(" for {r:1-10:moon}");

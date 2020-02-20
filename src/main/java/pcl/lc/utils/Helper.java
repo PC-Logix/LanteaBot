@@ -1187,4 +1187,32 @@ public class Helper {
 		}
 		return converted;
 	}
+
+	public static String getRandomCodeWord() {
+		ArrayList<String> codeWords = new ArrayList<>();
+		codeWords.add("Blatherskite");
+		codeWords.add("Mew");
+		codeWords.add("Nyan");
+		codeWords.add("Woof");
+		codeWords.add("Ohmygawd");
+		codeWords.add("Jeez");
+		codeWords.add("Crystal");
+		codeWords.add("Doom");
+		codeWords.add("Nice");
+		codeWords.add("Awesome");
+		codeWords.add("Wat");
+		codeWords.add("Yip");
+		codeWords.add("Wenk");
+		codeWords.add("Harmony");
+		codeWords.add("Swing");
+		codeWords.add("Classic");
+		codeWords.add("Noir");
+		codeWords.add("Supercalifragilisticexpialidocious");
+		codeWords.add("Rather");
+		codeWords.add("Technically");
+		codeWords.add("Actually");
+		codeWords.add("Sup");
+		codeWords.add("Soup");
+		return codeWords.get(getRandomInt(0, codeWords.size() - 1));
+	}
 }

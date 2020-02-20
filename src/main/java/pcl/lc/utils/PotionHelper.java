@@ -177,10 +177,10 @@ public class PotionHelper {
 			junkoritem = Helper.getRandomGarbageItem(false, true);
 
 		return effect
-                .replace("{item}", itemName)
-                .replace("{junk_or_item}", junkoritem)
-                .replace("{appearance}", PotionHelper.getAppearance().getName(false, false))
-                .replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true))
+        .replace("{item}", itemName)
+        .replace("{junk_or_item}", junkoritem)
+        .replace("{appearance}", PotionHelper.getAppearance().getName(false, false))
+        .replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true))
 				.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false))
 				.replace("{appearance_p_lc}", PotionHelper.getAppearance().getName(true, true))
 				.replace("{turn_appearance}", PotionHelper.getAppearance().turnsTo())
@@ -198,6 +198,8 @@ public class PotionHelper {
 				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
 				.replace("{junk}", Helper.getRandomGarbageItem(false, true))
 				.replace("{junk_p}", Helper.getRandomGarbageItem(true, true))
-				.replace("{limit}", PotionHelper.getLimit());
+				.replace("{limit}", PotionHelper.getLimit())
+				.replace("{codeword}", Helper.getRandomCodeWord())
+				.replace("{codeword2}", Helper.getRandomCodeWord());
 	}
 }
