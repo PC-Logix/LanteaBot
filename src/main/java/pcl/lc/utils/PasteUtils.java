@@ -20,7 +20,7 @@ public class PasteUtils {
 	    NONE;
 	}
 	
-    private static String pasteURL = "http://paste.pc-logix.com/";
+    private static String pasteURL = "https://paste.pc-logix.com/";
 
 	  public synchronized static String paste(String urlParameters) {
 	      return paste(urlParameters, Formats.NONE);
@@ -64,7 +64,7 @@ public class PasteUtils {
 
             //Get Response
             BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            return pasteURL.replace("http", "https") + new JSONObject(rd.readLine()).getString("key");
+            return pasteURL + new JSONObject(rd.readLine()).getString("key");
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -120,6 +120,4 @@ public class PasteUtils {
             return "";
         }
     }
-
-
 }
