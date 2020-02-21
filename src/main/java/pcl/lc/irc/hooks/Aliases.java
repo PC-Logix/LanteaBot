@@ -4,6 +4,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
@@ -27,21 +28,15 @@ public class Aliases extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("aliases", 60) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				boolean didTheThing = false;
-				for (String param : params) {
-					for (Map.Entry<String, Command> cmd : IRCBot.commands.entrySet()) {
-						if (cmd.getKey().equals(param) || cmd.getValue().hasAlias(param)) {
-							Helper.sendMessage(target, cmd.getValue().toString(), nick);
-							didTheThing = true;
-						}
-					}
-				}
-				if (!didTheThing)
-					Helper.sendMessage(target, "No commands found matching, or with alias matching argument" + (params.size() == 1 ? "" : "s") + ".");
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Command cmd = Command.findCommand(params);
+				if (cmd != null)
+					Helper.sendMessage(target, cmd.toString(), nick);
+				else
+					Helper.sendMessage(target, "No command or alias found matching '" + params + "'", nick);
 			}
 		};
-		local_command.setHelpText("Get aliases for a command, or find the root command for an alias");
+		local_command.setHelpText("Get aliases for a command, or find the root command for an alias. Syntax: " + Config.commandprefix + local_command.getCommand() + " <command or alias>");
 		local_command.registerAlias("alias");
 	}
 
