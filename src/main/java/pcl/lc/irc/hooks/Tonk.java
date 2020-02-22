@@ -111,6 +111,7 @@ public class Tonk extends AbstractListener {
 						long diff = now - lasttonk;
 
 						String position = "";
+						String advance = "";
 
 						try {
 							String[] tonk = tonk_record.split(";");
@@ -141,15 +142,21 @@ public class Tonk extends AbstractListener {
 									int pre_position = getScoreboardPosition(nick);
 									Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 									int post_position = getScoreboardPosition(nick);
+									position = (pre_position == post_position || pre_position == -1 ? " Position #" + post_position : " Position #" + pre_position + " => #" + post_position) + ".";
 
-									position = (pre_position == post_position || pre_position == -1 ? " Position #" + post_position : " Position #" + pre_position + " => #" + post_position);
+									ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
+									if (sr != null && sr.user != null) {
+										DecimalFormat dec = new DecimalFormat(numberFormat);
+										advance = " Need " + dec.format((sr.score - tonk_record_personal) / 1000d) + " more points to pass " + sr.user + "!";
+									}
+
 								} else {
 									System.out.println("No points gained because nick equals record holder (Lost: " + hours + " * " + record_hours + " = " + (hours * record_hours) + ")");
 								}
 
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								DecimalFormat dec = new DecimalFormat(numberFormat);
-								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + (record_hours > 1 ? " (" + dec.format(hours / 1000d) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + dec.format(hours / 1000d) + (record_hours > 1 ? " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) : "") + ")") : "") + position);
+								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + (record_hours > 1 ? " (" + dec.format(hours / 1000d) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + dec.format(hours / 1000d) + (record_hours > 1 ? " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) : "") + ")") : "") + position + advance);
 								Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
 								try {
@@ -204,14 +211,22 @@ public class Tonk extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					int multiplier = 1;
+					long remove_time = 0;
+					String unit = "hour";
 					try {
-						multiplier = Math.max(1, Integer.parseInt(params));
+						if (params.contains("m")) {
+							params = params.replace("m", "");
+							remove_time = 1000 * 60 * Integer.parseInt(params);
+							unit = "minute";
+						} else {
+							params = params.replace("h", "");
+							remove_time = 1000 * 60 * 60 * Integer.parseInt(params);
+						}
 					} catch (Exception ignored) {}
 					long tonk_time = Long.parseLong(Database.getJsonData(last_tonk_key));
-					tonk_time -= 1000 * 60 * 60 * multiplier;
+					tonk_time -= remove_time;
 					Database.storeJsonData(last_tonk_key, String.valueOf(tonk_time));
-					Helper.sendMessage(target, "Last tonk has been rewound by " + multiplier + " hour" + (multiplier == 1 ? "": "s") + "!");
+					Helper.sendMessage(target, "Last tonk has been rewound by " + params + " " + unit + (Integer.parseInt(params) == 1 ? "": "s") + "!");
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					Helper.sendMessage(target, "Something went wrong.");
@@ -341,8 +356,13 @@ public class Tonk extends AbstractListener {
 				try {
 					String data = Database.getJsonData(tonk_record_key + "_" + nick);
 					if (data != null && !data.isEmpty()) {
+						double score = Double.parseDouble(data);
 						DecimalFormat dec = new DecimalFormat(numberFormat);
-						Helper.sendMessage(target, "You currently have " + dec.format(Double.parseDouble(data) / 1000d) + " points!", nick);
+						String advance = "";
+						ScoreRemainingResult rs = getScoreRemainingToAdvance(nick);
+						if (rs != null && rs.user != null)
+							advance = " Need " + dec.format((rs.score - score) / 1000d) + " more points to pass " + rs.user + "!";
+						Helper.sendMessage(target, "You currently have " + dec.format(score / 1000d) + " points! Position #" + getScoreboardPosition(nick) + advance, nick);
 					} else {
 						Helper.sendMessage(target, "I can't find a record, so you have 0 points.", nick);
 					}
@@ -483,6 +503,35 @@ public class Tonk extends AbstractListener {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	static class ScoreRemainingResult {
+		public double score;
+		public String user;
+
+		ScoreRemainingResult(double score, String user) {
+			this.score = score;
+			this.user = user;
+		}
+	}
+	private static ScoreRemainingResult getScoreRemainingToAdvance(String nick) {
+		try {
+			PreparedStatement stop = Database.getPreparedStatement(PreparedStatementKeys.GET_TONK_USERS);
+			ResultSet result = stop.executeQuery();
+
+			double prev_score = -1;
+			String prev_user = null;
+			while (result.next()) {
+				String user = result.getString(1).replace(tonk_record_key + "_", "");
+				if (nick.toLowerCase().equals(user.toLowerCase()))
+					return new ScoreRemainingResult(prev_score, prev_user);
+				prev_score = result.getDouble(2);
+				prev_user = user;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	static class TonkHandler implements HttpHandler {
