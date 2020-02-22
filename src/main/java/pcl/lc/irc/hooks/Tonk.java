@@ -361,7 +361,7 @@ public class Tonk extends AbstractListener {
 						String advance = "";
 						ScoreRemainingResult rs = getScoreRemainingToAdvance(nick);
 						if (rs != null && rs.user != null)
-							advance = " Need " + dec.format((rs.score - score) / 1000d) + " more points to pass " + rs.user + "!";
+							advance = " Need " + dec.format((rs.score - score) / 1000d) + " more points to pass " + Helper.antiPing(rs.user) + "!";
 						Helper.sendMessage(target, "You currently have " + dec.format(score / 1000d) + " points! Position #" + getScoreboardPosition(nick) + advance, nick);
 					} else {
 						Helper.sendMessage(target, "I can't find a record, so you have 0 points.", nick);
