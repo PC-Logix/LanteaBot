@@ -175,7 +175,7 @@ public class Admin extends AbstractListener {
 				event.getBot().sendRaw().rawLineNow("NICK " + params);
 			}
 		}; command_chnick.setHelpText("Changes the bots nick to the supplied nick, requires Bot Admin");
-		command_hashcount = new Command("hashcount", 0) {
+		command_hashcount = new Command("hashcount", 0, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 			    Helper.AntiPings = Helper.getNamesFromTarget(target);
@@ -186,14 +186,14 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 			    Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.users.size(), nick);
+				Helper.sendMessage(target, "Current usercount is: " + IRCBot.users.size(), nick);
 			}
 		}; command_usercount.setHelpText("Count users");
 		command_authcount = new Command("authcount", 0) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 			    Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.authed.size(), nick);
+				Helper.sendMessage(target, "Current auth count is: " + IRCBot.authed.size(), nick);
 			}
 		}; command_authcount.setHelpText("Count authed users");
 		command_flushhash = new Command("flushhash", 0, Permissions.ADMIN) {
