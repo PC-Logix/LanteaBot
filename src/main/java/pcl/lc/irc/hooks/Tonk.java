@@ -147,7 +147,7 @@ public class Tonk extends AbstractListener {
 									ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
 									if (sr != null && sr.user != null) {
 										DecimalFormat dec = new DecimalFormat(numberFormat);
-										advance = " Need " + dec.format((sr.score - tonk_record_personal) / 1000d) + " more points to pass " + sr.user + "!";
+										advance = " Need " + dec.format((sr.score - tonk_record_personal) / 1000d) + " more points to pass " + Helper.antiPing(sr.user) + "!";
 									}
 
 								} else {
@@ -311,12 +311,19 @@ public class Tonk extends AbstractListener {
 
 								String position = (pre_position == post_position || pre_position == -1 ? "Position #" + post_position : "Position #" + pre_position + " => #" + post_position);
 
+								String advance = "";
+								ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
+								if (sr != null && sr.user != null) {
+									DecimalFormat dec = new DecimalFormat(numberFormat);
+									advance = " Need " + dec.format((sr.score - tonk_record_personal) / 1000d) + " more points to pass " + Helper.antiPing(sr.user) + "!";
+								}
+
 								DecimalFormat dec = new DecimalFormat(numberFormat);
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + nick + "! You beat " + (nick_is_recorder ? "your own" : recorder + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								if (nick_is_recorder)
-									Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", " + position);
+									Helper.sendMessage(target, nick + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", " + position + advance);
 								else
-									Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.5d) / 1000d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ". " + position);
+									Helper.sendMessage(target, nick + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.5d) / 1000d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ". " + position + advance);
 
 								Database.storeJsonData(tonk_record_key, "0;" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
