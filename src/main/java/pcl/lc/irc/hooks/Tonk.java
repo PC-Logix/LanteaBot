@@ -427,10 +427,9 @@ public class Tonk extends AbstractListener {
 					double from = Double.parseDouble(Database.getJsonData(from_key));
 					double to = Double.parseDouble(Database.getJsonData(to_key));
 
-					to += from;
-					Database.storeJsonData(to_key, String.valueOf(to));
+					Database.storeJsonData(to_key, String.valueOf(to + from));
 					Database.destroyJsonData(from_key);
-					Helper.sendMessage(target, "Merge successful!");
+					Helper.sendMessage(target, "Merge successful! " + param.get(1) + ": " + from + " + " + param.get(0) + ": " + to + " => " + param.get(0) + ": " + (to + from));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Helper.sendMessage(target, "Merge failed!");
