@@ -101,7 +101,7 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("Orange", "An"));
 		appearanceEntries.add(new AppearanceEntry("Tuna", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Salmon", "A", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("Rainbow", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Rainbow", "A", "{appearance} colored {item}", "the color of the {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Void", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Ocean", "An", "{appearance} colored {item}", "the color of the {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Grass", "A", "{appearance} colored {item}", "the color of {appearance}"));
