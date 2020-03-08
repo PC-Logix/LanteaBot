@@ -72,6 +72,10 @@ public abstract class AbstractListener extends ListenerAdapter
 
 	@Override
 	public void onMessage(final MessageEvent event) {
+		for (String str : Config.ignoreMessagesEndingWith) {
+			if (event.getMessage().endsWith(str))
+				return;
+		}
 		String[] splitMessage = event.getMessage().split(" ");
 		String nickClean = event.getUser().getNick().replaceAll("\\p{C}", "");
 		String nick = event.getUser().getNick();
@@ -97,6 +101,10 @@ public abstract class AbstractListener extends ListenerAdapter
 
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
+		for (String str : Config.ignoreMessagesEndingWith) {
+			if (event.getMessage().endsWith(str))
+				return;
+		}
 		String[] splitMessage = event.getMessage().split(" ");
 		String nickClean = event.getUser().getNick().replaceAll("\\p{C}", "");
 		String nick = event.getUser().getNick();

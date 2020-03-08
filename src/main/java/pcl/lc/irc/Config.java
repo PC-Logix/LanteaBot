@@ -43,6 +43,7 @@ public class Config {
 	public static String weatherAPI = null;
 	public static String yuriWebAPI = null;
 	public static List<String> parseBridgeCommandsFromUsers = null;
+	public static List<String> ignoreMessagesEndingWith = null;
 
 	public static String mysqlDbHost = null;
 	public static String mysqlDbPort = null;
@@ -126,6 +127,7 @@ public class Config {
 			weatherAPI = prop.getProperty("WeatherAPI", "");
 			yuriWebAPI = prop.getProperty("yuriWebAPI", "");
 			parseBridgeCommandsFromUsers = Arrays.asList(prop.getProperty("parseBridgeCommandsFromUsers", "").split(","));
+			ignoreMessagesEndingWith = Arrays.asList(prop.getProperty("ignoreMessagesEndingWith", "").split(","));
 
 			mysqlDbHost = prop.getProperty("mysqlDbHost", "");
 			mysqlDbPort = prop.getProperty("mysqlDbPort", "");
