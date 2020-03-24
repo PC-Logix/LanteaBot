@@ -198,7 +198,7 @@ public class DrinkPotion extends AbstractListener {
 		// {transformations2_p}    			- Same as above but with appropriate prefix appended before
 		// {limit}                 			- A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
 		// {r:[min]-{max]:[unit]}  			- Produces a random int within the range specified suffixed by the specified unit
-		// {evade:<DC>:<damage(ex 1d4)> - Calls for an evade check against <DC> and either returns "{user} evades successfully!" or "{user} fails to evade and takes <damage> damage."
+		// {evade:<DC>:<damage> 				- Calls for an evade check against <DC> and either returns "{user} evades successfully!" or "{user} fails to evade and takes <damage> damage. Damage can be a dice string such as 'd4' or '2d6' or a number such as '12' or '0' for no damage."
 		// {junk}												- A random garbage item from Helper all lower case with no prefix
 		// {junk_p}											- A random garbage item from Helper all lower case with prefix
 		// {codeword}										- A word used for code, or nonsense
@@ -309,8 +309,8 @@ public class DrinkPotion extends AbstractListener {
 				"{user} looks confused as nothing seems to happen..."});
 		effects.add(new String[]{"{user} gains the ability to talk to {transformations}{limit}."});
 		effects.add(new String[]{"{user} sees the sky briefly flash solid dark blue then go back to normal."});
-		effects.add(new String[]{"When {user} drinks the last drop, a bucket of water materializes above their head and dumps it contents over them, then vanishes. The water does not.",
-				"A bucket of water materializes above {user}'s head and dumps it contents over them, then vanishes. The water does not."});
+		effects.add(new String[]{"When {user} drinks the last drop, a bucket of water materializes above their head and dumps it contents over them. {evade:8:0}",
+				"A bucket of water materializes above {user}'s head and dumps it contents over them. {evade:8:0}"});
 		effects.add(new String[]{"Suddenly there's a swarm of wasps behind {user} that chase them for {r:30-60:second}!"});
 		effects.add(new String[]{"When {user} brings the bottle down they see {appearance:plastic flamingo:p}. It stares into their soul.",
 				"When {user} turns around they see {appearance:plastic flamingo:p}. It stares into their soul."});

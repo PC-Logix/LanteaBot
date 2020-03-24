@@ -167,7 +167,7 @@ public class PotionHelper {
 		else
 			itemName = item.getNameRaw();
 
-		Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d+d\\d+)}");
+		Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d*d?\\d+)}");
 		Matcher evadeMatcher = evadePattern.matcher(effect);
 		if (evadeMatcher.find()) {
 			DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC} and takes {damage} damage.");
