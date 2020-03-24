@@ -465,7 +465,7 @@ public class DrinkPotion extends AbstractListener {
 						EffectEntry effect = potion.getEffect(nick);
 
 						if (effect != null)
-							Helper.sendMessage(target, (potion.isNew ? "(New!) " : "") + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
+							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
 						else
 							Helper.sendMessage(target, "Due to some series of events I couldn't find any effect for this potion.");
 					} catch (InvalidPotionException ex) {

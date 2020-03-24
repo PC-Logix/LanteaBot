@@ -120,8 +120,12 @@ public class PotionEntry {
 		AppearanceEntry consistency = PotionHelper.findConsistencyInString(str);
 		AppearanceEntry appearance = PotionHelper.findAppearanceInString(str);
 
-		if (consistency == null || appearance == null || !str.toLowerCase().contains("potion"))
+		if (!str.toLowerCase().contains("potion"))
 			return null;
+		if (consistency == null)
+			consistency = PotionHelper.getConsistency();
+		if (appearance == null)
+			appearance = PotionHelper.getAppearance();
 		return new PotionEntry(consistency, appearance, !PotionHelper.combinationHasEffect(consistency, appearance));
 	}
 }
