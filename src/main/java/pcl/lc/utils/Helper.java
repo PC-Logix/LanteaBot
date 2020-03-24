@@ -13,8 +13,6 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.hooks.DrinkPotion;
-import pcl.lc.irc.hooks.Inventory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -596,123 +594,181 @@ public class Helper {
 		return time_string;
 	}
 
-	public static String get_fail_response() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("Oops...");
-		strings.add("ohno");
-		strings.add("Not again...");
-		strings.add("Dammit!");
-		strings.add("#@%&!!");
-		strings.add("Fore!");
-		strings.add("I hope nobody saw that...");
-		strings.add("I didn't do it!");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	private static String[] responsesFail = new String[] {
+			"Oops...",
+			"ohno",
+			"Not again...",
+			"Dammit!",
+			"#@%&!!",
+			"Fore!",
+			"I hope nobody saw that...",
+			"I didn't do it!",
+	};
+
+	public static int getFailResponseCount() {
+		return responsesFail.length;
 	}
 
-	public static String get_success_response() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("Yes!");
-		strings.add("I did it!");
-		strings.add("Woo!");
-		strings.add("I'm awesome!");
-		strings.add("Take that RNG!");
-		strings.add("In yo face!");
-		strings.add("Exactly as planned.");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	public static String getFailResponse() {
+		return responsesFail[getRandomInt(0, responsesFail.length - 1)];
 	}
 
-	public static String get_surprise_response() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("What? D:");
-		strings.add("Nooooo");
-		strings.add("Whatever.");
-		strings.add("Nuuh");
-		strings.add("I'll stab you in the face!");
-		strings.add("How dare you?!");
-		strings.add("Fight me!");
-		strings.add("No u!");
-		strings.add("Someone's mad.");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	private static String[] responsesSuccess = new String[] {
+			"Yes!",
+			"I did it!",
+			"Woo!",
+			"I'm awesome!",
+			"Take that RNG!",
+			"In yo face!",
+			"Exactly as planned.",
+	};
+
+	public static int getSuccessResponseCount() {
+		return responsesSuccess.length;
 	}
 
-	public static String get_thanks_response() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("Thanks!");
-		strings.add("You're too kind!");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	public static String getSuccessResponse() {
+		return responsesSuccess[getRandomInt(0, responsesSuccess.length - 1)];
 	}
 
-	public static String get_care_response() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("No caring detected in the area");
-		strings.add("The tricorder shows 0%, captain");
-		strings.add("Records show zero shits given");
-		strings.add("Scans indicate 0.001 units of caring, with a 0.02% margin of error");
-		strings.add("Earlier instances indicate you do not.");
-		strings.add("Barely even registers on the care-o-meter");
-		strings.add("The needle seems to be stuck below 0");
-		strings.add("Detecting trace amounts of background caring, but nothing significant");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	private static String[] responsesSurprise = new String[] {
+			"What? D:",
+			"Nooooo",
+			"Whatever.",
+			"Nuuh",
+			"I'll stab you in the face!",
+			"How dare you?!",
+			"Fight me!",
+			"No u!",
+			"Someone's mad.",
+	};
+
+	public static int getSurpriseResponseCount() {
+		return responsesSurprise.length;
 	}
 
-	public static String get_right_response() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("Meh.");
-		strings.add("Sure, I guess");
-		strings.add("Hm?");
-		strings.add("What? No.");
-		strings.add("That's fine I guess");
-		strings.add("Sure, whatever");
-		strings.add("Yeah right.");
-		strings.add("Maybe.");
-		strings.add("Okay");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	public static String getSurpriseResponse() {
+		return responsesSurprise[getRandomInt(0, responsesSurprise.length - 1)];
 	}
 
-	public static String get_garbage() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("into a garbage compactor");
-		strings.add("into a black hole");
-		strings.add("in the Sarlacc pit");
-		strings.add("in the tentacle pit");
-		strings.add("in the incinerator");
-		strings.add("into a portal to the moon");
-		strings.add("into a stargate to deep space");
-		strings.add("a forgotten box in somebodies garage");
-		strings.add("into the core of a dying star");
-		strings.add("into a nearby garbage can");
-		strings.add("in a hole with lava in it");
-		strings.add("into the void");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	private static String[] responsesThanks = new String[] {
+		"Thanks!",
+		"Wow thanks!",
+	};
+
+	public static int getThanksResponseCount() {
+		return responsesThanks.length;
 	}
 
-	public static String get_hurt_response() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("ow");
-		strings.add("ouch");
-		strings.add("owies");
-		strings.add("ohno D:");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	public static String getThanksResponse() {
+		return responsesThanks[getRandomInt(0, responsesThanks.length - 1)];
 	}
 
-	public static String get_hit_place() {
-		ArrayList<String> strings = new ArrayList<>();
-		strings.add("on the arm");
-		strings.add("in the head");
-		strings.add("on the butt");
-		strings.add("in their pride");
-		strings.add("in the small of the back");
-		strings.add("on the heel");
-		strings.add("on the left hand");
-		strings.add("underneath their foot");
-		strings.add("in their spleen");
-		strings.add("on a body part they didn't even know they had");
-		strings.add("in the face");
-		strings.add("on a small but very important bone");
-		strings.add("right where they didn't expect");
-		strings.add("right where the last item hit");
-		strings.add("right in their lunch");
-		return strings.get(getRandomInt(0, strings.size() - 1));
+	private static String[] responsesAffirmative = new String[] {
+			"Meh.",
+			"Sure, I guess",
+			"Hm?",
+			"What? No.",
+			"That's fine I guess",
+			"Sure, whatever",
+			"Yeah right.",
+			"Maybe.",
+			"Okay",
+	};
+
+	public static int getAffirmativeResponseCount() {
+		return responsesAffirmative.length;
+	}
+
+	public static String getAffirmativeResponse() {
+		return responsesAffirmative[getRandomInt(0, responsesAffirmative.length - 1)];
+	}
+
+	private static String[] careDetectorResponses = new String[] {
+			"No caring detected in the area",
+			"The tricorder shows 0%, captain",
+			"Records show zero shits given",
+			"Scans indicate 0.001 units of caring, with a 0.02% margin of error",
+			"Earlier instances indicate you do not.",
+			"Barely even registers on the care-o-meter",
+			"The needle seems to be stuck below 0",
+			"Detecting trace amounts of background caring, but nothing significant",
+	};
+
+	public static int getCareDetectorResponseCount() {
+		return careDetectorResponses.length;
+	}
+
+	public static String getCareDetectorResponse() {
+		return careDetectorResponses[getRandomInt(0, careDetectorResponses.length - 1)];
+	}
+
+	private static String[] garbageDisposals = new String[] {
+			"into a garbage compactor",
+			"into a black hole",
+			"in the Sarlacc pit",
+			"in the tentacle pit",
+			"in the incinerator",
+			"into a portal to the moon",
+			"into a stargate to deep space",
+			"a forgotten box in somebodies garage",
+			"into the core of a dying star",
+			"into a nearby garbage can",
+			"in a hole with lava in it",
+			"into the void"	,
+	};
+
+	public static int getGarbageDisposalCount() {
+		return garbageDisposals.length;
+	}
+
+	public static String getGarbageDisposal() {
+		return garbageDisposals[getRandomInt(0, garbageDisposals.length - 1)];
+	}
+
+	private static String[] responsesHurt = new String[] {
+		"ow",
+		"ouch",
+		"owies",
+		"ohno D:",
+		"aaah",
+		"agh",
+		"ack",
+		"owwwww",
+	};
+
+	public static int getHurtResponseCount() {
+		return responsesHurt.length;
+	}
+
+	public static String getHurtResponse() {
+		return responsesHurt[getRandomInt(0, responsesHurt.length - 1)];
+	}
+
+	private static String[] hitLocations = new String[] {
+			"on the arm",
+			"in the head",
+			"on the butt",
+			"in their pride",
+			"in the small of the back",
+			"on the heel",
+			"on the left hand",
+			"underneath their foot",
+			"in their spleen",
+			"on a body part they didn't even know they had",
+			"in the face",
+			"on a small but very important bone",
+			"right where they didn't expect",
+			"right where the last item hit",
+			"right in their lunch",
+	};
+
+	public static int getHitPlaceCount() {
+		return hitLocations.length;
+	}
+
+	public static String getHitPlace() {
+		return hitLocations[getRandomInt(0, hitLocations.length - 1)];
 	}
 
 	public static String parseSelfReferral(String type) {
@@ -791,6 +847,178 @@ public class Helper {
 		return output;
 	}
 
+	private static String[][] garbageItems = new String[][]{
+			new String[] {"a", "Twig"},
+			new String[] {"a", "Pebble"},
+			new String[] {"a", "Piece of cloth"},
+			new String[] {"a", "Leaf"},
+			new String[] {"a", "Weed"},
+			new String[] {"a", "Paper crane"},
+			new String[] {"a", "Half-eaten fortune cookie"},
+			new String[] {"a", "Cookie with raisins"},
+			new String[] {"a", "Turnip"},
+			new String[] {"a", "Potato"},
+			new String[] {"a", "Doorknob"},
+			new String[] {"a", "Rickety Gazebo"},
+			new String[] {"", "Half of an IKEA shelf"},
+			new String[] {"a", "Metal bearing"},
+			new String[] {"a", "Wooden bird"},
+			new String[] {"", "Cheese residue"},
+			new String[] {"a", "Slice of butter"},
+			new String[] {"a", "Depleted 9v battery"},
+			new String[] {"a", "Brick"},
+			new String[] {"a", "Charred piece of bacon"},
+			new String[] {"a", "Single grain of rice"},
+			new String[] {"an", "Empty bottle"},
+			new String[] {"a", "Bottle filled with concrete"},
+			new String[] {"a", "Ball of yarn"},
+			new String[] {"a", "Fork"},
+			new String[] {"", "Some half-melted snow"},
+			new String[] {"a", "Deed for a bridge"},
+			new String[] {"an", "Unlabeled key"},
+			new String[] {"a", "Napkin with scribbles on it"},
+			new String[] {"a", "Butterfly"},
+			new String[] {"a", "Phone battery"},
+			new String[] {"a", "Set of assorted wires"},
+			new String[] {"a", "Pen"},
+			new String[] {"a", "Pencil"},
+			new String[] {"an", "Eraser"},
+			new String[] {"an", "Empty post-it note"},
+			new String[] {"a", "Hood ornament in the shape of a tomato"},
+			new String[] {"a", "Bottle cap"},
+			new String[] {"an", "Empty Array"},
+			new String[] {"", "attempt to index nil value"},
+			new String[] {"a", "Expired lottery ticket"},
+			new String[] {"a", "Tiny bag of catnip"},
+			new String[] {"a", "Tiny snail"},
+			new String[] {"", "Corn on the cob"},
+			new String[] {"a", "Pecan pie"},
+			new String[] {"an", "Empty drive slot"},
+			new String[] {"a", "Dropbox account with zero capacity"},
+			new String[] {"an", "Empty shot glass"},
+			new String[] {"a", "Lootcrate"},
+			new String[] {"a", "Power adapter incompatible with everything"},
+			new String[] {"a", "Lockpick"},
+			new String[] {"", "Two lockpicks"},
+			new String[] {"a", "Monopoly top hat figure"},
+			new String[] {"a", "Pretty average hat"},
+			new String[] {"a", "Knight who says NI"},
+			new String[] {"the", "Bottom of a barrel"},
+			new String[] {"an", "Impossible geometric shape"},
+			new String[] {"a", "Geode"},
+			new String[] {"a", "Sad looking flower"},
+			new String[] {"a", "Happy flower"},
+			new String[] {"a", "Particularly fat bee"},
+			new String[] {"a", "Box full of wasps"},
+			new String[] {"a", "Box full of worms"},
+			new String[] {"a", "Box full of thumbtacks"},
+			new String[] {"a", "Box full of caps"},
+			new String[] {"", "randompotion"},
+			new String[] {"a", "Picture of a crudely drawn appendage"},
+			new String[] {"a", "Broken .jpg"},
+			new String[] {"a", "Broken .png"},
+			new String[] {"a", "Broken .gif"},
+			new String[] {"a", "Broken .tif"},
+			new String[] {"a", "Broken .mov"},
+			new String[] {"a", "Broken .zip"},
+			new String[] {"a", "Broken .psd"},
+			new String[] {"a", "Broken .7z"},
+			new String[] {"a", "Broken .mp3"},
+			new String[] {"a", "Broken .mp4"},
+			new String[] {"a", "Broken .mp5"},
+			new String[] {"a", "Broken .mp6"},
+			new String[] {"a", "Pentagram pendant"},
+			new String[] {"a", "Rosary"},
+			new String[] {"an", "Upside-down cross"},
+			new String[] {"a", "Poofy ball of fluff"},
+			new String[] {"a", "Paperclip, big one"},
+			new String[] {"a", "Leftover pumpkin"},
+			new String[] {"a", "Fork in the road"},
+			new String[] {"a", "Chocolate bar that was left out in the sun"},
+			new String[] {"an", "Impossibly green dress"},
+			new String[] {"a", "Piece of rope slightly too small to be useful"},
+			new String[] {"a", "20ft Pole"},
+			new String[] {"", "Ten birds in a bush"},
+			new String[] {"a", "Very stale piece of pizza"},
+			new String[] {"a", "Tiny packet of cream"},
+			new String[] {"a", "Tiny packet of ketchup"},
+			new String[] {"a", "Tiny packet of salt"},
+			new String[] {"a", "Tiny packet of packets"},
+			new String[] {"a", "Tiny packet of rubber bands"},
+			new String[] {"a", "Tiny model shoe"},
+			new String[] {"a", "Mermaids tear"},
+			new String[] {"a", "Mermaid scale"},
+			new String[] {"a", "Dragon tooth"},
+			new String[] {"a", "Dragon scale"},
+			new String[] {"a", "Book that is glued shut"},
+			new String[] {"a", "Sealed unmarked canister"},
+			new String[] {"a", "Canister of neurotoxin"},
+			new String[] {"a", "Frog leg"},
+			new String[] {"", "Eye of newt"},
+			new String[] {"", "Roberto's knife"},
+			new String[] {"an", "Unassuming lamp"},
+			new String[] {"a", "Copy of \"The Lusty Argonian Maid\""},
+			new String[] {"a", "Cabbage leaf"},
+			new String[] {"an", "Ornate chandelier"},
+			new String[] {"a", "Tiny cage"},
+			new String[] {"a", "Tiny fork"},
+			new String[] {"a", "Tiny spoon"},
+			new String[] {"a", "Tiny knife"},
+			new String[] {"an", "Ornate Nate"},
+			new String[] {"a", "Tiny figurine"},
+			new String[] {"a", "Mask of your face"},
+			new String[] {"a", "Mask of someones face"},
+			new String[] {"a", "Tiny clay figure"},
+			new String[] {"an", "Empty soup can"},
+			new String[] {"an", "Empty wooden chest"},
+			new String[] {"a", "Portable stick"},
+			new String[] {"a", "Stationary stick"},
+			new String[] {"an", "Inanimate carbon rod"},
+			new String[] {"a", "Living tombstone"},
+			new String[] {"a", "Talking sword that wont stop talking"},
+			new String[] {"a", "3D-printer that only prints in papier mache"},
+			new String[] {"a", "Raspberry Pi that only beeps at you"},
+			new String[] {"a", "Sphere that just wont stop talking"},
+			new String[] {"a", "Talking fork"},
+			new String[] {"a", "Talking spoon"},
+			new String[] {"a", "Talking knife"},
+			new String[] {"a", "Talking spork"},
+			new String[] {"a", "Eerily quiet singing fish"},
+			new String[] {"a", "Suspicious looking statue"},
+			new String[] {"a", "Radioactive teapot"},
+			new String[] {"a", "Miraculous Miracle Man (MMM) #1 comic"},
+			new String[] {"the", "official laws and migration guidelines of Pluto"},
+			new String[] {"the", "official baby talk translation guide"},
+			new String[] {"", "Loot boxes for dummies volume 1"},
+			new String[] {"the", "Extra-terrestrials guide to Earth fourth edition"},
+			new String[] {"the", "Ultimate guide to killing all humans"},
+			new String[] {"a", "Shiny metal posterior"},
+			new String[] {"an", "Unfinished m"},
+			new String[] {"a", "Sort-of-holy symbol"},
+			new String[] {"a", "Guide to Talking to Rocks"},
+			new String[] {"", "randompotion"},
+			new String[] {"a", "triangular ball"},
+			new String[] {"a", "pie-shaped cake"},
+			new String[] {"an", "Inverted hole"},
+			new String[] {"a", "Small pile of dirt"},
+			new String[] {"a", "Jar of dirt"},
+			new String[] {"a", "Cracked crack"},
+			new String[] {"an", "Extremely short fork"},
+			new String[] {"an", "Incredibly thin sheet of air"},
+			new String[] {"a", "Poofy cloud"},
+			new String[] {"a", "Hard cloud"},
+			new String[] {"a", "Pointy cloud"},
+			new String[] {"", "Another settlement that needs your help"},
+			new String[] {"a", "baseball cap with the Starbucks logo on it"},
+			new String[] {"a", "baseball cap with the McDonalds logo on it"},
+			new String[] {"a", "baseball cap with the IKEA logo on it"},
+			new String[] {"a", "baseball cap with the Walmart logo on it"},
+	};
+
+	public static int getGarbageItemCount() {
+		return garbageItems.length;
+	}
+
 	/**
 	 * Calls getRandomGarbageItem(boolean all_lower_case) with all_lower_case = false
 	 * Returns a random mundane garbage item
@@ -808,171 +1036,9 @@ public class Helper {
 	public static String getRandomGarbageItem(boolean include_prefix, boolean all_lower_case) {
 		String name;
 		try {
-			List<String[]> garbage = new ArrayList<>();
-			garbage.add(new String[] {"a", "Twig"});
-			garbage.add(new String[] {"a", "Pebble"});
-			garbage.add(new String[] {"a", "Piece of cloth"});
-			garbage.add(new String[] {"a", "Leaf"});
-			garbage.add(new String[] {"a", "Weed"});
-			garbage.add(new String[] {"a", "Paper crane"});
-			garbage.add(new String[] {"a", "Half-eaten fortune cookie"});
-			garbage.add(new String[] {"a", "Cookie with raisins"});
-			garbage.add(new String[] {"a", "Turnip"});
-			garbage.add(new String[] {"a", "Potato"});
-			garbage.add(new String[] {"a", "Doorknob"});
-			garbage.add(new String[] {"a", "Rickety Gazebo"});
-			garbage.add(new String[] {"", "Half of an IKEA shelf"});
-			garbage.add(new String[] {"a", "Metal bearing"});
-			garbage.add(new String[] {"a", "Wooden bird"});
-			garbage.add(new String[] {"", "Cheese residue"});
-			garbage.add(new String[] {"a", "Slice of butter"});
-			garbage.add(new String[] {"a", "Depleted 9v battery"});
-			garbage.add(new String[] {"a", "Brick"});
-			garbage.add(new String[] {"a", "Charred piece of bacon"});
-			garbage.add(new String[] {"a", "Single grain of rice"});
-			garbage.add(new String[] {"an", "Empty bottle"});
-			garbage.add(new String[] {"a", "Bottle filled with concrete"});
-			garbage.add(new String[] {"a", "Ball of yarn"});
-			garbage.add(new String[] {"a", "Fork"});
-			garbage.add(new String[] {"", "Some half-melted snow"});
-			garbage.add(new String[] {"a", "Deed for a bridge"});
-			garbage.add(new String[] {"an", "Unlabeled key"});
-			garbage.add(new String[] {"a", "Napkin with scribbles on it"});
-			garbage.add(new String[] {"a", "Butterfly"});
-			garbage.add(new String[] {"a", "Phone battery"});
-			garbage.add(new String[] {"a", "Set of assorted wires"});
-			garbage.add(new String[] {"a", "Pen"});
-			garbage.add(new String[] {"a", "Pencil"});
-			garbage.add(new String[] {"an", "Eraser"});
-			garbage.add(new String[] {"an", "Empty post-it note"});
-			garbage.add(new String[] {"a", "Hood ornament in the shape of a tomato"});
-			garbage.add(new String[] {"a", "Bottle cap"});
-			garbage.add(new String[] {"an", "Empty Array"});
-			garbage.add(new String[] {"", "attempt to index nil value"});
-			garbage.add(new String[] {"a", "Expired lottery ticket"});
-			garbage.add(new String[] {"a", "Tiny bag of catnip"});
-			garbage.add(new String[] {"a", "Tiny snail"});
-			garbage.add(new String[] {"", "Corn on the cob"});
-			garbage.add(new String[] {"a", "Pecan pie"});
-			garbage.add(new String[] {"an", "Empty drive slot"});
-			garbage.add(new String[] {"a", "Dropbox account with zero capacity"});
-			garbage.add(new String[] {"an", "Empty shot glass"});
-			garbage.add(new String[] {"a", "Lootcrate"});
-			garbage.add(new String[] {"a", "Power adapter incompatible with everything"});
-			garbage.add(new String[] {"a", "Lockpick"});
-			garbage.add(new String[] {"", "Two lockpicks"});
-			garbage.add(new String[] {"a", "Monopoly top hat figure"});
-			garbage.add(new String[] {"a", "Pretty average hat"});
-			garbage.add(new String[] {"a", "Knight who says NI"});
-			garbage.add(new String[] {"the", "Bottom of a barrel"});
-			garbage.add(new String[] {"an", "Impossible geometric shape"});
-			garbage.add(new String[] {"a", "Geode"});
-			garbage.add(new String[] {"a", "Sad looking flower"});
-			garbage.add(new String[] {"a", "Happy flower"});
-			garbage.add(new String[] {"a", "Particularly fat bee"});
-			garbage.add(new String[] {"a", "Box full of wasps"});
-			garbage.add(new String[] {"a", "Box full of worms"});
-			garbage.add(new String[] {"a", "Box full of thumbtacks"});
-			garbage.add(new String[] {"a", "Box full of caps"});
-			garbage.add(new String[] {"", "randompotion"});
-			garbage.add(new String[] {"a", "Picture of a crudely drawn appendage"});
-			garbage.add(new String[] {"a", "Broken .jpg"});
-			garbage.add(new String[] {"a", "Broken .png"});
-			garbage.add(new String[] {"a", "Broken .gif"});
-			garbage.add(new String[] {"a", "Broken .tif"});
-			garbage.add(new String[] {"a", "Broken .mov"});
-			garbage.add(new String[] {"a", "Broken .zip"});
-			garbage.add(new String[] {"a", "Broken .psd"});
-			garbage.add(new String[] {"a", "Broken .7z"});
-			garbage.add(new String[] {"a", "Broken .mp3"});
-			garbage.add(new String[] {"a", "Broken .mp4"});
-			garbage.add(new String[] {"a", "Broken .mp5"});
-			garbage.add(new String[] {"a", "Broken .mp6"});
-			garbage.add(new String[] {"a", "Pentagram pendant"});
-			garbage.add(new String[] {"a", "Rosary"});
-			garbage.add(new String[] {"an", "Upside-down cross"});
-			garbage.add(new String[] {"a", "Poofy ball of fluff"});
-			garbage.add(new String[] {"a", "Paperclip, big one"});
-			garbage.add(new String[] {"a", "Leftover pumpkin"});
-			garbage.add(new String[] {"a", "Fork in the road"});
-			garbage.add(new String[] {"a", "Chocolate bar that was left out in the sun"});
-			garbage.add(new String[] {"an", "Impossibly green dress"});
-			garbage.add(new String[] {"a", "Piece of rope slightly too small to be useful"});
-			garbage.add(new String[] {"a", "20ft Pole"});
-			garbage.add(new String[] {"", "Ten birds in a bush"});
-			garbage.add(new String[] {"a", "Very stale piece of pizza"});
-			garbage.add(new String[] {"a", "Tiny packet of cream"});
-			garbage.add(new String[] {"a", "Tiny packet of ketchup"});
-			garbage.add(new String[] {"a", "Tiny packet of salt"});
-			garbage.add(new String[] {"a", "Tiny packet of packets"});
-			garbage.add(new String[] {"a", "Tiny packet of rubber bands"});
-			garbage.add(new String[] {"a", "Tiny model shoe"});
-			garbage.add(new String[] {"a", "Mermaids tear"});
-			garbage.add(new String[] {"a", "Mermaid scale"});
-			garbage.add(new String[] {"a", "Dragon tooth"});
-			garbage.add(new String[] {"a", "Dragon scale"});
-			garbage.add(new String[] {"a", "Book that is glued shut"});
-			garbage.add(new String[] {"a", "Sealed unmarked canister"});
-			garbage.add(new String[] {"a", "Canister of neurotoxin"});
-			garbage.add(new String[] {"a", "Frog leg"});
-			garbage.add(new String[] {"", "Eye of newt"});
-			garbage.add(new String[] {"", "Roberto's knife"});
-			garbage.add(new String[] {"an", "Unassuming lamp"});
-			garbage.add(new String[] {"a", "Copy of \"The Lusty Argonian Maid\""});
-			garbage.add(new String[] {"a", "Cabbage leaf"});
-			garbage.add(new String[] {"an", "Ornate chandelier"});
-			garbage.add(new String[] {"a", "Tiny cage"});
-			garbage.add(new String[] {"a", "Tiny fork"});
-			garbage.add(new String[] {"a", "Tiny spoon"});
-			garbage.add(new String[] {"a", "Tiny knife"});
-			garbage.add(new String[] {"an", "Ornate Nate"});
-			garbage.add(new String[] {"a", "Tiny figurine"});
-			garbage.add(new String[] {"a", "Mask of your face"});
-			garbage.add(new String[] {"a", "Mask of someones face"});
-			garbage.add(new String[] {"a", "Tiny clay figure"});
-			garbage.add(new String[] {"an", "Empty soup can"});
-			garbage.add(new String[] {"an", "Empty wooden chest"});
-			garbage.add(new String[] {"a", "Portable stick"});
-			garbage.add(new String[] {"a", "Stationary stick"});
-			garbage.add(new String[] {"an", "Inanimate carbon rod"});
-			garbage.add(new String[] {"a", "Living tombstone"});
-			garbage.add(new String[] {"a", "Talking sword that wont stop talking"});
-			garbage.add(new String[] {"a", "3D-printer that only prints in papier mache"});
-			garbage.add(new String[] {"a", "Raspberry Pi that only beeps at you"});
-			garbage.add(new String[] {"a", "Sphere that just wont stop talking"});
-			garbage.add(new String[] {"a", "Talking fork"});
-			garbage.add(new String[] {"a", "Talking spoon"});
-			garbage.add(new String[] {"a", "Talking knife"});
-			garbage.add(new String[] {"a", "Talking spork"});
-			garbage.add(new String[] {"a", "Eerily quiet singing fish"});
-			garbage.add(new String[] {"a", "Suspicious looking statue"});
-			garbage.add(new String[] {"a", "Radioactive teapot"});
-			garbage.add(new String[] {"a", "Miraculous Miracle Man (MMM) #1 comic"});
-			garbage.add(new String[] {"the", "official laws and migration guidelines of Pluto"});
-			garbage.add(new String[] {"the", "official baby talk translation guide"});
-			garbage.add(new String[] {"", "Loot boxes for dummies volume 1"});
-			garbage.add(new String[] {"the", "Extra-terrestrials guide to Earth fourth edition"});
-			garbage.add(new String[] {"the", "Ultimate guide to killing all humans"});
-			garbage.add(new String[] {"a", "Shiny metal posterior"});
-			garbage.add(new String[] {"an", "Unfinished m"});
-			garbage.add(new String[] {"a", "Sort-of-holy symbol"});
-			garbage.add(new String[] {"a", "Guide to Talking to Rocks"});
-			garbage.add(new String[] {"", "randompotion"});
-			garbage.add(new String[] {"a", "triangular ball"});
-			garbage.add(new String[] {"a", "pie-shaped cake"});
-			garbage.add(new String[] {"an", "Inverted hole"});
-			garbage.add(new String[] {"a", "Small pile of dirt"});
-			garbage.add(new String[] {"a", "Jar of dirt"});
-			garbage.add(new String[] {"a", "Cracked crack"});
-			garbage.add(new String[] {"an", "Extremely short fork"});
-			garbage.add(new String[] {"an", "Incredibly thin sheet of air"});
-			garbage.add(new String[] {"a", "Poofy cloud"});
-			garbage.add(new String[] {"a", "Hard cloud"});
-			garbage.add(new String[] {"a", "Pointy cloud"});
-			garbage.add(new String[] {"", "Another settlement that needs your help"});
-
-			String[] item = garbage.get(getRandomInt(0, garbage.size() - 1));
-			name = (include_prefix && item[0] != "" ? item[0] + " " : "") + item[1];
+			int index = Helper.getRandomInt(0, garbageItems.length - 1);
+			String[] item = garbageItems[index];
+			name = (include_prefix && !item[0].equals("") ? item[0] + " " : "") + item[1];
 			if (all_lower_case)
 				name = name.toLowerCase();
 		} catch (Exception ex) {
@@ -980,6 +1046,8 @@ public class Helper {
 		}
 		return name;
 	}
+
+
 	private static String[][] animals = new String[][]{
 			//prefix, name, suffix, remove n characters from end before applying suffix
 			new String[] {"A" , "Pig"      , "s"  , null},
@@ -1015,6 +1083,10 @@ public class Helper {
 			new String[] {"A" , "Octopus"  , "i"  , "3"},
 			new String[] {"A" , "Unicorn"  , "s"  , null},
 	};
+
+	public static int getAnimalCount() {
+		return animals.length;
+	}
 
 	public static String getTransformationByIndex(int index) {
 		return getTransformationByIndex(index, false, false, false, true);
@@ -1122,15 +1194,15 @@ public class Helper {
 		return null;
 	}
 
-    public static double round(double value, int places) {
-        double scale = Math.pow(10, places);
-        return Math.round(value * scale) / scale;
-    }
+	public static double round(double value, int places) {
+		double scale = Math.pow(10, places);
+		return Math.round(value * scale) / scale;
+	}
 
 	//Valid tags: {user},{appearance},{turn_appearance},{appearance:item},{consistency},{p_transformation},{transformation},{transformation2},{transformations},{transformations2}
-    private static String[] warp_locations = new String[] {
-    		"You end up at home.",
-    		"You end up in your bed.",
+	private static String[] warpLocations = new String[] {
+			"You end up at home.",
+    	"You end up in your bed.",
 			"You end up in a dimension populated by {transformations}.",
 			"You end up in a dimension populated by {transformation} girls.",
 			"You end up in a dimension populated by {transformation} boys.",
@@ -1149,12 +1221,16 @@ public class Helper {
 			"You end up at the location of a great treasure. The treasure of friendship!",
 	};
 
+	public static int getWarpLocationCount() {
+		return warpLocations.length;
+	}
+
 	public static String getWarpLocationByIndex(int index) {
 		return getWarpLocationByIndex(index, false);
 	}
 
 	public static String getWarpLocationByIndex(int index, boolean lower_case) {
-		String ret = PotionHelper.replaceParamsInEffectString(warp_locations[index], "");
+		String ret = PotionHelper.replaceParamsInEffectString(warpLocations[index], "");
 		return !lower_case ? ret : ret.toLowerCase();
 	}
 
@@ -1163,7 +1239,7 @@ public class Helper {
 	}
 
     public static String getRandomWarpLocation(boolean lower_case) {
-		int index = Helper.getRandomInt(0, warp_locations.length - 1);
+		int index = Helper.getRandomInt(0, warpLocations.length - 1);
 		return getWarpLocationByIndex(index, lower_case);
 	}
 
@@ -1187,31 +1263,37 @@ public class Helper {
 		return converted;
 	}
 
+	private static String[] codeWords = new String[] {
+			"Blatherskite",
+			"Mew",
+			"Nyan",
+			"Woof",
+			"Ohmygawd",
+			"Jeez",
+			"Crystal",
+			"Doom",
+			"Nice",
+			"Awesome",
+			"Wat",
+			"Yip",
+			"Wenk",
+			"Harmony",
+			"Swing",
+			"Classic",
+			"Noir",
+			"Supercalifragilisticexpialidocious",
+			"Rather",
+			"Technically",
+			"Actually",
+			"Sup",
+			"Soup",
+	};
+
+	public static int getCodeWordCount() {
+		return codeWords.length;
+	}
+
 	public static String getRandomCodeWord() {
-		ArrayList<String> codeWords = new ArrayList<>();
-		codeWords.add("Blatherskite");
-		codeWords.add("Mew");
-		codeWords.add("Nyan");
-		codeWords.add("Woof");
-		codeWords.add("Ohmygawd");
-		codeWords.add("Jeez");
-		codeWords.add("Crystal");
-		codeWords.add("Doom");
-		codeWords.add("Nice");
-		codeWords.add("Awesome");
-		codeWords.add("Wat");
-		codeWords.add("Yip");
-		codeWords.add("Wenk");
-		codeWords.add("Harmony");
-		codeWords.add("Swing");
-		codeWords.add("Classic");
-		codeWords.add("Noir");
-		codeWords.add("Supercalifragilisticexpialidocious");
-		codeWords.add("Rather");
-		codeWords.add("Technically");
-		codeWords.add("Actually");
-		codeWords.add("Sup");
-		codeWords.add("Soup");
-		return codeWords.get(getRandomInt(0, codeWords.size() - 1));
+		return codeWords[getRandomInt(0, codeWords.length - 1)];
 	}
 }

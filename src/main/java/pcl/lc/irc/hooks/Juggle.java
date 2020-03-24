@@ -60,10 +60,10 @@ public class Juggle extends AbstractListener {
 					}
 				}
 				if (dropped > 0)
-					Helper.sendMessage(target, Helper.get_fail_response());
+					Helper.sendMessage(target, Helper.getFailResponse());
 				else {
 					Helper.sendAction(target, "doesn't drop anything");
-					Helper.sendMessage(target, Helper.get_success_response());
+					Helper.sendMessage(target, Helper.getSuccessResponse());
 				}
 			}
 		};

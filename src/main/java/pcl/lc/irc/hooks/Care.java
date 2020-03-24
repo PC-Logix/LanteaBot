@@ -3,15 +3,12 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
-import pcl.lc.utils.ItemCollection;
 
 import java.util.ArrayList;
 
@@ -29,7 +26,7 @@ public class Care extends AbstractListener {
 		local_command = new Command("care", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				Helper.sendMessage(target, Helper.get_care_response(), nick);
+				Helper.sendMessage(target, Helper.getCareDetectorResponse(), nick);
 			}
 		};
 		IRCBot.registerCommand(local_command, "Measure care levels");

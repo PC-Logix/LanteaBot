@@ -80,6 +80,10 @@ public class PotionHelper {
 		return null;
 	}
 
+	public static int getAppearanceCount() {
+		return DrinkPotion.appearanceEntries.size();
+	}
+
 	public static int getRandomAppearanceIndex() {
 		return Helper.getRandomInt(0, DrinkPotion.appearanceEntries.size() - 1);
 	}
@@ -92,6 +96,10 @@ public class PotionHelper {
 		return DrinkPotion.appearanceEntries.get(index);
 	}
 
+	public static int getConsistencyCount() {
+		return DrinkPotion.consistencies.size();
+	}
+
 	public static int getRandomConsistencyIndex() {
 		return Helper.getRandomInt(0, DrinkPotion.consistencies.size() - 1);
 	}
@@ -102,6 +110,10 @@ public class PotionHelper {
 
 	public static AppearanceEntry getConsistency(int index) {
 		return DrinkPotion.consistencies.get(index);
+	}
+
+	public static int getLimitCount() {
+		return DrinkPotion.limits.size();
 	}
 
 	public static int getRandomLimitIndex() {
@@ -172,9 +184,14 @@ public class PotionHelper {
 		if (triggererName != null)
 			effect = effect.replaceAll("\\{trigger}", triggererName);
 
-		String junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
-		if (Helper.getRandomInt(0, 1) == 1)
-			junkoritem = Helper.getRandomGarbageItem(false, true);
+		String junkoritem = "nothing";
+		try {
+			junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
+			if (Helper.getRandomInt(0, 1) == 1)
+				junkoritem = Helper.getRandomGarbageItem(false, true);
+		} catch (Exception ex) {
+			//Ignore no item found
+		}
 
 		return effect
         .replace("{item}", itemName)
@@ -201,5 +218,54 @@ public class PotionHelper {
 				.replace("{limit}", PotionHelper.getLimit())
 				.replace("{codeword}", Helper.getRandomCodeWord())
 				.replace("{codeword2}", Helper.getRandomCodeWord());
+	}
+
+	public static int countEffectVariations(String effect) {
+		int count = 0;
+		if (effect.contains("{appearance}"))
+			count += getAppearanceCount();
+		if (effect.contains("{apperance_lc}"))
+			count += getAppearanceCount();
+		if (effect.contains("{appearance_p}"))
+			count += getAppearanceCount();
+		if (effect.contains("{appearance_p_lc}"))
+			count += getAppearanceCount();
+		if (effect.contains("{turn_appearance}"))
+			count += getAppearanceCount();
+		if (effect.contains("{turn_appearance_lc}"))
+			count += getAppearanceCount();
+		if (effect.contains("{consistency}"))
+			count += getConsistencyCount();
+		if (effect.contains("{consistency_lc}"))
+			count += getConsistencyCount();
+		if (effect.contains("{consistency_p}"))
+			count += getConsistencyCount();
+		if (effect.contains("{consistency_p_lc}"))
+			count += getConsistencyCount();
+		if (effect.contains("{transformation}"))
+			count += Helper.getAnimalCount();
+		if (effect.contains("{transformation_p}"))
+			count += Helper.getAnimalCount();
+		if (effect.contains("{transformation_pc}"))
+			count += Helper.getAnimalCount();
+		if (effect.contains("{transformation2}"))
+			count += Helper.getAnimalCount();
+		if (effect.contains("{transformations}"))
+			count += Helper.getAnimalCount();
+		if (effect.contains("{transformations_p}"))
+			count += Helper.getAnimalCount();
+		if (effect.contains("{transformations2}"))
+			count += Helper.getAnimalCount();
+		if (effect.contains("{junk}"))
+			count += Helper.getGarbageItemCount();
+		if (effect.contains("{junk_p}"))
+			count += Helper.getGarbageItemCount();
+		if (effect.contains("{limit}"))
+			count += getLimitCount();
+		if (effect.contains("{codeword}"))
+			count += Helper.getCodeWordCount();
+		if (effect.contains("{codeword2}"))
+			count += Helper.getCodeWordCount();
+		return count;
 	}
 }

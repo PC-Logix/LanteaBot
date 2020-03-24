@@ -623,14 +623,17 @@ public class DrinkPotion extends AbstractListener {
 			PotionHelper.tryResetPotionList();
 
 			String target = t.getRequestURI().toString();
-			String response = "";
+			StringBuilder response = new StringBuilder();
 
-			int appearancecount = appearanceEntries.size();
-			int concount = consistencies.size();
-			int combinations = appearancecount * concount;
-			int potioncount = potions.size();
-			int effectcount = effects.size();
-			float ratio = (float) effectcount / (float) combinations;
+			int appearanceCount = appearanceEntries.size();
+			int consistencyCount = consistencies.size();
+			int combinations = appearanceCount * consistencyCount;
+			int potionCount = potions.size();
+			int effectCount = 0;
+			for (String[] effect : effects) {
+				effectCount += PotionHelper.countEffectVariations(effect[0]);
+			}
+			float ratio = (float) effectCount / (float) combinations;
 			DecimalFormat format = new DecimalFormat("#.###");
 			ArrayList<String> unique_effects_discovered = new ArrayList<>();
 
@@ -640,42 +643,42 @@ public class DrinkPotion extends AbstractListener {
 					unique_effects_discovered.add(potion[1]);
 			}
 			int unique_effect_count = unique_effects_discovered.size();
-			String potionShelf = "<div>There are <b>" + appearancecount + "</b> appearances and <b>" + concount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potioncount + "</b> " + (potioncount == 1 ? "has" : "have") + " been discovered today.</div>" +
-					"<div>There are <b>" + effectcount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. <b>" + unique_effect_count + "</b> unique effect" + (unique_effect_count == 1 ? "" : "s") + " " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
+			StringBuilder potionShelf = new StringBuilder("<div>There are <b>" + appearanceCount + "</b> appearances and <b>" + consistencyCount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potionCount + "</b> " + (potionCount == 1 ? "has" : "have") + " been discovered today.</div>" +
+					"<div>There are <b>" + effectCount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. <b>" + unique_effect_count + "</b> unique effect" + (unique_effect_count == 1 ? "" : "s") + " " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<div style='margin-top: 6px;'>A valid potion string (for use with <b>" + Config.commandprefix + "drink</b>) needs an appearance keyword, consistency keyword and the word \"<b>potion</b>\" in it.</div>" +
-					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>";
+					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>");
 			try {
 				for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
 					String[] potion = stringEffectEntryEntry.getKey().split(",");
 					String consistency = consistencies.get(Integer.parseInt(potion[0])).getName();
 					String appearance = appearanceEntries.get(Integer.parseInt(potion[1])).getName();
 					EffectEntry entry = stringEffectEntryEntry.getValue();
-					potionShelf += "<tr><td>" + consistency.substring(0, 1).toUpperCase() + consistency.substring(1) + " " + appearance.substring(0, 1).toUpperCase() + appearance.substring(1) + " Potion</td><td>" + entry.Effect.replace("{user}", "User") + "</td><td>" + entry.Discoverer + "</td></tr>";
+					potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(entry.Effect.replace("{user}", "User")).append("</td><td>").append(entry.Discoverer).append("</td></tr>");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			potionShelf += "</table>";
+			potionShelf.append("</table>");
 			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(), "utf-8");
 
-			String entries = "";
+			StringBuilder entries = new StringBuilder();
 			for (AppearanceEntry appearanceEntry : appearanceEntries) {
 				String name = appearanceEntry.getName();
-				entries += "<div>" + name.substring(0, 1).toUpperCase() + name.substring(1) + "</div>";
+				entries.append("<div>").append(name.substring(0, 1).toUpperCase()).append(name.substring(1)).append("</div>");
 			}
-			potionShelf += "<div style='margin-top: 10px;'>" + MakeJavascriptContainer("Show/hide appearances (" + appearanceEntries.size() + ")", entries) + "</div>";
+			potionShelf.append("<div style='margin-top: 10px;'>").append(MakeJavascriptContainer("Show/hide appearances (" + appearanceEntries.size() + ")", entries.toString())).append("</div>");
 
-			entries = "";
-			for (AppearanceEntry consistancy : consistencies) {
-				entries += "<div>" + consistancy.getName().substring(0, 1).toUpperCase() + consistancy.getName().substring(1) + "</div>";
+			entries = new StringBuilder();
+			for (AppearanceEntry consistency : consistencies) {
+				entries.append("<div>").append(consistency.getName().substring(0, 1).toUpperCase()).append(consistency.getName().substring(1)).append("</div>");
 			}
-			potionShelf += "<div style='margin-top: 10px;'>" + MakeJavascriptContainer("Show/hide consistencies (" + consistencies.size() + ")", entries) + "</div>";
+			potionShelf.append("<div style='margin-top: 10px;'>").append(MakeJavascriptContainer("Show/hide consistencies (" + consistencies.size() + ")", entries.toString())).append("</div>");
 
-			String navData = "";
+			StringBuilder navData = new StringBuilder();
 			Iterator it = httpd.pages.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry pair = (Map.Entry) it.next();
-				navData += "<div class=\"innertube\"><h1><a href=\"" + pair.getValue() + "\">" + pair.getKey() + "</a></h1></div>";
+				navData.append("<div class=\"innertube\"><h1><a href=\"").append(pair.getValue()).append("\">").append(pair.getKey()).append("</a></h1></div>");
 			}
 
 			// convert String into InputStream
@@ -683,13 +686,13 @@ public class DrinkPotion extends AbstractListener {
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 				String line = null;
 				while ((line = br.readLine()) != null) {
-					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#POTIONS#", potionShelf)
-							.replace("#NAVIGATION#", navData) + "\n";
+					response.append(line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#POTIONS#", potionShelf.toString())
+							.replace("#NAVIGATION#", navData.toString())).append("\n");
 				}
 			}
-			t.sendResponseHeaders(200, response.getBytes().length);
+			t.sendResponseHeaders(200, response.toString().getBytes().length);
 			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
+			os.write(response.toString().getBytes());
 			os.close();
 		}
 	}

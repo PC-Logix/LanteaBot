@@ -118,13 +118,13 @@ public class Responses extends AbstractListener {
         Helper.sendMessage(target,"You're welcome!", nick);
         break;
       case "surprise":
-        Helper.sendMessage(target, Helper.get_surprise_response(), nick);
+        Helper.sendMessage(target, Helper.getSurpriseResponse(), nick);
         break;
       case "smile":
         Helper.sendAction(target, "smiles ^.^");
         break;
       case "thanks":
-        Helper.sendMessage(target, Helper.get_thanks_response(), nick);
+        Helper.sendMessage(target, Helper.getThanksResponse(), nick);
         break;
       case "angry":
         Helper.sendMessage(target,"Don't you poor me! I'll poor you in the face! D:<", nick);
@@ -145,7 +145,7 @@ public class Responses extends AbstractListener {
     	  Helper.sendMessage(target, "That tickles!");
     	  break;
       case "whocares":
-        Helper.sendMessage(target, Helper.get_care_response(), nick);
+        Helper.sendMessage(target, Helper.getCareDetectorResponse(), nick);
         break;
       case "face":
         Helper.sendMessage(target, "Your face wont work!");
@@ -154,13 +154,13 @@ public class Responses extends AbstractListener {
         Helper.sendAction(target, "does the flop");
         break;
       case "hurt":
-        Helper.sendMessage(target, Helper.get_hurt_response(), nick);
+        Helper.sendMessage(target, Helper.getHurtResponse(), nick);
         break;
       case "hello":
         Helper.sendMessage(target, "Hello " + nick);
         break;
       case "right":
-        Helper.sendMessage(target, Helper.get_right_response());
+        Helper.sendMessage(target, Helper.getAffirmativeResponse());
         break;
       case "pet":
         Helper.sendAction(target, "purrs");
