@@ -6,6 +6,7 @@ import pcl.lc.irc.hooks.DrinkPotion;
 import pcl.lc.irc.hooks.Inventory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,7 +60,9 @@ public class PotionHelper {
 	public static AppearanceEntry findAppearanceInString(String string) {
 		string = Helper.reverseString(string).toLowerCase();
 		System.out.println(string);
-		for (AppearanceEntry c : DrinkPotion.appearanceEntries) {
+		ArrayList<AppearanceEntry> appearanceEntries = DrinkPotion.appearanceEntries;
+		Collections.sort(appearanceEntries);
+		for (AppearanceEntry c : appearanceEntries) {
 			if (string.contains(c.getName(false, true)))
 				return c;
 		}
@@ -73,7 +76,9 @@ public class PotionHelper {
 	public static AppearanceEntry findConsistencyInString(String string) {
 		string = Helper.reverseString(string).toLowerCase();
 		System.out.println(string);
-		for (AppearanceEntry c : DrinkPotion.consistencies) {
+		ArrayList<AppearanceEntry> consistencies = DrinkPotion.consistencies;
+		Collections.sort(consistencies);
+		for (AppearanceEntry c : consistencies) {
 			if (string.contains(c.getName(false, true)))
 				return c;
 		}

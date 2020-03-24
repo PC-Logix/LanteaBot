@@ -1,6 +1,11 @@
 package pcl.lc.utils;
 
-public class AppearanceEntry {
+import gcardone.junidecode.App;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Comparator;
+
+public class AppearanceEntry implements Comparable<AppearanceEntry> {
     public String Prefix;
     public String Name;
     private String ItemPattern; //e.g. "{appearance} {item}" or "{item} the color of {appearance}"
@@ -72,5 +77,14 @@ public class AppearanceEntry {
         if (lowercase)
             return str.toLowerCase();
         return str;
+    }
+
+    @Override
+    public int compareTo(@NotNull AppearanceEntry o) {
+        if (this.Name.length() == o.Name.length())
+            return 0;
+        else if (this.Name.length() > o.Name.length())
+            return -1;
+        return 1;
     }
 }
