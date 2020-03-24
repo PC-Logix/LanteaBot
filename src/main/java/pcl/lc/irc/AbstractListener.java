@@ -101,12 +101,10 @@ public abstract class AbstractListener extends ListenerAdapter
 
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
-		if (Config.ignoreMessagesEndingWith.size() > 1) {
-			for (String str : Config.ignoreMessagesEndingWith) {
-				if (event.getMessage().endsWith(str)) {
-					System.out.println("Ignored '" + event.getMessage() + "' because it ends with '" + str + "'");
-					return;
-				}
+		for (String str : Config.ignoreMessagesEndingWith) {
+			if (event.getMessage().endsWith(str)) {
+				System.out.println("Ignored '" + event.getMessage() + "' because it ends with '" + str + "'");
+				return;
 			}
 		}
 		String[] splitMessage = event.getMessage().split(" ");

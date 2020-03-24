@@ -127,7 +127,7 @@ public class Config {
 			weatherAPI = prop.getProperty("WeatherAPI", "");
 			yuriWebAPI = prop.getProperty("yuriWebAPI", "");
 			parseBridgeCommandsFromUsers = Arrays.asList(prop.getProperty("parseBridgeCommandsFromUsers", "").split(","));
-			ignoreMessagesEndingWith = Arrays.asList(prop.getProperty("ignoreMessagesEndingWith", "").split(","));
+			ignoreMessagesEndingWith = Arrays.asList(prop.getProperty("ignoreMessagesEndingWith", "%*%").split(","));
 
 			mysqlDbHost = prop.getProperty("mysqlDbHost", "");
 			mysqlDbPort = prop.getProperty("mysqlDbPort", "");
