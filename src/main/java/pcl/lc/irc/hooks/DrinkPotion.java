@@ -384,6 +384,16 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"A swinging blade comes flying towards {user} from nowhere! {evade:16:1d8}"});
 		effects.add(new String[]{"A trapdoor suddenly opens up under {user}! There are spikes at the bottom. {evade:15:1d6}"});
 		effects.add(new String[]{"A giant boulder is rolling towards {user}! {evade:15:1d6}"});
+		effects.add(new String[]{"Tonk has been reset."});
+		effects.add(new String[]{"Tonk moved forward 2d6 hours."});
+		effects.add(new String[]{"Tonk moved back 3d4 hours."});
+		effects.add(new String[]{"Tonk moved to next week."});
+		effects.add(new String[]{"Tonk moved to last week."});
+		effects.add(new String[]{"Tonk moved to an indeterminate point in time."});
+		effects.add(new String[]{"{user}'s tonk score has been reset."});
+		effects.add(new String[]{"{user} gained one million tonk points."});
+		effects.add(new String[]{"Someone just had some of {user}'s favourite food and you didn't get any!"});
+		effects.add(new String[]{"A bunch of people in white coats approach you. {evade:12:0}"});
 
 		//Never end with punctuation and always start with a space
 		//See above for valid tags
