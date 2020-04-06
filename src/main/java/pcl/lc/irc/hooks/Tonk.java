@@ -32,7 +32,7 @@ class PreparedStatementKeys {
  * Created by Forecaster on 30/03/2017 for the LanteaBot project.
  */
 public class Tonk extends AbstractListener {
-    private static String numberFormat = "#.########";
+	private static String numberFormat = "#.########";
 	private static String tonk_record_key = "tonkrecord";
 	private static String last_tonk_key = "lasttonk";
 	private static String tonk_attempts_key = "tonkattempt";
@@ -146,8 +146,7 @@ public class Tonk extends AbstractListener {
 
 									ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
 									if (sr != null && sr.user != null) {
-										DecimalFormat dec = new DecimalFormat(numberFormat);
-										advance = " Need " + dec.format((sr.score - tonk_record_personal) / 1000d) + " more points to pass " + Helper.antiPing(sr.user) + "!";
+										advance = " Need " + displayTonkPoints(sr.score - tonk_record_personal) + " more points to pass " + Helper.antiPing(sr.user) + "!";
 									}
 
 								} else {
@@ -155,8 +154,7 @@ public class Tonk extends AbstractListener {
 								}
 
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
-								DecimalFormat dec = new DecimalFormat(numberFormat);
-								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + dec.format((hours * record_hours) / 1000d) + (record_hours > 1 ? " (" + dec.format(hours / 1000d) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + dec.format(hours / 1000d) + (record_hours > 1 ? " x " + record_hours + " = " + dec.format((hours * record_hours) / 1000d) : "") + ")") : "") + position + advance);
+								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + displayTonkPoints(hours * record_hours) + (record_hours > 1 ? " (" + displayTonkPoints(hours) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + displayTonkPoints(hours) + (record_hours > 1 ? " x " + record_hours + " = " + displayTonkPoints(hours * record_hours) : "") + ")") : "") + position + advance);
 								Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
 								try {
@@ -314,16 +312,14 @@ public class Tonk extends AbstractListener {
 								String advance = "";
 								ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
 								if (sr != null && sr.user != null) {
-									DecimalFormat dec = new DecimalFormat(numberFormat);
-									advance = " Need " + dec.format((sr.score - tonk_record_personal) / 1000d) + " more points to pass " + Helper.antiPing(sr.user) + "!";
+									advance = " Need " + displayTonkPoints(sr.score - tonk_record_personal) + " more points to pass " + Helper.antiPing(sr.user) + "!";
 								}
 
-								DecimalFormat dec = new DecimalFormat(numberFormat);
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								if (nick_is_recorder)
-									Helper.sendMessage(target, Helper.antiPing(nick) + " has tonked out! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format((2d * (hours - 1)) / 1000d) + " bonus points for consecutive hours!" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ", " + position + advance);
+									Helper.sendMessage(target, Helper.antiPing(nick) + " has tonked out! Tonk has been reset! They gained " + displayTonkPoints(hours) + " tonk points!" + (applyPoints ? " plus " + displayTonkPoints(2d * (hours - 1)) + " bonus points for consecutive hours!" : "") + " Current score: " + displayTonkPoints(tonk_record_personal) + ", " + position + advance);
 								else
-									Helper.sendMessage(target, Helper.antiPing(nick) + " has stolen the tonkout! Tonk has been reset! They gained " + dec.format(hours / 1000d) + " tonk points!" + (applyPoints ? " plus " + dec.format(((2d * (hours - 1)) * 0.5d) / 1000d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + dec.format(tonk_record_personal / 1000d) + ". " + position + advance);
+									Helper.sendMessage(target, Helper.antiPing(nick) + " has stolen the tonkout! Tonk has been reset! They gained " + displayTonkPoints(hours) + " tonk points!" + (applyPoints ? " plus " + displayTonkPoints((2d * (hours - 1)) * 0.5d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + displayTonkPoints(tonk_record_personal) + ". " + position + advance);
 
 								Database.storeJsonData(tonk_record_key, "0;" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
@@ -364,12 +360,11 @@ public class Tonk extends AbstractListener {
 					String data = Database.getJsonData(tonk_record_key + "_" + nick);
 					if (data != null && !data.isEmpty()) {
 						double score = Double.parseDouble(data);
-						DecimalFormat dec = new DecimalFormat(numberFormat);
 						String advance = "";
 						ScoreRemainingResult rs = getScoreRemainingToAdvance(nick);
 						if (rs != null && rs.user != null)
-							advance = " Need " + dec.format((rs.score - score) / 1000d) + " more points to pass " + Helper.antiPing(rs.user) + "!";
-						Helper.sendMessage(target, "You currently have " + dec.format(score / 1000d) + " points! Position #" + getScoreboardPosition(nick) + advance, nick);
+							advance = " Need " + displayTonkPoints(rs.score - score) + " more points to pass " + Helper.antiPing(rs.user) + "!";
+						Helper.sendMessage(target, "You currently have " + displayTonkPoints(score) + " points! Position #" + getScoreboardPosition(nick) + advance, nick);
 					} else {
 						Helper.sendMessage(target, "I can't find a record, so you have 0 points.", nick);
 					}
@@ -429,7 +424,7 @@ public class Tonk extends AbstractListener {
 
 					Database.storeJsonData(to_key, String.valueOf(to + from));
 					Database.destroyJsonData(from_key);
-					Helper.sendMessage(target, "Merge successful! " + param.get(1) + ": " + from + " + " + param.get(0) + ": " + to + " => " + param.get(0) + ": " + (to + from));
+					Helper.sendMessage(target, "Merge successful! " + param.get(1) + ": " + displayTonkPoints(from) + " + " + param.get(0) + ": " + displayTonkPoints(to) + " => " + param.get(0) + ": " + displayTonkPoints(to + from));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Helper.sendMessage(target, "Merge failed!");
@@ -578,8 +573,7 @@ public class Tonk extends AbstractListener {
 				int count = 0;
 				while (resultSet.next()) {
 					count++;
-					DecimalFormat dec = new DecimalFormat(numberFormat);
-					tonkLeaders += "<tr><td>#" + count + " " + resultSet.getString(1).replace(tonk_record_key + "_",  "") + "</td><td>" + dec.format(Double.parseDouble(resultSet.getString(2)) / 1000d) + "</td></tr>";
+					tonkLeaders += "<tr><td>#" + count + " " + resultSet.getString(1).replace(tonk_record_key + "_",  "") + "</td><td>" + displayTonkPoints(resultSet.getString(2)) + "</td></tr>";
 				}
 			}
 			catch (Exception e) {
@@ -610,6 +604,19 @@ public class Tonk extends AbstractListener {
 			os.write(response.getBytes());
 			os.close();
 		}
+	}
+
+	public static String displayTonkPoints(int points) {
+		return displayTonkPoints((double) points);
+	}
+
+	public static String displayTonkPoints(String points) {
+		return displayTonkPoints(Double.parseDouble(points));
+	}
+
+	public static String displayTonkPoints(double points) {
+		DecimalFormat dec = new DecimalFormat(numberFormat);
+		return dec.format(points / 1000d);
 	}
 
 	private String parseNick(String nick) {
