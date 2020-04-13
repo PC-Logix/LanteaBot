@@ -166,7 +166,9 @@ public class Item {
 		if (this.uses_left == -1)
 			return "";
 		this.uses_left -= damage;
-		if (this.uses_left <= 0) {
+		int inventory_size_penalty = (int) Math.floor(Inventory.getInventorySize() / 15d);
+		System.out.println("inventory_size_penalty: " + inventory_size_penalty);
+		if ((this.uses_left - inventory_size_penalty) <= 0) {
 			int result = Inventory.removeItem(this.id);
 			if (result == 0) {
 				String sentence = Inventory.getItemBreakString(Inventory.fixItemName(this.name, true), includeEndPunctuation);

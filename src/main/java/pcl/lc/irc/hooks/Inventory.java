@@ -145,12 +145,7 @@ public class Inventory extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				try {
-					PreparedStatement getItems = Database.getPreparedStatement("getItems");
-					ResultSet result = getItems.executeQuery();
-					int counter = 0;
-					while (result.next())
-						counter++;
-					Helper.sendMessage(target, "The inventory contains " + counter + " items.");
+					Helper.sendMessage(target, "The inventory contains " + getInventorySize() + " items.");
 				} catch (Exception e) {
 					e.printStackTrace();
 					Helper.sendAction(target, "shrugs");
@@ -623,6 +618,20 @@ public class Inventory extends AbstractListener {
 		int length_penalty = name.length() / 20; //this is the length where the bonus turns into a penalty
 		int actual_penalty = (int) ((length_penalty < 1) ? 5 - Math.floor(length_penalty * 5) : -Math.floor(length_penalty));
 		return Math.max(1, (Helper.getRandomInt(1, 4) + actual_penalty));
+	}
+
+	public static int getInventorySize() {
+		int counter = 0;
+		PreparedStatement getItems;
+		try {
+			getItems = Database.getPreparedStatement("getItems");
+			ResultSet result = getItems.executeQuery();
+			while (result.next())
+				counter++;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return counter;
 	}
 
 	public String chan;
