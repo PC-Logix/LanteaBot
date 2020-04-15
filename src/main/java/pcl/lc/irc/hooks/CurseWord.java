@@ -63,6 +63,7 @@ public class CurseWord extends AbstractListener {
 		local_command.registerAlias("curses");
 		local_command.registerAlias("cursewd");
 		local_command.registerAlias("cursew");
+		local_command.registerAlias("swear");
 	}
 
 	public String chan;
