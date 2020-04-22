@@ -282,7 +282,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"{user} zones out for {r:1-10:minute}."});
 		effects.add(new String[]{"A warp zone opens up next to {user}. (Use " + Config.commandprefix + "warp to jump in)"});
 		effects.add(new String[]{"After the first sip the potion poofs away.",
-				"{user} flinches as the potion is throw but nothing arrives to hit them..."});
+				"{user} flinches as the potion is thrown but nothing arrives to hit them..."});
 		effects.add(new String[]{"{user} looks up and sees the moon smile at them for a second."});
 		effects.add(new String[]{"The ghost of a plant haunts {user}{limit}."});
 		effects.add(new String[]{"{r:2-5:} nearby pebbles suddenly shift slightly in {user}'s direction."});
@@ -309,8 +309,8 @@ public class DrinkPotion extends AbstractListener {
 				"{user} looks confused as nothing seems to happen..."});
 		effects.add(new String[]{"{user} gains the ability to talk to {transformations}{limit}."});
 		effects.add(new String[]{"{user} sees the sky briefly flash solid dark blue then go back to normal."});
-		effects.add(new String[]{"When {user} drinks the last drop, a bucket of water materializes above their head and dumps it contents over them. {evade:8:0}",
-				"A bucket of water materializes above {user}'s head and dumps it contents over them. {evade:8:0}"});
+		effects.add(new String[]{"When {user} drinks the last drop, a bucket of water materializes above their head and dumps its contents over them. {evade:8:0}",
+				"A bucket of water materializes above {user}'s head and dumps its contents over them. {evade:8:0}"});
 		effects.add(new String[]{"Suddenly there's a swarm of wasps behind {user} that chase them for {r:30-60:second}!"});
 		effects.add(new String[]{"When {user} brings the bottle down they see {appearance:plastic flamingo:p}. It stares into their soul.",
 				"When {user} turns around they see {appearance:plastic flamingo:p}. It stares into their soul."});
