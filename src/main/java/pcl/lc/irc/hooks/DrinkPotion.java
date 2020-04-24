@@ -403,7 +403,7 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until their next sip of water");
 		limits.add(" until the next time they hug someone");
 		limits.add(" until they say the word \"{codeword}\"");
-		limits.add(" until they say the word \"{codeword}\" followed by \"{codeword2}\"");
+		limits.add(" until they say the phrase \"{codeword} {codeword2}\"");
 		limits.add(" until they exit the room");
 		limits.add(" until they see a bird");
 		limits.add(" for {r:1-10:moon}");
@@ -428,8 +428,8 @@ public class DrinkPotion extends AbstractListener {
 				new EffectEntry("{user} explodes!"),
 				new EffectEntry("You fail to lift the container containing all the potions. It's too heavy."))));
 		specialFluids.put("antidote", new ArrayList<>(Arrays.asList(
-				new EffectEntry("{user} reverts to their original state before drinking any potions."),
-				new EffectEntry("You splash {user} with some antidote. {user} reverts to their original state before drinking any potions."))));
+				new EffectEntry("{user} reverts to their original state before any potions."),
+				new EffectEntry("You splash {user} with some antidote. {user} reverts to their original state before any potions."))));
 	}
 
 	static String html;
