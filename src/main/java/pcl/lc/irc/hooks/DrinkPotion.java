@@ -394,6 +394,15 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"{user} gained one million tonk points."});
 		effects.add(new String[]{"Someone just had some of {user}'s favourite food and you didn't get any!"});
 		effects.add(new String[]{"A bunch of people in white coats approach you. {evade:12:0}"});
+		effects.add(new String[]{"{user} gains one research point."});
+		effects.add(new String[]{"{user} gains one point."});
+		effects.add(new String[]{"{user} gains no points."});
+		effects.add(new String[]{"{user} gains loses two points."});
+		effects.add(new String[]{"{user} hears a scream from nearby."});
+		effects.add(new String[]{"{user} gains some curse."});
+		effects.add(new String[]{"{user}'s left sock is now cursed."});
+		effects.add(new String[]{"{user}'s feet tingle briefly."});
+		effects.add(new String[]{"{user} spots a shiny thing!"});
 
 		//Never end with punctuation and always start with a space
 		//See above for valid tags
