@@ -392,7 +392,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"Tonk moved to an indeterminate point in time."});
 		effects.add(new String[]{"{user}'s tonk score has been reset."});
 		effects.add(new String[]{"{user} gained one million tonk points."});
-		effects.add(new String[]{"Someone just had some of {user}'s favourite food and you didn't get any!"});
+		effects.add(new String[]{"Someone just had some of {user}'s favourite food and they didn't get any!"});
 		effects.add(new String[]{"A bunch of people in white coats approach you. {evade:12:0}"});
 		effects.add(new String[]{"{user} gains one research point."});
 		effects.add(new String[]{"{user} gains one point."});
