@@ -541,7 +541,7 @@ public class Inventory extends AbstractListener {
 		strings.add("{item} gets lost in the woods and is never seen again.");
 		strings.add("{item} flies into space and doesn't come back.");
 		strings.add("{item} angered a witch and was turned into a toad.");
-		strings.add("{item} ate the red pill and exited the matrix.");
+		strings.add("{item} took the red pill and exited the matrix.");
 		strings.add("{item} took the blue pill and fell asleep.");
 		strings.add("{item} was taken out by the mafia.");
 		strings.add("{item} was loaned out to a friend and was never returned.");

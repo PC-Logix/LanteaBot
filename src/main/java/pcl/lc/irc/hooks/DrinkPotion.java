@@ -385,8 +385,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"A trapdoor suddenly opens up under {user}! There are spikes at the bottom. {evade:15:1d6}"});
 		effects.add(new String[]{"A giant boulder is rolling towards {user}! {evade:15:1d6}"});
 		effects.add(new String[]{"Tonk has been reset."});
-		effects.add(new String[]{"Tonk moved forward 2d6 hours."});
-		effects.add(new String[]{"Tonk moved back 3d4 hours."});
+		effects.add(new String[]{"Tonk moved forward {r:2-12:hours}."});
+		effects.add(new String[]{"Tonk moved back {r:3-12:hours}."});
 		effects.add(new String[]{"Tonk moved to next week."});
 		effects.add(new String[]{"Tonk moved to last week."});
 		effects.add(new String[]{"Tonk moved to an indeterminate point in time."});
