@@ -27,15 +27,18 @@ class TemplateCollection {
 		return getRandomTemplate(1);
 	}
 
-	public Template getRandomTemplate(int min_arguments) {
-		System.out.println("Looking for template with min arguments " + min_arguments);
+	public Template getRandomTemplate(int arguments) {
+		System.out.println("Looking for template matching " + arguments + " arguments");
+		int counter = 0;
+		int maxIterations = 100;
 		int rand = 0;
-
 		Template template = null;
-		while (template == null || template.min_arguments > min_arguments) {
+		while (template == null && counter < maxIterations) {
+			counter++;
 			rand = Helper.getRandomInt(0, this.templates.size() - 1);
-			template = this.templates.get(rand);
-			System.out.println("Found template with " + template.min_arguments + " min arguments");
+			Template thisTemplate = this.templates.get(rand);
+			if (thisTemplate.min_arguments <= arguments && (thisTemplate.max_arguments == 0 || arguments <= thisTemplate.max_arguments))
+				template = thisTemplate;
 		}
 		return template;
 	}
@@ -43,15 +46,24 @@ class TemplateCollection {
 
 class Template {
 	public int min_arguments;
+	public int max_arguments;
 	public String template;
 
 	Template(String template) {
 		this.min_arguments = 1;
+		this.max_arguments = 0;
 		this.template = template;
 	}
 
 	Template(int min_arguments, String template) {
 		this.min_arguments = min_arguments;
+		this.max_arguments = 0;
+		this.template = template;
+	}
+
+	Template(int min_arguments, String template, int max_arguments) {
+		this.min_arguments = min_arguments;
+		this.max_arguments = max_arguments;
 		this.template = template;
 	}
 }
@@ -63,41 +75,54 @@ public class RandomChoice extends AbstractListener {
 	@Override
 	protected void initHook() {
 		templates = new TemplateCollection();
-		templates.add(new Template("Some \"{choice}\" sounds nice"));
-		templates.add(new Template("I'm 40% \"{choice}\"!"));
-		templates.add(new Template("You *could* do \"{choice}\", I guess."));
-		templates.add(new Template("Why not {count}? Okay fine. \"{choice}\"."));
-		templates.add(new Template("I sense some \"{choice}\" in your future!"));
-		templates.add(new Template("\"{choice}\" is for cool kids!"));
+		templates.add(new Template(1, "Why would you do that when you could do something else instead?", 1));
+		templates.add(new Template(1, "\"{choice}\" doesn't really seem like a good idea right now.", 1));
+		templates.add(new Template(1, "No, maybe tomorrow.", 1));
+		templates.add(new Template(1, "Are you sure? Well alright.", 1));
+		templates.add(new Template(1, "Oh yes, definitely!", 1));
+		templates.add(new Template(1, "Hm. I can't choose. Ask me again in a couple of minutes.", 1));
+		templates.add(new Template(1, "I don't think I've heard of \"{choice}\", so probably not.", 1));
+		templates.add(new Template(1, "Yes! Do it now!", 1));
+		templates.add(new Template(1, "Hm, yeah okay.", 1));
+		templates.add(new Template(1, "Ah... well, I'd say wait an hour.", 1));
+		templates.add(new Template(1, "Oh, I've heard about that. You'll want to wait until tomorrow.", 1));
+		templates.add(new Template(1, "Boo! No!", 1));
+		templates.add(new Template(1, "I'd advice against \"{choice}\" right now.", 1));
+		templates.add(new Template(2, "Some \"{choice}\" sounds nice"));
+		templates.add(new Template(2, "I'm 40% \"{choice}\"!"));
+		templates.add(new Template(2, "You *could* do \"{choice}\", I guess."));
+		templates.add(new Template(2, "Why not {count}? Okay fine. \"{choice}\"."));
+		templates.add(new Template(2, "I sense some \"{choice}\" in your future!"));
+		templates.add(new Template(2, "\"{choice}\" is for cool kids!"));
 		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
-		templates.add(new Template("If I had a gold nugget for every time someone asked me about \"{choice}\""));
-		templates.add(new Template("The proof is in the pudding. Definitely \"{choice}\". Now please get it out of my pudding."));
-		templates.add(new Template("I received a message from future you, said to go with \"{choice}\"."));
-		templates.add(new Template("I saw that \"{choice}\" is the best choice in a vision"));
-		templates.add(new Template("You'll want to go with \"{choice}\"."));
-		templates.add(new Template("Elementary dear Watson, \"{choice}\" is the obvious choice!"));
-		templates.add(new Template("My grandfather always told me that \"{choice}\" is the way to go!"));
-		templates.add(new Template("If I've learned anything in life it's that you always pick \"{choice}\""));
-		templates.add(new Template("Once you get a taste of \"{choice}\" you can't stop."));
+		templates.add(new Template(2, "If I had a gold nugget for every time someone asked me about \"{choice}\""));
+		templates.add(new Template(2, "The proof is in the pudding. Definitely \"{choice}\". Now please get it out of my pudding."));
+		templates.add(new Template(2, "I received a message from future you, said to go with \"{choice}\"."));
+		templates.add(new Template(2, "I saw that \"{choice}\" is the best choice in a vision"));
+		templates.add(new Template(2, "You'll want to go with \"{choice}\"."));
+		templates.add(new Template(2, "Elementary dear Watson, \"{choice}\" is the obvious choice!"));
+		templates.add(new Template(2, "My grandfather always told me that \"{choice}\" is the way to go!"));
+		templates.add(new Template(2, "If I've learned anything in life it's that you always pick \"{choice}\""));
+		templates.add(new Template(2, "Once you get a taste of \"{choice}\" you can't stop."));
 		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
-		templates.add(new Template("Somebody once told me to roll with \"{choice}\""));
-		templates.add(new Template("Out of these {raw_count} choices? I'd say \"{choice}\"."));
-		templates.add(new Template("I've heard \"{choice}\" is in these days"));
-		templates.add(new Template("I spy with my robotic eye something beginning with \"{choice}\"!"));
-		templates.add(new Template("Haven't you always gone with \"{choice}\"? Hm, maybe not."));
-		templates.add(new Template("I have a pamphlet that says never to engage in \"{choice}\", so you should definitely do it!"));
-		templates.add(new Template("Pretty sure I'd want you to go with \"{choice}\"!"));
-		templates.add(new Template("The sands of time whisper to me... they're saying \"{choice}\"."));
-		templates.add(new Template("I tried reading my tea leaves this morning. There was sometihng about death and doom. Anyway, go with \"{choice}\""));
-		templates.add(new Template("Eeny, meeny, miny, {choice}."));
-		templates.add(new Template("{choice}'os, for a complete breakfast!"));
-		templates.add(new Template("\"{choice}\", now with 30% fewer deaths caused by negligence!"));
-		templates.add(new Template("Hold on tightly! \"{choice}\" is a wild ride!"));
-		templates.add(new Template("A wizard is never late, and sometimes engages in some \"{choice}\"."));
-		templates.add(new Template("I received a telegram from a long lost relative that only read \"{choice}\". Weird."));
-		templates.add(new Template("Wait, what was the question again? Uhh... \"{choice}\"?"));
-		templates.add(new Template("I want a divorce. I'm taking half the \"{choice}\"."));
-		templates.add(new Template("Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
+		templates.add(new Template(2, "Somebody once told me to roll with \"{choice}\""));
+		templates.add(new Template(2, "Out of these {raw_count} choices? I'd say \"{choice}\"."));
+		templates.add(new Template(2, "I've heard \"{choice}\" is in these days"));
+		templates.add(new Template(2, "I spy with my robotic eye something beginning with \"{choice}\"!"));
+		templates.add(new Template(2, "Haven't you always gone with \"{choice}\"? Hm, maybe not."));
+		templates.add(new Template(2, "I have a pamphlet that says never to engage in \"{choice}\", so you should definitely do it!"));
+		templates.add(new Template(2, "Pretty sure I'd want you to go with \"{choice}\"!"));
+		templates.add(new Template(2, "The sands of time whisper to me... they're saying \"{choice}\"."));
+		templates.add(new Template(2, "I tried reading my tea leaves this morning. There was sometihng about death and doom. Anyway, go with \"{choice}\""));
+		templates.add(new Template(2, "Eeny, meeny, miny, {choice}."));
+		templates.add(new Template(2, "{choice}'os, for a complete breakfast!"));
+		templates.add(new Template(2, "\"{choice}\", now with 30% fewer deaths caused by negligence!"));
+		templates.add(new Template(2, "Hold on tightly! \"{choice}\" is a wild ride!"));
+		templates.add(new Template(2, "A wizard is never late, and sometimes engages in some \"{choice}\"."));
+		templates.add(new Template(2, "I received a telegram from a long lost relative that only read \"{choice}\". Weird."));
+		templates.add(new Template(2, "Wait, what was the question again? Uhh... \"{choice}\"?"));
+		templates.add(new Template(2, "I want a divorce. I'm taking half the \"{choice}\"."));
+		templates.add(new Template(2, "Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
 
 		local_command = new Command("choose", 0) {
 			@Override
@@ -125,7 +150,8 @@ public class RandomChoice extends AbstractListener {
 				switch (parts.length)
 				{
 					case 1:
-						msg = "The choice seems obvious..."; break;
+						count = "the";
+						raw_count = "one";
 					case 2:
 						count = "both";
 						raw_count = "two";
@@ -134,8 +160,7 @@ public class RandomChoice extends AbstractListener {
 						count = "all " + ruleBasedNumberFormat.format(parts.length);
 						raw_count = "" + ruleBasedNumberFormat.format(parts.length);
 				}
-				if (count != "")
-					msg = msg.replaceAll("\\{count}", count);
+				msg = msg.replaceAll("\\{count}", count);
 				msg = msg.replaceAll("\\{raw_count}", raw_count);
 
 				Helper.sendMessage(target, msg, nick);
