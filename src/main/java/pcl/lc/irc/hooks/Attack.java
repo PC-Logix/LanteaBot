@@ -22,15 +22,18 @@ import java.util.HashMap;
 public class Attack extends AbstractListener {
 	private Command local_command;
 	private HashMap<String, ActionType> actions;
-	private static String STAB = "stab";
-	private static String HIT = "hit";
-	private static String SHIV = "shiv";
-	private static String STRIKE = "strike";
-	private static String SLAP = "slap";
-	private static String POKE = "poke";
-	private static String PROD = "prod";
-	private static String BITE = "bite";
-	private static String CLAW = "claw";
+	private static final String STAB = "stab";
+	private static final String HIT = "hit";
+	private static final String SHIV = "shiv";
+	private static final String STRIKE = "strike";
+	private static final String SLAP = "slap";
+	private static final String POKE = "poke";
+	private static final String PROD = "prod";
+	private static final String SMACK = "smack";
+	private static final String CONK = "conk";
+
+	private static final String BITE = "bite";
+	private static final String CLAW = "claw";
 
 	@Override
 	protected void initHook() {
@@ -42,6 +45,9 @@ public class Attack extends AbstractListener {
 		actions.put(SLAP, new ActionType("Slapping", "Slapped", "Slap"));
 		actions.put(POKE, new ActionType("Poking", "Poked", "Poke"));
 		actions.put(PROD, new ActionType("Prodding", "Prodded", "Prod"));
+		actions.put(SMACK, new ActionType("Smacking", "Smacked", "Smack"));
+		actions.put(CONK, new ActionType("Conking", "Conked", "Conk"));
+
 		actions.put(BITE, new ActionType("Biting", "Bit", "Bite"));
 		actions.put(CLAW, new ActionType("Clawing", "Clawed", "Claw"));
 
