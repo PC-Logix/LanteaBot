@@ -30,6 +30,7 @@ public class Attack extends AbstractListener {
 	private static String POKE = "poke";
 	private static String PROD = "prod";
 	private static String BITE = "bite";
+	private static String CLAW = "claw";
 
 	@Override
 	protected void initHook() {
@@ -42,6 +43,7 @@ public class Attack extends AbstractListener {
 		actions.put(POKE, new ActionType("Poking", "Poked", "Poke"));
 		actions.put(PROD, new ActionType("Prodding", "Prodded", "Prod"));
 		actions.put(BITE, new ActionType("Biting", "Bit", "Bite"));
+		actions.put(CLAW, new ActionType("Clawing", "Clawed", "Claw"));
 
 		local_command = new Command("attack", 0) {
 			@Override
@@ -71,7 +73,7 @@ public class Attack extends AbstractListener {
 						with = split[1].trim();
 
 					Item item = null;
-					if (!actions.get(method.toLowerCase()).equals(actions.get(BITE))) { //Don't get item on bite attack
+					if (!actions.get(method.toLowerCase()).equals(actions.get(BITE)) && !actions.get(method.toLowerCase()).equals(actions.get(CLAW))) { //Don't get item on bite attack or claw attack
 						if (with == null)
 							item = Inventory.getRandomItem(false);
 						else
@@ -96,6 +98,8 @@ public class Attack extends AbstractListener {
 							dmg = item.getDamage();
 							dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
 						} else if (actions.get(method.toLowerCase()).equals(actions.get(BITE))) {
+							dmg = Item.getGenericRoll(1, 6, new DiceRollBonusCollection());
+						} else if (actions.get(method.toLowerCase()).equals(actions.get(CLAW))) {
 							dmg = Item.getGenericRoll(1, 6, new DiceRollBonusCollection());
 						} else {
 							dmg = Item.getGenericRoll(1, 4, new DiceRollBonusCollection());
