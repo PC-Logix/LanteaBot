@@ -11,6 +11,8 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
 
+import java.util.Arrays;
+
 /**
  * @author Forecaster
  *
@@ -32,7 +34,7 @@ public class Fling extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					String[] split = params.split(" at ", 2);
+					String[] split = params.split("^at ", 2);
 					String flingTarget = "";
 					String with;
 					if (split.length == 1) {
