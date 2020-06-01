@@ -1083,7 +1083,7 @@ public class Helper {
 			new String[] {"A" , "Bear"     , "s"  , null},
 			new String[] {"A" , "Platypus" , "i"  , "2"},
 			new String[] {"A" , "Frog"     , "s"  , null},
-			new String[] {"A" , "Octopus"  , "i"  , "3"},
+			new String[] {"An", "Octopus" , "i"  , "3"},
 			new String[] {"A" , "Unicorn"  , "s"  , null},
 	};
 

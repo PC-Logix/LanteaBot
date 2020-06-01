@@ -224,7 +224,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"{user}'s bones turn {turn_appearance_lc}{limit}."});
 		effects.add(new String[]{"{user}'s clothes turn {turn_appearance_lc}{limit}."});
 		effects.add(new String[]{"{user}'s eyes glow {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s skin turn {turn_appearance_lc} but with a {appearance} glow{limit}."});
+		effects.add(new String[]{"{user}'s skin turn {turn_appearance_lc} but with a {appearance_lc} glow{limit}."});
 		effects.add(new String[]{"{user}'s toes turn invisible{limit}."});
 		effects.add(new String[]{"{user}'s hair grows {r:2-4:time} longer{limit}."});
 		effects.add(new String[]{"{user} gains the proportional strength of a {transformation}{limit}."});
