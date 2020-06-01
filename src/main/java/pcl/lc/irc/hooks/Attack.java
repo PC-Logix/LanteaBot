@@ -33,6 +33,7 @@ public class Attack extends AbstractListener {
 	private static final String PROD = "prod";
 	private static final String SMACK = "smack";
 	private static final String CONK = "conk";
+	private static final String CAST = "cast";
 
 	private static final String BITE = "bite";
 	private static final String CLAW = "claw";
@@ -51,6 +52,7 @@ public class Attack extends AbstractListener {
 		actions.put(PROD, new ActionType("Prodding", "Prodded", "Prod", "Prodded"));
 		actions.put(SMACK, new ActionType("Smacking", "Smacked", "Smack", "Smacked"));
 		actions.put(CONK, new ActionType("Conking", "Conked", "Conk", "Conked"));
+//		actions.put(CAST, new ActionType("Casting", "Cast", "Cast", "Cast"));
 
 		actions.put(BITE, new ActionType("Biting", "Bit", "Bite", "Bitten"));
 		actions.put(CLAW, new ActionType("Clawing", "Clawed", "Claw", "Clawed"));
@@ -126,7 +128,7 @@ public class Attack extends AbstractListener {
 						else
 							dmgString += " damage";
 						String itemName = item != null ? item.getName() : "";
-						Helper.addAttack(nick, attackTarget, dmg.getTotal(), itemName);
+						Defend.addEvent(nick, attackTarget, dmg.getTotal(), itemName, "attack");
 						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);

@@ -1300,68 +1300,28 @@ public class Helper {
 		return codeWords[getRandomInt(0, codeWords.length - 1)];
 	}
 
-	public static void addAttack(String attacker, String target, int damage, String implement) {
-		ArrayList<String> newAttackData = new ArrayList<>();
-		if (!attackExistsFor(target)) {
-			Defend.attackLog.add(attacker + "," + target + "," + new Date().getTime() + "," + damage + "," + implement);
-		} else {
-			for (String att : Defend.attackLog) {
-				String[] attack = att.split(",");
-				String dataAttacker = attack[0];
-				String dataTarget = attack[1];
-				String dataTime = attack[2];
-				String dataDamage = attack[3];
-				String dataImplement = attack[4];
-				if (!dataTarget.equals(target)) {
-					newAttackData.add(dataAttacker + "," + dataTarget + "," + dataTime + "," + dataDamage + "," + dataImplement);
-				}
-			}
-			newAttackData.add(attacker + "," + target + "," + new Date().getTime() + "," + damage + "," + implement);
-			Defend.attackLog = newAttackData;
-		}
-	}
-
-	public static String[] getAttackFor(String player) {
-		for (String att : Defend.attackLog) {
-			String[] attack = att.split(",");
-			String attacker = attack[0];
-			String target = attack[1];
-			String time = attack[2];
-			String damage = attack[3];
-			String implement = attack[4];
-			if (target.equals(player)) {
-				Date date = new Date();
-				date.setTime(Long.parseLong(time));
-				Date now = new Date(new Date().getTime() - 60 * 1000);
-				if (date.after(now)) {
-					return new String[] {attacker, target, time, damage, implement};
-				}
-			}
-		}
-		return null;
-	}
-
-	public static boolean attackExistsFor(String player) {
-		return getAttackFor(player) != null;
-	}
-
-	public static void clearAttackFor(String player) {
-		ArrayList<String> newAttackData = new ArrayList<>();
-		for (String att : Defend.attackLog) {
-			String[] attack = att.split(",");
-			String dataAttacker = attack[0];
-			String dataTarget = attack[1];
-			String dataTime = attack[2];
-			String dataDamage = attack[3];
-			String dataImplement = attack[4];
-			if (!dataTarget.equals(player)) {
-				newAttackData.add(dataAttacker + "," + dataTarget + "," + dataTime + "," + dataDamage + "," + dataImplement);
-			}
-		}
-		Defend.attackLog = newAttackData;
-	}
-
 	public static String cleanDiscordNick(String nick) {
 		return nick.replaceAll("\\p{C}", "");
+	}
+
+	public static String getNumberPrefix(int number) { return getNumberPrefix(String.valueOf(number)); }
+
+	public static String getNumberPrefix(double number) { return getNumberPrefix(Double.valueOf(number)); }
+
+	public static String getNumberPrefix(float number) { return getNumberPrefix(Float.valueOf(number)); }
+
+	public static String getNumberPrefix(long number) { return getNumberPrefix(Long.valueOf(number)); }
+
+	public static String getNumberPrefix(short number) { return getNumberPrefix(Short.valueOf(number)); }
+
+	public static String getNumberPrefix(String number) {
+		switch (number) {
+			case "8":
+			case "11":
+			case "18":
+				return "an";
+			default:
+				return "a";
+		}
 	}
 }
