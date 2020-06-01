@@ -13,7 +13,9 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.hooks.Defend;
 
+import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,6 +24,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1295,5 +1298,66 @@ public class Helper {
 
 	public static String getRandomCodeWord() {
 		return codeWords[getRandomInt(0, codeWords.length - 1)];
+	}
+
+	public static void addAttack(String attacker, String target, int damage, String implement) {
+		ArrayList<String> newAttackData = new ArrayList<>();
+		if (!attackExistsFor(target)) {
+			Defend.attackLog.add(attacker + "," + target + "," + new Date().getTime() + "," + damage + "," + implement);
+		} else {
+			for (String att : Defend.attackLog) {
+				String[] attack = att.split(",");
+				String dataAttacker = attack[0];
+				String dataTarget = attack[1];
+				String dataTime = attack[2];
+				String dataDamage = attack[3];
+				String dataImplement = attack[4];
+				if (!dataTarget.equals(target)) {
+					newAttackData.add(dataAttacker + "," + dataTarget + "," + dataTime + "," + dataDamage + "," + dataImplement);
+				}
+			}
+			newAttackData.add(attacker + "," + target + "," + new Date().getTime() + "," + damage + "," + implement);
+			Defend.attackLog = newAttackData;
+		}
+	}
+
+	public static String[] getAttackFor(String player) {
+		for (String att : Defend.attackLog) {
+			String[] attack = att.split(",");
+			String attacker = attack[0];
+			String target = attack[1];
+			String time = attack[2];
+			String damage = attack[3];
+			String implement = attack[4];
+			if (target.equals(player)) {
+				Date date = new Date();
+				date.setTime(Long.parseLong(time));
+				Date now = new Date(new Date().getTime() - 60 * 1000);
+				if (date.after(now)) {
+					return new String[] {attacker, target, time, damage, implement};
+				}
+			}
+		}
+		return null;
+	}
+
+	public static boolean attackExistsFor(String player) {
+		return getAttackFor(player) != null;
+	}
+
+	public static void clearAttackFor(String player) {
+		ArrayList<String> newAttackData = new ArrayList<>();
+		for (String att : Defend.attackLog) {
+			String[] attack = att.split(",");
+			String dataAttacker = attack[0];
+			String dataTarget = attack[1];
+			String dataTime = attack[2];
+			String dataDamage = attack[3];
+			String dataImplement = attack[4];
+			if (!dataTarget.equals(player)) {
+				newAttackData.add(dataAttacker + "," + dataTarget + "," + dataTime + "," + dataDamage + "," + dataImplement);
+			}
+		}
+		Defend.attackLog = newAttackData;
 	}
 }

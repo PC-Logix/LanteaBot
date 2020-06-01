@@ -27,8 +27,8 @@ public class Pet extends AbstractListener {
 	@Override
 	protected void initHook() {
 		actions = new HashMap<>();
-		actions.put("pets", new ActionType("Petting", "Petting", "Pet"));
-		actions.put("brushes", new ActionType("Brushing", "Brushing", "Brush"));
+		actions.put("pets", new ActionType("Petting", "Petting", "Pet", "Petted"));
+		actions.put("brushes", new ActionType("Brushing", "Brushing", "Brush", "Brushed"));
 
 		local_command = new Command("pet", 0) {
 			@Override

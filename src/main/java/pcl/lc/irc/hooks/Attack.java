@@ -11,8 +11,10 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
 
+import javax.swing.Action;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Caitlyn
@@ -35,34 +37,41 @@ public class Attack extends AbstractListener {
 	private static final String BITE = "bite";
 	private static final String CLAW = "claw";
 
+	private static String actionList = "";
+
 	@Override
 	protected void initHook() {
 		actions = new HashMap<>();
-		actions.put(STAB, new ActionType("Stabbing", "Stabbed", "Stab"));
-		actions.put(HIT, new ActionType("Hitting", "Hit", "Hit"));
-		actions.put(SHIV, new ActionType("Shivving", "Shivved", "Shiv"));
-		actions.put(STRIKE, new ActionType("Striking", "Struck", "Strike"));
-		actions.put(SLAP, new ActionType("Slapping", "Slapped", "Slap"));
-		actions.put(POKE, new ActionType("Poking", "Poked", "Poke"));
-		actions.put(PROD, new ActionType("Prodding", "Prodded", "Prod"));
-		actions.put(SMACK, new ActionType("Smacking", "Smacked", "Smack"));
-		actions.put(CONK, new ActionType("Conking", "Conked", "Conk"));
+		actions.put(STAB, new ActionType("Stabbing", "Stabbed", "Stab", "Stabbed"));
+		actions.put(HIT, new ActionType("Hitting", "Hit", "Hit", "Hit"));
+		actions.put(SHIV, new ActionType("Shivving", "Shivved", "Shiv", "Shivved"));
+		actions.put(STRIKE, new ActionType("Striking", "Struck", "Strike", "Struck"));
+		actions.put(SLAP, new ActionType("Slapping", "Slapped", "Slap", "Slapped"));
+		actions.put(POKE, new ActionType("Poking", "Poked", "Poke", "Poked"));
+		actions.put(PROD, new ActionType("Prodding", "Prodded", "Prod", "Prodded"));
+		actions.put(SMACK, new ActionType("Smacking", "Smacked", "Smack", "Smacked"));
+		actions.put(CONK, new ActionType("Conking", "Conked", "Conk", "Conked"));
 
-		actions.put(BITE, new ActionType("Biting", "Bit", "Bite"));
-		actions.put(CLAW, new ActionType("Clawing", "Clawed", "Claw"));
+		actions.put(BITE, new ActionType("Biting", "Bit", "Bite", "Bitten"));
+		actions.put(CLAW, new ActionType("Clawing", "Clawed", "Claw", "Clawed"));
 
-		local_command = new Command("attack", 0) {
+		ArrayList<String> acts = new ArrayList<>();
+		for (Map.Entry<String, ActionType> act : actions.entrySet())
+			acts.add(act.getValue().actionNameWill);
+		actionList = String.join(", ", acts);
+
+		local_command = new Command("attack", 60) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() == 0) {
-					Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
+					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 					return;
 				}
 				try
 				{
 					String method = params.remove(0);
 					if (!actions.containsKey(method.toLowerCase())) {
-						Helper.sendMessage(target, "Valid \"attacks\": " + actions.toString().replace("[", "").replace("]", ""));
+						Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 						return;
 					}
 
@@ -99,7 +108,8 @@ public class Attack extends AbstractListener {
 						Helper.sendMessage(target,nick + " flails at nothingness" + (item != null ? " with " + item.getName() : ""));
 					else if (Helper.doInteractWith(attackTarget)) {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
-						DiceRollResult dmg = new DiceRollResult();
+
+						DiceRollResult dmg;
 						if (item != null) {
 							dmg = item.getDamage();
 							dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
@@ -115,6 +125,8 @@ public class Attack extends AbstractListener {
 							dmgString = "no damage";
 						else
 							dmgString += " damage";
+						String itemName = item != null ? item.getName() : "";
+						Helper.addAttack(nick, attackTarget, dmg.getTotal(), itemName);
 						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
