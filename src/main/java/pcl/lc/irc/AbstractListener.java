@@ -3,6 +3,7 @@ package pcl.lc.irc;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.utils.Helper;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -108,21 +109,21 @@ public abstract class AbstractListener extends ListenerAdapter
 			}
 		}
 		String[] splitMessage = event.getMessage().split(" ");
-		String nickClean = event.getUser().getNick().replaceAll("\\p{C}", "");
-		String nick = event.getUser().getNick();
+		String nickClean = Helper.cleanDiscordNick(event.getUser().getNick());
+		String nick = Helper.cleanDiscordNick(event.getUser().getNick());
 		if (splitMessage[0].startsWith(Config.commandprefix)) {
 			if (!IRCBot.isIgnored(nickClean)) {
 				handleCommand(nick, event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length), null);
 			}
 		} else if (Config.parseBridgeCommandsFromUsers.contains(nickClean) && (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
-			String sender = splitMessage[0].substring(1,splitMessage[0].length()-1);
-			if (!IRCBot.isIgnored(sender.replaceAll("\\p{C}", ""))) {
+			String sender = Helper.cleanDiscordNick(splitMessage[0].substring(1,splitMessage[0].length()-1));
+			if (!IRCBot.isIgnored(sender)) {
 				handleMessage(sender, event, Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 				handleCommand(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length), nickClean);
 			}
 		} else {
-			if (!IRCBot.isIgnored(event.getUser().getNick().replaceAll("\\p{C}", ""))) {
-				handleMessage(event.getUser().getNick(), event, Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
+			if (!IRCBot.isIgnored(Helper.cleanDiscordNick(event.getUser().getNick()))) {
+				handleMessage(Helper.cleanDiscordNick(event.getUser().getNick()), event, Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
 		}
 	}

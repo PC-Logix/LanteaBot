@@ -1360,4 +1360,8 @@ public class Helper {
 		}
 		Defend.attackLog = newAttackData;
 	}
+
+	public static String cleanDiscordNick(String nick) {
+		return nick.replaceAll("\\p{C}", "");
+	}
 }
