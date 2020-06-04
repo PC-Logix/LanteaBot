@@ -65,12 +65,16 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("Black", "A"));
 		appearanceEntries.add(new AppearanceEntry("White", "A"));
 		appearanceEntries.add(new AppearanceEntry("Pink", "A"));
-		appearanceEntries.add(new AppearanceEntry("Metal", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Gold", "A", "{appearance} colored {item}"));
+		appearanceEntries.add(new AppearanceEntry("Silver", "A", "{appearance} colored {item}"));
 		appearanceEntries.add(new AppearanceEntry("Copper", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Iron", "An", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Stainless steel", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Aluminium", "An", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Titanium", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Platinum", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Electrum", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		appearanceEntries.add(new AppearanceEntry("Mithril", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Adamantium", "An", "{appearance} colored {item}", "the color of {appearance}")); // Marvel universe
 		appearanceEntries.add(new AppearanceEntry("Unobtanium", "An", "{appearance} colored {item}", "the color of {appearance}")); // Avatar
 		appearanceEntries.add(new AppearanceEntry("Tiberium", "A", "{appearance} colored {item}", "the color of {appearance}")); // Command & Conquer
@@ -91,8 +95,6 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("Diamond", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Spice", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Radiation", "A", "{appearance} colored {item}", "the color of {appearance}"));
-		appearanceEntries.add(new AppearanceEntry("Gold", "A", "{appearance} colored {item}"));
-		appearanceEntries.add(new AppearanceEntry("Silver", "A", "{appearance} colored {item}"));
 		appearanceEntries.add(new AppearanceEntry("Tomato", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Lime", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		appearanceEntries.add(new AppearanceEntry("Citrus", "A", "{appearance} colored {item}", "the color of {appearance}"));
@@ -249,9 +251,9 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"{user} feels slightly more agile."}); // gain 1 point of agility
 		effects.add(new String[]{"{user} feels slightly faster."}); // gain 1 point of speed
 		effects.add(new String[]{"{user} recovers some mana."});
-		effects.add(new String[]{"{user} feels slightly weaker."});
-		effects.add(new String[]{"{user} feels slightly less agile."});
-		effects.add(new String[]{"{user} feels slightly slower."});
+		effects.add(new String[]{"{user} feels slightly weaker."}); // lose 1 point of strength
+		effects.add(new String[]{"{user} feels slightly less agile."}); // lose 1 point of agility
+		effects.add(new String[]{"{user} feels slightly slower."}); // lose 1 point of speed
 		effects.add(new String[]{"{user} gains an additional bone."});
 		effects.add(new String[]{"{user} is suddenly more aware of cute things nearby{limit}."});
 		effects.add(new String[]{"{user} loses exactly a handful of luck."});
