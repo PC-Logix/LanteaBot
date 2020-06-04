@@ -273,7 +273,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"{user} gets an urge to have another potion.",
 				"{user} gets the urge to drink a potion."});
 		effects.add(new String[]{"It tastes sweet.",
-				"It smells like sugar as it sticks to you."});
+				"It smells like sugar as it sticks to {user}."});
 		effects.add(new String[]{"It tastes sour.",
 				"It smells sour and stings a little where it touches skin."});
 		effects.add(new String[]{"It tastes bitter.",
@@ -296,7 +296,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"True enlightenment can be achieved by drinking another potion.",
 				"{user} feels as if they should drink a potion for some reason."});
 		effects.add(new String[]{"For about a second {user} knows the location of a great treasure."});
-		effects.add(new String[]{"The potion was inside you all along."});
+		effects.add(new String[]{"The potion was inside {user} all along."});
 		effects.add(new String[]{"{user} is suddenly wearings gloves they don't remember putting on."});
 		effects.add(new String[]{"{user} is suddenly wearings a tiny glove on each finger."});
 		effects.add(new String[]{"A sudden craving for soup occupies {user}'s thoughts{limit}."});
@@ -346,9 +346,9 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"A tiny cloud appears with a ridiculous smile on it. It follows {user}{limit}."});
 		effects.add(new String[]{"The potion contained a computer virus! But {user}'s anti-virus routines destroy it."});
 		effects.add(new String[]{"The potion contained a computer virus! It just changed {user}'s background..."});
-		effects.add(new String[]{"The potion contained a computer virus! It sent a message to all your friends telling them that you love them!"});
-		effects.add(new String[]{"The potion contained a computer virus! It changed your theme to one you don't like!"});
-		effects.add(new String[]{"The potion contained a computer virus! You hear a maniacal laugh as your cursor flips upside down!"});
+		effects.add(new String[]{"The potion contained a computer virus! It sent a message to all of {user}'s friends telling them that they love them!"});
+		effects.add(new String[]{"The potion contained a computer virus! It changed {user}'s theme to one they don't like!"});
+		effects.add(new String[]{"The potion contained a computer virus! {user} hears a maniacal laugh as their cursor flips upside down!"});
 		effects.add(new String[]{"The bottle splits into two revealing a smaller {consistency} {appearance} potion."});
 		effects.add(new String[]{"A tiny genie appears, gives {user} a thumbs up, and poofs away."});
 		effects.add(new String[]{"{user} feels chill."});
@@ -374,8 +374,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"{user}'s favourite cup is now upside down."});
 		effects.add(new String[]{"The potion bottle insults {user}'s haircut.",
 				"A disembodied voice insults {user}'s haircut coming from the direction of {trigger}"});
-		effects.add(new String[]{"After drinking the potion you realize the bottle has your face on it.",
-				"You see your face etched into one of the shards of the broken bottle."});
+		effects.add(new String[]{"After drinking the potion {user} realizes the bottle has their face on it.",
+				"{user} sees their face etched into one of the shards of the broken bottle."});
 		effects.add(new String[]{"Wheels are briefly square."});
 		effects.add(new String[]{"{user} hears a train whistle in the distance."});
 		effects.add(new String[]{"The next glass of water {user} has tastes like {appearance}."});
@@ -395,11 +395,11 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new String[]{"{user}'s tonk score has been reset."});
 		effects.add(new String[]{"{user} gained one million tonk points."});
 		effects.add(new String[]{"Someone just had some of {user}'s favourite food and they didn't get any!"});
-		effects.add(new String[]{"A bunch of people in white coats approach you. {evade:12:0}"});
+		effects.add(new String[]{"A bunch of people in white coats approach {user}. {evade:12:0}"});
 		effects.add(new String[]{"{user} gains one research point."});
 		effects.add(new String[]{"{user} gains one point."});
 		effects.add(new String[]{"{user} gains no points."});
-		effects.add(new String[]{"{user} gains loses two points."});
+		effects.add(new String[]{"{user} loses two points."});
 		effects.add(new String[]{"{user} hears a scream from nearby."});
 		effects.add(new String[]{"{user} gains some curse."});
 		effects.add(new String[]{"{user}'s left sock is now cursed."});
@@ -427,13 +427,13 @@ public class DrinkPotion extends AbstractListener {
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		specialFluids.put("water", new ArrayList<>(Arrays.asList(
-				new EffectEntry("You drink some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"),
+				new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"),
 				new EffectEntry("You splash {user} with some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"))));
 		specialFluids.put("soda", new ArrayList<>(Arrays.asList(
-				new EffectEntry("You have some soda. It's fizzy and sweet."),
+				new EffectEntry("{user} has some soda. It's fizzy and sweet."),
 				new EffectEntry("You splash {user} with some soda. It's fizzy and sticky."))));
 		specialFluids.put("coffee", new ArrayList<>(Arrays.asList(
-				new EffectEntry("You have some coffee. It's hot and bitter."),
+				new EffectEntry("{user} has some coffee. It's hot and bitter."),
 				new EffectEntry("You splash {user} with coffee. It's scalding hot! {user} takes 1d6 fire damage!"))));
 		specialFluids.put("everything", new ArrayList<>(Arrays.asList(
 				new EffectEntry("{user} explodes!"),
@@ -534,6 +534,7 @@ public class DrinkPotion extends AbstractListener {
 							potion = PotionHelper.getRandomPotion();
 							EffectEntry effect = potion.getEffect(nick, true);
 							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
+							Defend.addEvent(nick, splashTarget, potion.consistency.getName(false, true) + " " + potion.appearance.getName(false, true) + " potion", Defend.EventTypes.POTION);
 							return;
 						} else if (potionString.equals("^")) {
 							List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());

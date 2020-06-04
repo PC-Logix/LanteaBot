@@ -128,7 +128,7 @@ public class Attack extends AbstractListener {
 						else
 							dmgString += " damage";
 						String itemName = item != null ? item.getName() : "";
-						Defend.addEvent(nick, attackTarget, dmg.getTotal(), itemName, "attack");
+						Defend.addEvent(nick, attackTarget, dmg.getTotal(), itemName, Defend.EventTypes.ATTACK);
 						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);

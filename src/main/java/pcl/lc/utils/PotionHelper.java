@@ -48,6 +48,12 @@ public class PotionHelper {
 		DrinkPotion.potions.put(key, effect);
 	}
 
+	/**
+	 *
+	 * @param consistency An {@link AppearanceEntry} representing a consistency
+	 * @param appearance An {@link AppearanceEntry} representing an appearance
+	 * @return Return an {@link EffectEntry} if consistency and appearance combination exists or null otherwise
+	 */
 	public static EffectEntry getCombinationEffect(AppearanceEntry consistency, AppearanceEntry appearance) {
 		String key = getConsistencyIndexByName(consistency.getName()) + "," + getAppearanceIndexByName(appearance.getName());
 		return DrinkPotion.potions.get(key);
