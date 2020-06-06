@@ -132,8 +132,8 @@ public class Defend extends AbstractListener {
 						} else if (attack.type == EventTypes.POTION) {
 //							if (result >= dc) {
 								String altTarget = Helper.getRandomTransformation(true, true, false, true);
-								AppearanceEntry app = PotionHelper.findAppearanceInString(implement);
 								AppearanceEntry con = PotionHelper.findConsistencyInString(implement);
+								AppearanceEntry app = PotionHelper.findAppearanceInString(implement);
 								String potionString = "";
 								if (app != null && con != null) {
 									System.out.println("App: '" + app.Name + "', Con: '" + con.Name + "'");

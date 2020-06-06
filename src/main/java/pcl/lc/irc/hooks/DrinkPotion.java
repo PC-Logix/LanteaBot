@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.joda.time.DateTime;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
@@ -31,15 +32,16 @@ public class DrinkPotion extends AbstractListener {
 	private Command potion_stats;
 	private Command discovered;
 	private Command splash;
+	private Command potion_lookup;
 	public static ArrayList<AppearanceEntry> appearanceEntries = new ArrayList<>();
 	public static ArrayList<AppearanceEntry> consistencies = new ArrayList<>();
 	public static ArrayList<String[]> effects = new ArrayList<>();
 	public static HashMap<String, EffectEntry> potions = new HashMap<>();
 	public static ArrayList<String> limits = new ArrayList<>();
-	public static String day_of_potioning = "";
 	public static HashMap<String, ArrayList<EffectEntry>> specialFluids = new HashMap<>();
 
 	public static int daysPotionsLast = 4;
+	public static String day_of_potioning = DateTime.now().plusDays(DrinkPotion.daysPotionsLast).toString("yyyy-MM-dd");
 
 	private static Boolean limitsEnabled = true;
 
@@ -52,6 +54,7 @@ public class DrinkPotion extends AbstractListener {
 		IRCBot.registerCommand(potion_stats);
 		IRCBot.registerCommand(discovered);
 		IRCBot.registerCommand(splash);
+		IRCBot.registerCommand(potion_lookup);
 
 		appearanceEntries.add(new AppearanceEntry("Blue", "A"));
 		appearanceEntries.add(new AppearanceEntry("Red", "A"));
@@ -618,6 +621,21 @@ public class DrinkPotion extends AbstractListener {
 		potion_stats.registerAlias("potionshelf");
 		potion_stats.registerAlias("potionlist");
 		potion_stats.registerAlias("listpotions");
+
+		potion_lookup = new Command("potion_lookup", 10) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				AppearanceEntry app = PotionHelper.findAppearanceInString(params);
+				AppearanceEntry con = PotionHelper.findConsistencyInString(params);
+				String key = PotionHelper.getCombinationKey(con, app);
+				String ret = "Potion combination key: " + key;
+				if (DrinkPotion.potions.containsKey(key))
+					ret += ", Potion registered: Yes";
+				else
+					ret += ", Potion registered: No";
+				Helper.sendMessage(target, ret);
+			}
+		};
 	}
 
 	public String chan;
@@ -636,6 +654,7 @@ public class DrinkPotion extends AbstractListener {
 		potion_stats.tryExecute(command, nick, target, event, copyOfRange);
 		discovered.tryExecute(command, nick, target, event, copyOfRange);
 		splash.tryExecute(command, nick, target, event, copyOfRange);
+		potion_lookup.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	static class PotionHandler implements HttpHandler {

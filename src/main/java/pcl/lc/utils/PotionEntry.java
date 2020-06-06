@@ -49,13 +49,15 @@ public class PotionEntry {
 			if (appearance == null || consistency == null) {
 				return null;
 			}
+			System.out.println("Con: '" + consistency.getName() + "', App: '" + appearance.getName() + "'");
+			String key = PotionHelper.getCombinationKey(consistency, appearance);
 
 			PotionHelper.tryResetPotionList();
 
-			if (PotionHelper.combinationHasEffect(consistency, appearance)) {
+			if (PotionHelper.combinationHasEffect(key)) {
 				this.isNew = false;
-				this.effect = PotionHelper.getCombinationEffect(consistency, appearance);
-				System.out.println("Effect recorded for " + PotionHelper.getConsistencyIndexByName(consistency.getName()) + "," + PotionHelper.getAppearanceIndexByName(appearance.getName()) + ": " + this.effect);
+				this.effect = PotionHelper.getCombinationEffect(key);
+				System.out.println("Effect recorded for " + key + ": " + this.effect);
 				return this.effect;
 			} else {
 				int min = 0;
@@ -65,18 +67,18 @@ public class PotionEntry {
 					max = 6;
 				}
 				int effect = Helper.getRandomInt(min, max);
-				System.out.println("No effect recorded for " + PotionHelper.getConsistencyIndexByName(consistency.getName()) + "," + PotionHelper.getAppearanceIndexByName(appearance.getName()) + ", Assign " + effect);
+				System.out.println("No effect recorded for " + key + ", Assign effect with index: " + effect);
 
 				String effectp = null;
 
 				if (splash) {
-                    try {
-                        effectp = DrinkPotion.effects.get(effect)[1];
-                    } catch (Exception ignored) {}
-                }
+					try {
+						effectp = DrinkPotion.effects.get(effect)[1];
+					} catch (Exception ignored) {}
+				}
 
 				if (effectp == null)
-				    effectp = DrinkPotion.effects.get(effect)[0];
+					effectp = DrinkPotion.effects.get(effect)[0];
 
 				effectp = PotionHelper.replaceParamsInEffectString(effectp);
 
@@ -122,10 +124,14 @@ public class PotionEntry {
 
 		if (!str.toLowerCase().contains("potion"))
 			return null;
-		if (consistency == null)
+		if (consistency == null) {
 			consistency = PotionHelper.getConsistency();
-		if (appearance == null)
+			System.out.println("No consistency found in '" + str + "'. Using '" + consistency.Name + "'");
+		}
+		if (appearance == null) {
 			appearance = PotionHelper.getAppearance();
+			System.out.println("No appearance found in '" + str + "'. Using '" + appearance.Name + "'");
+		}
 		return new PotionEntry(consistency, appearance, !PotionHelper.combinationHasEffect(consistency, appearance));
 	}
 }

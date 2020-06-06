@@ -1,5 +1,6 @@
 package pcl.lc.utils;
 
+import ch.qos.logback.core.joran.action.AppenderRefAction;
 import gcardone.junidecode.App;
 import org.joda.time.DateTime;
 import pcl.lc.irc.hooks.DrinkPotion;
@@ -35,16 +36,30 @@ public class PotionHelper {
 		DrinkPotion.day_of_potioning = DateTime.now().plusDays(DrinkPotion.daysPotionsLast).toString("yyyy-MM-dd");
 	}
 
+	public static String getCombinationKey(AppearanceEntry consistency, AppearanceEntry appearance) {
+		return getCombinationKey(getConsistencyIndexByName(consistency.getName()), getAppearanceIndexByName(appearance.getName()));
+	}
+
+	public static String getCombinationKey(int consistency, int appearance) {
+		return consistency + "," + appearance;
+	}
+
 	public static boolean combinationHasEffect(AppearanceEntry consistency, AppearanceEntry appearance) {
+		return combinationHasEffect(getConsistencyIndexByName(consistency.getName()), getAppearanceIndexByName(appearance.getName()));
+	}
+
+	public static boolean combinationHasEffect(int consistency, int appearance) {
+		return combinationHasEffect(getCombinationKey(consistency, appearance));
+	}
+
+	public static boolean combinationHasEffect(String key) {
 		tryResetPotionList();
-		String key = getConsistencyIndexByName(consistency.getName()) + "," + getAppearanceIndexByName(appearance.getName());
-		if (DrinkPotion.potions.containsKey(key))
-			return true;
-		return false;
+		return DrinkPotion.potions.containsKey(key);
 	}
 
 	public static void setCombinationEffect(AppearanceEntry consistency, AppearanceEntry appearance, EffectEntry effect) {
 		String key = getConsistencyIndexByName(consistency.getName()) + "," + getAppearanceIndexByName(appearance.getName());
+		System.out.println("Registering effect for combination '" + key + "'");
 		DrinkPotion.potions.put(key, effect);
 	}
 
@@ -55,7 +70,11 @@ public class PotionHelper {
 	 * @return Return an {@link EffectEntry} if consistency and appearance combination exists or null otherwise
 	 */
 	public static EffectEntry getCombinationEffect(AppearanceEntry consistency, AppearanceEntry appearance) {
-		String key = getConsistencyIndexByName(consistency.getName()) + "," + getAppearanceIndexByName(appearance.getName());
+		return getCombinationEffect(getCombinationKey(consistency, appearance));
+	}
+
+	public static EffectEntry getCombinationEffect(String key) {
+		System.out.println("Attempt to find registered effect for combination '" + key + "'");
 		return DrinkPotion.potions.get(key);
 	}
 
@@ -81,7 +100,6 @@ public class PotionHelper {
 
 	public static AppearanceEntry findConsistencyInString(String string) {
 		string = Helper.reverseString(string).toLowerCase();
-		System.out.println(string);
 		ArrayList<AppearanceEntry> consistencies = DrinkPotion.consistencies;
 		Collections.sort(consistencies);
 		for (AppearanceEntry c : consistencies) {
