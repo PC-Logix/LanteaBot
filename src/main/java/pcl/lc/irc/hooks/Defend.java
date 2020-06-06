@@ -30,7 +30,8 @@ public class Defend extends AbstractListener {
 		ATTACK(12),
 		PET(8),
 		POTION(14),
-		MISC(10);
+		MISC(10),
+		FLING(10);
 
 		private final int baseDC;
 
@@ -149,6 +150,15 @@ public class Defend extends AbstractListener {
 								Helper.sendMessage(target, nick + " manages to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + attack.implement + " " + attack.triggerer + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ". It splashes onto " + altTarget + " that was standing next to you." + potionString);
 							} else
 								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill + " the " + attack.implement + " " + attack.triggerer + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ".");
+						} else if (attack.type == EventTypes.FLING) {
+							if (result >= dc + 5) {
+								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " the " + attack.implement + " flung at them by " + attack.triggerer + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", avoiding all the damage (" + dec.format(damage) + ")");
+							} else if (result >= dc) {
+								damage = (int) Math.max(1, Math.floor(damage / 2d));
+								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " the " + attack.implement + " flung at them by " + attack.triggerer + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", taking only half damage. (" + dec.format(damage) + ")");
+							} else {
+								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + attack.implement + " flung at them by " + attack.triggerer + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", taking all of the damage. (" + dec.format(damage) + ")");
+							}
 						}
 						clearEventFor(nick);
 					} else {
