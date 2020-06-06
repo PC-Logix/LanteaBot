@@ -24,7 +24,7 @@ public class Defend extends AbstractListener {
 	public static HashMap<String, DefendEvent> defendEventLog;
 
 	private static String damageFormat = "#";
-	private static final int reactionTimeMinutes = 2;
+	private static final int reactionTimeMinutes = 8;
 
 	public enum EventTypes {
 		ATTACK(12),
@@ -91,7 +91,7 @@ public class Defend extends AbstractListener {
 						Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 						return;
 					}
-					DefendEvent attack = getEventFor(nick);
+					DefendEvent attack = getEventFor(nick, reactionTimeMinutes);
 					if (attack != null) {
 						int damage = attack.damage;
 						String implement = attack.implement;
