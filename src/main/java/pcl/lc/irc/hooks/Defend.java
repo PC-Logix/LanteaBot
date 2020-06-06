@@ -130,7 +130,7 @@ public class Defend extends AbstractListener {
 								Helper.sendMessage(target, nick + " failed to " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + attack.triggerer + " " + implementString + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " takes all of the damage. (" + dec.format(damage) + ")");
 							}
 						} else if (attack.type == EventTypes.POTION) {
-//							if (result >= dc) {
+							if (result >= dc) {
 								String altTarget = Helper.getRandomTransformation(true, true, false, true);
 								AppearanceEntry con = PotionHelper.findConsistencyInString(implement);
 								AppearanceEntry app = PotionHelper.findAppearanceInString(implement);
@@ -147,8 +147,8 @@ public class Defend extends AbstractListener {
 									}
 								}
 								Helper.sendMessage(target, nick + " manages to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + attack.implement + " " + attack.triggerer + " threw. It splashes onto " + altTarget + " that was standing next to you." + potionString);
-//							} else
-//								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill + " the " + attack.implement + " " + attack.triggerer + " threw.");
+							} else
+								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill + " the " + attack.implement + " " + attack.triggerer + " threw.");
 						}
 						clearEventFor(nick);
 					} else {
