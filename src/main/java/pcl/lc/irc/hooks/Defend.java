@@ -146,9 +146,9 @@ public class Defend extends AbstractListener {
 										potionString = " " + effectString.substring(0, 1).toUpperCase() + effectString.substring(1);
 									}
 								}
-								Helper.sendMessage(target, nick + " manages to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + attack.implement + " " + attack.triggerer + " threw. It splashes onto " + altTarget + " that was standing next to you." + potionString);
+								Helper.sendMessage(target, nick + " manages to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + attack.implement + " " + attack.triggerer + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ". It splashes onto " + altTarget + " that was standing next to you." + potionString);
 							} else
-								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill + " the " + attack.implement + " " + attack.triggerer + " threw.");
+								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill + " the " + attack.implement + " " + attack.triggerer + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ".");
 						}
 						clearEventFor(nick);
 					} else {
