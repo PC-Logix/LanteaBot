@@ -70,7 +70,7 @@ public class Attack extends AbstractListener {
 						Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 						return;
 					}
-					Actions action = Actions.valueOf(method.toLowerCase());
+					Actions action = Actions.valueOf(method.toUpperCase());
 
 					String message = "";
 					for (String aParam : params)
