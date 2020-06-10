@@ -23,43 +23,37 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 public class Attack extends AbstractListener {
 	private Command local_command;
-	private HashMap<String, ActionType> actions;
-	private static final String STAB = "stab";
-	private static final String HIT = "hit";
-	private static final String SHIV = "shiv";
-	private static final String STRIKE = "strike";
-	private static final String SLAP = "slap";
-	private static final String POKE = "poke";
-	private static final String PROD = "prod";
-	private static final String SMACK = "smack";
-	private static final String CONK = "conk";
-	private static final String CAST = "cast";
 
-	private static final String BITE = "bite";
-	private static final String CLAW = "claw";
+	private enum Actions {
+		STAB("stab", new ActionType("Stabbing", "Stabbed", "Stab", "Stabbed")),
+		HIT("hit", new ActionType("Hitting", "Hit", "Hit", "Hit")),
+		SHIV("shiv", new ActionType("Shivving", "Shivved", "Shiv", "Shivved")),
+		STRIKE("strike", new ActionType("Striking", "Struck", "Strike", "Struck")),
+		SLAP("slap", new ActionType("Slapping", "Slapped", "Slap", "Slapped")),
+		POKE("poke", new ActionType("Poking", "Poked", "Poke", "Poked")),
+		PROD("prod", new ActionType("Prodding", "Prodded", "Prod", "Prodded")),
+		SMACK("smack", new ActionType("Smacking", "Smacked", "Smack", "Smacked")),
+		CONK("conk", new ActionType("Conking", "Conked", "Conk", "Conked")),
+
+		BITE("bite", new ActionType("Biting", "Bit", "Bite", "Bitten")),
+		CLAW("claw", new ActionType("Clawing", "Clawed", "Claw", "Clawed")),
+		PUNCH("punch", new ActionType("Punching", "Punched", "Punch", "Punched"));
+
+		private final String command;
+		private ActionType type;
+
+		Actions(String command, ActionType type) { this.command = command; this.type = type; }
+	}
 
 	private static String actionList = "";
 
 	@Override
 	protected void initHook() {
-		actions = new HashMap<>();
-		actions.put(STAB, new ActionType("Stabbing", "Stabbed", "Stab", "Stabbed"));
-		actions.put(HIT, new ActionType("Hitting", "Hit", "Hit", "Hit"));
-		actions.put(SHIV, new ActionType("Shivving", "Shivved", "Shiv", "Shivved"));
-		actions.put(STRIKE, new ActionType("Striking", "Struck", "Strike", "Struck"));
-		actions.put(SLAP, new ActionType("Slapping", "Slapped", "Slap", "Slapped"));
-		actions.put(POKE, new ActionType("Poking", "Poked", "Poke", "Poked"));
-		actions.put(PROD, new ActionType("Prodding", "Prodded", "Prod", "Prodded"));
-		actions.put(SMACK, new ActionType("Smacking", "Smacked", "Smack", "Smacked"));
-		actions.put(CONK, new ActionType("Conking", "Conked", "Conk", "Conked"));
-//		actions.put(CAST, new ActionType("Casting", "Cast", "Cast", "Cast"));
-
-		actions.put(BITE, new ActionType("Biting", "Bit", "Bite", "Bitten"));
-		actions.put(CLAW, new ActionType("Clawing", "Clawed", "Claw", "Clawed"));
 
 		ArrayList<String> acts = new ArrayList<>();
-		for (Map.Entry<String, ActionType> act : actions.entrySet())
-			acts.add(act.getValue().actionNameWill);
+		for (Attack.Actions act : Attack.Actions.values())
+			if (act.command != null)
+				acts.add(act.command);
 		actionList = String.join(", ", acts);
 
 		local_command = new Command("attack", 60) {
@@ -72,10 +66,11 @@ public class Attack extends AbstractListener {
 				try
 				{
 					String method = params.remove(0);
-					if (!actions.containsKey(method.toLowerCase())) {
+					if (!actionList.contains(method.toLowerCase())) {
 						Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 						return;
 					}
+					Actions action = Actions.valueOf(method.toLowerCase());
 
 					String message = "";
 					for (String aParam : params)
@@ -90,7 +85,13 @@ public class Attack extends AbstractListener {
 						with = split[1].trim();
 
 					Item item = null;
-					if (!actions.get(method.toLowerCase()).equals(actions.get(BITE)) && !actions.get(method.toLowerCase()).equals(actions.get(CLAW))) { //Don't get item on bite attack or claw attack
+
+					ArrayList<Actions> nonItemActions = new ArrayList<>();
+					nonItemActions.add(Actions.BITE);
+					nonItemActions.add(Actions.CLAW);
+					nonItemActions.add(Actions.PUNCH);
+
+					if (!nonItemActions.contains(action)) {
 						if (with == null)
 							item = Inventory.getRandomItem(false);
 						else
@@ -115,12 +116,14 @@ public class Attack extends AbstractListener {
 						if (item != null) {
 							dmg = item.getDamage();
 							dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
-						} else if (actions.get(method.toLowerCase()).equals(actions.get(BITE))) {
-							dmg = Item.getGenericRoll(1, 6, new DiceRollBonusCollection());
-						} else if (actions.get(method.toLowerCase()).equals(actions.get(CLAW))) {
-							dmg = Item.getGenericRoll(1, 6, new DiceRollBonusCollection());
+						} else if (action == Actions.BITE) {
+							dmg = Item.getGenericRoll(1, 6);
+						} else if (action == Actions.CLAW) {
+							dmg = Item.getGenericRoll(1, 6);
+						} else if (action == Actions.PUNCH) {
+							dmg = Item.getGenericRoll(1, 4);
 						} else {
-							dmg = Item.getGenericRoll(1, 4, new DiceRollBonusCollection());
+							dmg = Item.getGenericRoll(1, 4);
 						}
 						String dmgString = dmg.getResultString();
 						if (dmgString == null)
@@ -129,7 +132,7 @@ public class Attack extends AbstractListener {
 							dmgString += " damage";
 						String itemName = item != null ? item.getName() : "";
 						Defend.addEvent(nick, attackTarget, dmg.getTotal(), itemName, Defend.EventTypes.ATTACK);
-						Helper.sendMessage(target, nick + " is " + actions.get(method.toLowerCase()).actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
+						Helper.sendMessage(target, nick + " is " + action.type.actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target,DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));
@@ -139,9 +142,10 @@ public class Attack extends AbstractListener {
 				}
 			}
 		};
-		IRCBot.registerCommand(local_command, "Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actions.toString().replace("[","").replace("]","") + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
-		for (String action : actions.keySet()) {
-			local_command.registerAlias(action, action);
+		IRCBot.registerCommand(local_command, "Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actionList + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
+		for (Attack.Actions action : Attack.Actions.values()) {
+			if (action.command != null)
+				local_command.registerAlias(action.command, action.command);
 		}
 	}
 

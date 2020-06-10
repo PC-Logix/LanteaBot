@@ -313,6 +313,14 @@ public class Item {
 		return getGenericRoll(diceAmount, diceSize, bonus, 0);
 	}
 
+	public static DiceRollResult getGenericRoll(int diceAmount, int diceSize, int minValue) {
+		return getGenericRoll(diceAmount, diceSize, new DiceRollBonusCollection(), minValue);
+	}
+
+	public static DiceRollResult getGenericRoll(int diceAmount, int diceSize) {
+		return getGenericRoll(diceAmount, diceSize, new DiceRollBonusCollection(), 0);
+	}
+
 	public static DiceRollResult getGenericRoll(int diceAmount, int diceSize, DiceRollBonusCollection bonus, int minValue)
 	{
 		DiceRollResult result = new DiceRollResult();
