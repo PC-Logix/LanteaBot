@@ -261,14 +261,14 @@ public class DynamicCommands extends AbstractListener {
 		}
 
 		//<editor-fold desc="Alias into proper command sub-command structure">
-		base_command = new Command("command", 0, Permissions.ADMIN) {
+		base_command = new Command("command", 0, Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
 			}
 		};
 
-		add = new Command("add", 0, Permissions.ADMIN) {
+		add = new Command("add", 0, local_command_add.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				System.out.println("Send '" + params + "' to add command");
@@ -276,7 +276,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		};
 
-		del = new Command("del", 0, Permissions.ADMIN) {
+		del = new Command("del", 0, local_command_del.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_del.forceExecute(nick, target, event, params.split(" "));
@@ -286,28 +286,28 @@ public class DynamicCommands extends AbstractListener {
 		del.registerAlias("rem");
 		del.registerAlias("remove");
 
-		addhelp = new Command("addhelp", 0, Permissions.ADMIN) {
+		addhelp = new Command("addhelp", 0, local_command_addhelp.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_addhelp.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
-		print = new Command("print", 0, Permissions.ADMIN) {
+		print = new Command("print", 0, local_command_print.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_print.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
-		edit = new Command("edit", 0, Permissions.ADMIN) {
+		edit = new Command("edit", 0, local_command_edit.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_edit.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
-		alias = new Command("alias", 0, Permissions.ADMIN) {
+		alias = new Command("alias", 0, Permissions.TRUSTED) {
             @Override
             public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
                 Helper.sendMessage(target, "To add an alias create a dynamic command with one or more commands to execute between two % like %command%.");
