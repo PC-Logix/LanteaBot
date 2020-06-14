@@ -199,7 +199,7 @@ public class Defend extends AbstractListener {
 	 * @param type String Supported types are `attack`, & `pet`
 	 */
 	public static void addEvent(String trigger, String target, int damage, String implement, EventTypes type) {
-		ArrayList<String> newEventData = new ArrayList<>();
+		target = target.toLowerCase();
 		if (eventExistsFor(target))
 			defendEventLog.remove(target);
 		defendEventLog.put(target, new DefendEvent(trigger, target, new Date(), damage, implement, type));
@@ -214,6 +214,7 @@ public class Defend extends AbstractListener {
 	}
 
 	public static DefendEvent getEventFor(String player, int maxReactionTimeMinutes) {
+		player = player.toLowerCase();
 		if (defendEventLog.containsKey(player)) {
 			DefendEvent event = defendEventLog.get(player);
 			Date now = new Date(new Date().getTime() - (maxReactionTimeMinutes * 60 * 1000));
