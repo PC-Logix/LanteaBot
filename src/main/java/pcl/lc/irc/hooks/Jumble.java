@@ -25,7 +25,7 @@ public class Jumble extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("jumble", 0) {
+		local_command = new Command("jumble") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = "";

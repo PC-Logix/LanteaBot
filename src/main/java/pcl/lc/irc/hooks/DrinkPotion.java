@@ -11,10 +11,7 @@ import org.joda.time.DateTime;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.*;
 import pcl.lc.utils.*;
 import pcl.lc.utils.Exceptions.InvalidPotionException;
 
@@ -454,7 +451,7 @@ public class DrinkPotion extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("drink", 0) {
+		local_command = new Command("drink") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				PotionEntry potion;
@@ -514,7 +511,7 @@ public class DrinkPotion extends AbstractListener {
 		local_command.registerAlias("down");
 		local_command.registerAlias("slurp");
 
-		splash = new Command("splash", 10) {
+		splash = new Command("splash", new CommandRateLimit(10)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -577,7 +574,7 @@ public class DrinkPotion extends AbstractListener {
 		};
 		splash.setHelpText("Splash some unfortunate bystander with a potion! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <potion>] If [with <potion>] is omitted a random potion is used.");
 
-		get_random = new Command("randompotion", 10) {
+		get_random = new Command("randompotion", new CommandRateLimit(10)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PotionEntry potion = PotionHelper.getRandomPotion();
@@ -589,7 +586,7 @@ public class DrinkPotion extends AbstractListener {
 		get_random.registerAlias("randpotion");
 		get_random.registerAlias("gimmepotion");
 
-		potion_stats = new Command("potionstats", 10) {
+		potion_stats = new Command("potionstats", new CommandRateLimit(10)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Config.httpdEnable.equals("true")) {
@@ -604,7 +601,7 @@ public class DrinkPotion extends AbstractListener {
 			}
 		};
 
-		discovered = new Command("discovered", 10) {
+		discovered = new Command("discovered", new CommandRateLimit(10)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Config.httpdEnable.equals("true")) {
@@ -622,7 +619,7 @@ public class DrinkPotion extends AbstractListener {
 		potion_stats.registerAlias("potionlist");
 		potion_stats.registerAlias("listpotions");
 
-		potion_lookup = new Command("potion_lookup", 10) {
+		potion_lookup = new Command("potion_lookup", new CommandRateLimit(10)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				AppearanceEntry app = PotionHelper.findAppearanceInString(params);

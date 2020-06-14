@@ -32,48 +32,48 @@ public class Search extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		search = new Command("search", 0) {
+		search = new Command("search") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(((params.size() > 0) ? params.get(0) : "")), nick);
 			}
 		}; search.setHelpText("Search various sites for term (eg search <site> <term>)");
-		google = new Command("google", 0) {
+		google = new Command("google") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch(null, params);
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; google.setHelpText("Searches google and returns the first result");
-		curseForge = new Command("curseForge", 0) {
+		curseForge = new Command("curseForge") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:minecraft.curseforge.com", params);
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; curseForge.setHelpText("Searches CurseForge and returns the first result");
-		wiki = new Command("wiki", 0) {
+		wiki = new Command("wiki") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("wiki", params);
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; wiki.setHelpText("Searches Wikipedia and returns the first result");
-		urban = new Command("urban", 0) {
+		urban = new Command("urban") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:urbandictionary.com", params);
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; urban.setHelpText("Searches UrbanDictonary and returns the first result");
-		ann = new Command("ann", 0) {
+		ann = new Command("ann") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:animenewsnetwork.com", params);
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; ann.setHelpText("Searches Anime News Network and returns the first result");
-		youtube = new Command("youtube", 0) {
+		youtube = new Command("youtube") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:youtube.com", params);
@@ -88,21 +88,21 @@ public class Search extends AbstractListener {
 		search.registerSubCommand(urban);
 		search.registerSubCommand(ann);
 		search.registerSubCommand(youtube);
-		g = new Command("g", 0) {
+		g = new Command("g") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				google.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
 		g.registerAlias("google");
-		yt = new Command("yt", 0) {
+		yt = new Command("yt") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				youtube.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
 		yt.registerAlias("youtube");
-		wik = new Command("wiki", 0) {
+		wik = new Command("wiki") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				wiki.onExecuteSuccess(command, nick, target, event, params);
@@ -110,7 +110,7 @@ public class Search extends AbstractListener {
 		};
 		wik.registerAlias("wp");
 		wik.registerAlias("wikipedia");
-		cf = new Command("cf", 0) {
+		cf = new Command("cf") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				curseForge.onExecuteSuccess(command, nick, target, event, params);
@@ -118,7 +118,7 @@ public class Search extends AbstractListener {
 		};
 		cf.registerAlias("curse");
 		cf.registerAlias("curseforge");
-		urb = new Command("urban", 0) {
+		urb = new Command("urban") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				urban.onExecuteSuccess(command, nick, target, event, params);
@@ -127,7 +127,7 @@ public class Search extends AbstractListener {
 		urb.registerAlias("u");
 		urb.registerAlias("urbandictionary");
 
-		lmgtfy = new Command("lmgtfy", 0) {
+		lmgtfy = new Command("lmgtfy") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

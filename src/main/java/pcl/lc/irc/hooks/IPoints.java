@@ -31,7 +31,7 @@ public class IPoints extends AbstractListener {
 		Database.addPreparedStatement("getPoints", "SELECT Points FROM InternetPoints WHERE nick = ?;");
 		Database.addPreparedStatement("addPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
 		Database.addPreparedStatement("setPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
-		command_points = new Command("points", 0) {
+		command_points = new Command("points") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String[] splitMessage = event.getMessage().split(" ");
@@ -83,7 +83,7 @@ public class IPoints extends AbstractListener {
 				}
 			}
 		}; command_points.setHelpText("Checks the points for yourself, or another user");
-		command_reset_points = new Command("resetpoints", 0, Permissions.ADMIN) {
+		command_reset_points = new Command("resetpoints", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

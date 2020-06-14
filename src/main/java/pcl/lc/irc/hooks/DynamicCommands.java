@@ -107,7 +107,7 @@ public class DynamicCommands extends AbstractListener {
 		}
 
 		initLua();
-		local_command_add = new Command("addcommand", 0, Permissions.TRUSTED) {
+		local_command_add = new Command("addcommand", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				try {
@@ -131,7 +131,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		};
 		IRCBot.registerCommand(local_command_add, "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
-		local_command_del = new Command("delcommand", 0, Permissions.TRUSTED) {
+		local_command_del = new Command("delcommand", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() == 0) {
@@ -152,7 +152,7 @@ public class DynamicCommands extends AbstractListener {
 				}
 			}
 		};
-		local_command_print = new Command ("printcommand", 0) {
+		local_command_print = new Command ("printcommand") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement getCommand;
@@ -170,7 +170,7 @@ public class DynamicCommands extends AbstractListener {
 
 			}
 		};
-		local_command_edit = new Command ("editcommand", 0, Permissions.TRUSTED) {
+		local_command_edit = new Command ("editcommand", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -197,7 +197,7 @@ public class DynamicCommands extends AbstractListener {
 				}
 			}
 		};
-		local_command_addhelp = new Command ("addcommandhelp", 0, Permissions.TRUSTED) {
+		local_command_addhelp = new Command ("addcommandhelp", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement addCommandHelp;
@@ -231,7 +231,7 @@ public class DynamicCommands extends AbstractListener {
 		IRCBot.registerCommand(local_command_addhelp);
 
 		
-		toggle_command = new Command("dyncmd", 10, Permissions.MOD) {
+		toggle_command = new Command("dyncmd", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {
@@ -261,14 +261,14 @@ public class DynamicCommands extends AbstractListener {
 		}
 
 		//<editor-fold desc="Alias into proper command sub-command structure">
-		base_command = new Command("command", 0, Permissions.TRUSTED) {
+		base_command = new Command("command", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
 			}
 		};
 
-		add = new Command("add", 0, local_command_add.getPermissionLevel()) {
+		add = new Command("add", local_command_add.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				System.out.println("Send '" + params + "' to add command");
@@ -276,7 +276,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		};
 
-		del = new Command("del", 0, local_command_del.getPermissionLevel()) {
+		del = new Command("del", local_command_del.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_del.forceExecute(nick, target, event, params.split(" "));
@@ -286,28 +286,28 @@ public class DynamicCommands extends AbstractListener {
 		del.registerAlias("rem");
 		del.registerAlias("remove");
 
-		addhelp = new Command("addhelp", 0, local_command_addhelp.getPermissionLevel()) {
+		addhelp = new Command("addhelp", local_command_addhelp.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_addhelp.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
-		print = new Command("print", 0, local_command_print.getPermissionLevel()) {
+		print = new Command("print", local_command_print.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_print.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
-		edit = new Command("edit", 0, local_command_edit.getPermissionLevel()) {
+		edit = new Command("edit", local_command_edit.getPermissionLevel()) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				local_command_edit.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
-		alias = new Command("alias", 0, Permissions.TRUSTED) {
+		alias = new Command("alias", Permissions.TRUSTED) {
             @Override
             public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
                 Helper.sendMessage(target, "To add an alias create a dynamic command with one or more commands to execute between two % like %command%.");

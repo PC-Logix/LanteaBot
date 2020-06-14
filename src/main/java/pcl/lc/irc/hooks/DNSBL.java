@@ -19,10 +19,7 @@ import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Permissions;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -99,7 +96,7 @@ public class DNSBL  extends AbstractListener {
 			e1.printStackTrace();
 		}
 
-		toggle_command = new Command("dnsbl", 10, Permissions.MOD) {
+		toggle_command = new Command("dnsbl", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {
@@ -113,7 +110,7 @@ public class DNSBL  extends AbstractListener {
 		IRCBot.registerCommand(toggle_command);
 
 
-		check_command = new Command("checkdnsbl", 10, Permissions.EVERYONE) {
+		check_command = new Command("checkdnsbl", new CommandRateLimit(10), Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				InetAddress address = null;
@@ -146,7 +143,7 @@ public class DNSBL  extends AbstractListener {
 		IRCBot.registerCommand(check_command);
 
 
-		adddnsbl_command = new Command("adddnsbl", 10, Permissions.MOD) {
+		adddnsbl_command = new Command("adddnsbl", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() > 0 && !(params.length() < 1)) {
@@ -168,7 +165,7 @@ public class DNSBL  extends AbstractListener {
 		IRCBot.registerCommand(adddnsbl_command);
 
 
-		remdnsbl_command = new Command("remdnsbl", 10, Permissions.MOD) {
+		remdnsbl_command = new Command("remdnsbl", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() > 0 && !(params.length() < 1)) {
@@ -189,7 +186,7 @@ public class DNSBL  extends AbstractListener {
 		}; toggle_command.setHelpText("Remove DNSBL Service");
 		IRCBot.registerCommand(remdnsbl_command);
 
-		listdnsbl_command = new Command("listdnsbl", 10, Permissions.EVERYONE) {
+		listdnsbl_command = new Command("listdnsbl", new CommandRateLimit(10), Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String dnsblServices = "";

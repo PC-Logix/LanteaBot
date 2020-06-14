@@ -54,7 +54,7 @@ public class PhraseBan extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("phraseban", 0) {
+		local_command = new Command("phraseban") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				this.trySubCommandsMessage(params);
@@ -63,7 +63,7 @@ public class PhraseBan extends AbstractListener {
 		local_command.setHelpText("Ban phrases, all of them");
 		local_command.registerAlias("pb");
 
-		add = new Command("add", 0, Permissions.MOD) {
+		add = new Command("add", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.isEmpty()) {
@@ -88,7 +88,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(add);
 
-		del = new Command("del", 0, Permissions.MOD) {
+		del = new Command("del", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.isEmpty()) {
@@ -109,7 +109,7 @@ public class PhraseBan extends AbstractListener {
 		del.registerAlias("rem");
 		local_command.registerSubCommand(del);
 
-		list = new Command("list", 0, Permissions.EVERYONE) {
+		list = new Command("list", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "The words: " + String.join(", ", phrases));
@@ -117,7 +117,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(list);
 
-		clear = new Command("clear", 0, Permissions.ADMIN) {
+		clear = new Command("clear", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -132,7 +132,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(clear);
 
-		exadd = new Command("exadd", 0, Permissions.MOD) {
+		exadd = new Command("exadd", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.isEmpty()) {
@@ -155,7 +155,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(exadd);
 
-		exdel = new Command("exdel", 0, Permissions.MOD) {
+		exdel = new Command("exdel", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.isEmpty()) {
@@ -174,7 +174,7 @@ public class PhraseBan extends AbstractListener {
 		exdel.registerAlias("exrem");
 		local_command.registerSubCommand(exdel);
 
-		set = new Command("set", 0, Permissions.MOD) {
+		set = new Command("set", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() < 2) {

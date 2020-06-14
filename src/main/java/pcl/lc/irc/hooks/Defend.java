@@ -79,7 +79,7 @@ public class Defend extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("defend", 0) {
+		local_command = new Command("defend") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() == 0) {

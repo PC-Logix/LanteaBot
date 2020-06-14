@@ -33,7 +33,7 @@ public class Shell extends AbstractListener {
 
 	private void initCommands() {
 		commands = new ArrayList<>();
-		shell = new Command("shell", 0) {
+		shell = new Command("shell") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();

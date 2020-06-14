@@ -33,7 +33,7 @@ public class Sell extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("sell", 0) {
+		local_command = new Command("sell") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String string = strings.get(Helper.getRandomInt(0, strings.size() - 1));

@@ -73,7 +73,7 @@ public class l33t extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("1337", 0) {
+		local_command = new Command("1337") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("^")) {

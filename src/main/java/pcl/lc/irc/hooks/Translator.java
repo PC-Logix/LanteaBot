@@ -19,10 +19,7 @@ import com.google.common.collect.Lists;
 
 import io.github.firemaples.language.Language;
 import io.github.firemaples.translate.Translate;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
 
 public class Translator extends AbstractListener {
@@ -76,7 +73,7 @@ public class Translator extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("translate", 5) {
+		local_command = new Command("translate", new CommandRateLimit(5)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("^")) {

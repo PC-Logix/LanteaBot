@@ -36,14 +36,14 @@ public class Ping extends AbstractListener {
 	private static TimedHashMap<String, List<Object>> usersMSP = new TimedHashMap<String, List<Object>>(60000, null);
 
 	private void initCommands() {
-		ping = new Command("ping", 0) {
+		ping = new Command("ping") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				sendPing(params, nick, false);
 			}
 		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
 		ping.registerAlias("p");
-		msp = new Command("msp", 0) {
+		msp = new Command("msp") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				sendPing(params, nick, true);

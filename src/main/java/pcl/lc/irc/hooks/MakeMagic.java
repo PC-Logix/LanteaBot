@@ -22,7 +22,7 @@ public class MakeMagic extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("makemagic", 0) {
+		local_command = new Command("makemagic") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String[] prefixes = Helper.solvePrefixes(params);

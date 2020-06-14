@@ -16,11 +16,7 @@ import com.google.common.collect.Lists;
 import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Permissions;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PasteUtils;
 
@@ -35,7 +31,7 @@ public class SED extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("sed", 10, Permissions.MOD) {
+		local_command = new Command("sed", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {

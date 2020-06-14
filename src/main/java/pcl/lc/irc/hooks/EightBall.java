@@ -20,7 +20,7 @@ public class EightBall extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("eightball", 0) {
+		local_command = new Command("eightball") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if ((params.length() > 6 && params.matches(".*\\?$")) || params.equals("^")) {

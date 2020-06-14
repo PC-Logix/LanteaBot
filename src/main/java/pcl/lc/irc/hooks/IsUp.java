@@ -41,7 +41,7 @@ public class IsUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("isup", 0) {
+		local_command = new Command("isup") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 0) {

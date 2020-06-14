@@ -27,7 +27,7 @@ public class Calc extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		local_command = new Command("calc", 0) {
+		local_command = new Command("calc") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equalsIgnoreCase("the meaning of life")) {

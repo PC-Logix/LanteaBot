@@ -29,7 +29,7 @@ public class Reminders extends AbstractListener {
 	private ScheduledFuture<?> executor;
 	@Override
 	protected void initHook() {
-		remind = new Command("remind", 0) {
+		remind = new Command("remind") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 1) {
@@ -68,7 +68,7 @@ public class Reminders extends AbstractListener {
 		remind.registerAlias("remindme");
 		remind.setHelpText("'remindme 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 
-		remindSomeone = new Command("remindthem", 0) {
+		remindSomeone = new Command("remindthem") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 1) {
@@ -108,7 +108,7 @@ public class Reminders extends AbstractListener {
 		};
 		remindSomeone.setHelpText("'remindthem gamax92 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot) to gamax92");
 		
-		list = new Command("list", 0, true) {
+		list = new Command("list", true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -134,7 +134,7 @@ public class Reminders extends AbstractListener {
 			}
 		};
 		list.setHelpText("Gives you a list of your next 3 reminders");
-		reminders = new Command("reminders", 0) {
+		reminders = new Command("reminders") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				list.onExecuteSuccess(command, nick, target, event, params);

@@ -28,7 +28,7 @@ public class Garbage extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("garbage", 0) {
+		local_command = new Command("garbage") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("")) {

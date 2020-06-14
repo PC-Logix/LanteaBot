@@ -56,7 +56,7 @@ public class WhoPinged extends AbstractListener {
 		Database.addPreparedStatement("getAllPings", "SELECT id, time FROM Pings;");
 		Database.addPreparedStatement("delPings", "DELETE FROM Pings WHERE id = ?;");
 
-		command_WhoPinged = new Command("whopinged", 0) {
+		command_WhoPinged = new Command("whopinged") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 
@@ -76,7 +76,7 @@ public class WhoPinged extends AbstractListener {
 			}
 		};
 		command_WhoPinged.setHelpText("Shows you the last ? pings you had.");
-		command_ClearPings = new Command("clearpings", 0) {
+		command_ClearPings = new Command("clearpings") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

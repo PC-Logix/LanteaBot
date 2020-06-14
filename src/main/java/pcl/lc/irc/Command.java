@@ -2,6 +2,7 @@ package pcl.lc.irc;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.SyntaxGroup;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,8 +19,7 @@ public class Command {
 
 	private String command;
 	private String className;
-	private Integer rateLimit;
-	private long lastExecution;
+	private CommandRateLimit rateLimit;
 	private ArrayList<String> aliases;
 	private ArrayList<String> aliasesFixedArguments;
 	private ArrayList<Command> subCommands;
@@ -27,43 +27,43 @@ public class Command {
 	private boolean isEnabled;
 	private String minRank;
 	private String helpText;
+	private SyntaxGroup syntax;
 	private String actualCommand;
 
 	public String callingRelay = null;
 
 	public Command(String command) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, false, true, Permissions.EVERYONE);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), null, false, true, Permissions.EVERYONE);
 	}
 
-	public Command(String command, Integer rateLimit) {
+	public Command(String command, CommandRateLimit rateLimit) {
 		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, Permissions.EVERYONE);
 	}
 
-	public Command(String command, Integer rateLimit, boolean isSubCommand) {
+	public Command(String command, CommandRateLimit rateLimit, boolean isSubCommand) {
 		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, true, Permissions.EVERYONE);
 	}
 
-	public Command(String command, Integer rateLimit, String minRank) {
+	public Command(String command, CommandRateLimit rateLimit, String minRank) {
 		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, minRank);
 	}
 
-	public Command(String command, Integer rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
+	public Command(String command, CommandRateLimit rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
 		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, isEnabled, minRank);
 	}
 
 	public Command(String command, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), 0, isSubCommand, true, Permissions.EVERYONE);
+		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), null, isSubCommand, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, String className) {
-		this(command, className, 0, false, true, Permissions.EVERYONE);
+		this(command, className, null, false, true, Permissions.EVERYONE);
 	}
 
-	public Command(String command, String className, Integer rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
+	public Command(String command, String className, CommandRateLimit rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
 		this.command = command;
 		this.className = className;
 		this.rateLimit = rateLimit;
-		this.lastExecution = 0;
 		this.aliases = new ArrayList<>();
 		this.aliasesFixedArguments = new ArrayList<>();
 		this.subCommands = new ArrayList<>();
@@ -117,20 +117,21 @@ public class Command {
 		return this.className;
 	}
 
-	public Integer getRateLimit() {
+	public CommandRateLimit getRateLimit() {
 		return this.rateLimit;
 	}
 
 	public long getLastExecution() {
-		return this.lastExecution;
+		return this.rateLimit.getLastExecution();
 	}
 
 	public void setLastExecution(Integer lastExecution) {
-		this.lastExecution = lastExecution;
+		this.rateLimit.setLastExecution(lastExecution);
 	}
 
 	public void updateLastExecution() {
-		this.lastExecution = new Timestamp(System.currentTimeMillis()).getTime();
+		if (this.rateLimit != null)
+			this.rateLimit.updateLastExecution();
 	}
 
 	public long shouldExecute(String command, GenericMessageEvent event) {
@@ -160,15 +161,9 @@ public class Command {
 			return NO_PERMISSION;
 		if (nick != null && IRCBot.isIgnored(nick))
 			return IGNORED;
-		if (this.rateLimit == 0)
+		if (this.rateLimit == null)
 			return 0;
-		if (this.lastExecution == 0)
-			return 0;
-		long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
-		long difference = timestamp - this.lastExecution;
-		if (difference > (this.rateLimit * 1000))
-			return 0;
-		return (this.rateLimit * 1000) - difference;
+		return this.rateLimit.getHeatValue();
 	}
 
 	public boolean shouldExecuteBool(String command, GenericMessageEvent event) {

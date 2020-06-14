@@ -47,6 +47,7 @@ public class Tonk extends AbstractListener {
 	private Command tonk_attempts_remaining;
 	private Command tonk_merge_scores;
 	private Command tonk_destroy_scores;
+	private CommandRateLimit rateLimit;
 
 	@Override
 	protected void initHook() {
@@ -73,7 +74,8 @@ public class Tonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("tonk", 900) {
+		rateLimit = new CommandRateLimit(900);
+		local_command = new Command("tonk", rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int attempts = getTonkFails(nick);
@@ -184,7 +186,7 @@ public class Tonk extends AbstractListener {
 		};
 		local_command.setHelpText("What is tonk? Tonk is life. For a description of the rules see " + Config.commandprefix + "tonkleaders");
 		
-		reset_command = new Command("resettonk", 60, Permissions.ADMIN) {
+		reset_command = new Command("resettonk", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				long now = new Date().getTime();
@@ -202,7 +204,7 @@ public class Tonk extends AbstractListener {
 		reset_command.setHelpText("Reset current tonk.");
 		reset_command.registerAlias("tonkreset");
 
-		wind_back_command = new Command("tonkback", 60, Permissions.ADMIN) {
+		wind_back_command = new Command("tonkback", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -230,7 +232,7 @@ public class Tonk extends AbstractListener {
 		};
 		reset_command.setHelpText("Used for testing.");
 
-		tonkout_command = new Command("tonkout", 900) {
+		tonkout_command = new Command("tonkout", rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int attempts = getTonkFails(nick);
@@ -369,7 +371,7 @@ public class Tonk extends AbstractListener {
 		};
 		tonkpoints_command.registerAlias("tonkscore");
 
-		tonkreseteverything_command = new Command("tonkreseteverything", 0, Permissions.ADMIN) {
+		tonkreseteverything_command = new Command("tonkreseteverything", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -405,7 +407,7 @@ public class Tonk extends AbstractListener {
 			}
 		};
 
-		tonk_merge_scores = new Command("tonkmerge", 0, Permissions.ADMIN) {
+		tonk_merge_scores = new Command("tonkmerge", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
 				try {
@@ -425,7 +427,7 @@ public class Tonk extends AbstractListener {
 		};
 		tonk_merge_scores.setHelpText("Merges the score of the second name into the first name and wipes the second name from the scoreboard. Syntax: " + Config.commandprefix + tonk_merge_scores.getCommand() + " <first_name> <second_name>");
 
-		tonk_destroy_scores = new Command("tonkdestroy", 0, Permissions.ADMIN) {
+		tonk_destroy_scores = new Command("tonkdestroy", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
 				ArrayList<String> successes = new ArrayList<>();

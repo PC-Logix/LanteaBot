@@ -24,7 +24,7 @@ public class Bap extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bap", 0) {
+		local_command = new Command("bap") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0)

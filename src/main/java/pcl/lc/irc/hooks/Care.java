@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.CommandRateLimit;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
@@ -23,7 +24,7 @@ public class Care extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("care", 60) {
+		local_command = new Command("care", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, Helper.getCareDetectorResponse(), nick);

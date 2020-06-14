@@ -22,7 +22,7 @@ public class Jiggle extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("jiggle", 0) {
+		local_command = new Command("jiggle") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int number = 0;

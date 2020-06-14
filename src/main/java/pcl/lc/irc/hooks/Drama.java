@@ -142,7 +142,7 @@ public class Drama extends AbstractListener {
 		words.put("says", new String[]{"says", "tweets", "claims", "confirms", "denies"});
 		words.put("enormous", new String[]{"big", "large", "huge", "gigantic", "enormous"});
 
-		local_command = new Command("drama", 0) {
+		local_command = new Command("drama") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.AntiPings = Helper.getNamesFromTarget(target);

@@ -30,7 +30,7 @@ public class Fling extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("fling", 0) {
+		local_command = new Command("fling") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

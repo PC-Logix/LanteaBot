@@ -74,7 +74,7 @@ public class Quotes extends AbstractListener {
 	}
 
 	private void initCommands() {
-		quote = new Command("quote", 0) {
+		quote = new Command("quote") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0) {
@@ -124,7 +124,7 @@ public class Quotes extends AbstractListener {
 				}
 			}
 		}; quote.setHelpText("Returns quotes from the quote database. Also Has sub-commands: add, del");
-		add = new Command("add", 0, true) {
+		add = new Command("add", true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 1) {
@@ -150,7 +150,7 @@ public class Quotes extends AbstractListener {
 				}
 			}
 		}; add.setHelpText("Adds a quote to the database");
-		delete = new Command("delete", 0, true, true, Permissions.ADMIN) {
+		delete = new Command("delete", null, true, true, Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 0) {
@@ -172,7 +172,7 @@ public class Quotes extends AbstractListener {
 			}
 		}; delete.setHelpText("Removes a quote from the database");
 		delete.registerAlias("del");
-		list = new Command("list", 0, true) {
+		list = new Command("list", true) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 0) {
@@ -205,7 +205,7 @@ public class Quotes extends AbstractListener {
 				}
 			}
 		}; list.setHelpText("Returns list of ids for quotes belonging to user as well as their total quote count");
-		quotes = new Command("quotes", 0) {
+		quotes = new Command("quotes") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, httpd.getBaseDomain() + "/quotes", nick);

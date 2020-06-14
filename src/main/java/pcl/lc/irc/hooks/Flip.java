@@ -48,7 +48,7 @@ public class Flip extends AbstractListener {
 
   @Override
   protected void initHook() {
-    local_command = new Command("flip", 0) {
+    local_command = new Command("flip") {
       @Override
       public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
         if (params.equals("")) {

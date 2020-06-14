@@ -124,7 +124,7 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "I want a divorce. I'm taking half the \"{choice}\"."));
 		templates.add(new Template(2, "Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
 
-		local_command = new Command("choose", 0) {
+		local_command = new Command("choose") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String[] parts = params.split(" or ");

@@ -27,7 +27,7 @@ public class OCTime extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("octime", 0) {
+		local_command = new Command("octime") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");

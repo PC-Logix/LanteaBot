@@ -36,7 +36,7 @@ public class MCInfo extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("mcinfo", 0) {
+		local_command = new Command("mcinfo") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String server = "";

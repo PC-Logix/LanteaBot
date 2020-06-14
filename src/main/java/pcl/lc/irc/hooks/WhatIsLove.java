@@ -22,7 +22,7 @@ public class WhatIsLove extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("whatislove", 0) {
+		local_command = new Command("whatislove") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int roll = Helper.getRandomInt(0,100);

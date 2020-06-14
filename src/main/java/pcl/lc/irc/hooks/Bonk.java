@@ -25,7 +25,7 @@ public class Bonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bonk", 0) {
+		local_command = new Command("bonk") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0)

@@ -77,7 +77,7 @@ public class IP2Geo extends AbstractListener {
 			}
 		}
 
-		local_command = new Command("geoip", 0) {
+		local_command = new Command("geoip") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.AntiPings = Helper.getNamesFromTarget(target);

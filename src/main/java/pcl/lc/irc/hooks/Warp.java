@@ -22,7 +22,7 @@ public class Warp extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("warp", 0) {
+		local_command = new Command("warp") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, Helper.getRandomWarpLocation());

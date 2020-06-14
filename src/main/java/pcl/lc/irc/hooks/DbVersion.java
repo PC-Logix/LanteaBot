@@ -26,7 +26,7 @@ public class DbVersion extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("dbversion", 0) {
+		local_command = new Command("dbversion") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

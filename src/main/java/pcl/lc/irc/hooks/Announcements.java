@@ -81,32 +81,32 @@ public class Announcements extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command_announce = new Command("announce", 0, Permissions.ADMIN) {
+		local_command_announce = new Command("announce", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
 			}
 		}; local_command_announce.setHelpText("Has sub-commands: add, list, remove");
-		local_command_add = new Command("add", 0, Permissions.ADMIN) {
+		local_command_add = new Command("add", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_add.setHelpText("Add announce message");
-		local_command_list = new Command("list", 0, Permissions.ADMIN) {
+		local_command_list = new Command("list", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_list.setHelpText("List announce messages");
-		local_command_remove = new Command("remove", 0, Permissions.ADMIN) {
+		local_command_remove = new Command("remove", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_remove.setHelpText("Remove announce message");
-		local_command_reload = new Command("reload", 0, Permissions.ADMIN) {
+		local_command_reload = new Command("reload", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);

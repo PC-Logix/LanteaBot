@@ -2,10 +2,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -26,7 +23,7 @@ public class Aliases extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("aliases", 60) {
+		local_command = new Command("aliases", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Command cmd = Command.findCommand(params);

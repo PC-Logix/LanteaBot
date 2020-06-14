@@ -5,10 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.*;
 import pcl.lc.utils.*;
 
 import javax.swing.Action;
@@ -56,7 +53,7 @@ public class Attack extends AbstractListener {
 				acts.add(act.command);
 		actionList = String.join(", ", acts);
 
-		local_command = new Command("attack", 60) {
+		local_command = new Command("attack", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() == 0) {

@@ -51,7 +51,7 @@ public class CurseWord extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("curseword", 0) {
+		local_command = new Command("curseword") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (curses.size() == 0)

@@ -30,7 +30,7 @@ public class Pet extends AbstractListener {
 		actions.put("pets", new ActionType("Petting", "Petting", "Pet", "Petted"));
 		actions.put("brushes", new ActionType("Brushing", "Brushing", "Brush", "Brushed"));
 
-		local_command = new Command("pet", 0) {
+		local_command = new Command("pet") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.length() == 0) {

@@ -38,7 +38,7 @@ public class SWSpoilerGen extends AbstractListener {
 		words.put("7", new String[]{"a bow that shoots little Lightsaber-headed arrows","X-Wings and TIE Fighters dodging the giant letters of the opening crawl","a Sith educational display that uses force lightning to demonstate the dielectric breakdown of air","Kylo Ren putting on another helmet over his smaller one","a Sith car wash where the bristles on the brushes are little Lightsabers"});
 		words.put("8", new String[]{"Luke","Leia","Han","Obi-Wan","A Random Junk Trader"});
 		words.put("9", new String[]{"Poe","BB-8","Amilyn Holdo","Laura Dern","A Random Junk Trader","That One Droid from the Jawa Sandcrawler that says Gronk"});
-		local_command = new Command("swspoiler", 0) {
+		local_command = new Command("swspoiler") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.AntiPings = Helper.getNamesFromTarget(target);

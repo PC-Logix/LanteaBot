@@ -34,7 +34,7 @@ public class NewTopic extends AbstractListener {
 		Database.addPreparedStatement("getRandomTopic", "SELECT id, topic FROM Topics ORDER BY Random() LIMIT 1");
 		Database.addPreparedStatement("delTopic", "DELETE FROM Topics WHERE id = ?;");
 
-		command_newTopic = new Command("newtopic", 0) {
+		command_newTopic = new Command("newtopic") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String msg = "";
@@ -64,7 +64,7 @@ public class NewTopic extends AbstractListener {
 			}
 		}; command_newTopic.setHelpText("Generates a new topic");
 
-		command_addTopic = new Command("addtopic", 0, Permissions.TRUSTED) {
+		command_addTopic = new Command("addtopic", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -80,7 +80,7 @@ public class NewTopic extends AbstractListener {
 			}
 		};
 
-		command_delTopic = new Command("deltopic", 0, Permissions.TRUSTED) {
+		command_delTopic = new Command("deltopic", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

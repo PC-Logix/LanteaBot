@@ -30,7 +30,7 @@ public class Brainfuck extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bf", 0) {
+		local_command = new Command("bf") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, parse(params, null));

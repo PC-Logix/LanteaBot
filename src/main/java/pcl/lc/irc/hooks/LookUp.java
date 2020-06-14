@@ -29,7 +29,7 @@ public class LookUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command_lookup = new Command("lookup", 0) {
+		local_command_lookup = new Command("lookup") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {	
 		        try
@@ -87,7 +87,7 @@ public class LookUp extends AbstractListener {
 				//Helper.sendMessage(target, output.replace(params.get(0) + "/", " ").replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2"), nick);
 			}
 		}; local_command_lookup.setHelpText("Returns DNS information");
-		local_command_rdns = new Command("rdns", 0) {
+		local_command_rdns = new Command("rdns") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				InetAddress addr = null;

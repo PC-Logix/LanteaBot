@@ -23,7 +23,7 @@ public class Dice extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("dice", 0) {
+		local_command = new Command("dice") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				params = DiceRoll.rollDiceInString(params);

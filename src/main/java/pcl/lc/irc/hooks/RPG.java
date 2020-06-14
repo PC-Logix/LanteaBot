@@ -67,14 +67,14 @@ public class RPG extends AbstractListener {
 			"revives = ? WHERE account = ?");
 		Database.addPreparedStatement("getRPGCharacter", "SELECT * FROM RPGUsers WHERE account = ?");
 
-		rpg = new Command("rpg", 0, Permissions.EVERYONE) {
+		rpg = new Command("rpg", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
 			}
 		};
 
-		enable = new Command("enable", 0, Permissions.MOD) {
+		enable = new Command("enable", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.toggleCommand("RPG", target, "enable");
@@ -82,7 +82,7 @@ public class RPG extends AbstractListener {
 		};
 		rpg.registerSubCommand(enable);
 
-		disable = new Command("disable", 0, Permissions.MOD) {
+		disable = new Command("disable", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.toggleCommand("RPG", target, "disable");
@@ -90,7 +90,7 @@ public class RPG extends AbstractListener {
 		};
 		rpg.registerSubCommand(disable);
 
-		stats = new Command("stats", 0, Permissions.EVERYONE) {
+		stats = new Command("stats", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (!Helper.isEnabledHere(target, "RPG"))
@@ -108,7 +108,7 @@ public class RPG extends AbstractListener {
 		};
 		rpg.registerSubCommand(stats);
 
-		givexp = new Command("givexp", 0, Permissions.ADMIN) {
+		givexp = new Command("givexp", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (!Helper.isEnabledHere(target, "RPG"))
@@ -132,7 +132,7 @@ public class RPG extends AbstractListener {
 		}; givexp.setHelpText("Gives xp to user by name");
 		rpg.registerSubCommand(givexp);
 
-		strength = new Command("strength", 0, Permissions.EVERYONE) {
+		strength = new Command("strength", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (!Helper.isEnabledHere(target, "RPG"))
@@ -153,7 +153,7 @@ public class RPG extends AbstractListener {
 		};
 		rpg.registerSubCommand(strength);
 
-		defense = new Command("defense", 0, Permissions.EVERYONE) {
+		defense = new Command("defense", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (!Helper.isEnabledHere(target, "RPG"))
@@ -174,7 +174,7 @@ public class RPG extends AbstractListener {
 		};
 		rpg.registerSubCommand(defense);
 
-		accuracy = new Command("accuracy", 0, Permissions.EVERYONE) {
+		accuracy = new Command("accuracy", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (!Helper.isEnabledHere(target, "RPG"))
@@ -195,7 +195,7 @@ public class RPG extends AbstractListener {
 		};
 		rpg.registerSubCommand(accuracy);
 
-		dodge = new Command("dodge", 0, Permissions.EVERYONE) {
+		dodge = new Command("dodge", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (!Helper.isEnabledHere(target, "RPG"))
@@ -216,7 +216,7 @@ public class RPG extends AbstractListener {
 		};
 		rpg.registerSubCommand(dodge);
 
-		status = new Command("status", 0, Permissions.EVERYONE) {
+		status = new Command("status", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (!Helper.isEnabledHere(target, "RPG"))

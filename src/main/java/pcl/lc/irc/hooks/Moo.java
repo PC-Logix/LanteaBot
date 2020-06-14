@@ -31,7 +31,7 @@ public class Moo extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("moo", 0) {
+		local_command = new Command("moo") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = "";

@@ -8,6 +8,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
+import pcl.lc.irc.CommandRateLimit;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.Item;
@@ -26,7 +27,7 @@ public class Juggle extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("juggle", 60) {
+		local_command = new Command("juggle", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				local_command.updateLastExecution();

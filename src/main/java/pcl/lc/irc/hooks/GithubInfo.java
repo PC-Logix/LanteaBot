@@ -32,10 +32,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Permissions;
+import pcl.lc.irc.*;
 import pcl.lc.utils.Helper;
 
 /**
@@ -48,7 +45,7 @@ public class GithubInfo extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("github", 10, Permissions.MOD) {
+		local_command = new Command("github", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {

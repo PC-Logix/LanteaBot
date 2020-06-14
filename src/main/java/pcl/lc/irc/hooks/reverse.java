@@ -30,7 +30,7 @@ public class reverse extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		reverse = new Command("reverse", 0) {
+		reverse = new Command("reverse") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("^")) {

@@ -23,7 +23,7 @@ public class Say extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("say", 0, Permissions.ADMIN) {
+		local_command = new Command("say", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, params);

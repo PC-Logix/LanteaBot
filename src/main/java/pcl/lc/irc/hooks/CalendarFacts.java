@@ -28,7 +28,7 @@ public class CalendarFacts extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("calendarfacts", 0) {
+		local_command = new Command("calendarfacts") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = "Did you know that ";

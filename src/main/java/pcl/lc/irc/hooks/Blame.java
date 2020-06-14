@@ -25,7 +25,7 @@ public class Blame extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("blame", 5) {
+		local_command = new Command("blame", new CommandRateLimit(5)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.toLowerCase().equals(IRCBot.getOurNick().toLowerCase()))

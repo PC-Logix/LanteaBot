@@ -30,7 +30,7 @@ public class Rot13 extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		rot = new Command("rot13", 0) {
+		rot = new Command("rot13") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("^")) {
