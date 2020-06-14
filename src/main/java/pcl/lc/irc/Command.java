@@ -376,4 +376,36 @@ public class Command {
 		});
 		return ret.get();
 	}
+
+	public void addSyntax(String argument) {
+		addSyntax(argument, "");
+	}
+
+	public void addSyntax(String argument, String description) {
+		addSyntax(argument, description, true, false);
+	}
+
+	public void addSyntax(String argument, String description, boolean required, boolean staticWord) {
+		if (this.syntax == null)
+			this.syntax = new SyntaxGroup();
+		this.syntax.addSubArgument(argument, description, required, staticWord);
+	}
+
+	public void setSyntax(SyntaxGroup syntax) {
+		this.syntax = syntax;
+	}
+
+	public void setSyntax(String argument, String description, boolean required, boolean staticWord) {
+		this.syntax = new SyntaxGroup(argument, description, required, staticWord);
+	}
+
+	public SyntaxGroup getSyntax() {
+		return this.syntax;
+	}
+
+	public String printSyntax() {
+		if (this.syntax == null)
+			return "No syntax registered for command '" + this.command + "'";
+		return Config.commandprefix + this.command + " " + this.syntax.print();
+	}
 }

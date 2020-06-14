@@ -64,6 +64,7 @@ public class Admin extends AbstractListener {
 	private Command command_test;
 	private Command command_listadmins;
 	private Command command_help;
+	private Command command_syntax;
 	private Command command_authed;
 	private Command command_addadmin;
 	private Command command_time_test;
