@@ -11,6 +11,11 @@ public class CommandRateLimit {
 		this.limit = limitSeconds;
 	}
 
+	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds) {
+		this.lastExecution = 0;
+		this.limit = limitSeconds + (limitMinutes * 60) + (limitHours * 60 * 60);
+	}
+
 	public void setLimitSeconds(int seconds) {
 		this.limit = seconds;
 	}

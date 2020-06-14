@@ -81,7 +81,7 @@ public class Tonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		rateLimit = null;//new CommandRateLimit(900);
+		rateLimit = new CommandRateLimit(0, 15, 0);
 		local_command = new Command("tonk", rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
