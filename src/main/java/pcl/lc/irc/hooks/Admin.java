@@ -68,6 +68,7 @@ public class Admin extends AbstractListener {
 	private Command command_addadmin;
 	private Command command_time_test;
 	private Command command_whatami;
+	private Command command_ami;
 	static String html;
 	@Override
 	protected void initHook() {
@@ -481,6 +482,15 @@ public class Admin extends AbstractListener {
 					Helper.sendMessage(target, "You are nothing! NOTHING!");
 			}
 		};
+		command_ami = new Command("ami", 0) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (nick.equals(params))
+					Helper.sendMessage(target, "Yes you are.");
+				else
+					Helper.sendMessage(target, "No, you are not '" + params + "', you are '" + nick + "'");
+			}
+		};
 		IRCBot.registerCommand(command_prefix);
 		IRCBot.registerCommand(command_join);
 		IRCBot.registerCommand(command_part);
@@ -507,6 +517,7 @@ public class Admin extends AbstractListener {
 		IRCBot.registerCommand(command_authed);
 		IRCBot.registerCommand(command_addadmin);
 		IRCBot.registerCommand(command_whatami);
+		IRCBot.registerCommand(command_ami);
 	}
 
 	public String chan;
@@ -547,6 +558,7 @@ public class Admin extends AbstractListener {
 		command_addadmin.tryExecute(command, nick, target, event, copyOfRange);
 		command_time_test.tryExecute(command, nick, target, event, copyOfRange);
 		command_whatami.tryExecute(command, nick, target, event, copyOfRange);
+		command_ami.tryExecute(command, nick, target, event, copyOfRange);
 	}
 
 	@Override
