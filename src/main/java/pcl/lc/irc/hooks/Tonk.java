@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.joda.time.DateTime;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
@@ -32,12 +33,16 @@ class PreparedStatementKeys {
  * Created by Forecaster on 30/03/2017 for the LanteaBot project.
  */
 public class Tonk extends AbstractListener {
-	private static String numberFormat = "#.########";
-	private static String tonk_record_key = "tonkrecord";
-	private static String last_tonk_key = "lasttonk";
-	private static String tonk_attempts_key = "tonkattempt";
-	private static boolean applyBonusPoints = true;
-	private static int maxTonkFails = 2;
+	private static final String numberFormat = "#.########";
+	private static final String tonk_record_key = "tonkrecord";
+	private static final String last_tonk_key = "lasttonk";
+	private static final String tonk_attempts_key = "tonkattempt";
+	private static final boolean applyBonusPoints = true;
+	private static final boolean enableTonkSnipe = true;
+	private static final double tonkSnipeHitChancePercent = 5;
+	private static final double pointTransferPercentage = 0.2;
+	private static final int daysBetweenTonkSnipes = 5;
+	private static final int maxTonkFails = 2;
 	private Command local_command;
 	private Command reset_command;
 	private Command tonkout_command;
@@ -47,6 +52,7 @@ public class Tonk extends AbstractListener {
 	private Command tonk_attempts_remaining;
 	private Command tonk_merge_scores;
 	private Command tonk_destroy_scores;
+	private Command tonk_snipe;
 	private CommandRateLimit rateLimit;
 
 	@Override
@@ -60,6 +66,7 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(tonk_attempts_remaining);
 		IRCBot.registerCommand(tonk_merge_scores);
 		IRCBot.registerCommand(tonk_destroy_scores);
+		IRCBot.registerCommand(tonk_snipe);
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_COUNT, "SELECT count(*) FROM JsonData;");
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_USERS, "SELECT mykey, store FROM JsonData WHERE mykey LIKE '" + tonk_record_key + "_%' ORDER BY CAST(store AS DECIMAL) DESC;");
 		Database.addPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK, "DELETE FROM JsonData WHERE mykey like '" + tonk_record_key + "_%' OR mykey ='" + tonk_record_key + "' OR mykey = '" + last_tonk_key + "'");
@@ -74,7 +81,7 @@ public class Tonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		rateLimit = new CommandRateLimit(900);
+		rateLimit = null;//new CommandRateLimit(900);
 		local_command = new Command("tonk", rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -112,6 +119,7 @@ public class Tonk extends AbstractListener {
 
 						String position = "";
 						String advance = "";
+						String overtook = "";
 
 						try {
 							String[] tonk = tonk_record.split(";");
@@ -143,6 +151,8 @@ public class Tonk extends AbstractListener {
 									Database.storeJsonData(personal_record_key, String.valueOf(tonk_record_personal));
 									int post_position = getScoreboardPosition(nick);
 									position = (pre_position == post_position || pre_position == -1 ? " Position #" + post_position : " Position #" + pre_position + " => #" + post_position) + ".";
+									if (pre_position != post_position)
+										overtook = " (Overtook " + getByScoreboardPosition(post_position - 1) + ")";
 
 									ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
 									if (sr != null && sr.user != null) {
@@ -154,7 +164,7 @@ public class Tonk extends AbstractListener {
 								}
 
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
-								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + displayTonkPoints(hours * record_hours) + (record_hours > 1 ? " (" + displayTonkPoints(hours) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + displayTonkPoints(hours) + (record_hours > 1 ? " x " + record_hours + " = " + displayTonkPoints(hours * record_hours) : "") + ")") : "") + position + advance);
+								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + displayTonkPoints(hours * record_hours) + (record_hours > 1 ? " (" + displayTonkPoints(hours) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + displayTonkPoints(hours) + (record_hours > 1 ? " x " + record_hours + " = " + displayTonkPoints(hours * record_hours) : "") + ")") : "") + position + overtook + advance);
 								Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
 								try {
@@ -452,21 +462,130 @@ public class Tonk extends AbstractListener {
 			}
 		};
 		tonk_destroy_scores.setHelpText("Wipes entries from the tonk scoreboard. Accepts as many names as arguments as will fit in a message.");
+
+		tonk_snipe = new Command("tonksnipe"/*new CommandRateLimit(60)*/) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				if (!enableTonkSnipe) {
+					Helper.sendMessage(target, "You chuck the shell you got forward just before realizing it's made out of cheap plastic and it clatters to the ground in front of you...", nick);
+					return;
+				}
+				int maxScoreboardPosition = getMaxScoreboardPosition();
+				int scoreboardPosition = getScoreboardPosition(nick);
+				if (scoreboardPosition == -1)
+					Helper.sendMessage(target, "You are not on the scoreboard.", nick);
+				else if (maxScoreboardPosition == 1)
+					Helper.sendMessage(target, "You're the only one on the scoreboard...", nick);
+				else if (scoreboardPosition == maxScoreboardPosition) {
+					Helper.sendMessage(target, "You're last! You get a shell!", nick);
+					if (tonkSnipeCanSnipe(nick)) {
+						boolean snipeSuccess = Helper.getRandomInt(0, 100) >= tonkSnipeHitChancePercent;
+						if (snipeSuccess) {
+							String leader = getByScoreboardPosition(1);
+							if (leader == null) {
+								Helper.sendMessage(target, "Seems there's nobody in first position...");
+								return;
+							}
+							String key_last = tonk_record_key + "_" + nick;
+							String key_leader = tonk_record_key + "_" + leader;
+							double points_last = 0;
+							double points_leader = 0;
+							try {
+								points_last = Double.parseDouble(Database.getJsonData(key_last));
+								points_leader = Double.parseDouble(Database.getJsonData(key_leader));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							double diff = points_leader - points_last;
+							if (diff > 0) {
+								int prePos = getScoreboardPosition(nick);
+								diff = diff * pointTransferPercentage;
+								try {
+									double points_last_new = points_last + diff;
+									double points_leader_new = points_leader + diff;
+									Database.storeJsonData(key_last, String.valueOf(points_last_new));
+									Database.storeJsonData(key_leader, String.valueOf(points_leader_new));
+									int postPos = getScoreboardPosition(nick);
+									String pos = (prePos == postPos ? " Position #" + postPos : " Position #" + prePos + " => #" + postPos);
+									String overtook = "";
+									if (prePos != postPos)
+										overtook = " (Overtook " + getByScoreboardPosition(postPos - 1) + ")";
+
+									String advance = "";
+									ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
+									if (sr != null && sr.user != null) {
+										advance = " Need " + displayTonkPoints(sr.score - points_last_new) + " more points to pass " + Helper.antiPing(sr.user) + "!";
+									}
+									Helper.sendMessage(target, "You hit " + leader + "! They lost " + displayTonkPoints(diff) + " tonk points which you gain! Congratulations!" + pos + overtook + advance);
+								} catch (Exception e) {
+									Helper.sendMessage(target, "Unable to save new scores...", nick);
+									e.printStackTrace();
+								}
+							} else
+								Helper.sendMessage(target, "You hit " + leader + " but nothing happened... (Point difference was 0)", nick);
+						} else
+							Helper.sendMessage(target, "Unfortunately you missed.", nick);
+						tonkSnipeSetSnipe(nick, snipeSuccess);
+					} else {
+						Helper.sendMessage(target, "You have already attempted a snipe. Try again in " + tonkSnipeDaysUntilRetry() + " days.", nick);
+					}
+				} else
+					Helper.sendMessage(target, "You're not last on the tonk scoreboard. You cannot have a shell.", nick);
+			}
+		};
+		tonk_snipe.registerAlias("tonkshell");
+		tonk_snipe.registerAlias("blueshell");
+		DecimalFormat format = new DecimalFormat("#");
+		tonk_snipe.setHelpText("If you are in last place on the tonk scoreboard you can attempt to snipe whoever is in first place. A successful snipe will remove " + format.format(pointTransferPercentage * 100) + "% of the difference between your and their points, and give it to you. You can only succeed once. If it fails you can try again after " + daysBetweenTonkSnipes + " days.");
+	}
+
+	static boolean tonkSnipeCanSnipe(String nick) {
+		try {
+			String tonksnipe = Database.getJsonData("tonksnipe");
+			if (tonksnipe.equals(""))
+				return true;
+			String[] data = tonksnipe.split(";");
+			if (!data[0].equals(nick))
+				return true;
+			DateTime now = new DateTime(Long.parseLong(data[1]));
+			now.plusDays(daysBetweenTonkSnipes);
+			if (now.isAfterNow())
+				return false;
+			if (data[2].equals("true"))
+				return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	static void tonkSnipeSetSnipe(String nick, boolean successfull) {
+		try {
+			Database.storeJsonData("tonksnipe", nick + ";" + new Date().getTime() + ";" + (successfull ? "true" : "false"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	static int tonkSnipeDaysUntilRetry() {
+		try {
+			String tonksnipe = Database.getJsonData("tonksnipe");
+			if (tonksnipe.equals(""))
+				return 0;
+			String[] data = tonksnipe.split(";");
+			return (int) Math.floor((new Date().getTime() - Long.parseLong(data[1])) / 1000 / 60 / 60 / 24) + daysBetweenTonkSnipes;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 	static int GetHours(long tonk_time) {
-//		System.out.println("Record long: " + tonk_time);
-		int hours = (int)Math.floor(tonk_time / 1000d / 60d / 60d);
-//		System.out.println("Hours: " + hours);
-
-		return hours;
+		return (int)Math.floor(tonk_time / 1000d / 60d / 60d);
 	}
 
 	public static double GetHoursDouble(long tonk_time, int decimals) {
-//		System.out.println("Record long: " + tonk_time);
 		double hours = tonk_time / 1000d / 60d / 60d;
-//		System.out.println("Hours: " + hours);
-
 		return Helper.round(hours, decimals);
 	}
 
@@ -498,6 +617,40 @@ public class Tonk extends AbstractListener {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	private static int getMaxScoreboardPosition() {
+		try {
+			PreparedStatement stop = Database.getPreparedStatement(PreparedStatementKeys.GET_TONK_USERS);
+			ResultSet result = stop.executeQuery();
+
+			int index = 0;
+			while (result.next()) {
+				index++;
+			}
+			return index;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	private static String getByScoreboardPosition(int position) {
+		try {
+			PreparedStatement stop = Database.getPreparedStatement(PreparedStatementKeys.GET_TONK_USERS);
+			ResultSet result = stop.executeQuery();
+
+			int index = 0;
+			while (result.next()) {
+				index++;
+				String user = result.getString(1).replace(tonk_record_key + "_", "");
+				if (index == position)
+					return user;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	static class ScoreRemainingResult {
@@ -633,6 +786,7 @@ public class Tonk extends AbstractListener {
 			tonk_attempts_remaining.tryExecute(command, nick, target, event, copyOfRange);
 			tonk_merge_scores.tryExecute(command, nick, target, event, copyOfRange);
 			tonk_destroy_scores.tryExecute(command, nick, target, event, copyOfRange);
+			tonk_snipe.tryExecute(command, nick, target, event, copyOfRange);
 		}
 	}
 }
