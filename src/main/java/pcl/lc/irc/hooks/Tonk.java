@@ -152,7 +152,7 @@ public class Tonk extends AbstractListener {
 									int post_position = getScoreboardPosition(nick);
 									position = (pre_position == post_position || pre_position == -1 ? " Position #" + post_position : " Position #" + pre_position + " => #" + post_position) + ".";
 									if (pre_position != post_position)
-										overtook = " (Overtook " + getByScoreboardPosition(post_position - 1) + ")";
+										overtook = " (Overtook " + getByScoreboardPosition(post_position + 1) + ")";
 
 									ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
 									if (sr != null && sr.user != null) {
@@ -315,6 +315,9 @@ public class Tonk extends AbstractListener {
 								int post_position = getScoreboardPosition(nick);
 
 								String position = (pre_position == post_position || pre_position == -1 ? "Position #" + post_position : "Position #" + pre_position + " => #" + post_position);
+								String overtook = "";
+								if (pre_position != post_position)
+									overtook = " (Overtook " + getByScoreboardPosition(post_position + 1) + ")";
 
 								String advance = "";
 								ScoreRemainingResult sr = getScoreRemainingToAdvance(nick);
@@ -324,9 +327,9 @@ public class Tonk extends AbstractListener {
 
 								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								if (nick_is_recorder)
-									Helper.sendMessage(target, Helper.antiPing(nick) + " has tonked out! Tonk has been reset! They gained " + displayTonkPoints(hours) + " tonk points!" + (applyPoints ? " plus " + displayTonkPoints(2d * (hours - 1)) + " bonus points for consecutive hours!" : "") + " Current score: " + displayTonkPoints(tonk_record_personal) + ", " + position + advance);
+									Helper.sendMessage(target, Helper.antiPing(nick) + " has tonked out! Tonk has been reset! They gained " + displayTonkPoints(hours) + " tonk points!" + (applyPoints ? " plus " + displayTonkPoints(2d * (hours - 1)) + " bonus points for consecutive hours!" : "") + " Current score: " + displayTonkPoints(tonk_record_personal) + ", " + position + overtook + advance);
 								else
-									Helper.sendMessage(target, Helper.antiPing(nick) + " has stolen the tonkout! Tonk has been reset! They gained " + displayTonkPoints(hours) + " tonk points!" + (applyPoints ? " plus " + displayTonkPoints((2d * (hours - 1)) * 0.5d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + displayTonkPoints(tonk_record_personal) + ". " + position + advance);
+									Helper.sendMessage(target, Helper.antiPing(nick) + " has stolen the tonkout! Tonk has been reset! They gained " + displayTonkPoints(hours) + " tonk points!" + (applyPoints ? " plus " + displayTonkPoints((2d * (hours - 1)) * 0.5d) + " bonus points for consecutive hours! (Reduced to 50% because stealing)" : "") + " Current score: " + displayTonkPoints(tonk_record_personal) + ". " + position + overtook + advance);
 
 								Database.storeJsonData(tonk_record_key, "0;" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
@@ -635,7 +638,7 @@ public class Tonk extends AbstractListener {
 		return -1;
 	}
 
-	private static String getByScoreboardPosition(int position) {
+	public static String getByScoreboardPosition(int position) {
 		try {
 			PreparedStatement stop = Database.getPreparedStatement(PreparedStatementKeys.GET_TONK_USERS);
 			ResultSet result = stop.executeQuery();
