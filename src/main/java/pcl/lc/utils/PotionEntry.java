@@ -95,18 +95,6 @@ public class PotionEntry {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				try {
-					Pattern pattern = Pattern.compile("\\{r:(\\d\\d?\\d?)-(\\d\\d?\\d?):(.*?)}");
-					Matcher matcher = pattern.matcher(effectp);
-					while (matcher.find()) {
-						int num_min = Integer.parseInt(matcher.group(1));
-						int num_max = Integer.parseInt(matcher.group(2));
-						int value = Helper.getRandomInt(num_min, num_max);
-						effectp = effectp.replace(matcher.group(0), value + (!matcher.group(3).equals("") ? " " + Noun.pluralOf(matcher.group(3), value) : ""));
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
 
 				this.isNew = true;
 				this.effect = new EffectEntry(effectp, user);

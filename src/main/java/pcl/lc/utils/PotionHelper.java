@@ -3,6 +3,7 @@ package pcl.lc.utils;
 import ch.qos.logback.core.joran.action.AppenderRefAction;
 import gcardone.junidecode.App;
 import org.joda.time.DateTime;
+import org.jvnet.inflector.Noun;
 import pcl.lc.irc.hooks.DrinkPotion;
 import pcl.lc.irc.hooks.Inventory;
 
@@ -188,65 +189,94 @@ public class PotionHelper {
 		return replaceParamsInEffectString(effect, targetName, null);
 	}
 
+	public enum params {
+
+	}
+
 	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
-		Item item = Inventory.getRandomItem();
-		String itemName;
-		if (item == null)
-			itemName = Helper.getRandomGarbageItem();
-		else
-			itemName = item.getNameRaw();
+		String tempEffect = "";
+		int timeout = 10;
+		while (timeout > 0) {
+			timeout++;
 
-		Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d*d?\\d+)}");
-		Matcher evadeMatcher = evadePattern.matcher(effect);
-		if (evadeMatcher.find()) {
-			DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC} and takes {damage} damage.");
-			String damage = evadeMatcher.group(2);
-			test.doCheck();
-			effect = Helper.replaceSubstring(effect, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
+			Item item = Inventory.getRandomItem();
+			String itemName;
+			if (item == null)
+				itemName = Helper.getRandomGarbageItem();
+			else
+				itemName = item.getNameRaw();
+
+			Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d*d?\\d+)}");
+			Matcher evadeMatcher = evadePattern.matcher(effect);
+			if (evadeMatcher.find()) {
+				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC} and takes {damage} damage.");
+				String damage = evadeMatcher.group(2);
+				test.doCheck();
+				effect = Helper.replaceSubstring(effect, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
+			}
+
+			effect = DiceRoll.rollDiceInString(effect, true);
+
+			if (targetName != null)
+				effect = effect.replaceAll("\\{user}", targetName);
+
+			if (triggererName != null)
+				effect = effect.replaceAll("\\{trigger}", triggererName);
+
+			String junkoritem = "nothing";
+			try {
+				junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
+				if (Helper.getRandomInt(0, 1) == 1)
+					junkoritem = Helper.getRandomGarbageItem(false, true);
+			} catch (Exception ex) {
+				//Ignore no item found
+			}
+
+			try {
+				Pattern pattern = Pattern.compile("\\{r:(\\d\\d?\\d?)-(\\d\\d?\\d?):(.*?)}");
+				Matcher matcher = pattern.matcher(effect);
+				while (matcher.find()) {
+					int num_min = Integer.parseInt(matcher.group(1));
+					int num_max = Integer.parseInt(matcher.group(2));
+					int value = Helper.getRandomInt(num_min, num_max);
+					String repl = matcher.group(0).replace("{", "\\{").replace("}", "\\}");
+					effect = effect.replaceFirst(repl, value + (!matcher.group(3).equals("") ? " " + Noun.pluralOf(matcher.group(3), value) : ""));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			effect = effect
+					.replace("{item}", itemName)
+					.replace("{junk_or_item}", junkoritem)
+					.replace("{appearance}", PotionHelper.getAppearance().getName(false, false))
+					.replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true))
+					.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false))
+					.replace("{appearance_p_lc}", PotionHelper.getAppearance().getName(true, true))
+					.replace("{turn_appearance}", PotionHelper.getAppearance().turnsTo())
+					.replace("{turn_appearance_lc}", PotionHelper.getAppearance().turnsTo(true))
+					.replace("{consistency}", PotionHelper.getConsistency().getName(false, false))
+					.replace("{consistency_lc}", PotionHelper.getConsistency().getName(false, true))
+					.replace("{consistency_p}", PotionHelper.getConsistency().getName(true, false))
+					.replace("{consistency_p_lc}", PotionHelper.getConsistency().getName(true, true))
+					.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true))
+					.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false, true))
+					.replace("{transformation_pc}", Helper.getRandomTransformation(true, true, false, false))
+					.replace("{transformation2}", Helper.getRandomTransformation(true, false, false, true))
+					.replace("{transformations}", Helper.getRandomTransformation(true, true, true, true))
+					.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
+					.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
+					.replace("{junk}", Helper.getRandomGarbageItem(false, true))
+					.replace("{junk_p}", Helper.getRandomGarbageItem(true, true))
+					.replace("{limit}", PotionHelper.getLimit())
+					.replace("{codeword}", Helper.getRandomCodeWord())
+					.replace("{codeword2}", Helper.getRandomCodeWord());
+			if (tempEffect.equals(effect))
+				break;
+			tempEffect = effect;
 		}
 
-		effect = DiceRoll.rollDiceInString(effect, true);
-
-		if (targetName != null)
-			effect = effect.replaceAll("\\{user}", targetName);
-
-		if (triggererName != null)
-			effect = effect.replaceAll("\\{trigger}", triggererName);
-
-		String junkoritem = "nothing";
-		try {
-			junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
-			if (Helper.getRandomInt(0, 1) == 1)
-				junkoritem = Helper.getRandomGarbageItem(false, true);
-		} catch (Exception ex) {
-			//Ignore no item found
-		}
-
-		return effect
-        .replace("{item}", itemName)
-        .replace("{junk_or_item}", junkoritem)
-        .replace("{appearance}", PotionHelper.getAppearance().getName(false, false))
-        .replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true))
-				.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false))
-				.replace("{appearance_p_lc}", PotionHelper.getAppearance().getName(true, true))
-				.replace("{turn_appearance}", PotionHelper.getAppearance().turnsTo())
-				.replace("{turn_appearance_lc}", PotionHelper.getAppearance().turnsTo(true))
-				.replace("{consistency}", PotionHelper.getConsistency().getName(false, false))
-				.replace("{consistency_lc}", PotionHelper.getConsistency().getName(false, true))
-				.replace("{consistency_p}", PotionHelper.getConsistency().getName(true, false))
-				.replace("{consistency_p_lc}", PotionHelper.getConsistency().getName(true, true))
-				.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true))
-				.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false, true))
-				.replace("{transformation_pc}", Helper.getRandomTransformation(true, true, false, false))
-				.replace("{transformation2}", Helper.getRandomTransformation(true, false, false, true))
-				.replace("{transformations}", Helper.getRandomTransformation(true, true, true, true))
-				.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
-				.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
-				.replace("{junk}", Helper.getRandomGarbageItem(false, true))
-				.replace("{junk_p}", Helper.getRandomGarbageItem(true, true))
-				.replace("{limit}", PotionHelper.getLimit())
-				.replace("{codeword}", Helper.getRandomCodeWord())
-				.replace("{codeword2}", Helper.getRandomCodeWord());
+		return effect;
 	}
 
 	public static int countEffectVariations(String effect) {
