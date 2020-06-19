@@ -33,36 +33,32 @@ public class Command {
 	public String callingRelay = null;
 
 	public Command(String command) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), null, false, true, Permissions.EVERYONE);
+		this(command, null, false, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, Permissions.EVERYONE);
+		this(command, rateLimit, false, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, true, Permissions.EVERYONE);
+		this(command, rateLimit, isSubCommand, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit, String minRank) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, false, true, minRank);
+		this(command, rateLimit, false, true, minRank);
 	}
 
-	public Command(String command, CommandRateLimit rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), rateLimit, isSubCommand, isEnabled, minRank);
+	public Command(String command, String minRank) {
+		this(command, null, false, true, minRank);
 	}
 
 	public Command(String command, boolean isSubCommand) {
-		this(command, Thread.currentThread().getStackTrace()[2].getClassName(), null, isSubCommand, true, Permissions.EVERYONE);
+		this(command, null, isSubCommand, true, Permissions.EVERYONE);
 	}
 
-	public Command(String command, String className) {
-		this(command, className, null, false, true, Permissions.EVERYONE);
-	}
-
-	public Command(String command, String className, CommandRateLimit rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
+	public Command(String command, CommandRateLimit rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
 		this.command = command;
-		this.className = className;
+		this.className = Thread.currentThread().getStackTrace()[2].getClassName();
 		this.rateLimit = rateLimit;
 		this.aliases = new ArrayList<>();
 		this.aliasesFixedArguments = new ArrayList<>();
