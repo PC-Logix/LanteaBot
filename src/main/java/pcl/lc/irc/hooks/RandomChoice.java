@@ -113,7 +113,7 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "I have a pamphlet that says never to engage in \"{choice}\", so you should definitely do it!"));
 		templates.add(new Template(2, "Pretty sure I'd want you to go with \"{choice}\"!"));
 		templates.add(new Template(2, "The sands of time whisper to me... they're saying \"{choice}\"."));
-		templates.add(new Template(2, "I tried reading my tea leaves this morning. There was sometihng about death and doom. Anyway, go with \"{choice}\""));
+		templates.add(new Template(2, "I tried reading my tea leaves this morning. There was something about death and doom. Anyway, go with \"{choice}\""));
 		templates.add(new Template(2, "Eeny, meeny, miny, {choice}."));
 		templates.add(new Template(2, "{choice}'os, for a complete breakfast!"));
 		templates.add(new Template(2, "\"{choice}\", now with 30% fewer deaths caused by negligence!"));
