@@ -67,6 +67,8 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(tonk_merge_scores);
 		IRCBot.registerCommand(tonk_destroy_scores);
 		IRCBot.registerCommand(tonk_snipe);
+		IRCBot.registerCommand(wind_back_command);
+		IRCBot.registerCommand(tonkreseteverything_command);
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_COUNT, "SELECT count(*) FROM JsonData;");
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_USERS, "SELECT mykey, store FROM JsonData WHERE mykey LIKE '" + tonk_record_key + "_%' ORDER BY CAST(store AS DECIMAL) DESC;");
 		Database.addPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK, "DELETE FROM JsonData WHERE mykey like '" + tonk_record_key + "_%' OR mykey ='" + tonk_record_key + "' OR mykey = '" + last_tonk_key + "'");
