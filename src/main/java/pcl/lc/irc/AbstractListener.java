@@ -102,8 +102,6 @@ public abstract class AbstractListener extends ListenerAdapter
 
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
-		if (true)
-			return;
 		String[] splitMessage = event.getMessage().split(" ");
 		String nickClean = Helper.cleanDiscordNick(event.getUser().getNick());
 		String nick = Helper.cleanDiscordNick(event.getUser().getNick());
