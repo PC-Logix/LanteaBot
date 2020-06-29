@@ -39,20 +39,24 @@ public class Ping extends AbstractListener {
 		ping = new Command("ping") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				sendPing(params, nick, false);
+				sendPing(params, nick, false, target);
 			}
 		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
 		ping.registerAlias("p");
 		msp = new Command("msp") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				sendPing(params, nick, true);
+				sendPing(params, nick, true, target);
 			}
 		}; msp.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency, replies with milliseconds");
 		msp.registerAlias("msping");
 	}
 
 	private void sendPing(ArrayList<String> params, String nick, boolean ms) {
+		sendPing(params, nick, ms, null);
+	}
+
+	private void sendPing(ArrayList<String> params, String nick, boolean ms, String target) {
 		List<Object> eventData = new ArrayList<Object>();
 		eventData.add(target);
 		if (params.size() > 0) {
@@ -66,28 +70,25 @@ public class Ping extends AbstractListener {
 		}
 		eventData.add(System.currentTimeMillis());
 	}
-
-	public String chan;
-	public String target = null;
 	@Override
 	public void onNotice(final NoticeEvent event) {
 		if (event.getNotice().startsWith("PING ")) {
 			if (users.containsKey(event.getUser().getNick().toLowerCase())) {
 				long currentTime = System.currentTimeMillis();
-				String channel = (String) users.get(event.getUser().getNick().toLowerCase()).get(0);
+				String target = (String) users.get(event.getUser().getNick().toLowerCase()).get(0);
 				Long timeStamp = (Long) users.get(event.getUser().getNick().toLowerCase()).get(1);
 				float time = currentTime - timeStamp;
 
 				DecimalFormat df = new DecimalFormat("#.##");
 
-				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + Helper.antiPing(event.getUser().getNick()) + " " + df.format(time / 1000) + "s");
+				Helper.sendMessage(target, "Ping reply from " + Helper.antiPing(event.getUser().getNick()) + " " + df.format(time / 1000) + "s");
 				users.remove(event.getUser().getNick().toLowerCase());
 			} else if (usersMSP.containsKey(event.getUser().getNick().toLowerCase())) {
 				long currentTime = System.currentTimeMillis();
-				String channel = (String) usersMSP.get(event.getUser().getNick().toLowerCase()).get(0);
+				String target = (String) usersMSP.get(event.getUser().getNick().toLowerCase()).get(0);
 				Long timeStamp = (Long) usersMSP.get(event.getUser().getNick().toLowerCase()).get(1);
 				float time = currentTime - timeStamp;
-				IRCBot.bot.sendIRC().message(channel, "Ping reply from " + Helper.antiPing(event.getUser().getNick()) + " " + time + "ms");
+				Helper.sendMessage(target, "Ping reply from " + Helper.antiPing(event.getUser().getNick()) + " " + time + "ms");
 				usersMSP.remove(event.getUser().getNick().toLowerCase());
 			}
 		}
