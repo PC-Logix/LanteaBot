@@ -129,7 +129,7 @@ public class Tell extends AbstractListener {
 				checkTells.setString(1, sender.toLowerCase());
 				ResultSet results = checkTells.executeQuery();
 				while (results.next()) {
-					event.getBot().sendIRC().notice(sender, results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
+					Helper.sendNotice(sender, results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
 				}
 				PreparedStatement clearTells = Database.getPreparedStatement("removeTells");
 				clearTells.setString(1, sender.toLowerCase());

@@ -370,7 +370,7 @@ public class Command {
 		System.out.println("Called default onExecuteSuccess (ArrayList<String>)");
 	}
 	public void onExecuteFail(Command command, String nick, String target, long timeout) {
-		Helper.sendNotice(nick, getCannotExecuteReason(timeout), nick);
+		Helper.sendNotice(nick, getCannotExecuteReason(timeout), this.callingRelay);
 	}
 
 	@Override

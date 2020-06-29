@@ -431,10 +431,15 @@ public class Helper {
 		Helper.AntiPings = null;
 	}
 
+	public static void sendNotice(String target, String notice) {
+		sendNotice(target, notice, null);
+	}
 
-	public static void sendNotice(String target, String cannotExecuteReason, String nick) {
-		IRCBot.bot.sendIRC().notice(target, cannotExecuteReason);
-		IRCBot.log.info("--> " + " " + target.replaceAll("\\p{C}", "") + " " + cannotExecuteReason);
+	public static void sendNotice(String target, String notice, String callingRelay) {
+		if (callingRelay != null && !callingRelay.equals(""))
+			sendMessage(callingRelay, target + ": " + notice);
+		else
+			IRCBot.bot.sendIRC().notice(target, notice);
 	}
 
 	public static Boolean stringContainsItemFromList(String inputStr, ImmutableSortedSet<String> items) {
