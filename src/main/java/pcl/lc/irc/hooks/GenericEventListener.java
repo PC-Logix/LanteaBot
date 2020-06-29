@@ -98,7 +98,7 @@ public class GenericEventListener extends AbstractListener{
 			System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
 		}
 
-//		super.onGenericMessage(event);
+		super.onGenericMessage(event);
 		if (!(event instanceof MessageEvent))
 			IRCBot.log.info("<-- Query: " + event.getUser().getNick() + ": " + event.getMessage());
 	}
