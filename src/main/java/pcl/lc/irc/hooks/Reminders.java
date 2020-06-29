@@ -176,19 +176,4 @@ public class Reminders extends AbstractListener {
 			}
 		}, 0, 1, TimeUnit.SECONDS);
 	}
-
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		remind.tryExecute(command, nick, target, event, copyOfRange);
-		remindSomeone.tryExecute(command, nick, target, event, copyOfRange);
-		reminders.tryExecute(command, nick, target, event, copyOfRange);
-	}
 }

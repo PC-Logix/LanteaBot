@@ -25,7 +25,7 @@ public class RateItem extends AbstractListener {
 			item = new Item(itemName);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
+			return null;
 		}
 		return item;
 	}
@@ -52,6 +52,10 @@ public class RateItem extends AbstractListener {
 					return;
 				}
 				Item item = makeItem(itemName);
+				if (item == null) {
+					Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
+					return;
+				}
 				DiceRollBonusCollection bonus = DiceRollBonusCollection.getOffensiveItemBonus(itemName);
 				if (bonus.incapable)
 					Helper.sendMessage(target, "This item is incapable of doing damage.");
@@ -71,6 +75,10 @@ public class RateItem extends AbstractListener {
 					return;
 				}
 				Item item = makeItem(itemName);
+				if (item == null) {
+					Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
+					return;
+				}
 				DiceRollBonusCollection bonus = DiceRollBonusCollection.getDefensiveItemBonus(itemName);
 				if (bonus.incapable)
 					Helper.sendMessage(target, "This item is incapable of blocking damage.");
@@ -90,6 +98,10 @@ public class RateItem extends AbstractListener {
 					return;
 				}
 				Item item = makeItem(itemName);
+				if (item == null) {
+					Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
+					return;
+				}
 				DiceRollBonusCollection bonus = DiceRollBonusCollection.getHealingItemBonus(itemName);
 				if (bonus.incapable)
 					Helper.sendMessage(target, "This item is incapable of healing.");
@@ -104,19 +116,5 @@ public class RateItem extends AbstractListener {
 		local_command.registerSubCommand(sub_command_attack);
 		local_command.registerSubCommand(sub_command_defense);
 		local_command.registerSubCommand(sub_command_healing);
-	}
-
-	public String chan;
-	public String target = null;
-
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
 	}
 }

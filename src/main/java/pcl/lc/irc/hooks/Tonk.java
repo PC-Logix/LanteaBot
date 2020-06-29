@@ -775,28 +775,4 @@ public class Tonk extends AbstractListener {
 		DecimalFormat dec = new DecimalFormat(numberFormat);
 		return dec.format(points / 1000d);
 	}
-	
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		if (target.contains("#")) {
-			local_command.tryExecute(command, nick, target, event, copyOfRange);
-			reset_command.tryExecute(command, nick, target, event, copyOfRange);
-			tonkout_command.tryExecute(command, nick, target, event, copyOfRange);
-			tonkpoints_command.tryExecute(command, nick, target, event, copyOfRange);
-			wind_back_command.tryExecute(command, nick, target, event, copyOfRange);
-			tonkreseteverything_command.tryExecute(command, nick, target, event, copyOfRange);
-			tonk_attempts_remaining.tryExecute(command, nick, target, event, copyOfRange);
-			tonk_merge_scores.tryExecute(command, nick, target, event, copyOfRange);
-			tonk_destroy_scores.tryExecute(command, nick, target, event, copyOfRange);
-			tonk_snipe.tryExecute(command, nick, target, event, copyOfRange);
-		}
-	}
 }

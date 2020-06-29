@@ -139,23 +139,10 @@ public class Attack extends AbstractListener {
 				}
 			}
 		};
-		IRCBot.registerCommand(local_command, "Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actionList + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
 		for (Attack.Actions action : Attack.Actions.values()) {
 			if (action.command != null)
 				local_command.registerAlias(action.command, action.command);
 		}
-	}
-
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
+		IRCBot.registerCommand(local_command, "Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actionList + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
 	}
 }

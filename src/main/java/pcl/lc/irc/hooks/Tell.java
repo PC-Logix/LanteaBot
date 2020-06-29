@@ -1,5 +1,6 @@
 package pcl.lc.irc.hooks;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Database;
@@ -22,10 +24,49 @@ import pcl.lc.utils.Helper;
 
 @SuppressWarnings("rawtypes")
 public class Tell extends AbstractListener {
+	Command local_command;
+	String dest;
+	String chan;
 
-	public String dest;
-
-	public String chan;
+	@Override
+	protected void initHook() {
+		local_command = new Command("tell") {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				try {
+					PreparedStatement addTell = Database.getPreparedStatement("addTell");
+					if (params.size() == 0) {
+						Helper.sendMessage(target, "Who did you want to tell?", nick);
+						return;
+					}
+					String recipient = params.get(0);
+					if (params.size() == 1) {
+						Helper.sendMessage(target, "What did you want to say to " + recipient + "?", nick);
+						return;
+					}
+					String channel = dest;
+					SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
+					f.setTimeZone(TimeZone.getTimeZone("UTC"));
+					String messageOut = StringUtils.join(params," ", 1, params.size()) + " on " + f.format(new Date()) + " UTC";
+					addTell.setString(1, nick);
+					addTell.setString(2, recipient.toLowerCase());
+					addTell.setString(3, channel);
+					addTell.setString(4, messageOut);
+					addTell.executeUpdate();
+					Helper.sendMessage(target, recipient + " will be notified of this message when next seen.", nick);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Helper.sendMessage(target, "An error occurred while processing this command (" + Config.commandprefix + "tell)", nick);
+				}
+			}
+		};
+		local_command.setHelpText("Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");
+		IRCBot.registerCommand(local_command);
+		Database.addStatement("CREATE TABLE IF NOT EXISTS Tells(id, sender, rcpt, channel, message, time)");
+		Database.addPreparedStatement("addTell","INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);");
+		Database.addPreparedStatement("getTells","SELECT rowid, sender, channel, message FROM Tells WHERE LOWER(rcpt) = ?;");
+		Database.addPreparedStatement("removeTells","DELETE FROM Tells WHERE LOWER(rcpt) = ?;");
+	}
 
 	@Override
 	public void onJoin(final JoinEvent event) {
@@ -48,15 +89,6 @@ public class Tell extends AbstractListener {
 	}
 
 	@Override
-	protected void initHook() {
-		IRCBot.registerCommand("tell", "Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");
-		Database.addStatement("CREATE TABLE IF NOT EXISTS Tells(id, sender, rcpt, channel, message, time)");
-		Database.addPreparedStatement("addTell","INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);");
-		Database.addPreparedStatement("getTells","SELECT rowid, sender, channel, message FROM Tells WHERE LOWER(rcpt) = ?;");
-		Database.addPreparedStatement("removeTells","DELETE FROM Tells WHERE LOWER(rcpt) = ?;");
-	}
-
-	@Override
 	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
 		if (command.equals(Config.commandprefix + "tell")) {
 			chan = event.getChannel().getName();
@@ -73,37 +105,6 @@ public class Tell extends AbstractListener {
 				dest = "query";
 			}
 			String message = "";
-			try {
-				for( int i = 0; i < copyOfRange.length; i++)
-				{
-					message = message + " " + copyOfRange[i];
-				}
-				message = message.trim();
-				PreparedStatement addTell = Database.getPreparedStatement("addTell");
-				if (copyOfRange.length == 0) {
-					event.getBot().sendIRC().message(dest, sender + ": " + "Who did you want to tell?");
-					return;
-				}
-				String recipient = copyOfRange[0];
-				if (copyOfRange.length == 1) {
-					event.getBot().sendIRC().message(dest, sender + ": " + "What did you want to say to " + recipient + "?");
-					return;
-				}
-
-				String channel = dest;
-				SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
-				f.setTimeZone(TimeZone.getTimeZone("UTC"));
-				String messageOut = StringUtils.join(copyOfRange," ", 1, copyOfRange.length) + " on " + f.format(new Date()) + " UTC";
-				addTell.setString(1, sender);
-				addTell.setString(2, recipient.toLowerCase());
-				addTell.setString(3, channel);
-				addTell.setString(4, messageOut);
-				addTell.executeUpdate();
-				event.getBot().sendIRC().message(dest, sender + ": " + recipient + " will be notified of this message when next seen.");
-			} catch (Exception e) {
-				e.printStackTrace();
-				event.getBot().sendIRC().message(dest, sender + ": " + "An error occurred while processing this command (" + Config.commandprefix + "tell)");
-			}
 		}
 
 	}

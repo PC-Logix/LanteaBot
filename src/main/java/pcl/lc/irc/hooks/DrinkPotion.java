@@ -635,25 +635,6 @@ public class DrinkPotion extends AbstractListener {
 		};
 	}
 
-	public String chan;
-	public String target = null;
-
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
-		get_random.tryExecute(command, nick, target, event, copyOfRange);
-		potion_stats.tryExecute(command, nick, target, event, copyOfRange);
-		discovered.tryExecute(command, nick, target, event, copyOfRange);
-		splash.tryExecute(command, nick, target, event, copyOfRange);
-		potion_lookup.tryExecute(command, nick, target, event, copyOfRange);
-	}
-
 	static class PotionHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {

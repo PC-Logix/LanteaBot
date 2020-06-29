@@ -100,20 +100,4 @@ public class NewTopic extends AbstractListener {
 		IRCBot.registerCommand(command_delTopic);
 		IRCBot.registerCommand(command_addTopic);
 	}
-
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String nick, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		command_newTopic.tryExecute(command, nick, target, event, copyOfRange);
-		command_addTopic.tryExecute(command, nick, target, event, copyOfRange);
-		command_delTopic.tryExecute(command, nick, target, event, copyOfRange);
-	}
-
 }

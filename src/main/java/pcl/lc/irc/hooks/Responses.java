@@ -22,12 +22,6 @@ public class Responses extends AbstractListener {
     responseTimeout = 30; //Seconds between responses
   }
 
-  @Override
-  public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {}
-
-  @Override
-  public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {}
-
   public String chan;
   public String target = null;
   @Override

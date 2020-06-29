@@ -27,6 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,9 +37,10 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings("rawtypes")
 public class DynamicCommands extends AbstractListener {
-	private NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();;
-	private final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
-	private final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
+	static ArrayList<String> dynamicCommands;
+	private static NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();;
+	private static final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
+	private static final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
 
 	private Command local_command_add;
 	private Command local_command_del;
@@ -54,13 +56,15 @@ public class DynamicCommands extends AbstractListener {
 	private Command print;
 	private Command edit;
 	private Command alias;
-	
+	private Command placeholders;
+	private Command prefixes;
+
 	public String luasb;
 
 	private static LuaState luaState;
-	public StringBuilder output;
+	public static StringBuilder output;
 
-	public class CommandsHaveBeenRun {
+	public static class CommandsHaveBeenRun {
 		private ArrayList commands;
 
 		CommandsHaveBeenRun() {
@@ -98,6 +102,7 @@ public class DynamicCommands extends AbstractListener {
 		Database.addPreparedStatement("searchCommands", "SELECT command, help FROM Commands");
 		Database.addPreparedStatement("getCommand", "SELECT return_value, help FROM Commands WHERE command = ?");
 		Database.addPreparedStatement("delCommand", "DELETE FROM Commands WHERE command = ?;");
+		Database.addPreparedStatement("getCommands", "SELECT * FROM Commands");
 		InputStream luain = getClass().getResourceAsStream("/jnlua/luasb.lua");
 		try {
 			luasb = CharStreams.toString(new InputStreamReader(luain, Charsets.UTF_8));
@@ -118,7 +123,8 @@ public class DynamicCommands extends AbstractListener {
 						CommandItem item = new CommandItem(cmd, content, null);
 						item.Save();
 						event.respond("Command Added! Don't forget to set help text with " + local_command_addhelp.getCommand() + "!");
-						IRCBot.registerCommand(cmd, "Dynamic commands module, who knows what it does?!");
+//						IRCBot.registerCommand(cmd, "Dynamic commands module, who knows what it does?!");
+						dynamicCommands.add(cmd);
 					}
 					else {
 						event.respond("Can't override existing commands.");
@@ -144,7 +150,8 @@ public class DynamicCommands extends AbstractListener {
 					if (item != null)
 						item.Delete();
 					event.respond("Command deleted");
-					IRCBot.unregisterCommand(cmd);
+//					IRCBot.unregisterCommand(cmd);
+					dynamicCommands.remove(cmd);
 				}
 				catch (Exception e) {
 					e.printStackTrace();
@@ -314,107 +321,125 @@ public class DynamicCommands extends AbstractListener {
             }
         };
 
+		placeholders = new Command("placeholders", Permissions.TRUSTED) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, "Valid placeholders: %command% - Where 'command' is a different dyn-command. [randomitem] - Inserts a random item from the inventory. [drama] - ??. [argument] - The entire argument string. [nick] - The name of the caller. {n} - Where n is the number of an argument word starting at 0.");
+			}
+		};
+
+		prefixes = new Command("prefixes", Permissions.TRUSTED) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, "Valid prefixes: [js] - Attempts to parse the dyn-command contents as javascript. [lua] - Attempts to parse the dyn-command contents as Lua. [action] - Sends an ACTION instead of a normal message.");
+			}
+		};
+
 		base_command.registerSubCommand(add);
 		base_command.registerSubCommand(del);
 		base_command.registerSubCommand(addhelp);
 		base_command.registerSubCommand(print);
 		base_command.registerSubCommand(edit);
+		base_command.registerSubCommand(placeholders);
+		base_command.registerSubCommand(prefixes);
 		//</editor-fold>
-	}
 
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		if (!Helper.isEnabledHere(target, "dyncmd")) {
-			return;
-		}
+		dynamicCommands = new ArrayList<>();
 		try {
-			CommandsHaveBeenRun blacklist = new CommandsHaveBeenRun();
-			parseDynCommand(command, copyOfRange, nick, blacklist);
-		}
-		catch (Exception e) {
+			PreparedStatement getCommands = Database.getPreparedStatement("getCommands");
+			ResultSet resultSet = getCommands.executeQuery();
+			int count = 0;
+			while (resultSet.next()) {
+				count++;
+				String command = resultSet.getString("command");
+				System.out.println("Register dyncommand '" + command + "'");
+				Command dynCmd = new Command(command) {
+//					final public String message = resultSet.getString("return_value");
+					@Override
+					public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+						try {
+							System.out.println("Executing dyn command (String)");
+							Helper.sendMessage(target, "This is a placeholder message");
+						} catch (Exception e) {
+							e.printStackTrace();
+							Helper.sendMessage(target, "Something went wrong.", nick);
+						}
+					}
+				};
+				String help = resultSet.getString("help");
+				if (help != null && !help.equals("")) {
+					dynCmd.setHelpText(help);
+					System.out.println("Set dyncommand help to '" + help + "'");
+				}
+				dynamicCommands.add(dynCmd.getCommand());
+			}
+			System.out.println("Registered " + count  + " dyn command" + (count == 1 ? "" : "s"));
+		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("An error occurred while processing this command");
 		}
 	}
 
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-		target = Helper.getTarget(event);
+	public static void parseDynCommandAliases(String input, CommandsHaveBeenRun excludeList) {
+		StringBuilder output;
+		String aliasPattern = "%([a-zA-Z0-9]*?)%";
+		Pattern pattern = Pattern.compile(aliasPattern);
+		Matcher matcher = pattern.matcher(input);
 
-		if (!Helper.isEnabledHere(target, "dyncmd")) {
-			return;
+		while (matcher.find()) {
+			for (int i = 1; i <= matcher.groupCount(); i++) {
+				String match = matcher.group(i);
+				if (!excludeList.hasCommand(match)) {
+					excludeList.addCommand(match);
+					parseDynCommandAliases(match, excludeList);
+				}
+				input = input.replace("%" + match + "%", "");
+			}
 		}
-
-		local_command_add.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		local_command_del.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		local_command_addhelp.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		local_command_print.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		local_command_edit.tryExecute(command, sender, event.getChannel().getName(), event, args);
-		toggle_command.tryExecute(command, sender, event.getChannel().getName(), event, args);
-
-		base_command.tryExecute(command, sender, event.getChannel().getName(), event, args);
 	}
 
-	private void parseDynCommand(String command, String[] arguments, String nick, CommandsHaveBeenRun blacklist) throws Exception {
+	public static String parseDynCommandPlaceholders(String input, String user, String params) {
+
+		System.out.println("Done with aliases: '" + input + "'");
+		if (input.startsWith("[lua]")) {
+			output = new StringBuilder();
+			output.append(runScriptInSandbox(input.replace("[lua]", "").trim()));
+			input = output.toString();
+		} else if (input.startsWith("[js]")) {
+			if (engineFactory == null) return input;
+			NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
+			output = new StringBuilder();
+			output.append(eval(engine, input.replace("[js]", "").trim()));
+			if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
+				output.setLength(output.length()-1);
+			input = output.toString().replace("\n", " | ").replace("\r", "");
+		}
+		if (input.contains("[drama]")) {
+			input = input.replace("[drama]", Drama.dramaParse());
+		}
+		if (input.contains("[argument]")) {
+			input = input.replaceAll("\\[argument\\]", String.join(" ", params));
+		}
+		if (input.contains("[nick]")) {
+			input = input.replaceAll("\\[nick\\]", user);
+		}
+		return input;
+	}
+
+	public static void parseDynCommand(String command, String user, String target, String[] arguments){
 		String prefix = Config.commandprefix;
 
 		CommandItem com = CommandItem.GetByCommand(command.replace(prefix, "").toLowerCase());
 		if (com != null) {
 			String message = com.return_value;
-		
-			StringBuilder output;
-			String aliasPattern = "%([a-zA-Z0-9]*?)%";
-			Pattern pattern = Pattern.compile(aliasPattern);
-			Matcher matcher = pattern.matcher(message);
+			parseDynCommandAliases(message, new CommandsHaveBeenRun());
 
-			while (matcher.find()) {
-				for (int i = 1; i <= matcher.groupCount(); i++) {
-					String match = matcher.group(i);
-					if (!blacklist.hasCommand(match)) {
-						blacklist.addCommand(match);
-						parseDynCommand(match, arguments, nick, blacklist);
-					}
-					message = message.replace("%" + match + "%", "");
-				}
-			}
-
-			System.out.println("Done with aliases: '" + message + "'");
-
-			if (message.startsWith("[lua]")) {
-				output = new StringBuilder();
-				output.append(runScriptInSandbox(message.replace("[lua]", "").trim()));
-				message = output.toString();
-			}else if (message.startsWith("[js]")) {
-				if (engineFactory == null) return;
-				NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
-				output = new StringBuilder();
-				output.append(eval(engine, message.replace("[js]", "").trim()));
-				if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
-					output.setLength(output.length()-1);
-				message = output.toString().replace("\n", " | ").replace("\r", "");
-			}
-			if (message.contains("[randomitem]")) {
-				ArrayList<InventoryItem> items = InventoryItem.GetRandomItems(1);
-				System.out.println("Items: " + items);
-				if (items.size() == 1)
-					message = message.replace("[randomitem]", items.get(0).item_name);
-			}
-			if (message.contains("[drama]")) {
-				message = message.replace("[drama]", Drama.dramaParse());
-			}
-			if (message.contains("[argument]")) {
-				message = message.replaceAll("\\[argument\\]", String.join(" ", arguments));
-			}
-			if (message.contains("[nick]")) {
-				message = message.replaceAll("\\[nick\\]", nick);
-			}
-			message = MessageFormat.format(message, (Object[]) arguments);
+			message = parseDynCommandPlaceholders(message, user, String.join(" ", arguments));
 
 			message = PotionHelper.replaceParamsInEffectString(message);
+
+			try {
+				message = MessageFormat.format(message, (Object[]) arguments);
+			} catch (Exception ignored) {}
 
 			Helper.AntiPings = Helper.getNamesFromTarget(target);
 			System.out.println("This is what's left: '" + message.replaceAll(" ", "") + "'");
@@ -424,7 +449,7 @@ public class DynamicCommands extends AbstractListener {
 				message = message.replace("[action]", "");
 				Helper.sendAction(target, message);
 			} else {
-				Helper.sendMessage(target, message, nick, true);
+				Helper.sendMessage(target, message, user, true);
 			}
 		}
 	}
@@ -497,7 +522,7 @@ public class DynamicCommands extends AbstractListener {
 		return results.toString();
 	}
 
-	public String eval(NashornScriptEngine engine, String code) {
+	public static String eval(NashornScriptEngine engine, String code) {
 		CompiledScript cs;
 		try {
 			cs = engine.compile(code);
@@ -529,7 +554,7 @@ public class DynamicCommands extends AbstractListener {
 		return output;
 	}
 
-	public class JSRunner implements Callable<String> {
+	public static class JSRunner implements Callable<String> {
 
 		private final CompiledScript cs;
 

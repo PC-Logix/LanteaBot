@@ -19,10 +19,7 @@ import org.json.JSONObject;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
-import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.Permissions;
+import pcl.lc.irc.*;
 import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;
@@ -33,24 +30,9 @@ import pcl.lc.utils.SearchResult;
  */
 @SuppressWarnings("rawtypes")
 public class xkcd extends AbstractListener {
+	Command local_command;
 	public List<String> enabledChannels = new ArrayList<String>();
 	private String chan;
-	private Boolean chanOp = false;
-	private int permLevel = 0;
-	private int requiredPermLevel = 0;
-
-	public xkcd() {
-		try {
-			PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
-			checkHook.setString(1, "XKCD");
-			ResultSet results = checkHook.executeQuery();
-			while (results.next()) {
-				enabledChannels.add(results.getString("channel"));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	private static String readUrl(String urlString) throws Exception {
 		BufferedReader reader = null;
@@ -81,14 +63,75 @@ public class xkcd extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("xkcd", "XKCD stuff");
-	}
-
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-		chanOp = Helper.isChannelOp(event);
-		permLevel = Permissions.getPermLevel(event.getUser() ,event);
+		local_command = new Command("xkcd") {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+					if(params.size() > 0) {
+						if (isNumeric(params.get(0))) {
+							String json = null;
+							try {
+								json = readUrl("https://xkcd.com/" + params.get(0) + "/info.0.json");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							JSONObject obj = null;
+							try {
+								obj = new JSONObject(json);
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+							String name = null;
+							try {
+								name = obj.get("safe_title").toString();
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+							Helper.sendMessage(target, "XKCD Comic Name: " + name + " URL: https://xkcd.com/" + params.get(0));
+						} else {
+							if (Config.googleAPI.equals("")) {
+								Helper.sendMessage(target, "No Google API key has been set. This is required for this search feature.", nick);
+								return;
+							}
+							String filter = "site:xkcd.com";
+							try {
+								String terms = String.join(" ", params);
+								String suggestedReturn = performSearch(filter, terms).get(0).getSuggestedReturn();
+								Helper.sendMessage(target, suggestedReturn, nick);
+							} catch (Exception e) {
+								e.printStackTrace();
+								Helper.sendMessage(target, "Something went wrong.", nick);
+							}
+						}
+					} else {
+						URLConnection con = null;
+						try {
+							con = new URL( "https://dynamic.xkcd.com/random/comic/" ).openConnection();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						try {
+							con.connect();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						InputStream is = null;
+						try {
+							is = con.getInputStream();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						String newurl = con.getURL().toString();
+						try {
+							is.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						Helper.sendMessage(target, "Random XKCD Comic: " + newurl);
+					}
+			}
+		};
+		local_command.setHelpText("XKCD stuff");
+		IRCBot.registerCommand(local_command);
 	}
 
 	@Override
@@ -104,14 +147,12 @@ public class xkcd extends AbstractListener {
 				try {
 					json = readUrl("https://xkcd.com/" + matcher.group(1) + "/info.0.json");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				JSONObject obj = null;
 				try {
 					obj = new JSONObject(json);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -119,13 +160,11 @@ public class xkcd extends AbstractListener {
 				try {
 					name = obj.get("safe_title").toString();
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
 					event.getChannel().send().message("XKCD Comic Name: " + name + " Posted on: " + obj.get("month").toString() + "/" + obj.get("day").toString() + "/" + obj.get("year").toString());
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} 
@@ -142,89 +181,8 @@ public class xkcd extends AbstractListener {
 		List<SearchResult> results = GoogleSearch.performSearch(
 				"018291224751151548851%3Ajzifriqvl1o",
 				searchURLString.toString());
-
+		System.out.println("Results: " + results.size());
 		//return url + " - " + Colors.BOLD + title + Colors.NORMAL + ": \"" + content + "\"";
 		return results;
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		if (permLevel >= requiredPermLevel) {
-			String target = Helper.getTarget(event);
-			if (command.equalsIgnoreCase(Config.commandprefix + "xkcd")) {
-				boolean isOp = Permissions.isOp(event.getBot(), event.getUser());
-				if (isOp || chanOp) {
-					Boolean action = Helper.toggleCommand("XKCD", chan, copyOfRange[0]);
-					if (action) {
-						enabledChannels.add(chan);
-					} else {
-						enabledChannels.remove(chan);
-					}
-				}
-				if(copyOfRange.length > 0) {
-					if (isNumeric(copyOfRange[0])) {
-						String json = null;
-						try {
-							json = readUrl("https://xkcd.com/" + copyOfRange[0] + "/info.0.json");
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						JSONObject obj = null;
-						try {
-							obj = new JSONObject(json);
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						String name = null;
-						try {
-							name = obj.get("safe_title").toString();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						IRCBot.getInstance().sendMessage(target, "XKCD Comic Name: " + name + " URL: https://xkcd.com/" + copyOfRange[0]);
-					} else {
-						String filter = "site:xkcd.com";
-						try {
-							IRCBot.getInstance().sendMessage(target, Helper.antiPing(nick) + ": " + performSearch(filter, StringUtils.join(copyOfRange, " ", 0, copyOfRange.length)).get(0).getSuggestedReturn());
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				} else if (command.equals(Config.commandprefix + "xkcd")) {
-					URLConnection con = null;
-					try {
-						con = new URL( "https://dynamic.xkcd.com/random/comic/" ).openConnection();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					try {
-						con.connect();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					InputStream is = null;
-					try {
-						is = con.getInputStream();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					String newurl = con.getURL().toString();
-					try {
-						is.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Helper.sendMessage(target, "Random XKCD Comic: " + newurl);
-				}
-			}
-		}
 	}
 }

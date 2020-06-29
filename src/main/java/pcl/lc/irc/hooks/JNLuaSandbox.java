@@ -48,6 +48,11 @@ public class JNLuaSandbox extends AbstractListener {
 		IRCBot.registerCommand("resetlua", "Resets the lua sandbox");
 	}
 
+	@Override
+	protected void initHook() {
+
+	}
+
 	private static String stackToString(LuaState luaState) {
 		int top = luaState.getTop();
 		if (top > 0) {
@@ -118,18 +123,6 @@ public class JNLuaSandbox extends AbstractListener {
 		String results = stackToString(luaState);
 		luaState.setTop(0); // Remove results from stack
 		return results.toString();
-	}
-
-	@Override
-	protected void initHook() {
-		// Commands registered in JNLuaSandbox() constructor
-	}
-
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		if (command.equals(Config.commandprefix + "lua") || command.equals(Config.commandprefix + "resetlua")) {
-			chan = event.getChannel().getName();
-		}
 	}
 
 	@Override

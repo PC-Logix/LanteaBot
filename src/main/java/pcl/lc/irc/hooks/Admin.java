@@ -532,48 +532,6 @@ public class Admin extends AbstractListener {
 		IRCBot.registerCommand(command_ami);
 	}
 
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		command_prefix.tryExecute(command, nick, target, event, copyOfRange);
-		command_join.tryExecute(command, nick, target, event, copyOfRange);
-		command_part.tryExecute(command, nick, target, event, copyOfRange);
-		command_shutdown.tryExecute(command, nick, target, event, copyOfRange);
-		command_cycle.tryExecute(command, nick, target, event, copyOfRange);
-		command_raw.tryExecute(command, nick, target, event, copyOfRange);
-		command_chnick.tryExecute(command, nick, target, event, copyOfRange);
-		command_hashcount.tryExecute(command, nick, target, event, copyOfRange);
-		command_flushhash.tryExecute(command, nick, target, event, copyOfRange);
-		command_ignore.tryExecute(command, nick, target, event, copyOfRange);
-		command_unignore.tryExecute(command, nick, target, event, copyOfRange);
-		command_ignorelist.tryExecute(command, nick, target, event, copyOfRange);
-		command_usercount.tryExecute(command, nick, target, event, copyOfRange);
-		command_authcount.tryExecute(command, nick, target, event, copyOfRange);
-		command_load.tryExecute(command, nick, target, event, copyOfRange);
-		command_commands.tryExecute(command, nick, target, event, copyOfRange);
-		command_charset.tryExecute(command, nick, target, event, copyOfRange);
-		command_ram.tryExecute(command, nick, target, event, copyOfRange);
-		command_restart.tryExecute(command, nick, target, event, copyOfRange);
-		command_flushauth.tryExecute(command, nick, target, event, copyOfRange);
-		command_test.tryExecute(command, nick, target, event, copyOfRange);
-		command_listadmins.tryExecute(command, nick, target, event, copyOfRange);
-		command_help.callingRelay = callingRelay;
-		command_help.tryExecute(command, nick, target, event, copyOfRange);
-		command_syntax.tryExecute(command, nick, target, event, copyOfRange);
-		command_authed.tryExecute(command, nick, target, event, copyOfRange);
-		command_addadmin.tryExecute(command, nick, target, event, copyOfRange);
-		command_time_test.tryExecute(command, nick, target, event, copyOfRange);
-		command_whatami.tryExecute(command, nick, target, event, copyOfRange);
-		command_ami.tryExecute(command, nick, target, event, copyOfRange);
-	}
-
 	@Override
 	public void handleMessage(String nick, GenericMessageEvent event, String[] copyOfRange) {
 		ArrayList<String> terms = new ArrayList<>();

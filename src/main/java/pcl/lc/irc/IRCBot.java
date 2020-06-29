@@ -112,9 +112,18 @@ public class IRCBot {
 
 	public static void registerCommand(Command command, String help) {
 		if (!commands.containsKey(command.getCommand())) {
-			commands.put(command.getCommand(), command);
-			helpList.put(command.getCommand(), help);
 			log.info("Registering Command: " + command.getCommand());
+			commands.put(command.getCommand(), command);
+			ArrayList<String> aliases = command.getAliases();
+			if (aliases.size() > 0) {
+				log.info("Registering aliases: '" + aliases.toString() + "' for command '" + command.getCommand() + "'");
+				for (String alias : command.getAliases()) {
+					if (!alias.equals("")) {
+						commands.put(alias, command);
+					}
+				}
+			}
+			helpList.put(command.getCommand(), help);
 		} else {
 			log.error("Attempted to register duplicate command! Command: " + command.getCommand() + " Duplicating class: " + command.getClassName() + " Owning class " + commands.get(command.getCommand()).getClassName());
 		}

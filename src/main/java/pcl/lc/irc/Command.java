@@ -1,5 +1,6 @@
 package pcl.lc.irc;
 
+import com.sun.corba.se.impl.copyobject.FallbackObjectCopierImpl;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SyntaxGroup;
@@ -280,8 +281,12 @@ public class Command {
 		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) { return tryExecute(command, nick, target, event, params, false); }
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) { return tryExecute(command, nick, target, event, params, false);}
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) {
+		return tryExecute(command, nick, target, event, new ArrayList<>(Arrays.asList(params)), false);
+	}
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+		return tryExecute(command, nick, target, event, params, false);
+	}
 	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
@@ -290,8 +295,10 @@ public class Command {
 	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
 	{
 		long shouldExecute = this.shouldExecute(command, event, nick);
-		if (shouldExecute == INVALID_COMMAND) //Command does not match, ignore
+		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
+			System.out.println("Error when attempting to execute '" + this.actualCommand + "'. Doesn't match '" + command + "'");
 			return false;
+		}
 		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
 			this.actualCommand = command.replace(Config.commandprefix, "");
 			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
@@ -315,15 +322,19 @@ public class Command {
 						return true;
 				}
 			}
-			this.onExecuteSuccess(this, nick, target, event, params);
-			String message = "";
-			for (String aCopyOfRange : params)
-			{
-				message = message + " " + aCopyOfRange;
+			try {
+				this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
+//				System.out.println("Called onExecuteSuccess with String[]");
+				this.onExecuteSuccess(this, nick, target, event, params);
+//				System.out.println("Called onExecuteSuccess with ArrayList<String>");
+				String message = String.join(" ", params);
+				message = message.replaceAll("^\\s+", "");
+				this.onExecuteSuccess(this, nick, target, event, message);
+//				System.out.println("Called onExecuteSuccess with String");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
 			}
-			//message = message.trim();
-			message = message.replaceAll("^\\s+", "");
-			this.onExecuteSuccess(this, nick, target, event, message);
 		} else {
 			this.onExecuteFail(this, nick, target, shouldExecute);
 		}
@@ -337,6 +348,7 @@ public class Command {
 		forceExecute(nick, target, event, arguments, ignore_sub_commands);
 	}
 	public void forceExecute(String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) {
+		this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[] {}));
 		this.onExecuteSuccess(this, nick, target, event, params);
 		String message = "";
 		for (String aCopyOfRange : params)
@@ -348,15 +360,22 @@ public class Command {
 		this.onExecuteSuccess(this, nick, target, event, message);
 	}
 
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {}
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {}
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
+		System.out.println("Called default onExecuteSuccess (String[])");
+	}
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+		System.out.println("Called default onExecuteSuccess (String)");
+	}
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+		System.out.println("Called default onExecuteSuccess (ArrayList<String>)");
+	}
 	public void onExecuteFail(Command command, String nick, String target, long timeout) {
 		Helper.sendNotice(nick, getCannotExecuteReason(timeout), nick);
 	}
 
 	@Override
 	public String toString() {
-		return "'" + command + "' aliases: " + aliases.toString();
+		return "'" + command + "' aliases: " + getAliases().toString();
 	}
 
 	/**

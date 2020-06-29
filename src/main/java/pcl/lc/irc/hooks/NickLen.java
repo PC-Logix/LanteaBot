@@ -110,6 +110,4 @@ public class NickLen extends ListenerAdapter {
 			}
 		}
 	}
-
-
 }

@@ -43,17 +43,4 @@ public class Calc extends AbstractListener {
 		}; local_command.setHelpText("Does basic math on the expression passed to the command Ex: 2+2");
 		IRCBot.registerCommand(local_command);
 	}
-
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, final MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event,	String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
-	}
 }

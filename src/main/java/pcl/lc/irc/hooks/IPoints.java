@@ -161,18 +161,4 @@ public class IPoints extends AbstractListener {
 			}
 		}
 	}
-	
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		if (command.contains(Config.commandprefix + "+") || command.contains(Config.commandprefix + "points") || command.equals(Config.commandprefix + "points")) {
-			target = event.getChannel().getName();
-		}
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		command_points.tryExecute(command, nick, target, event, copyOfRange);
-		command_reset_points.tryExecute(command, nick, target, event, copyOfRange);
-	}
 }

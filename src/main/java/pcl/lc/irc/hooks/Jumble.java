@@ -73,17 +73,4 @@ public class Jumble extends AbstractListener {
 		};
 		local_command.registerAlias("yoda");
 	}
-
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		local_command.tryExecute(command, nick, target, event, copyOfRange);
-	}
 }

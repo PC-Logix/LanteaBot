@@ -37,9 +37,8 @@ import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
 public class WhoPinged extends AbstractListener {
-
-	private Command command_WhoPinged;
-	private Command command_ClearPings;
+	Command command_WhoPinged;
+	Command command_ClearPings;
 	private ScheduledFuture<?> executor;
 	static String html;
 
@@ -170,8 +169,6 @@ public class WhoPinged extends AbstractListener {
 	public String chan;
 	public String target = null;
 
-
-
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		String message = String.join(" ", args).trim();
@@ -196,17 +193,4 @@ public class WhoPinged extends AbstractListener {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void handleCommand(String sender, final MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event,	String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		command_WhoPinged.tryExecute(command, nick, target, event, copyOfRange);
-		command_ClearPings.tryExecute(command, nick, target, event, copyOfRange);
-	}
-
 }

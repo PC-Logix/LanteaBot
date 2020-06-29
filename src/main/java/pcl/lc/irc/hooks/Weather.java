@@ -27,6 +27,7 @@ import io.github.firemaples.language.Language;
 import io.github.firemaples.translate.Translate;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
@@ -37,13 +38,27 @@ import pcl.lc.utils.Helper;
  */
 @SuppressWarnings("rawtypes")
 public class Weather extends AbstractListener {
+	Command local_command;
 
 	String prefix = Config.commandprefix;
 	private String chan;
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("weather", "Returns weather data for the supplied postal code, or Place name");
+		local_command = new Command("weather") {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				try {
+					Helper.sendMessage(target, getWeather(params));
+				} catch (Exception e) {
+					e.printStackTrace();
+					Helper.sendMessage(target, e.getCause().getMessage());
+				}
+			}
+		};
+		local_command.registerAlias("w");
+		local_command.setHelpText("Returns weather data for the supplied postal code, or Place name");
+		IRCBot.registerCommand(local_command);
 	}
 
 	@Override
@@ -56,18 +71,6 @@ public class Weather extends AbstractListener {
 	@Override
 	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
 		if ((command.equalsIgnoreCase(prefix + "weather") || command.equalsIgnoreCase(prefix + "w"))) {
-			String location = "";
-			for( int i = 0; i < copyOfRange.length; i++)
-			{
-				location = location + " " + copyOfRange[i];
-			}
-			String target = Helper.getTarget(event);
-			try {
-				Helper.sendMessage(target, getWeather(location));
-			} catch (XPathExpressionException | ParserConfigurationException | SAXException | IOException e) {
-				Helper.sendMessage(target, e.getCause().getMessage());
-				e.printStackTrace();
-			}
 		}
 	}
 

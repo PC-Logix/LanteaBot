@@ -40,11 +40,11 @@ public class Announcements extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command_announce);
 		local_command_announce.registerSubCommand(local_command_add);
 		local_command_announce.registerSubCommand(local_command_list);
 		local_command_announce.registerSubCommand(local_command_remove);
 		local_command_announce.registerSubCommand(local_command_reload);
+		IRCBot.registerCommand(local_command_announce);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Announcements(channel, schedule, lastran, title, message)");
 		Database.addPreparedStatement("addAnnounce", "INSERT INTO Announcements(channel, schedule, message) VALUES (?,?,?);");
 		Database.addPreparedStatement("getAnnounce", "SELECT schedule, title, message FROM Announcements WHERE channel = ?;");
@@ -112,22 +112,5 @@ public class Announcements extends AbstractListener {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
 			}
 		}; local_command_reload.setHelpText("Reload announce messages");
-	}
-
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		local_command_announce.tryExecute(command, nick, target, event, copyOfRange);
-		local_command_add.tryExecute(command, nick, target, event, copyOfRange);
-		local_command_list.tryExecute(command, nick, target, event, copyOfRange);
-		local_command_remove.tryExecute(command, nick, target, event, copyOfRange);
-		local_command_reload.tryExecute(command, nick, target, event, copyOfRange);
 	}
 }

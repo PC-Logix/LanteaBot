@@ -1,7 +1,5 @@
 package pcl.lc.utils;
 
-import ch.qos.logback.core.joran.action.AppenderRefAction;
-import gcardone.junidecode.App;
 import org.joda.time.DateTime;
 import org.jvnet.inflector.Noun;
 import pcl.lc.irc.hooks.DrinkPotion;
@@ -10,6 +8,9 @@ import pcl.lc.irc.hooks.Inventory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,40 +190,15 @@ public class PotionHelper {
 		return replaceParamsInEffectString(effect, targetName, null);
 	}
 
-	public enum params {
-
-	}
-
-	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
-		String tempEffect = "";
-		int timeout = 10;
-		while (timeout > 0) {
-			timeout++;
-
+	public enum DynaParam {
+		ITEM("item", "{item}", "Replaced with a random item from the inventory, or a random junk item if nothing is found.", (input) -> {
+			String tag = "{item}";
 			Item item = Inventory.getRandomItem();
-			String itemName;
 			if (item == null)
-				itemName = Helper.getRandomGarbageItem();
-			else
-				itemName = item.getNameRaw();
-
-			Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d*d?\\d+)}");
-			Matcher evadeMatcher = evadePattern.matcher(effect);
-			if (evadeMatcher.find()) {
-				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC} and takes {damage} damage.");
-				String damage = evadeMatcher.group(2);
-				test.doCheck();
-				effect = Helper.replaceSubstring(effect, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
-			}
-
-			effect = DiceRoll.rollDiceInString(effect, true);
-
-			if (targetName != null)
-				effect = effect.replaceAll("\\{user}", targetName);
-
-			if (triggererName != null)
-				effect = effect.replaceAll("\\{trigger}", triggererName);
-
+				return input.replace(tag, Helper.getRandomGarbageItem());
+			return input.replace(tag, item.getNameRaw());
+		}),
+		ITEM_JUNK("item_junk", "{junk_or_item}", "Returns either a random item from the inventory or a junk item.", (input) -> {
 			String junkoritem = "nothing";
 			try {
 				junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
@@ -231,6 +207,123 @@ public class PotionHelper {
 			} catch (Exception ex) {
 				//Ignore no item found
 			}
+			return input.replace("{junk_or_item}", junkoritem);
+		}),
+		JUNK("junk", "{junk}", "Returns a random junk item, capitalized, without prefix", (input) -> {
+			return input.replace("{junk}", Helper.getRandomGarbageItem(false, false));
+		}),
+		JUNK_PREFIX("junk_p", "{junk_p}", "Returns a random junk item, capitalized, with prefix", (input) -> {
+			return input.replace("{junk_p}", Helper.getRandomGarbageItem(true, false));
+		}),
+		JUNK_PREFIX_LOWER("junk_p_lc", "{junk_p_lc}", "Returns a random junk item, in lowercase, with prefix", (input) -> {
+			return input.replace("{junk_p_lc}", Helper.getRandomGarbageItem(true, true));
+		}),
+		EVADE("evade", "{evade:DC:damage}", "Allows triggering an evade event. A d20 roll is made and compared against the DC. On a failure damage is taken.", (input) -> {
+			Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d*d?\\d+)}");
+			Matcher evadeMatcher = evadePattern.matcher(input);
+			if (evadeMatcher.find()) {
+				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC} and takes {damage} damage.");
+				String damage = evadeMatcher.group(2);
+				test.doCheck();
+				input = Helper.replaceSubstring(input, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
+			}
+			return input;
+		}),
+		APPEARANCE("appearance", "{appearance}", "Returns a random appearance, capitalized, without prefix.", (input) -> {
+			return input.replace("{appearance}", PotionHelper.getAppearance().getName(false, false));
+		}),
+		APPEARANCE_LOWER("appearance_lc", "{appearance_lc}", "Returns a random appearance in lowercase, without prefix.", (input) -> {
+			return input.replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true));
+		}),
+		APPEARANCE_PREFIX("appearance_p", "{appearance_p}", "Returns a random appearance, capitalized, with prefix.", (input) -> {
+			return input.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false));
+		}),
+		APPEARANCE_PREFIX_LOWER("appearance_p_lc", "{appearance_p_lc}", "Returns a random appearance in lowercase, with prefix.", (input) -> {
+			return input.replace("{appearance_p_lc}", PotionHelper.getAppearance().getName(true, true));
+		}),
+		TURN_APPEARANCE("turn_appearance", "{turn_appearance}", "Returns the turnsTo form of a random appearance.", (input) -> {
+			return input.replace("{turn_appearance}", PotionHelper.getAppearance().turnsTo());
+		}),
+		TURN_APPEARANCE_LOWER("turn_appearance_lc", "{turn_appearance_lc}", "Returns the turnsTo form of a random appearance, in lowercase.", (input) -> {
+			return input.replace("{turn_appearance_lc}", PotionHelper.getAppearance().turnsTo(true));
+		}),
+		CONSISTENCY("consistency", "{consistency}", "Returns a random consistency, capitalized, without prefix.", (input) -> {
+			return input.replace("{consistency}", PotionHelper.getConsistency().getName(false, false));
+		}),
+		CONSISTENCY_LOWER("consistency_lc", "{consistency_lc}", "Returns a random consistency, in lowercase, without prefix.", (input) -> {
+			return input.replace("{consistency_lc}", PotionHelper.getConsistency().getName(false, true));
+		}),
+		CONSISTENCY_PREFIX("consistency_p", "{consistency_p}", "Returns a random consistency, capitalized, with prefix.", (input) -> {
+			return input.replace("{consistency_p}", PotionHelper.getConsistency().getName(true, false));
+		}),
+		CONSISTENCY_PREFIX_LOWER("consistency_p_lc", "{consistency_p_lc}", "Returns a random consistency, in lowercase, with prefix.", (input) -> {
+			return input.replace("{consistency_p_lc}", PotionHelper.getConsistency().getName(true, true));
+		}),
+		TRANSFORMATION("transformation", "{transformation}", "Returns a random transformation, in lowercase, without prefix.", (input) -> {
+			return input.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true));
+		}),
+		TRANSFORMATION_PREFIX("transformation_p", "{transformation_p}", "Returns a random transformation, in lowercase, with prefix.", (input) -> {
+			return input.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false, true));
+		}),
+		TRANSFORMATION_CONDITIONAL_PREFIX("transformation_pc", "{transformation_pc}", "Returns a random transformation, in lowercase. This respects conditional prefixes, Such as \"turns into a lava cat\" vs \"turns into a lava\"", (input) -> {
+			return input.replace("{transformation_pc}", Helper.getRandomTransformation(true, true, false, false));
+		}),
+		TRANSFORMATION_2("transformation2", "{transformation2}", "Returns a random transformation, in lowercase, without prefix. Used to have two different transformations in one string.", (input) -> {
+			return input.replace("{transformation2}", Helper.getRandomTransformation(true, false, false, true));
+		}),
+		TRANSFORMATION_2_PREFIX("transformation2_p", "{transformation2_p}", "Returns a random transformation, in lowercase, with prefix. Used to have two different transformations in one string.", (input) -> {
+			return input.replace("{transformation2_p}", Helper.getRandomTransformation(true, true, false, true));
+		}),
+		TRANSFORMATIONS("transformations", "{transformations}", "A transformation in plural, such as \"cats\", in lowercase, without prefix.", (input) -> {
+			return input.replace("{transformations}", Helper.getRandomTransformation(false, false, true, true));
+		}),
+		TRANSFORMATIONS_PREFIX("transformations_p", "{transformations_p}", "A transformation in plural, such as \"cats\", in lowercase, with prefix.", (input) -> {
+			return input.replace("{transformations_p}", Helper.getRandomTransformation(true, true, true, true));
+		}),
+		TRANSFORMATIONS_2("transformations2", "{transformations2}", "A transformation in plural, such as \"cats\", in lowercase, without prefix. Used to have two different transformations in one string.", (input) -> {
+			return input.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true));
+		}),
+		TRANSFORMATIONS_2_PREFIX("transformations2_p", "{transformations2_p}", "A transformation in plural, such as \"cats\", in lowercase, with prefix. Used to have two different transformations in one string.", (input) -> {
+			return input.replace("{transformations2_p}", Helper.getRandomTransformation(true, true, true, true));
+		}),
+		LIMIT("limit", "{limit}", "Returns a random time limit string.", (input) -> {
+			return input.replace("{limit}", PotionHelper.getLimit());
+		}),
+		CODEWORD("codeword", "{codeword}", "", (input) -> {
+			return input.replace("{codeword}", Helper.getRandomCodeWord());
+		}),
+		CODEWORD_2("codeword2", "{codeword2}", "", (input) -> {
+			return input.replace("{codeword2}", Helper.getRandomCodeWord());
+		});
+
+		public String name;
+		public String tag;
+		public String desc;
+		public Function<String, String> replace;
+
+		DynaParam(String name, String tag, String desc, Function<String, String> replace) {
+			this.name = name;
+			this.tag = tag;
+			this.desc = desc;
+			this.replace = replace;
+		}
+	}
+
+	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
+		String tempEffect = "";
+		int timeout = 10;
+		while (timeout > 0) {
+			timeout++;
+
+			effect = DynaParam.ITEM.replace.apply(effect);
+
+			effect = DiceRoll.rollDiceInString(effect, true);
+
+			if (targetName != null)
+				effect = effect.replaceAll("\\{user}", targetName);
+
+			if (triggererName != null)
+				effect = effect.replaceAll("\\{trigger}", triggererName);
 
 			try {
 				Pattern pattern = Pattern.compile("\\{r:(\\d\\d?\\d?)-(\\d\\d?\\d?):(.*?)}");
@@ -246,31 +339,10 @@ public class PotionHelper {
 				ex.printStackTrace();
 			}
 
-			effect = effect
-					.replace("{item}", itemName)
-					.replace("{junk_or_item}", junkoritem)
-					.replace("{appearance}", PotionHelper.getAppearance().getName(false, false))
-					.replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true))
-					.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false))
-					.replace("{appearance_p_lc}", PotionHelper.getAppearance().getName(true, true))
-					.replace("{turn_appearance}", PotionHelper.getAppearance().turnsTo())
-					.replace("{turn_appearance_lc}", PotionHelper.getAppearance().turnsTo(true))
-					.replace("{consistency}", PotionHelper.getConsistency().getName(false, false))
-					.replace("{consistency_lc}", PotionHelper.getConsistency().getName(false, true))
-					.replace("{consistency_p}", PotionHelper.getConsistency().getName(true, false))
-					.replace("{consistency_p_lc}", PotionHelper.getConsistency().getName(true, true))
-					.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true))
-					.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false, true))
-					.replace("{transformation_pc}", Helper.getRandomTransformation(true, true, false, false))
-					.replace("{transformation2}", Helper.getRandomTransformation(true, false, false, true))
-					.replace("{transformations}", Helper.getRandomTransformation(true, true, true, true))
-					.replace("{transformations_p}", Helper.getRandomTransformation(true, false, true, true))
-					.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true))
-					.replace("{junk}", Helper.getRandomGarbageItem(false, true))
-					.replace("{junk_p}", Helper.getRandomGarbageItem(true, true))
-					.replace("{limit}", PotionHelper.getLimit())
-					.replace("{codeword}", Helper.getRandomCodeWord())
-					.replace("{codeword2}", Helper.getRandomCodeWord());
+			for (DynaParam p : DynaParam.values()) {
+				effect = p.replace.apply(effect);
+			}
+
 			if (tempEffect.equals(effect))
 				break;
 			tempEffect = effect;

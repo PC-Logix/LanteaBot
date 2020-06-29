@@ -163,23 +163,4 @@ public class Search extends AbstractListener {
 			return null;
 		}
 	}
-
-	public String chan;
-	public String target = null;
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		chan = event.getChannel().getName();
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		target = Helper.getTarget(event);
-		search.tryExecute(command, nick, target, event, copyOfRange);
-		g.tryExecute(command, nick, target, event, copyOfRange);
-		yt.tryExecute(command, nick, target, event, copyOfRange);
-		wik.tryExecute(command, nick, target, event, copyOfRange);
-		cf.tryExecute(command, nick, target, event, copyOfRange);
-		urb.tryExecute(command, nick, target, event, copyOfRange);
-		lmgtfy.tryExecute(command, nick, target, event, copyOfRange);
-	}
 }

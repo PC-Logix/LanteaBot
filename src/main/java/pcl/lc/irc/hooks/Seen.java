@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import org.pircbotx.User;
 import org.pircbotx.hooks.events.ActionEvent;
@@ -13,6 +14,7 @@ import org.pircbotx.hooks.events.QuitEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Database;
@@ -22,6 +24,7 @@ import pcl.lc.utils.Helper;
 
 @SuppressWarnings("rawtypes")
 public class Seen extends AbstractListener {
+	Command local_command;
 	String chan;
 	String dest;
 
@@ -50,7 +53,39 @@ public class Seen extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		IRCBot.registerCommand("seen", "Tells you the last time a user was active.  Active means they sent a message");
+		local_command = new Command("seen") {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
+					dest = chan;
+				} else {
+					dest = "query";
+				}
+				try {
+					PreparedStatement getSeen = Database.getPreparedStatement("getLastSeen");
+					String targetNick = params.get(0);
+					getSeen.setString(1, targetNick.toLowerCase());
+					ResultSet results = getSeen.executeQuery();
+					if (results.next()) {
+						if (dest.equals("query")) {
+							event.respond(targetNick + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2).isEmpty()) ? "No Record" : results.getString(2)));
+						} else {
+							Helper.sendMessage(dest, targetNick + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
+						}
+					} else {
+						if (dest.equals("query")) {
+							event.respond(targetNick + " has not been seen");
+						} else {
+							event.getBot().sendIRC().message(dest, targetNick + " has not been seen");
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		local_command.setHelpText("Tells you the last time a user was active.  Active means they sent a message");
+		IRCBot.registerCommand(local_command);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp, doing)");
 		Database.addUpdateQuery(4, "ALTER TABLE LastSeen ADD doing DEFAULT NULL");
 		Database.addPreparedStatement("updateLastSeen","REPLACE INTO LastSeen(user, timestamp, doing) VALUES (?, ?, ?);");
@@ -60,51 +95,6 @@ public class Seen extends AbstractListener {
 		//Database.addPreparedStatement("getInfo","SELECT data FROM Info WHERE key = ?;");
 		//Database.addPreparedStatement("getInfoAll","SELECT key, data FROM Info;");
 		//Database.addPreparedStatement("removeInfo","DELETE FROM Info WHERE key = ?;");
-	}
-
-	@Override
-	public void handleCommand(String sender, MessageEvent event, String command, String[] args, String callingRelay) {
-		if (command.equals(Config.commandprefix + "seen")) {
-			chan = event.getChannel().getName();
-		}
-	}
-
-	@Override
-	public void handleCommand(String nick, GenericMessageEvent event, String command, String[] copyOfRange, String callingRelay) {
-		String message = "";
-		for( int i = 0; i < copyOfRange.length; i++)
-		{
-			message = message + " " + copyOfRange[i];
-		}
-		message = message.trim();
-		if (command.equals(Config.commandprefix + "seen")) {
-			if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-				dest = chan;
-			} else {
-				dest = "query";
-			}
-			try {
-				PreparedStatement getSeen = Database.getPreparedStatement("getLastSeen");
-				String target = copyOfRange[0];
-				getSeen.setString(1, target.toLowerCase());
-				ResultSet results = getSeen.executeQuery();
-				if (results.next()) {
-					if (dest.equals("query")) {
-						event.respond(target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2).isEmpty()) ? "No Record" : results.getString(2)));
-					} else {
-						Helper.sendMessage(dest, target + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
-					}
-				} else {
-					if (dest.equals("query")) {
-						event.respond(target + " has not been seen");
-					} else {
-						event.getBot().sendIRC().message(dest, target + " has not been seen");
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override

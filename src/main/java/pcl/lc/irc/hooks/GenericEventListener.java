@@ -9,10 +9,13 @@ import org.pircbotx.hooks.types.GenericCTCPEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +35,70 @@ public class GenericEventListener extends AbstractListener{
 
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
-		super.onGenericMessage(event);
+		String[] split = event.getMessage().split(" ");
+		String command = "";
+		String actualCommand = "";
+		String callingRelay = null;
+		String user = "";
+		String[] params = new String[]{};
+		for (String str : Config.ignoreMessagesEndingWith) {
+			if (event.getMessage().endsWith(str)) {
+				System.out.println("Ignored '" + event.getMessage() + "' because it ends with '" + str + "'");
+				return;
+			}
+		}
+		try {
+			if (split[0].startsWith(Config.commandprefix)) {
+				command = split[0];
+				actualCommand = command.replaceFirst("\\" + Config.commandprefix, "");
+				System.out.println("Direct command '" + command + "' received");
+				user = event.getUser().getNick();
+				params = Arrays.copyOfRange(split, 1, split.length);
+			} else {
+				if (event.getUser() != null && Config.parseBridgeCommandsFromUsers.contains(event.getUser().getNick())) {
+					for (String brackets : Config.overBridgeUsernameBrackets) {
+						if (brackets.equals("")) {
+							// Ignore empty bracket slot
+						} else {
+							String startBracket;
+							String endBracket;
+							if (brackets.length() == 1) {
+								startBracket = brackets;
+								endBracket = brackets;
+							} else {
+								startBracket = brackets.substring(0, 1);
+								endBracket = brackets.substring(1, 2);
+							}
+							if (split[0].startsWith(startBracket) && split[0].endsWith(endBracket)) {
+								user = split[0].substring(1, split[0].length() - 1);
+								command = split[1];
+								if (command.startsWith(Config.commandprefix)) {
+									System.out.println("Command received over bridge");
+									actualCommand = command.replaceFirst("\\" + Config.commandprefix, "");
+									params = Arrays.copyOfRange(split, 2, split.length);
+									callingRelay = event.getUser().getNick();
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
+			String target = Helper.getTarget(event);
+			DynamicCommands.parseDynCommand(actualCommand, user, target, params);
+		} else if (IRCBot.commands.containsKey(actualCommand)) {
+			Command cmd = IRCBot.commands.get(actualCommand);
+			cmd.callingRelay = callingRelay;
+			String target = Helper.getTarget(event);
+			System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
+		}
+
+//		super.onGenericMessage(event);
 		if (!(event instanceof MessageEvent))
 			IRCBot.log.info("<-- Query: " + event.getUser().getNick() + ": " + event.getMessage());
 	}
