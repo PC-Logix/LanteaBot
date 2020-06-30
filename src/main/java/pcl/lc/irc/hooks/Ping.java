@@ -39,6 +39,10 @@ public class Ping extends AbstractListener {
 		ping = new Command("ping") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (this.callingRelay != null && params.size() == 0) {
+					Helper.sendMessage(target, "Sorry. You can't get your ping from over a bridge. You can ping irc users by passing one or more as arguments.", nick);
+					return;
+				}
 				sendPing(params, nick, false, target);
 			}
 		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
@@ -46,6 +50,10 @@ public class Ping extends AbstractListener {
 		msp = new Command("msp") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				if (this.callingRelay != null && params.size() == 0) {
+					Helper.sendMessage(target, "Sorry. You can't get your ping from over a bridge. You can ping irc users by passing one or more as arguments.", nick);
+					return;
+				}
 				sendPing(params, nick, true, target);
 			}
 		}; msp.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency, replies with milliseconds");
