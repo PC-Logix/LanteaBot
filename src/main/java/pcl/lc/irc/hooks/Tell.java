@@ -40,6 +40,7 @@ public class Tell extends AbstractListener {
 						return;
 					}
 					String recipient = params.get(0);
+					recipient = recipient.replaceAll("\\s*\\p{Punct}+\\s*$", "");
 					if (params.size() == 1) {
 						Helper.sendMessage(target, "What did you want to say to " + recipient + "?", nick);
 						return;
@@ -47,7 +48,7 @@ public class Tell extends AbstractListener {
 					String channel = dest;
 					SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
 					f.setTimeZone(TimeZone.getTimeZone("UTC"));
-					String messageOut = StringUtils.join(params," ", 1, params.size()) + " on " + f.format(new Date()) + " UTC";
+					String messageOut = String.join(" ", params) + " on " + f.format(new Date()) + " UTC";
 					addTell.setString(1, nick);
 					addTell.setString(2, recipient.toLowerCase());
 					addTell.setString(3, channel);
