@@ -44,6 +44,7 @@ public class Dice extends AbstractListener {
 		local_command.registerAlias("math");
 		local_command.registerAlias("expression");
 		local_command.registerAlias("exp");
+		local_command.registerAlias("calc");
 		IRCBot.registerCommand(local_command);
 	}
 }

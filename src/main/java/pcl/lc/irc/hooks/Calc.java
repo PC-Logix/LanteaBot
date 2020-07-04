@@ -41,6 +41,6 @@ public class Calc extends AbstractListener {
 				}
 			}
 		}; local_command.setHelpText("Does basic math on the expression passed to the command Ex: 2+2");
-		IRCBot.registerCommand(local_command);
+//		IRCBot.registerCommand(local_command);
 	}
 }
