@@ -25,8 +25,6 @@ import pcl.lc.utils.Helper;
 @SuppressWarnings("rawtypes")
 public class Seen extends AbstractListener {
 	Command local_command;
-	String chan;
-	String dest;
 
 	private String formatTime(long delta) {
 		StringBuilder duration = new StringBuilder();
@@ -56,8 +54,9 @@ public class Seen extends AbstractListener {
 		local_command = new Command("seen") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				String dest;
 				if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
-					dest = chan;
+					dest = target;
 				} else {
 					dest = "query";
 				}
