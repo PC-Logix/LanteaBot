@@ -342,6 +342,7 @@ public class DynamicCommands extends AbstractListener {
 		base_command.registerSubCommand(edit);
 		base_command.registerSubCommand(placeholders);
 		base_command.registerSubCommand(prefixes);
+		IRCBot.registerCommand(base_command);
 		//</editor-fold>
 
 		dynamicCommands = new ArrayList<>();
