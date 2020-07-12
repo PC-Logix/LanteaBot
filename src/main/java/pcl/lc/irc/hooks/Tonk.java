@@ -592,6 +592,7 @@ public class Tonk extends AbstractListener {
 		tonk_snipe.registerAlias("greenshell", TonkSnipeType.GREEN.keyword);
 		tonk_snipe.registerAlias("shellcount", "count");
 		tonk_snipe.registerAlias("tonkshells", "count");
+		tonk_snipe.registerAlias("ammocount", "count");
 		tonk_snipe.setHelpText("If you are in last place on the tonk scoreboard you can attempt to snipe someone with a green, red, or blue shell. A successful snipe will remove a percentage (depending on the shell type) of the difference between your and their points, and give it to you. You can only succeed once. If it fails you can try again after " + daysBetweenTonkSnipes + " days.");
 
 		tonk_snipe_blue = new Command(TonkSnipeType.BLUE.keyword) {
@@ -799,14 +800,14 @@ public class Tonk extends AbstractListener {
 
 			String sniperAmmo = "";
 			if (enableTonkSnipe) {
-				sniperAmmo += "<div>" +
+				sniperAmmo += "<div style='margin-top:4px;'>" +
 						"<h2>Tonk Sniping</h2>" +
-						"<p>You can now launch attacks against someone. You have a certain number of each which resets on the complete reset only. You may be able to find more in certain ways.</p>" +
+						"<p>You can now launch attacks against someone. You have a certain number of each which resets on the complete reset only. You may be able to find more in certain ways. Find out how many by using the command '" + Config.commandprefix + "tonksnipe count' or one of its aliases.</p>" +
 						"<p>On a successful hit, determined by rolling a d20 and beating a DC, a percentage of the <b>difference</b> between yours and the targets points are removed from the target and transferred to you.</p>";
 				sniperAmmo += "<ul>";
 				for (TonkSnipeType type : TonkSnipeType.values()) {
 					String canTarget = type.canTarget();
-					sniperAmmo += "<li>" + type.getDisplayName() + " - Hit DC: " + type.hitChance + (canTarget.equals("") ? "" : ", " + canTarget) + ", Starting uses: " + type.maxUses + ", Transfer percentage: " + type.pointTransferPercentage * 100 + "%</li>";
+					sniperAmmo += "<li>" + type.getDisplayName() + " - Hit DC: " + type.hitChance + (canTarget.equals("") ? "," : ", " + canTarget) + " Starting uses: " + type.maxUses + ", Transfer percentage: " + type.pointTransferPercentage * 100 + "%</li>";
 				}
 				sniperAmmo += "</ul></div>";
 			}
@@ -826,8 +827,6 @@ public class Tonk extends AbstractListener {
 					"<p>If you perform " + maxTonkFails + " mistimed tonks or tonkouts you can no longer attempt it.</p>" +
 					"<p>When a successful tonk or tonkout happens everyone gets " + maxTonkFails + " new attempts.</p>" +
 					"</div>" +
-					"<div style='margin-top:4px;'>" +
-					"<h2>Sniping</h2>" +
 					sniperAmmo +
 					"<table>";
 			try {
