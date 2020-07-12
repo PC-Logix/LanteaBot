@@ -483,6 +483,8 @@ public class Helper {
 			this.input = input;
 		}
 
+		public TimeObject() {}
+
 		public long getYears() {
 			return years;
 		}
@@ -513,6 +515,11 @@ public class Helper {
 
 		public long getInput() {
 			return input;
+		}
+
+		@Override
+		public String toString() {
+			return timeString(this);
 		}
 	}
 
@@ -1348,5 +1355,19 @@ public class Helper {
 			default:
 				return "a";
 		}
+	}
+
+	public static String oxfordJoin(ArrayList<? extends Object> input, String delimiter, String finalDelimiter) {
+		StringBuilder output = new StringBuilder();
+		for (int i = 0; i < input.size(); i++) {
+			String value = String.valueOf(input.get(i));
+			if (i == 0)
+				output.append(value);
+			else if (i == (input.size() - 1))
+				output.append(finalDelimiter).append(value);
+			else
+				output.append(delimiter).append(value);
+		}
+		return output.toString();
 	}
 }
