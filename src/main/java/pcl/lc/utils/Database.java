@@ -40,20 +40,20 @@ public class Database {
 	public static List<UpdateQuery> updateQueries = new ArrayList<>();
 
 	public static void init() throws SQLException {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			String url = "jdbc:mysql://" + Config.mysqlDbHost + (Config.mysqlDbPort == null || Config.mysqlDbPort == "" ? ":3306" : ":" + Config.mysqlDbPort) + "/" + Config.mysqlDbName + "?rewriteBatchedStatements=true&useUnicode=true";
-			connection = DriverManager.getConnection(url, Config.mysqlDbUser, Config.mysqlDbPass);
-			statement = connection.createStatement();
-			IRCBot.log.info("Connected to " + url);
-		} catch (Exception e) {
-			e.printStackTrace();
-			IRCBot.log.info("Failed to connect to MySQL database at " + Config.mysqlDbHost + ", falling back to SQLite");
+//		try {
+//			Class.forName("com.mysql.jdbc.Driver");
+//			String url = "jdbc:mysql://" + Config.mysqlDbHost + (Config.mysqlDbPort == null || Config.mysqlDbPort == "" ? ":3306" : ":" + Config.mysqlDbPort) + "/" + Config.mysqlDbName + "?rewriteBatchedStatements=true&useUnicode=true";
+//			connection = DriverManager.getConnection(url, Config.mysqlDbUser, Config.mysqlDbPass);
+//			statement = connection.createStatement();
+//			IRCBot.log.info("Connected to " + url);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			IRCBot.log.info("Failed to connect to MySQL database at " + Config.mysqlDbHost + ", falling back to SQLite");
 			connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
 			statement = connection.createStatement();
 			statement.setPoolable(true);
 			statement.setQueryTimeout(30);  // set timeout to 30 sec.
-		}
+//		}
 	}
 
 	public static boolean addStatement(String sql) {
