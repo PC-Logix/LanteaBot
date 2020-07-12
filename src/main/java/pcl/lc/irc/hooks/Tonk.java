@@ -800,6 +800,7 @@ public class Tonk extends AbstractListener {
 			String sniperAmmo = "";
 			if (enableTonkSnipe) {
 				sniperAmmo += "<div>" +
+						"<h2>Tonk Sniping</h2>" +
 						"<p>You can now launch attacks against someone. You have a certain number of each which resets on the complete reset only. You may be able to find more in certain ways.</p>" +
 						"<p>On a successful hit, determined by rolling a d20 and beating a DC, a percentage of the <b>difference</b> between yours and the targets points are removed from the target and transferred to you.</p>";
 				sniperAmmo += "<ul>";
@@ -812,28 +813,23 @@ public class Tonk extends AbstractListener {
 
 			DecimalFormat format = new DecimalFormat("#");
 			String tonkLeaders = "<div>" +
-					"<ul>" +
-					"<li>Tonk is a game about timing, patience and opportunity, mixed with an idle game.</li>" +
-					"<li>To tonk successfully you must have waited past the current record. Trying to Tonk too early resets the timer.</li>" +
-					"<li>Tonking successfully gives you points depending on the difference between the old record and your new record, unless you held the previous record.</li>" +
-					"<li>Instead of Tonking you can Tonkout, this works the same as Tonk, except after claiming the new record, the entire record is converted to points.</li>" +
-					"<li>If the number of hours in the record is over 2 hours you get bonus points, with a multiplier based on the number of hours in the record minus 1.</li>" +
-					"<li>If you held the previous record you get 100% of the multiplied bonus, if not you get 50%.</li>" +
-					"</ul>" +
+					"<h2>Tonk</h2>" +
+					"<p>Tonk is a game about timing, patience and opportunity, mixed with an idle game.</p>" +
+					"<p>To tonk successfully you must have waited past the current record. Trying to Tonk too early resets the timer.</p>" +
+					"<p>Tonking successfully gives you points depending on the difference between the old record and your new record, unless you held the previous record.</p>" +
+					"<p>Instead of Tonking you can Tonkout, this works the same as Tonk, except after claiming the new record, the entire record is converted to points.</p>" +
+					"<p>If the number of hours in the record is over 2 hours you get bonus points, with a multiplier based on the number of hours in the record minus 1.</p>" +
+					"<p>If you held the previous record you get 100% of the multiplied bonus, if not you get 50%.</p>" +
 					"</div>" +
 					"<div style='margin-top:4px;'>" +
-					"<ul>" +
-					"<li>If you perform " + maxTonkFails + " mistimed tonks or tonkouts you can no longer attempt it.</li>" +
-					"<li>When a successful tonk or tonkout happens everyone gets " + maxTonkFails + " new attempts.</li>" +
-					"</ul>" +
+					"<h2>Failed Tonks</h2>" +
+					"<p>If you perform " + maxTonkFails + " mistimed tonks or tonkouts you can no longer attempt it.</p>" +
+					"<p>When a successful tonk or tonkout happens everyone gets " + maxTonkFails + " new attempts.</p>" +
 					"</div>" +
 					"<div style='margin-top:4px;'>" +
-					"<ul>" +
-					"<li>If you are in the very last place of the scoreboard you can use the tonksnipe command to attempt to steal " + format.format(TonkSnipeType.RED.pointTransferPercentage * 100) + "% of the difference between your and whoever is in first place's points.</li>" +
-					"<li>If you fail you can retry after " + daysBetweenTonkSnipes + " days.</li>" +
-					"</ul>" +
-					"</div>" +
-					"<table>" + sniperAmmo;
+					"<h2>Sniping</h2>" +
+					sniperAmmo +
+					"<table>";
 			try {
 				PreparedStatement statement = Database.getPreparedStatement("getTonkUsers");
 				ResultSet resultSet = statement.executeQuery();
