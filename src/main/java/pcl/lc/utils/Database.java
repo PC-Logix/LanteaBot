@@ -1,6 +1,7 @@
 package pcl.lc.utils;
 
-import pcl.lc.irc.Config;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import pcl.lc.irc.IRCBot;
 
 import java.sql.*;
@@ -148,24 +149,37 @@ public class Database {
 		IRCBot.log.info("Database update ran " + counter + " queries");
 	}
 
+	public static void storeJsonData(String key, HashMap<String, ? extends Object> data) throws Exception {
+		storeJsonData(key, new Gson().toJson(data));
+	}
+
 	/**
 	 *
 	 * @param key The key the data should be stored with, overwrites existing data if key exists
 	 * @param data The data to be stored
 	 */
 	public static void storeJsonData(String key, String data) throws Exception {
-//		try {
-//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
-//		} catch (SQLException e) {
-//			if (e.getErrorCode() != 101)
-//				IRCBot.log.error("Exception is: ", e);
-//				e.printStackTrace();
-//		}
 		IRCBot.log.info("storeJsonData: ('" + key.toLowerCase() + "', '" + data + "')");
 		PreparedStatement stmt = getPreparedStatement("storeJSON");
 		stmt.setString(1, key);
 		stmt.setString(2, data);
 		stmt.executeUpdate();
+	}
+
+	public static HashMap<String, Integer> getJsonHashMapInt(String key) throws Exception {
+		return new Gson().fromJson(getJsonData(key), new TypeToken<HashMap<String, Integer>>(){}.getType());
+	}
+
+	public static HashMap<String, Double> getJsonHashMapDouble(String key) throws Exception {
+		return new Gson().fromJson(getJsonData(key), new TypeToken<HashMap<String, Double>>(){}.getType());
+	}
+
+	public static HashMap<String, Boolean> getJsonHashMapBoolean(String key) throws Exception {
+		return new Gson().fromJson(getJsonData(key), new TypeToken<HashMap<String, Boolean>>(){}.getType());
+	}
+
+	public static HashMap<String, String> getJsonHashMapString(String key) throws Exception {
+		return new Gson().fromJson(getJsonData(key), new TypeToken<HashMap<String, String>>(){}.getType());
 	}
 
 	/**
@@ -174,13 +188,6 @@ public class Database {
 	 * @return Returns the contents of the row matching key, or an empty string if key was not found
 	 */
 	public static String getJsonData(String key) throws Exception {
-//		try {
-//			statement.executeQuery("CREATE TABLE IF NOT EXISTS JsonData (mykey VARCHAR(255) PRIMARY KEY NOT NULL, store TEXT DEFAULT NULL); CREATE UNIQUE INDEX JsonData_key_uindex ON JsonData (mykey)");
-//		} catch (SQLException e) {
-//			if (e.getErrorCode() != 101)
-//				IRCBot.log.error("Exception is: ", e);
-//				e.printStackTrace();
-//		}
 		PreparedStatement stmt = getPreparedStatement("retreiveJSON");
 		stmt.setString(1, key);
 
