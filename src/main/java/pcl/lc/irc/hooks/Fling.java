@@ -22,6 +22,7 @@ public class Fling extends AbstractListener {
 	private Command local_command;
 	private static String ALIAS_SLING = "sling";
 	private static String ALIAS_SHOOT = "shoot";
+	private static String ALIAS_LAUNCH = "launch";
 
 	@Override
 	protected void initHook() {
@@ -60,6 +61,8 @@ public class Fling extends AbstractListener {
 							action = " slings ";
 						else if (this.getActualCommand().equals(ALIAS_SHOOT))
 							action = " shoots ";
+						else if (this.getActualCommand().equals(ALIAS_LAUNCH))
+							action = " launches ";
 
 						if (flingTarget.equals(""))
 							flingTarget = Helper.getRandomUser(event);
@@ -93,6 +96,8 @@ public class Fling extends AbstractListener {
 							action = "slinging";
 						else if (this.getActualCommand().equals(ALIAS_SHOOT))
 							action = "shooting";
+						else if (this.getActualCommand().equals(ALIAS_LAUNCH))
+							action = "launching";
 
 						Helper.sendMessage(target, nick + " makes a " + action + " motion but realizes there was nothing there...");
 					}
@@ -104,6 +109,7 @@ public class Fling extends AbstractListener {
 		};
 		local_command.registerAlias(ALIAS_SLING);
 		local_command.registerAlias(ALIAS_SHOOT);
+		local_command.registerAlias(ALIAS_LAUNCH);
 		local_command.setHelpText("Fling something at someone! Syntax: " + Config.commandprefix + local_command.getCommand() + " [<item> [at <target>]] If [at <target>] is omitted picks a random target from IRC user list. If <item> is omitted tries to use a random item from the inventory.");
 	}
 }
