@@ -123,7 +123,10 @@ public class IRCBot {
 					}
 				}
 			}
-			helpList.put(command.getCommand(), help);
+			if (help == null)
+				helpList.put(command.getCommand(), "");
+			else
+				helpList.put(command.getCommand(), help);
 		} else {
 			log.error("Attempted to register duplicate command! Command: " + command.getCommand() + " Duplicating class: " + command.getClassName() + " Owning class " + commands.get(command.getCommand()).getClassName());
 		}
@@ -131,7 +134,10 @@ public class IRCBot {
 
 	public static void setHelp(String command, String help) {
 		if (helpList.containsKey(command)) {
-			helpList.put(command, help);
+			if (help == null)
+				helpList.put(command, "");
+			else
+				helpList.put(command, help);
 		} else {
 			log.error("Attempted to set help on non existent command");
 		}
@@ -150,7 +156,10 @@ public class IRCBot {
 	public static void registerCommand(String command, String help, CommandRateLimit rateLimit) {
 		if (!commands.containsKey(command)) {
 			commands.put(command, new Command(command, rateLimit, false, true, null));
-			helpList.put(command, help);	
+			if (help == null)
+				helpList.put(command, "");
+			else
+				helpList.put(command, help);
 			log.info("Registering Command: " + command);
 		} else {
 			log.error("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[2].getClassName() + " Owning class " + commands.get(command));
