@@ -120,7 +120,12 @@ public class IRCBot {
 				for (String alias : command.getAliases()) {
 					if (!alias.equals("")) {
 						commands.put(alias, command);
-						helpList.put(alias, " ** Alias of '" + Config.commandprefix + command.getCommand() + "' **");
+						String forcedArgument = command.getAliasForcedArgument(alias);
+						if (forcedArgument != null && !forcedArgument.equals(""))
+							forcedArgument = " with forced argument '" + forcedArgument + "'";
+						else
+							forcedArgument = "";
+						helpList.put(alias, " ** Alias of '" + Config.commandprefix + command.getCommand() + "'" + forcedArgument + " **");
 					}
 				}
 			}
