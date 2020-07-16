@@ -220,6 +220,17 @@ public class Command {
 		return this.aliases.contains(alias.replaceFirst(Pattern.quote(Config.commandprefix), ""));
 	}
 
+	/**
+	 * @param alias The alias to get the forced argument of
+	 * @return Returns the forced argument as a string, or an empty string if alias has no forced argument. Returns null if alias does not exist.
+	 */
+	public String getAliasForcedArgument(String alias) {
+		if (hasAlias(alias)) {
+			return this.aliasesFixedArguments.get(this.aliases.indexOf(alias));
+		}
+		return null;
+	}
+
 	public ArrayList<String> getAliases() {
 		return this.aliases;
 	}
