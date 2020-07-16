@@ -120,6 +120,7 @@ public class IRCBot {
 				for (String alias : command.getAliases()) {
 					if (!alias.equals("")) {
 						commands.put(alias, command);
+						helpList.put(alias, " ** Alias of '" + Config.commandprefix + command.getCommand() + "' **");
 					}
 				}
 			}
