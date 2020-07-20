@@ -50,6 +50,10 @@ public class Permissions {
 		return false;
 	}
 
+	public static boolean hasPermission(String currentPermission, String requiredPermission) {
+		return getPermLevel(currentPermission) >= getPermLevel(requiredPermission);
+	}
+
 	public static int getPermLevel(String rank) {
 		for (int i = 0; i < ranks.length; i++) {
 			if (ranks[i].equals(rank))
