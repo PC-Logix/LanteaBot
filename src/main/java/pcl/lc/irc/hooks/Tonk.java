@@ -11,7 +11,6 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.utils.Database;
-import pcl.lc.utils.DiceRollResult;
 import pcl.lc.utils.Helper;
 
 import java.io.*;
@@ -63,7 +62,7 @@ public class Tonk extends AbstractListener {
 	private CommandRateLimit rateLimit;
 
 	enum TonkSnipeType {
-		BLUE("blue", new String[] {"Blue Shell", "s"}, "Shell",0.5, 16, 1, "#1"),
+		BLUE("blue", new String[] {"Blue Shell", "s"}, "Shell",0.5, 0, 1, "#1"),
 		RED("red", new String[] {"Red Shell", "s"}, "Shell", 0.35, 14, 3, "+5"),
 		GREEN("green", new String[] {"Green Shell", "s"}, "Shell", 0.2, 10, 5, "+3");
 
@@ -71,25 +70,25 @@ public class Tonk extends AbstractListener {
 		String[] displayName;
 		String typeClass; //Eg. "Shell" or "Bullet" etc.
 		double pointTransferPercentage;
-		int hitChance;
+		int hitDC;
 		int maxUses;
 		String targetPosition; // Define the possible target positions as #n for a static position, or as a +n or -n for a range between n and the users current position. If null or invalid no restriction is considered.
 
-		TonkSnipeType(String keyword, String[] displayName, String typeClass, double pointTransferPercentage, int hitChance, int maxUses) {
-			this(keyword, displayName, typeClass, pointTransferPercentage, hitChance, maxUses, null);
+		TonkSnipeType(String keyword, String[] displayName, String typeClass, double pointTransferPercentage, int hitDC, int maxUses) {
+			this(keyword, displayName, typeClass, pointTransferPercentage, hitDC, maxUses, null);
 		}
-		TonkSnipeType(String keyword, String displayName, String typeClass, double pointTransferPercentage, int hitChance, int maxUses) {
-			this(keyword, new String[] {displayName}, typeClass, pointTransferPercentage, hitChance, maxUses, null);
+		TonkSnipeType(String keyword, String displayName, String typeClass, double pointTransferPercentage, int hitDC, int maxUses) {
+			this(keyword, new String[] {displayName}, typeClass, pointTransferPercentage, hitDC, maxUses, null);
 		}
-		TonkSnipeType(String keyword, String displayName, String typeClass, double pointTransferPercentage, int hitChance, int maxUses, String targetPosition) {
-			this(keyword, new String[] {displayName}, typeClass, pointTransferPercentage, hitChance, maxUses, targetPosition);
+		TonkSnipeType(String keyword, String displayName, String typeClass, double pointTransferPercentage, int hitDC, int maxUses, String targetPosition) {
+			this(keyword, new String[] {displayName}, typeClass, pointTransferPercentage, hitDC, maxUses, targetPosition);
 		}
-		TonkSnipeType(String keyword, String[] displayName, String typeClass, double pointTransferPercentage, int hitChance, int maxUsers, String targetPosition) {
+		TonkSnipeType(String keyword, String[] displayName, String typeClass, double pointTransferPercentage, int hitDC, int maxUsers, String targetPosition) {
 			this.keyword = keyword;
 			this.displayName = displayName;
 			this.typeClass = typeClass;
 			this.pointTransferPercentage = pointTransferPercentage;
-			this.hitChance = hitChance;
+			this.hitDC = hitDC;
 			this.maxUses = maxUsers;
 			this.targetPosition = targetPosition;
 		}
@@ -336,27 +335,7 @@ public class Tonk extends AbstractListener {
 		wind_back_command = new Command("tonkback", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					long remove_time = 0;
-					String unit = "hour";
-					try {
-						if (params.contains("m")) {
-							params = params.replace("m", "");
-							remove_time = 1000 * 60 * Integer.parseInt(params);
-							unit = "minute";
-						} else {
-							params = params.replace("h", "");
-							remove_time = 1000 * 60 * 60 * Integer.parseInt(params);
-						}
-					} catch (Exception ignored) {}
-					long tonk_time = Long.parseLong(Database.getJsonData(last_tonk_key));
-					tonk_time -= remove_time;
-					Database.storeJsonData(last_tonk_key, String.valueOf(tonk_time));
-					Helper.sendMessage(target, "Last tonk has been rewound by " + params + " " + unit + (Integer.parseInt(params) == 1 ? "": "s") + "!");
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					Helper.sendMessage(target, "Something went wrong.");
-				}
+				tonkTimeRemove(params);
 			}
 		};
 		reset_command.setHelpText("Used for testing.");
@@ -807,7 +786,8 @@ public class Tonk extends AbstractListener {
 				sniperAmmo += "<ul>";
 				for (TonkSnipeType type : TonkSnipeType.values()) {
 					String canTarget = type.canTarget();
-					sniperAmmo += "<li>" + type.getDisplayName() + " - Hit DC: " + type.hitChance + (canTarget.equals("") ? "," : ", " + canTarget) + " Starting uses: " + type.maxUses + ", Transfer percentage: " + type.pointTransferPercentage * 100 + "%</li>";
+					String hit = type.hitDC == 0 ? " - Always hits!" : " - Hit DC: " + type.hitDC;
+					sniperAmmo += "<li>" + type.getDisplayName() + hit + (canTarget.equals("") ? "," : ", " + canTarget) + " Starting uses: " + type.maxUses + ", Transfer percentage: " + type.pointTransferPercentage * 100 + "%</li>";
 				}
 				sniperAmmo += "</ul></div>";
 			}
@@ -895,7 +875,7 @@ public class Tonk extends AbstractListener {
 		}
 		tonkSnipeSpend(sniper, type, 1);
 		int rollResult = Helper.rollDice("d20").getSum();
-		boolean snipeSuccess = rollResult >= type.hitChance;
+		boolean snipeSuccess = rollResult >= type.hitDC;
 		tonkSnipeSetSnipe(sniper, snipeTarget, snipeSuccess);
 		if (snipeSuccess) {
 			String keySniper = tonk_record_key + "_" + sniper;
@@ -936,7 +916,7 @@ public class Tonk extends AbstractListener {
 			} else
 				return "You hit " + snipeTarget + " but nothing happened... (Point difference was not greater than zero)";
 		}
-		return "Unfortunately you missed with a " + rollResult + " vs " + type.hitChance + ".";
+		return "Unfortunately you missed with a " + rollResult + " vs " + type.hitDC + ".";
 	}
 
 	public static int tonkSnipeShellCount(String nick, TonkSnipeType type) {
@@ -1041,6 +1021,110 @@ public class Tonk extends AbstractListener {
 				snipes.put(type.keyword, -uses);
 			}
 			Database.storeJsonData(key, snipes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void tonkPointsAdd(String user, int add) {
+		String key = tonk_record_key + "_" + user;
+		double points = 0;
+		try {
+			points = Double.parseDouble(Database.getJsonData(key));
+			double pointsLastNew = points + add;
+			Database.storeJsonData(key, String.valueOf(pointsLastNew));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void tonkPointsRemove(String user, int remove) {
+		String key = tonk_record_key + "_" + user;
+		double points = 0;
+		try {
+			points = Double.parseDouble(Database.getJsonData(key));
+			double pointsLastNew = points - remove;
+			Database.storeJsonData(key, String.valueOf(pointsLastNew));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param time A string containing one or more numbers followed by d, h, m, or s.
+	 */
+	public static void tonkTimeRemove(String time) {
+		Pattern pattern;
+		Matcher matcher;
+		long removeTime = 0;
+		pattern = Pattern.compile("(\\d+)d");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double days = Double.parseDouble(matcher.group(1));
+			removeTime += days * 24 * 60 * 60 * 1000;
+		}
+		pattern = Pattern.compile("(\\d+)h");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double hours = Double.parseDouble(matcher.group(1));
+			removeTime += hours * 60 * 60 * 1000;
+		}
+		pattern = Pattern.compile("(\\d+)m");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double minutes = Double.parseDouble(matcher.group(1));
+			removeTime += minutes * 60 * 1000;
+		}
+		pattern = Pattern.compile("(\\d+)s");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double seconds = Double.parseDouble(matcher.group(1));
+			removeTime += seconds * 1000;
+		}
+		try {
+			long tonkTime = Long.parseLong(Database.getJsonData(last_tonk_key));
+			tonkTime -= removeTime;
+			Database.storeJsonData(last_tonk_key, String.valueOf(tonkTime));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param time A string containing one or more numbers followed by d, h, m, or s.
+	 */
+	public static void tonkTimeAdd(String time) {
+		Pattern pattern;
+		Matcher matcher;
+		long addTime = 0;
+		pattern = Pattern.compile("(\\d+)d");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double days = Double.parseDouble(matcher.group(1));
+			addTime += days * 24 * 60 * 60 * 1000;
+		}
+		pattern = Pattern.compile("(\\d+)h");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double hours = Double.parseDouble(matcher.group(1));
+			addTime += hours * 60 * 60 * 1000;
+		}
+		pattern = Pattern.compile("(\\d+)m");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double minutes = Double.parseDouble(matcher.group(1));
+			addTime += minutes * 60 * 1000;
+		}
+		pattern = Pattern.compile("(\\d+)s");
+		matcher = pattern.matcher(time);
+		if (matcher.find()) {
+			double seconds = Double.parseDouble(matcher.group(1));
+			addTime += seconds * 1000;
+		}
+		try {
+			long tonkTime = Long.parseLong(Database.getJsonData(last_tonk_key));
+			tonkTime += addTime;
+			Database.storeJsonData(last_tonk_key, String.valueOf(tonkTime));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
