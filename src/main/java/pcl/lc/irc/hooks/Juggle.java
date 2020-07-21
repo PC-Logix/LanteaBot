@@ -68,6 +68,7 @@ public class Juggle extends AbstractListener {
 				}
 			}
 		};
-		IRCBot.registerCommand(local_command, "Juggle with items");
+		local_command.setHelpText("Juggle with items");
+		IRCBot.registerCommand(local_command);
 	}
 }

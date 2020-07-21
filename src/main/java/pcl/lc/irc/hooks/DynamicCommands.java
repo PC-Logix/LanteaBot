@@ -136,7 +136,8 @@ public class DynamicCommands extends AbstractListener {
 				}
 			}
 		};
-		IRCBot.registerCommand(local_command_add, "Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
+		local_command_add.setHelpText("Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
+		IRCBot.registerCommand(local_command_add);
 		local_command_del = new Command("delcommand", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
@@ -159,6 +160,7 @@ public class DynamicCommands extends AbstractListener {
 				}
 			}
 		};
+		local_command_del.setHelpText("Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
 		local_command_print = new Command ("printcommand") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -218,7 +220,7 @@ public class DynamicCommands extends AbstractListener {
 							addCommandHelp.setString(1, theHelp);
 							addCommandHelp.setString(2, theCommand.toLowerCase());
 							addCommandHelp.executeUpdate();
-							IRCBot.setHelp(theCommand, theHelp);
+							IRCBot.commands.get(theCommand).setHelpText(theHelp);
 							event.respond("Help Set");
 						} catch (SQLException e) {
 							e.printStackTrace();
@@ -234,7 +236,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		};
 		local_command_addhelp.setHelpText("Sets help on dynamic commands");
-		IRCBot.registerCommand(local_command_del, "Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
+		IRCBot.registerCommand(local_command_del);
 		IRCBot.registerCommand(local_command_addhelp);
 
 		

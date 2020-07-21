@@ -61,12 +61,13 @@ public class Translator extends AbstractListener {
 
 		initCommands();
 		String supportedLangs = "";
-	    Iterator<?> it = langMap.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        supportedLangs += pair.getKey() + ", ";
-	    }
-		IRCBot.registerCommand(local_command, "Translate! supported languages are " + supportedLangs.replaceAll(", $", ""));
+	  Iterator<?> it = langMap.entrySet().iterator();
+	  while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry)it.next();
+			supportedLangs += pair.getKey() + ", ";
+	  }
+		local_command.setHelpText("Translate! supported languages are " + supportedLangs.replaceAll(", $", ""));
+		IRCBot.registerCommand(local_command);
 		if (Config.botConfig.containsKey("AzureTextAPI")) {
 			Translate.setSubscriptionKey(Config.AzureTextAPI);
 		}

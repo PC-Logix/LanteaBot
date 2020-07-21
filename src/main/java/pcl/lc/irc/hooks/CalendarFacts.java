@@ -19,7 +19,7 @@ public class CalendarFacts extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Calendar facts based on xkcd comic 1930");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private String getEntryFromArray(String[] array) {
@@ -377,5 +377,6 @@ public class CalendarFacts extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("calfacts");
+		local_command.setHelpText("Calendar facts based on xkcd comic #1930");
 	}
 }

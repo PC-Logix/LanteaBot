@@ -143,6 +143,7 @@ public class Attack extends AbstractListener {
 			if (action.command != null)
 				local_command.registerAlias(action.command, action.command);
 		}
-		IRCBot.registerCommand(local_command, "Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actionList + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
+		local_command.setHelpText("Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actionList + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
+		IRCBot.registerCommand(local_command);
 	}
 }

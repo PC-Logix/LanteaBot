@@ -27,7 +27,7 @@ public class Moo extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "What'choo loooking at moo?");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -55,6 +55,7 @@ public class Moo extends AbstractListener {
 					Helper.sendMessage(target, str.replaceAll("o", "oo").replaceAll("O", "OO"));
 				}
 			}
-		}; local_command.setHelpText("Moos the text");
+		};
+		local_command.setHelpText("Moos the text");
 	}
 }

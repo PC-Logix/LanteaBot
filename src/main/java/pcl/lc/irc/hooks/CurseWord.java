@@ -21,7 +21,7 @@ public class CurseWord extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Holy manbats Batman!");
+		IRCBot.registerCommand(local_command);
 		curses = new ArrayList<>();
 		curses.add("Heckgosh"); //xkcd #1975
 		curses.add("Jeepers"); //xkcd #1975
@@ -64,5 +64,6 @@ public class CurseWord extends AbstractListener {
 		local_command.registerAlias("cursewd");
 		local_command.registerAlias("cursew");
 		local_command.registerAlias("swear");
+		local_command.setHelpText("Holy manbats Batman!");
 	}
 }

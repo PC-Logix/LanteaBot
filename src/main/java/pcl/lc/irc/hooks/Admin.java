@@ -386,11 +386,7 @@ public class Admin extends AbstractListener {
 								Helper.sendNotice(nick, "Unable to find the command '" + l_command + "'", this.callingRelay);
 							} else {
 								ArrayList<String> aliases = com.getAliases();
-								String helpText = "";
-								if (!com.getHelpText().equals(""))
-									helpText = com.getHelpText();
-								else
-									helpText = IRCBot.helpList.get(l_command);
+								String helpText = com.getHelpText();
 								Helper.sendNotice(nick, "help for command '" + l_command + "': " + helpText, this.callingRelay);
 								if (com.getPermissionLevel() != null)
 									Helper.sendNotice(nick, "Required permission level: " + com.getPermissionLevel(), this.callingRelay);
@@ -572,41 +568,54 @@ public class Admin extends AbstractListener {
 
 	}
 
+	static ArrayList<String> includedCommands = new ArrayList<>();
+	public static String getHelpRow(Command command) {
+		if (includedCommands.contains(command.getCommand()))
+			return "";
+		String item = "";
+		String help = command.getHelpText();
+		if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
+			help = "[" + command.getPermissionLevel() + "] " + help;
+		item += "<tr><td>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + "</td><td>" + String.join(", ", command.getAliases()) + "</td></tr>";
+		for (Command subCommand : command.getSubCommands()) {
+			String subHelp = subCommand.getHelpText();
+			if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
+				subHelp = "[" + command.getPermissionLevel() + "] " + subHelp;
+			item += "<tr><td> ⌞ " + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + "</td><td>" + String.join(", ", subCommand.getAliases()) + "</td></tr>";
+		}
+		return item;
+	}
+
+	public static String getHelpRows() {
+		String items = "";
+		try {
+			items = "";
+			for (Map.Entry<String, Command> entry : IRCBot.commands.entrySet()) {
+				Command command = entry.getValue();
+				String item = getHelpRow(command);
+				if (!item.equals(""))
+					includedCommands.add(command.getCommand());
+				items += item;
+			}
+			items = StringUtils.strip(items, "\n");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return items;
+	}
+
+	public static String getHelpTable() {
+		return "<table><tr><th>Command</th><th>Help</th><th>Aliases</th></tr>" + getHelpRows() + "</table>";
+	}
+
 	static class HelpHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			TimeAgo time = new TimeAgo();
 			String target = t.getRequestURI().toString();
 			String response = "";
-			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(),"utf-8");
-			String items = "";
-			if (paramsList.size() >= 0) {
-				try {
-					TreeMap<String, Command> copy = new TreeMap<>(IRCBot.commands);
-					items = "<table><tr><th>Command</th><th>Help</th></tr>";
-					for (Object o : IRCBot.commands.entrySet()) {
-						Map.Entry pair = (Map.Entry) o;
 
-						items += "<tr><td>" + Config.commandprefix + pair.getKey() + "</td><td>" + StringEscapeUtils.escapeHtml4(IRCBot.helpList.get(pair.getKey())) + "</td></tr>";
-					}
-					items += "</table>";
-					items = StringUtils.strip(items, "\n");
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else {
-				/*try {
-					PreparedStatement getAllQuotes = Database.getPreparedStatement("getAllQuotes");
-					ResultSet results = getAllQuotes.executeQuery();
-					while (results.next()) {
-						quoteList = quoteList + "<a href=\"?id=" + results.getString(1) +"\">Quote #"+results.getString(1)+"</a><br>\n";
-					}
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}*/
-			}
+			String items = getHelpTable();
 
 			String navData = "";
 			Iterator it = httpd.pages.entrySet().iterator();
@@ -624,6 +633,7 @@ public class Admin extends AbstractListener {
 					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items).replace("#NAVIGATION#", navData)+"\n";
 				}
 			}
+			System.out.println(response);
 			t.sendResponseHeaders(200, response.getBytes().length);
 			OutputStream os = t.getResponseBody();
 			os.write(response.getBytes());

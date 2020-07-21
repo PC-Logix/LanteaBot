@@ -26,7 +26,7 @@ public class Hiss extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Don't step on snek!");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -53,8 +53,9 @@ public class Hiss extends AbstractListener {
 					Helper.sendMessage(target, str.replaceAll("s", "ss").replaceAll("S", "SS"));
 				}
 			}
-		}; local_command.setHelpText("Sneks the text");
+		};
 		local_command.registerAlias("snake");
 		local_command.registerAlias("snek");
+		local_command.setHelpText("Sneks the text");
 	}
 }

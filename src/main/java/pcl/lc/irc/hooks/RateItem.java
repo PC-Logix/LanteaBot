@@ -33,7 +33,7 @@ public class RateItem extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Rates items attack, defense or healing bonuses");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -43,6 +43,7 @@ public class RateItem extends AbstractListener {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
 			}
 		};
+		local_command.setHelpText("Rates items attack, defense or healing bonuses");
 
 		sub_command_attack = new Command("attack") {
 			@Override

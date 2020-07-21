@@ -21,7 +21,7 @@ public class Sell extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Sell");
+		IRCBot.registerCommand(local_command);
 
 		strings = new ArrayList<>();
 		strings.add("New %s! Buy now! Only 99.99! ");
@@ -41,5 +41,6 @@ public class Sell extends AbstractListener {
 				Helper.sendMessage(target, string, nick);
 			}
 		};
+		local_command.setHelpText("Returns a sales pitch for the given argument.");
 	}
 }

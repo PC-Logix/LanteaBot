@@ -18,7 +18,7 @@ public class WhatIsLove extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "The answer to the most question");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -30,5 +30,6 @@ public class WhatIsLove extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("loveis");
+		local_command.setHelpText("The answer to the most question");
 	}
 }

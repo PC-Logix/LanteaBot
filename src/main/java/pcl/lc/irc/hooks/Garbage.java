@@ -24,7 +24,7 @@ public class Garbage extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "It goes in the garbage");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -47,5 +47,6 @@ public class Garbage extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("gb");
+		local_command.setHelpText("It goes in the garbage");
 	}
 }

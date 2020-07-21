@@ -21,7 +21,7 @@ public class Jumble extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "It jumbles things. Try it. You'll be hooked.");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -72,5 +72,6 @@ public class Jumble extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("yoda");
+		local_command.setHelpText("It jumbles things. Try it. You'll be hooked.");
 	}
 }

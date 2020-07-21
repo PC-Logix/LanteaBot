@@ -20,7 +20,6 @@ import java.util.ArrayList;
 @SuppressWarnings("rawtypes")
 public class Care extends AbstractListener {
 	private Command local_command;
-	private double base_drop_chance = .20; // 0.08 is added for every item included
 
 	@Override
 	protected void initHook() {
@@ -30,10 +29,11 @@ public class Care extends AbstractListener {
 				Helper.sendMessage(target, Helper.getCareDetectorResponse(), nick);
 			}
 		};
-		IRCBot.registerCommand(local_command, "Measure care levels");
 		local_command.registerAlias("care-o-meter");
 		local_command.registerAlias("careometer");
 		local_command.registerAlias("doicare");
 		local_command.registerAlias("howmuchcare");
+		local_command.setHelpText("Measure care levels");
+		IRCBot.registerCommand(local_command);
 	}
 }

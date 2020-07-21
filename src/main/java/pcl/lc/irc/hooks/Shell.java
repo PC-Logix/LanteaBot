@@ -3,14 +3,12 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.*;
-import pcl.lc.utils.Exceptions.InvalidPotionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,18 +19,16 @@ import java.util.List;
  */
 @SuppressWarnings("rawtypes")
 public class Shell extends AbstractListener {
-	private List<Command> commands;
 	private Command shell;
-	private int hitChance = 40; //percentage (out of 100)
+	private final int hitChance = 40; //percentage (out of 100)
 
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(shell, "Be a nuisance with your very own mortar! Syntax: " + Config.commandprefix + shell.getCommand() + " [<target>[ and <target>][ and <target>][ with <item>]]  <item> can be a valid potion string or \"random potion\". If [ with <item>] is omitted tries to use a random item from the inventory. Omitted targets are selected randomly from IRC user list.");
+		IRCBot.registerCommand(shell);
 	}
 
 	private void initCommands() {
-		commands = new ArrayList<>();
 		shell = new Command("shell") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -88,7 +84,7 @@ public class Shell extends AbstractListener {
 					if (potion != null) {
 					    Helper.AntiPings = Helper.getNamesFromTarget(target);
 					    EffectEntry effect = potion.getEffect(nick, true);
-					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.Effect, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
+					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.effectDrink, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
                     } else {
                         int itemDamage = 0;
                         String dust;
@@ -128,6 +124,6 @@ public class Shell extends AbstractListener {
 				}
 			}
 		};
-		commands.add(shell);
+		shell.setHelpText("Be a nuisance with your very own mortar! Syntax: " + Config.commandprefix + shell.getCommand() + " [<target>[ and <target>][ and <target>][ with <item>]]  <item> can be a valid potion string or \"random potion\". If [ with <item>] is omitted tries to use a random item from the inventory. Omitted targets are selected randomly from IRC user list.");
 	}
 }

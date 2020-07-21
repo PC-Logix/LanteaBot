@@ -27,7 +27,7 @@ public class Fling extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Fling");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {

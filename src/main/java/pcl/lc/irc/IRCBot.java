@@ -104,13 +104,8 @@ public class IRCBot {
 	}
 
 	public static HashMap<String, Command> commands = new LinkedHashMap<>();
-	public static HashMap<String, String> helpList = new LinkedHashMap<String, String>();
 
 	public static void registerCommand(Command command) {
-		registerCommand(command, command.getHelpText());
-	}
-
-	public static void registerCommand(Command command, String help) {
 		if (!commands.containsKey(command.getCommand())) {
 			log.info("Registering Command: " + command.getCommand());
 			commands.put(command.getCommand(), command);
@@ -120,32 +115,11 @@ public class IRCBot {
 				for (String alias : command.getAliases()) {
 					if (!alias.equals("")) {
 						commands.put(alias, command);
-						String forcedArgument = command.getAliasForcedArgument(alias);
-						if (forcedArgument != null && !forcedArgument.equals(""))
-							forcedArgument = " with forced argument '" + forcedArgument + "'";
-						else
-							forcedArgument = "";
-						helpList.put(alias, " ** Alias of '" + Config.commandprefix + command.getCommand() + "'" + forcedArgument + " **");
 					}
 				}
 			}
-			if (help == null)
-				helpList.put(command.getCommand(), "");
-			else
-				helpList.put(command.getCommand(), help);
 		} else {
 			log.error("Attempted to register duplicate command! Command: " + command.getCommand() + " Duplicating class: " + command.getClassName() + " Owning class " + commands.get(command.getCommand()).getClassName());
-		}
-	}
-
-	public static void setHelp(String command, String help) {
-		if (helpList.containsKey(command)) {
-			if (help == null)
-				helpList.put(command, "");
-			else
-				helpList.put(command, help);
-		} else {
-			log.error("Attempted to set help on non existent command");
 		}
 	}
 
@@ -162,10 +136,6 @@ public class IRCBot {
 	public static void registerCommand(String command, String help, CommandRateLimit rateLimit) {
 		if (!commands.containsKey(command)) {
 			commands.put(command, new Command(command, rateLimit, false, true, null));
-			if (help == null)
-				helpList.put(command, "");
-			else
-				helpList.put(command, help);
 			log.info("Registering Command: " + command);
 		} else {
 			log.error("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[2].getClassName() + " Owning class " + commands.get(command));

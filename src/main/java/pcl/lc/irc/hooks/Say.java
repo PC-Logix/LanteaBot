@@ -19,7 +19,7 @@ public class Say extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Makes bot say thing");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -29,5 +29,6 @@ public class Say extends AbstractListener {
 				Helper.sendMessage(target, params);
 			}
 		};
+		local_command.setHelpText("Makes bot say thing");
 	}
 }

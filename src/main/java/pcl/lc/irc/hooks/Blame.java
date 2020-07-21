@@ -21,7 +21,7 @@ public class Blame extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		IRCBot.registerCommand(local_command, "Project problems onto someone else!");
+		IRCBot.registerCommand(local_command);
 	}
 
 	private void initCommands() {
@@ -33,6 +33,7 @@ public class Blame extends AbstractListener {
 				Helper.sendAction(target, "blames " + params + " for " + getEvent());
 			}
 		};
+		local_command.setHelpText("Project problems onto someone else!");
 	}
 
 	private String getEvent() {
