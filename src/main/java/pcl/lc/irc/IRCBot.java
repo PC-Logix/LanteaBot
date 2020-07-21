@@ -135,7 +135,9 @@ public class IRCBot {
 	 */
 	public static void registerCommand(String command, String help, CommandRateLimit rateLimit) {
 		if (!commands.containsKey(command)) {
-			commands.put(command, new Command(command, rateLimit, false, true, null));
+			Command cmd = new Command(command, rateLimit, false, true, null);
+			cmd.setHelpText(help);
+			commands.put(command, cmd);
 			log.info("Registering Command: " + command);
 		} else {
 			log.error("Attempted to register duplicate command! Command: " + command + " Duplicating class: " + Thread.currentThread().getStackTrace()[2].getClassName() + " Owning class " + commands.get(command));
