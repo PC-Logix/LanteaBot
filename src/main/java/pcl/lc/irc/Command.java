@@ -281,6 +281,10 @@ public class Command {
 			return "No registered sub-commands.";
 	}
 
+	public ArrayList<Command> getSubCommands() {
+		return this.subCommands;
+	}
+
 	protected String trySubCommandsMessage(ArrayList<String> params) {
 		if (params.size() > 0)
 			return trySubCommandsMessage(params.get(0));
