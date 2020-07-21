@@ -590,6 +590,7 @@ public class Admin extends AbstractListener {
 		String items = "";
 		try {
 			items = "";
+			includedCommands.clear();
 			for (Map.Entry<String, Command> entry : IRCBot.commands.entrySet()) {
 				Command command = entry.getValue();
 				String item = getHelpRow(command);
