@@ -119,12 +119,12 @@ public class Defend extends AbstractListener {
 						if (attack.type == EventTypes.ATTACK) {
 							String implementString = implementItem == null ? "" : "wielding " + implementItem.getName(true);
 							if (result >= (dc + 5)) {
-								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " " + attack.triggerer + " " + implementString + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " avoided all of the damage! (" + dec.format(damage) + ")");
+								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " " + attack.triggerer + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " avoided all of the damage! (" + dec.format(damage) + ")");
 							} else if (result >= dc) {
 								damage = (int) Math.max(1, Math.floor(damage / 2d));
-								Helper.sendMessage(target, nick + " managed to partially " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + attack.triggerer + " " + implementString + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " only takes half damage. (" + dec.format(damage) + ")");
+								Helper.sendMessage(target, nick + " managed to partially " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + attack.triggerer + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " only takes half damage. (" + dec.format(damage) + ")");
 							} else {
-								Helper.sendMessage(target, nick + " failed to " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + attack.triggerer + " " + implementString + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " takes all of the damage. (" + dec.format(damage) + ")");
+								Helper.sendMessage(target, nick + " failed to " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + attack.triggerer + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " takes all of the damage. (" + dec.format(damage) + ")");
 							}
 						} else if (attack.type == EventTypes.POTION) {
 							if (result >= dc) {
