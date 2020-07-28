@@ -124,6 +124,18 @@ public class PotionHelper {
 	}
 
 	public static AppearanceEntry getAppearance(int index) {
+		if (DrinkPotion.appearanceEntries.size() == 0) {
+			System.out.println("No appearance entries in array.");
+			return null;
+		}
+		if (index < 0) {
+			System.out.println("Appearance index '" + 0 + "' is less than 0.");
+			return null;
+		}
+		if (index >= DrinkPotion.appearanceEntries.size()) {
+			System.out.println("Appearance index '" + index + "' exceeds array size.");
+			return null;
+		}
 		return DrinkPotion.appearanceEntries.get(index);
 	}
 
@@ -181,13 +193,17 @@ public class PotionHelper {
 		return replaceParamsInEffectString(effect, null);
 	}
 
+	public static String replaceParamsInEffectString(String effect, String action) {
+		return replaceParamsInEffectString(effect, null, action);
+	}
+
 	/**
 	 * @param effect The effect string to replace {user} and {trigger} tags within
 	 * @param targetName The name of the target of the effect
 	 * @return Returns the effect string with name inserted
 	 */
-	public static String replaceParamsInEffectString(String effect, String targetName) {
-		return replaceParamsInEffectString(effect, targetName, null);
+	public static String replaceParamsInEffectString(String effect, String targetName, String action) {
+		return replaceParamsInEffectString(effect, targetName, null, action);
 	}
 
 	public enum DynaParam {
@@ -219,12 +235,16 @@ public class PotionHelper {
 			return input.replace("{junk_p_lc}", Helper.getRandomGarbageItem(true, true));
 		}),
 		EVADE("evade", "{evade:DC:damage}", "Allows triggering an evade event. A d20 roll is made and compared against the DC. On a failure damage is taken.", (input) -> {
-			Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(\\d*d?\\d+)}");
+			Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(.*)}");
 			Matcher evadeMatcher = evadePattern.matcher(input);
 			if (evadeMatcher.find()) {
-				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC} and takes {damage} damage.");
+				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC}{damage}.");
 				String damage = evadeMatcher.group(2);
 				test.doCheck();
+				if (!damage.equals("0"))
+					damage = " and takes " + damage + " damage";
+				else
+					damage = "";
 				input = Helper.replaceSubstring(input, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
 			}
 			return input;
@@ -307,15 +327,25 @@ public class PotionHelper {
 			this.desc = desc;
 			this.replace = replace;
 		}
+
+		public static String ReplaceParameters(String input) {
+			for (DynaParam p : DynaParam.values()) {
+				input = p.replace.apply(input);
+			}
+			return input;
+		}
 	}
 
-	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
+	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName, String action) {
 		String tempEffect = "";
 		int timeout = 10;
 		while (timeout > 0) {
 			timeout++;
 
 			effect = DynaParam.ITEM.replace.apply(effect);
+
+			if (action != null)
+				effect = effect.replace("{action}", action);
 
 			effect = DiceRoll.rollDiceInString(effect, true);
 
@@ -339,9 +369,7 @@ public class PotionHelper {
 				ex.printStackTrace();
 			}
 
-			for (DynaParam p : DynaParam.values()) {
-				effect = p.replace.apply(effect);
-			}
+			effect = DynaParam.ReplaceParameters(effect);
 
 			if (tempEffect.equals(effect))
 				break;

@@ -1,8 +1,5 @@
 package pcl.lc.irc.hooks;
 
-import org.jvnet.inflector.Pluralizer;
-import org.pircbotx.hooks.Event;
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Command;
@@ -13,7 +10,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Forecaster
@@ -143,7 +139,7 @@ public class Defend extends AbstractListener {
 										String[] prefix = Helper.solvePrefixes(altTarget);
 										if (prefix != null)
 											altTarget = "the " + prefix[1];
-										String effectString = PotionHelper.replaceParamsInEffectString(effectEntry.Effect, altTarget);
+										String effectString = PotionHelper.replaceParamsInEffectString(effectEntry.effectDrink, altTarget);
 										potionString = " " + effectString.substring(0, 1).toUpperCase() + effectString.substring(1);
 									}
 								}

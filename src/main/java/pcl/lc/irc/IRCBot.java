@@ -199,12 +199,18 @@ public class IRCBot {
 			}
 		}
 
+		int count = 0;
+		int count_success = 0;
 		Reflections plugins2 = new Reflections("pcl.lc.irc.hooks");
 		Set<Class<? extends AbstractListener>> allClasses2 = plugins2.getSubTypesOf(AbstractListener.class);
+		ArrayList<String> loadedHooks = new ArrayList<>();
 		for (Class<? extends Object> s : allClasses2) {
+			loadedHooks.add(s.getSimpleName());
+			count++;
 			try {
 				log.info("Loading " + s.getCanonicalName());
 				Config.config.addListener((Listener) s.newInstance());
+				count_success++;
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -213,6 +219,8 @@ public class IRCBot {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Loading hooks: " + String.join(", ", loadedHooks));
+		System.out.println("Successfully loaded " + count_success + " out of " + count + " hooks.");
 		loadOps();
 		loadChannels();
 		//Database.setDBVer(Database.DB_VER);

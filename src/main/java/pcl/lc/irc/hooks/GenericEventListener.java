@@ -89,8 +89,12 @@ public class GenericEventListener extends AbstractListener{
 		}
 
 		if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
-			String target = Helper.getTarget(event);
-			DynamicCommands.parseDynCommand(actualCommand, user, target, params);
+			try {
+				String target = Helper.getTarget(event);
+				DynamicCommands.parseDynCommand(actualCommand, user, target, params);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} else if (IRCBot.commands.containsKey(actualCommand)) {
 			Command cmd = IRCBot.commands.get(actualCommand);
 			cmd.callingRelay = callingRelay;

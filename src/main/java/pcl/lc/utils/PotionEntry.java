@@ -9,26 +9,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PotionEntry {
-    public AppearanceEntry consistency;
-    public AppearanceEntry appearance;
-    public boolean isNew;
-    public EffectEntry effect;
+	public AppearanceEntry consistency;
+	public AppearanceEntry appearance;
+	public boolean isNew;
+	public EffectEntry effect;
 
-    public PotionEntry() {}
-
-    public PotionEntry(AppearanceEntry consistency, AppearanceEntry appearance, boolean isNew) {
-        this.consistency = consistency;
-        this.appearance = appearance;
-        this.isNew = isNew;
-        System.out.println("Created PotionEntry (isNew: " + isNew + ")");
-    }
-
-    public void setFromCommandParameters(ArrayList<String> params) throws InvalidPotionException {
-    	setFromCommandParameters(String.join(" ", params));
+	public PotionEntry() {
 	}
 
-    public void setFromCommandParameters(String params) throws InvalidPotionException {
-    	PotionEntry potion = setFromString(params);
+	public PotionEntry(AppearanceEntry consistency, AppearanceEntry appearance, boolean isNew) {
+		this.consistency = consistency;
+		this.appearance = appearance;
+		this.isNew = isNew;
+		System.out.println("Created PotionEntry (isNew: " + isNew + ")");
+	}
+
+	public void setFromCommandParameters(ArrayList<String> params) throws InvalidPotionException {
+		setFromCommandParameters(String.join(" ", params));
+	}
+
+	public void setFromCommandParameters(String params) throws InvalidPotionException {
+		PotionEntry potion = setFromString(params);
 
 		if (potion == null)
 			throw new InvalidPotionException();
@@ -39,13 +40,13 @@ public class PotionEntry {
 	}
 
 	public EffectEntry getEffect(String user) {
-        return getEffect(user, false);
-    }
+		return getEffect(user, false);
+	}
 
-    public EffectEntry getEffect(String user, boolean splash) {
-    	if (this.effect != null)
-    		return this.effect;
-    	else {
+	public EffectEntry getEffect(String user, boolean splash) {
+		if (this.effect != null)
+			return this.effect;
+		else {
 			if (appearance == null || consistency == null) {
 				return null;
 			}
@@ -58,7 +59,6 @@ public class PotionEntry {
 				this.isNew = false;
 				this.effect = PotionHelper.getCombinationEffect(key);
 				System.out.println("Effect recorded for " + key + ": " + this.effect);
-				return this.effect;
 			} else {
 				int min = 0;
 				int max = DrinkPotion.effects.size() - 1;
@@ -70,15 +70,17 @@ public class PotionEntry {
 				System.out.println("No effect recorded for " + key + ", Assign effect with index: " + effect);
 
 				String effectp = null;
+				EffectEntry eff = DrinkPotion.effects.get(effect);
 
 				if (splash) {
 					try {
-						effectp = DrinkPotion.effects.get(effect)[1];
-					} catch (Exception ignored) {}
+						effectp = eff.effectSplash;
+					} catch (Exception ignored) {
+					}
 				}
 
 				if (effectp == null)
-					effectp = DrinkPotion.effects.get(effect)[0];
+					effectp = eff.effectDrink;
 
 				effectp = PotionHelper.replaceParamsInEffectString(effectp);
 
@@ -97,16 +99,16 @@ public class PotionEntry {
 				}
 
 				this.isNew = true;
-				this.effect = new EffectEntry(effectp, user);
+				this.effect = new EffectEntry(effectp, user, eff.action, user);
 				PotionHelper.setCombinationEffect(consistency, appearance, this.effect);
-				return this.effect;
 			}
+			return this.effect;
 		}
 	}
 
 	public static PotionEntry setFromString(String str) {
-    	if (str == null)
-    		return null;
+		if (str == null)
+			return null;
 		AppearanceEntry consistency = PotionHelper.findConsistencyInString(str);
 		AppearanceEntry appearance = PotionHelper.findAppearanceInString(str);
 

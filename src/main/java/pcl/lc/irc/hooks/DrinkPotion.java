@@ -8,7 +8,6 @@ import com.sun.net.httpserver.HttpHandler;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.joda.time.DateTime;
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
@@ -18,6 +17,7 @@ import pcl.lc.utils.Exceptions.InvalidPotionException;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author Forecaster
@@ -32,10 +32,15 @@ public class DrinkPotion extends AbstractListener {
 	private Command potion_lookup;
 	public static ArrayList<AppearanceEntry> appearanceEntries = new ArrayList<>();
 	public static ArrayList<AppearanceEntry> consistencies = new ArrayList<>();
-	public static ArrayList<String[]> effects = new ArrayList<>();
+	public static ArrayList<EffectEntry> effects = new ArrayList<>();
 	public static HashMap<String, EffectEntry> potions = new HashMap<>();
 	public static ArrayList<String> limits = new ArrayList<>();
 	public static HashMap<String, ArrayList<EffectEntry>> specialFluids = new HashMap<>();
+
+	public static HashMap<String, Integer> curseMap = new HashMap<>();
+	public static HashMap<String, Integer> researchPointsMap = new HashMap<>();
+	public static HashMap<String, Integer> baconMap = new HashMap<>();
+	public static HashMap<String, Integer> radiationMap = new HashMap<>();
 
 	public static int daysPotionsLast = 4;
 	public static String day_of_potioning = DateTime.now().plusDays(DrinkPotion.daysPotionsLast).toString("yyyy-MM-dd");
@@ -135,6 +140,7 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("Violet", "A"));
 		appearanceEntries.add(new AppearanceEntry("Crimson", "A"));
 		appearanceEntries.add(new AppearanceEntry("Grathnode", "A", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
+		System.out.println("Registered " + appearanceEntries.size() + " appearance entries!");
 
 		consistencies.add(new AppearanceEntry("Viscous", "A"));
 		consistencies.add(new AppearanceEntry("Cloudy", "A"));
@@ -177,234 +183,288 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add(new AppearanceEntry("Mutable", "A"));
 		consistencies.add(new AppearanceEntry("Liquid", "A"));
 		consistencies.add(new AppearanceEntry("Smelly", "A"));
+		System.out.println("Registered " + consistencies.size() + "consistencies!");
 
-		//Valid tags: {user}
-		// {appearance}            			- Taken from the appearanceEntries table above
-		// {appearance_lc}         			- Same as previous but lowercase
-		// {appearance_p}          			- Same as {appearance} but with appropriate prefix appended before
-		// {appearance_p_lc}       			- Same as previous but lowercase
-		// {turn_appearance}       			- Taken from the appearanceEntries table above, but formatted into a 'the color of' string where appropriate
-		// {turn_appearance_lc}    			- Same as previous but lowercase
-		// {appearance:<item>:[p]} 			- Produced a string such as 'coral colored <item>' or 'blue <item>' as appropriate. If p is present the appropriate prefix is appended before
-		// {r:<int>-<int>:[time]}  			- Generates a random int between the provided numbers. If time is not empty it is appended after the number and should be for example 'minute'. Automatically pluralized if needed.
-		// {consistency}           			- Taken from the consistencies table above
-		// {consistency_p}         			- Same as previous but with appropriate prefix appended before
-		// {transformation}        			- A random transformation from the Helper class
-		// {transformation_p}      			- A random transformation from the Helper class but with appropriate prefix appended before unless the prefix is conditional
-		// {transformation_pc}     			- A random transformation from the Helper class  but with appropriate prefix appended before, even for conditional prefixes such as 'water'
-		// {transformation2}       			- Same as above, but a separate random transformation
-		// {transformation2_p}     			- Same as above but with appropriate prefix appended before
-		// {transformations}       			- A random transformation from the Helper class but pluralized
-		// {transformations_p}     			- Same as above but with appropriate prefix appended before
-		// {transformations2}      			- Same as above, but a separate random transformation
-		// {transformations2_p}    			- Same as above but with appropriate prefix appended before
-		// {limit}                 			- A random time limit from the table below can be empty. If not empty always starts with a space and never ends with punctuation.
-		// {r:[min]-{max]:[unit]}  			- Produces a random int within the range specified suffixed by the specified unit
-		// {evade:<DC>:<damage> 				- Calls for an evade check against <DC> and either returns "{user} evades successfully!" or "{user} fails to evade and takes <damage> damage. Damage can be a dice string such as 'd4' or '2d6' or a number such as '12' or '0' for no damage."
-		// {junk}												- A random garbage item from Helper all lower case with no prefix
-		// {junk_p}											- A random garbage item from Helper all lower case with prefix
-		// {codeword}										- A word used for code, or nonsense
-		// {codeword2}									- A second word
-		effects.add(new String[]{"{user} looks confused as nothing happens."});
-		effects.add(new String[]{"{user} turns into {transformation_pc} girl{limit}."});
-		effects.add(new String[]{"{user} turns into {transformation_pc} boy{limit}."});
-		effects.add(new String[]{"{user} turns into {transformation_p}{limit}."});
-		effects.add(new String[]{"{user} turns into {appearance_p_lc} {transformation} girl{limit}."});
-		effects.add(new String[]{"{user} turns into {appearance_p_lc} {transformation} boy{limit}."});
-		effects.add(new String[]{"{user} turns into {appearance_p_lc} {transformation}{limit}."});
-		effects.add(new String[]{"{user} turns into {transformation_p} {transformation2}{limit}."});
-		effects.add(new String[]{"{user} turns into {transformation_p} {transformation2} girl{limit}."});
-		effects.add(new String[]{"{user} turns into {transformation_p} {transformation2} boy{limit}."});
-		effects.add(new String[]{"{user} turns into {appearance_p_lc} {transformation} {transformation2}{limit}."});
-		effects.add(new String[]{"{user} turns into {appearance_p_lc} {transformation} {transformation2} girl{limit}."});
-		effects.add(new String[]{"{user} turns into {appearance_p_lc} {transformation} {transformation2} boy{limit}."});
-		effects.add(new String[]{"{user}'s hair turn {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s hair glows {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s skin turn {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s eyes turn {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s nails turn {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s bones turn {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s clothes turn {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s eyes glow {turn_appearance_lc}{limit}."});
-		effects.add(new String[]{"{user}'s skin turn {turn_appearance_lc} but with a {appearance_lc} glow{limit}."});
-		effects.add(new String[]{"{user}'s toes turn invisible{limit}."});
-		effects.add(new String[]{"{user}'s hair grows {r:2-4:time} longer{limit}."});
-		effects.add(new String[]{"{user} gains the proportional strength of a {transformation}{limit}."});
-		effects.add(new String[]{"{user} now knows how not to be seen."});
-		effects.add(new String[]{"{user} gains knowledge about a random useless subject."});
-		effects.add(new String[]{"{user} grows whiskers{limit}."});
-		effects.add(new String[]{"{user} grows a tail from a {transformation}{limit}."});
-		effects.add(new String[]{"{user} shrinks by a negligible amount{limit}."});
-		effects.add(new String[]{"{user} grows slightly{limit}."});
-		effects.add(new String[]{"{user} suddenly craves pie."});
-		effects.add(new String[]{"{user} gains the ability to talk to bricks{limit}."});
-		effects.add(new String[]{"{user} feels a strong urge to recycle the potion bottle.",
-				"{user} feels like they should clean up the broken bottle."});
-		effects.add(new String[]{"{user}'s bed is suddenly slightly less comfortable{limit}."});
-		effects.add(new String[]{"{user} gains a negligible amount of luck."});
-		effects.add(new String[]{"{user} realizes this was actually a {consistency} {appearance} potion."});
-		effects.add(new String[]{"{user} remembers an important appointment."});
-		effects.add(new String[]{"An incredibly fake looking mustache is stuck to {user}'s face{limit}."});
-		effects.add(new String[]{"{user} has a sudden desire to run around in a circle{limit}."});
-		effects.add(new String[]{"{user} gains the ability to summon safety pins{limit}."});
-		effects.add(new String[]{"{user} feels slightly stronger."}); // gain 1 point of strength
-		effects.add(new String[]{"{user} feels slightly more agile."}); // gain 1 point of agility
-		effects.add(new String[]{"{user} feels slightly faster."}); // gain 1 point of speed
-		effects.add(new String[]{"{user} recovers some mana."});
-		effects.add(new String[]{"{user} feels slightly weaker."}); // lose 1 point of strength
-		effects.add(new String[]{"{user} feels slightly less agile."}); // lose 1 point of agility
-		effects.add(new String[]{"{user} feels slightly slower."}); // lose 1 point of speed
-		effects.add(new String[]{"{user} gains an additional bone."});
-		effects.add(new String[]{"{user} is suddenly more aware of cute things nearby{limit}."});
-		effects.add(new String[]{"{user} loses exactly a handful of luck."});
-		effects.add(new String[]{"{user}'s pockets suddenly contain 1d10 {appearance:marbles:}."});
-		effects.add(new String[]{"{user}'s favourite hat is suddenly on fire."});
-		effects.add(new String[]{"{user} has a single tear roll down their cheek for some reason."});
-		effects.add(new String[]{"{user}'s nose vanish{limit}."});
-		effects.add(new String[]{"{user} feels like a champion!"});
-		effects.add(new String[]{"{user} feels a sudden surge of static electricity."});
-		effects.add(new String[]{"{user}'s shoes are now slightly too large{limit}."});
-		effects.add(new String[]{"{user} is now Borg{limit}."});
-		effects.add(new String[]{"{user} has no memory of drinking a potion.",
-				"{user} doesn't remember being splashed."});
-		effects.add(new String[]{"{user} knows the exact location of a particular molecule of oxygen{limit}."});
-		effects.add(new String[]{"{user} thinks the empty bottle is a snake{limit}.",
-				"{user} thinks they're being chased by an imaginary snake{limit}"});
-		effects.add(new String[]{"{user} gets an urge to have another potion.",
-				"{user} gets the urge to drink a potion."});
-		effects.add(new String[]{"It tastes sweet.",
-				"It smells like sugar as it sticks to {user}."});
-		effects.add(new String[]{"It tastes sour.",
-				"It smells sour and stings a little where it touches skin."});
-		effects.add(new String[]{"It tastes bitter.",
-				"Nothing in particular happens."});
-		effects.add(new String[]{"It tastes salty.",
-				"Nothing in particular happens."});
-		effects.add(new String[]{"{user} feels like one particular wasp has it out for them suddenly."});
-		effects.add(new String[]{"{user} zones out for {r:1-10:minute}."});
-		effects.add(new String[]{"A warp zone opens up next to {user}. (Use " + Config.commandprefix + "warp to jump in)"});
-		effects.add(new String[]{"After the first sip the potion poofs away.",
-				"{user} flinches as the potion is thrown but nothing arrives to hit them..."});
-		effects.add(new String[]{"{user} looks up and sees the moon smile at them for a second."});
-		effects.add(new String[]{"The ghost of a plant haunts {user}{limit}."});
-		effects.add(new String[]{"{r:2-5:} nearby pebbles suddenly shift slightly in {user}'s direction."});
-		effects.add(new String[]{"The next pie {user} eats tastes slightly less good."});
-		effects.add(new String[]{"Sitting down suddenly seems like a really terrible idea."});
-		effects.add(new String[]{"The next fork {user} touches tells them it's most deeply guarded secret."});
-		effects.add(new String[]{"A voice whispers a secret into {user}'s ear only they can hear."});
-		effects.add(new String[]{"{user} briefly feel like they have just stepped out of a car."});
-		effects.add(new String[]{"True enlightenment can be achieved by drinking another potion.",
-				"{user} feels as if they should drink a potion for some reason."});
-		effects.add(new String[]{"For about a second {user} knows the location of a great treasure."});
-		effects.add(new String[]{"The potion was inside {user} all along."});
-		effects.add(new String[]{"{user} is suddenly wearings gloves they don't remember putting on."});
-		effects.add(new String[]{"{user} is suddenly wearings a tiny glove on each finger."});
-		effects.add(new String[]{"A sudden craving for soup occupies {user}'s thoughts{limit}."});
-		effects.add(new String[]{"{user} suddenly forgets a random piece of trivia."});
-		effects.add(new String[]{"A {transformation} flies past that vaguely resembles someone {user} knows."});
-		effects.add(new String[]{"{user} reboots for an update for {r:1-10:minute}."});
-		effects.add(new String[]{"Dramatic music briefly plays in the distance."});
-		effects.add(new String[]{"{user} has a feeling that their face just appeared on a random vegetable somewhere."});
-		effects.add(new String[]{"The potion bottle is suddenly on fire!",
-				"As the potion strikes {user} it bursts into flames!"});
-		effects.add(new String[]{"Once empty the potion bottle fills with a different potion.",
-				"{user} looks confused as nothing seems to happen..."});
-		effects.add(new String[]{"{user} gains the ability to talk to {transformations}{limit}."});
-		effects.add(new String[]{"{user} sees the sky briefly flash solid dark blue then go back to normal."});
-		effects.add(new String[]{"When {user} drinks the last drop, a bucket of water materializes above their head and dumps its contents over them. {evade:8:0}",
-				"A bucket of water materializes above {user}'s head and dumps its contents over them. {evade:8:0}"});
-		effects.add(new String[]{"Suddenly there's a swarm of wasps behind {user} that chase them for {r:30-60:second}!"});
-		effects.add(new String[]{"When {user} brings the bottle down they see {appearance:plastic flamingo:p}. It stares into their soul.",
-				"When {user} turns around they see {appearance:plastic flamingo:p}. It stares into their soul."});
-		effects.add(new String[]{"A bard starts playing a lute behind {user}. They don't stop."});
-		effects.add(new String[]{"A bard starts playing a lute behind {user}{limit}."});
-		effects.add(new String[]{"The bottle turns into a sword.",
-				"{appearance_p} sword appears next to {user}."});
-		effects.add(new String[]{"The bottle turns into {appearance_p_lc} axe.",
-				"{appearance_p} axe appears next to {user}."});
-		effects.add(new String[]{"The bottle turns into {appearance_p_lc} spear.",
-				"{appearance_p} spear appears next to {user}."});
-		effects.add(new String[]{"The bottle turns into {appearance_p_lc} dagger.",
-				"{appearance_p} dagger appears next to {user}."});
-		effects.add(new String[]{"The bottle turns into {appearance_p_lc} bow.",
-				"{appearance_p} bow appears next to {user}."});
-		effects.add(new String[]{"The bottle turns into {appearance_p_lc} trident.",
-				"{appearance_p} trident appears next to {user}."});
-		effects.add(new String[]{"The bottle turns into {appearance_p_lc} sling.",
-				"{appearance_p} sling appears next to {user}."});
-		effects.add(new String[]{"A genie appears out of the empty bottle, turns it into a pie, then vanishes.",
-				"A genie appears out of the smashed bottle, turns it into a pie, then vanishes."});
-		effects.add(new String[]{"{user} thinks \"What if, like, *we* are the potions man?\". This makes no sense whatsoever."});
-		effects.add(new String[]{"After drinking the potion {user} notices a label that says \"Side effects may include giggle fits and excessive monologuing.\"",
-				"{user} gets a sudden urge to monologue after being hit by the potion."});
-		effects.add(new String[]{"{user} forgets the location of a great treasure."});
-		effects.add(new String[]{"Oh no, {user} got a health potion, there's probably a boss fight coming!",
-				"{user} regains 1d6 hit points!"});
-		effects.add(new String[]{"There's an acidic tinge to the potion... A label on the bottle reads \"Who needs internal organs anyway?\"",
-				"The fluid burns as it splashes onto {user} who takes 2d6 acid damage."});
-		effects.add(new String[]{"{user} feels much better!"});
-		effects.add(new String[]{"A tiny cloud appears with a ridiculous smile on it. It follows {user}{limit}."});
-		effects.add(new String[]{"The potion contained a computer virus! But {user}'s anti-virus routines destroy it."});
-		effects.add(new String[]{"The potion contained a computer virus! It just changed {user}'s background..."});
-		effects.add(new String[]{"The potion contained a computer virus! It sent a message to all of {user}'s friends telling them that they love them!"});
-		effects.add(new String[]{"The potion contained a computer virus! It changed {user}'s theme to one they don't like!"});
-		effects.add(new String[]{"The potion contained a computer virus! {user} hears a maniacal laugh as their cursor flips upside down!"});
-		effects.add(new String[]{"The bottle splits into two revealing a smaller {consistency} {appearance} potion."});
-		effects.add(new String[]{"A tiny genie appears, gives {user} a thumbs up, and poofs away."});
-		effects.add(new String[]{"{user} feels chill."});
-		effects.add(new String[]{"{user} feels the need to smash."});
-		effects.add(new String[]{"{user} feels the need to use \"" + Config.commandprefix + "shell\"."});
-		effects.add(new String[]{"{user} feels the need to use \"" + Config.commandprefix + "fling\"."});
-		effects.add(new String[]{"The bottle turns into a pie.",
-				"A pie appears in front of {user}."});
-		effects.add(new String[]{"The bottle turns into a piece of bacon.",
-				"A piece of bacon appears in front of {user}."});
-		effects.add(new String[]{"The bottle turns into an apple.",
-				"An apple appears in front of {user}."});
-		effects.add(new String[]{"A bard behind {user} suddenly stops playing. They were most likely eaten by a monster."});
-		effects.add(new String[]{"Gravity reverses for {user}{limit}."});
-		effects.add(new String[]{"{user} now has a mullet{limit}."});
-		effects.add(new String[]{"The next remote {user} looks for is extra hard to find."});
-		effects.add(new String[]{"{user} gets a sudden Spice infusion. {user} can see the universe. [Spice Addiction +1]"});
-		effects.add(new String[]{"{user}'s radiation level goes up by 2{limit}."});
-		effects.add(new String[]{"{user} smells something burning."});
-		effects.add(new String[]{"The sun turns into a giant baby face for a second. It's horrific."});
-		effects.add(new String[]{"Everything {user} says is now in Comic Sans{limit}."});
-		effects.add(new String[]{"Everything {user} says is now in Wingdings{limit}."});
-		effects.add(new String[]{"{user}'s favourite cup is now upside down."});
-		effects.add(new String[]{"The potion bottle insults {user}'s haircut.",
-				"A disembodied voice insults {user}'s haircut coming from the direction of {trigger}"});
-		effects.add(new String[]{"After drinking the potion {user} realizes the bottle has their face on it.",
-				"{user} sees their face etched into one of the shards of the broken bottle."});
-		effects.add(new String[]{"Wheels are briefly square."});
-		effects.add(new String[]{"{user} hears a train whistle in the distance."});
-		effects.add(new String[]{"The next glass of water {user} has tastes like {appearance}."});
-		effects.add(new String[]{"As {user} drinks the potion they become the target of a wad of llama spit! {evade:12:1d4}",
-				"As the potion hits {user} they become the target of a wad of llama spit! {evade:12:1d4}"});
-		effects.add(new String[]{"As {user} drinks the potion they seem to have become magnetic and {junk_p} flies towards them! {evade:14:1d6}",
-				"As the potion hits {user} they seem to have become magnetic and {junk_p} flies towards them! {evade:14:1d6}"});
-		effects.add(new String[]{"A swinging blade comes flying towards {user} from nowhere! {evade:16:1d8}"});
-		effects.add(new String[]{"A trapdoor suddenly opens up under {user}! There are spikes at the bottom. {evade:15:1d6}"});
-		effects.add(new String[]{"A giant boulder is rolling towards {user}! {evade:15:1d6}"});
-		effects.add(new String[]{"Tonk has been reset."});
-		effects.add(new String[]{"Tonk moved forward {r:2-12:hours}."});
-		effects.add(new String[]{"Tonk moved back {r:3-12:hours}."});
-		effects.add(new String[]{"Tonk moved to next week."});
-		effects.add(new String[]{"Tonk moved to last week."});
-		effects.add(new String[]{"Tonk moved to an indeterminate point in time."});
-		effects.add(new String[]{"{user}'s tonk score has been reset."});
-		effects.add(new String[]{"{user} gained one million tonk points."});
-		effects.add(new String[]{"Someone just had some of {user}'s favourite food and they didn't get any!"});
-		effects.add(new String[]{"A bunch of people in white coats approach {user}. {evade:12:0}"});
-		effects.add(new String[]{"{user} gains one research point."});
-		effects.add(new String[]{"{user} gains one point."});
-		effects.add(new String[]{"{user} gains no points."});
-		effects.add(new String[]{"{user} loses two points."});
-		effects.add(new String[]{"{user} hears a scream from nearby."});
-		effects.add(new String[]{"{user} gains some curse."});
-		effects.add(new String[]{"{user}'s left sock is now cursed."});
-		effects.add(new String[]{"{user}'s feet tingle briefly."});
-		effects.add(new String[]{"{user} spots a shiny thing!"});
+		//See `PotionHelper.DynaParam` for tag list and descriptions.
+		effects.add(new EffectEntry("{user} looks confused as nothing happens."));
+		effects.add(new EffectEntry("{user} turns into {transformation_pc} girl{limit}."));
+		effects.add(new EffectEntry("{user} turns into {transformation_pc} boy{limit}."));
+		effects.add(new EffectEntry("{user} turns into {transformation_p}{limit}."));
+		effects.add(new EffectEntry("{user} turns into {appearance_p_lc} {transformation} girl{limit}."));
+		effects.add(new EffectEntry("{user} turns into {appearance_p_lc} {transformation} boy{limit}."));
+		effects.add(new EffectEntry("{user} turns into {appearance_p_lc} {transformation}{limit}."));
+		effects.add(new EffectEntry("{user} turns into {transformation_p} {transformation2}{limit}."));
+		effects.add(new EffectEntry("{user} turns into {transformation_p} {transformation2} girl{limit}."));
+		effects.add(new EffectEntry("{user} turns into {transformation_p} {transformation2} boy{limit}."));
+		effects.add(new EffectEntry("{user} turns into {appearance_p_lc} {transformation} {transformation2}{limit}."));
+		effects.add(new EffectEntry("{user} turns into {appearance_p_lc} {transformation} {transformation2} girl{limit}."));
+		effects.add(new EffectEntry("{user} turns into {appearance_p_lc} {transformation} {transformation2} boy{limit}."));
+		effects.add(new EffectEntry("{user}'s hair turn {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s hair glows {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s skin turn {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s eyes turn {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s nails turn {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s bones turn {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s clothes turn {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s eyes glow {turn_appearance_lc}{limit}."));
+		effects.add(new EffectEntry("{user}'s skin turn {turn_appearance_lc} but with a {appearance_lc} glow{limit}."));
+		effects.add(new EffectEntry("{user}'s toes turn invisible{limit}."));
+		effects.add(new EffectEntry("{user}'s hair grows {r:2-4:time} longer{limit}."));
+		effects.add(new EffectEntry("{user} gains the proportional strength of a {transformation}{limit}."));
+		effects.add(new EffectEntry("{user} now knows how not to be seen."));
+		effects.add(new EffectEntry("{user} gains knowledge about a random useless subject."));
+		effects.add(new EffectEntry("{user} grows whiskers{limit}."));
+		effects.add(new EffectEntry("{user} grows a tail from a {transformation}{limit}."));
+		effects.add(new EffectEntry("{user} shrinks by a negligible amount{limit}."));
+		effects.add(new EffectEntry("{user} grows slightly{limit}."));
+		effects.add(new EffectEntry("{user} suddenly craves pie."));
+		effects.add(new EffectEntry("{user} gains the ability to talk to bricks{limit}."));
+		effects.add(new EffectEntry("{user} feels a strong urge to recycle the potion bottle.",
+				"{user} feels like they should clean up the broken bottle."));
+		effects.add(new EffectEntry("{user}'s bed is suddenly slightly less comfortable{limit}."));
+		effects.add(new EffectEntry("{user} gains a negligible amount of luck."));
+		effects.add(new EffectEntry("{user} realizes this was actually a {consistency} {appearance} potion."));
+		effects.add(new EffectEntry("{user} remembers an important appointment."));
+		effects.add(new EffectEntry("An incredibly fake looking mustache is stuck to {user}'s face{limit}."));
+		effects.add(new EffectEntry("{user} has a sudden desire to run around in a circle{limit}."));
+		effects.add(new EffectEntry("{user} gains the ability to summon safety pins{limit}."));
+		effects.add(new EffectEntry("{user} feels slightly stronger.")); // gain 1 point of strength
+		effects.add(new EffectEntry("{user} feels slightly more agile.")); // gain 1 point of agility
+		effects.add(new EffectEntry("{user} feels slightly faster.")); // gain 1 point of speed
+		effects.add(new EffectEntry("{user} recovers some mana."));
+		effects.add(new EffectEntry("{user} feels slightly weaker.")); // lose 1 point of strength
+		effects.add(new EffectEntry("{user} feels slightly less agile.")); // lose 1 point of agility
+		effects.add(new EffectEntry("{user} feels slightly slower.")); // lose 1 point of speed
+		effects.add(new EffectEntry("{user} gains an additional bone."));
+		effects.add(new EffectEntry("{user} is suddenly more aware of cute things nearby{limit}."));
+		effects.add(new EffectEntry("{user} loses exactly a handful of luck."));
+		effects.add(new EffectEntry("{user}'s pockets suddenly contain 1d10 {appearance:marbles:}."));
+		effects.add(new EffectEntry("{user}'s favourite hat is suddenly on fire."));
+		effects.add(new EffectEntry("{user} has a single tear roll down their cheek for some reason."));
+		effects.add(new EffectEntry("{user}'s nose vanish{limit}."));
+		effects.add(new EffectEntry("{user} feels like a champion!"));
+		effects.add(new EffectEntry("{user} feels a sudden surge of static electricity."));
+		effects.add(new EffectEntry("{user}'s shoes are now slightly too large{limit}."));
+		effects.add(new EffectEntry("{user} is now Borg{limit}."));
+		effects.add(new EffectEntry("{user} has no memory of drinking a potion.",
+				"{user} doesn't remember being splashed."));
+		effects.add(new EffectEntry("{user} knows the exact location of a particular molecule of oxygen{limit}."));
+		effects.add(new EffectEntry("{user} thinks the empty bottle is a snake{limit}.",
+				"{user} thinks they're being chased by an imaginary snake{limit}"));
+		effects.add(new EffectEntry("{user} gets an urge to have another potion.",
+				"{user} gets the urge to drink a potion."));
+		effects.add(new EffectEntry("It tastes sweet.",
+				"It smells like sugar as it sticks to {user}."));
+		effects.add(new EffectEntry("It tastes sour.",
+				"It smells sour and stings a little where it touches skin."));
+		effects.add(new EffectEntry("It tastes bitter.",
+				"Nothing in particular happens."));
+		effects.add(new EffectEntry("It tastes salty.",
+				"Nothing in particular happens."));
+		effects.add(new EffectEntry("{user} feels like one particular wasp has it out for them suddenly."));
+		effects.add(new EffectEntry("{user} zones out for {r:1-10:minute}."));
+		effects.add(new EffectEntry("A warp zone opens up next to {user}. (Use " + Config.commandprefix + "warp to jump in)"));
+		effects.add(new EffectEntry("After the first sip the potion poofs away.",
+				"{user} flinches as the potion is thrown but nothing arrives to hit them..."));
+		effects.add(new EffectEntry("{user} looks up and sees the moon smile at them for a second."));
+		effects.add(new EffectEntry("The ghost of a plant haunts {user}{limit}."));
+		effects.add(new EffectEntry("{r:2-5:} nearby pebbles suddenly shift slightly in {user}'s direction."));
+		effects.add(new EffectEntry("The next pie {user} eats tastes slightly less good."));
+		effects.add(new EffectEntry("Sitting down suddenly seems like a really terrible idea."));
+		effects.add(new EffectEntry("The next fork {user} touches tells them it's most deeply guarded secret."));
+		effects.add(new EffectEntry("A voice whispers a secret into {user}'s ear only they can hear."));
+		effects.add(new EffectEntry("{user} briefly feel like they have just stepped out of a car."));
+		effects.add(new EffectEntry("True enlightenment can be achieved by drinking another potion.",
+				"{user} feels as if they should drink a potion for some reason."));
+		effects.add(new EffectEntry("For about a second {user} knows the location of a great treasure."));
+		effects.add(new EffectEntry("The potion was inside {user} all along."));
+		effects.add(new EffectEntry("{user} is suddenly wearings gloves they don't remember putting on."));
+		effects.add(new EffectEntry("{user} is suddenly wearings a tiny glove on each finger."));
+		effects.add(new EffectEntry("A sudden craving for soup occupies {user}'s thoughts{limit}."));
+		effects.add(new EffectEntry("{user} suddenly forgets a random piece of trivia."));
+		effects.add(new EffectEntry("A {transformation} flies past that vaguely resembles someone {user} knows."));
+		effects.add(new EffectEntry("{user} reboots for an update for {r:1-10:minute}."));
+		effects.add(new EffectEntry("Dramatic music briefly plays in the distance."));
+		effects.add(new EffectEntry("{user} has a feeling that their face just appeared on a random vegetable somewhere."));
+		effects.add(new EffectEntry("The potion bottle is suddenly on fire! {user} takes 1d4 damage before letting go of it!",
+				"As the potion strikes {user} it bursts into flames!"));
+		effects.add(new EffectEntry("Once empty the potion bottle fills with a different potion.",
+				"{user} looks confused as nothing seems to happen..."));
+		effects.add(new EffectEntry("{user} gains the ability to talk to {transformations}{limit}."));
+		effects.add(new EffectEntry("{user} sees the sky briefly flash solid dark blue then go back to normal."));
+		effects.add(new EffectEntry("When {user} drinks the last drop, a bucket of water materializes above their head and dumps its contents over them. {evade:8:0}",
+				"A bucket of water materializes above {user}'s head and dumps its contents over them. {evade:8:0}"));
+		effects.add(new EffectEntry("Suddenly there's a swarm of wasps behind {user} that chase them for {r:30-60:second}!"));
+		effects.add(new EffectEntry("When {user} brings the bottle down they see {appearance:plastic flamingo:p}. It stares into their soul.",
+				"When {user} turns around they see {appearance:plastic flamingo:p}. It stares into their soul."));
+		effects.add(new EffectEntry("A bard starts playing a lute behind {user}. They don't stop."));
+		effects.add(new EffectEntry("A bard starts playing a lute behind {user}{limit}."));
+		effects.add(new EffectEntry("The bottle turns into a sword.",
+				"{appearance_p} sword appears next to {user}."));
+		effects.add(new EffectEntry("The bottle turns into {appearance_p_lc} axe.",
+				"{appearance_p} axe appears next to {user}."));
+		effects.add(new EffectEntry("The bottle turns into {appearance_p_lc} spear.",
+				"{appearance_p} spear appears next to {user}."));
+		effects.add(new EffectEntry("The bottle turns into {appearance_p_lc} dagger.",
+				"{appearance_p} dagger appears next to {user}."));
+		effects.add(new EffectEntry("The bottle turns into {appearance_p_lc} bow.",
+				"{appearance_p} bow appears next to {user}."));
+		effects.add(new EffectEntry("The bottle turns into {appearance_p_lc} trident.",
+				"{appearance_p} trident appears next to {user}."));
+		effects.add(new EffectEntry("The bottle turns into {appearance_p_lc} sling.",
+				"{appearance_p} sling appears next to {user}."));
+		effects.add(new EffectEntry("A genie appears out of the empty bottle, turns it into a pie, then vanishes.",
+				"A genie appears out of the smashed bottle, turns it into a pie, then vanishes."));
+		effects.add(new EffectEntry("{user} thinks \"What if, like, *we* are the potions man?\". This makes no sense whatsoever."));
+		effects.add(new EffectEntry("After drinking the potion {user} notices a label that says \"Side effects may include giggle fits and excessive monologuing.\"",
+				"{user} gets a sudden urge to monologue after being hit by the potion."));
+		effects.add(new EffectEntry("{user} forgets the location of a great treasure."));
+		effects.add(new EffectEntry("Oh no, {user} got a health potion, there's probably a boss fight coming!",
+				"{user} regains 1d6 hit points!"));
+		effects.add(new EffectEntry("There's an acidic tinge to the potion... A label on the bottle reads \"Who needs internal organs anyway?\"",
+				"The fluid burns as it splashes onto {user} who takes 2d6 acid damage."));
+		effects.add(new EffectEntry("{user} feels much better!"));
+		effects.add(new EffectEntry("A tiny cloud appears with a ridiculous smile on it. It follows {user}{limit}."));
+		effects.add(new EffectEntry("The potion contained a computer virus! But {user}'s anti-virus routines destroy it."));
+		effects.add(new EffectEntry("The potion contained a computer virus! It just changed {user}'s background..."));
+		effects.add(new EffectEntry("The potion contained a computer virus! It sent a message to all of {user}'s friends telling them that they love them!"));
+		effects.add(new EffectEntry("The potion contained a computer virus! It changed {user}'s theme to one they don't like!"));
+		effects.add(new EffectEntry("The potion contained a computer virus! {user} hears a maniacal laugh as their cursor flips upside down!"));
+		effects.add(new EffectEntry("The bottle splits into two revealing a smaller {consistency} {appearance} potion."));
+		effects.add(new EffectEntry("A tiny genie appears, gives {user} a thumbs up, and poofs away."));
+		effects.add(new EffectEntry("{user} feels chill."));
+		effects.add(new EffectEntry("{user} feels the need to smash."));
+		effects.add(new EffectEntry("{user} feels the need to use \"" + Config.commandprefix + "shell\"."));
+		effects.add(new EffectEntry("{user} feels the need to use \"" + Config.commandprefix + "fling\"."));
+		effects.add(new EffectEntry("The bottle turns into a pie.",
+				"A pie appears in front of {user}."));
+		effects.add(new EffectEntry("The bottle turns into a piece of bacon. You have found {action} of bacon.",
+				"A piece of bacon appears in front of {user}.", new Function<String, String>() {
+			@Override
+			public String apply(String s) {
+				if (!baconMap.containsKey(s))
+					baconMap.put(s, 0);
+				int bacon = baconMap.get(s) +1;
+				baconMap.put(s, bacon);
+				return bacon + " piece" + (bacon == 1 ? "" : "s");
+			}
+		}));
+		effects.add(new EffectEntry("The bottle turns into an apple.",
+				"An apple appears in front of {user}."));
+		effects.add(new EffectEntry("A bard behind {user} suddenly stops playing. They were most likely eaten by a monster."));
+		effects.add(new EffectEntry("Gravity reverses for {user}{limit}."));
+		effects.add(new EffectEntry("{user} now has a mullet{limit}."));
+		effects.add(new EffectEntry("The next remote {user} looks for is extra hard to find."));
+		effects.add(new EffectEntry("{user} gets a sudden Spice infusion. {user} can see the universe. [Spice Addiction +1]"));
+		effects.add(new EffectEntry("{user}'s radiation level goes up by {action}.", new Function<String, String>() {
+			@Override
+			public String apply(String s) {
+				int rads = Helper.getRandomInt(1, 4);
+				if (!radiationMap.containsKey(s))
+					radiationMap.put(s, 0);
+				int rabs = radiationMap.get(s) + rads;
+				radiationMap.put(s, rabs);
+				return rads + ". {user}'s radiation level is " + rabs + ".";
+			}
+		}));
+		effects.add(new EffectEntry("{user} smells something burning."));
+		effects.add(new EffectEntry("The sun turns into a giant baby face for a second. It's horrific."));
+		effects.add(new EffectEntry("Everything {user} says is now in Comic Sans{limit}."));
+		effects.add(new EffectEntry("Everything {user} says is now in Wingdings{limit}."));
+		effects.add(new EffectEntry("{user}'s favourite cup is now upside down."));
+		effects.add(new EffectEntry("The potion bottle insults {user}'s haircut.",
+				"A disembodied voice insults {user}'s haircut coming from the direction of {trigger}"));
+		effects.add(new EffectEntry("After drinking the potion {user} realizes the bottle has their face on it.",
+				"{user} sees their face etched into one of the shards of the broken bottle."));
+		effects.add(new EffectEntry("Wheels are briefly square."));
+		effects.add(new EffectEntry("{user} hears a train whistle in the distance."));
+		effects.add(new EffectEntry("The next glass of water {user} has tastes like {appearance}."));
+		effects.add(new EffectEntry("As {user} drinks the potion they become the target of a wad of llama spit! {evade:12:1d4}",
+				"As the potion hits {user} they become the target of a wad of llama spit! {evade:12:1d4}"));
+		effects.add(new EffectEntry("As {user} drinks the potion they seem to have become magnetic and {junk_p} flies towards them! {evade:14:1d6}",
+				"As the potion hits {user} they seem to have become magnetic and {junk_p} flies towards them! {evade:14:1d6}"));
+		effects.add(new EffectEntry("A swinging blade comes flying towards {user} from nowhere! {evade:16:1d8}"));
+		effects.add(new EffectEntry("A trapdoor suddenly opens up under {user}! There are spikes at the bottom. {evade:15:1d6}"));
+		effects.add(new EffectEntry("A giant boulder is rolling towards {user}! {evade:15:1d6}"));
+		effects.add(new EffectEntry("Tonk moved forward {action}.", new Function<String, String>() {
+			@Override
+			public String apply(String user) {
+				int hours = Helper.getRandomInt(1, 4);
+				Tonk.tonkTimeAdd(hours + "h");
+				return hours + " hour" + (hours == 1 ? "" : "s");
+			}
+		}));
+		effects.add(new EffectEntry("Tonk moved back {action}.", new Function<String, String>() {
+			@Override
+			public String apply(String user) {
+				int hours = Helper.getRandomInt(1, 4);
+				Tonk.tonkTimeRemove(hours + "h");
+				return hours + " hour" + (hours == 1 ? "" : "s");
+			}
+		}));
+		effects.add(new EffectEntry("{user} gained {action} tonk points.", new Function<String, String>() {
+			@Override
+			public String apply(String user) {
+				int points = Helper.getRandomInt(1, 100);
+				Tonk.tonkPointsAdd(user, points);
+				return Tonk.displayTonkPoints(points);
+			}
+		}));
+		effects.add(new EffectEntry("Someone just had some of {user}'s favourite food and they didn't get any!"));
+		effects.add(new EffectEntry("A bunch of people in white coats approach {user}. {evade:12:0}"));
+		effects.add(new EffectEntry("{user} gains one research point. {user} now has {action}.", new Function<String, String>() {
+			@Override
+			public String apply(String s) {
+				if (!researchPointsMap.containsKey(s))
+					researchPointsMap.put(s, 0);
+				int points = researchPointsMap.get(s) +1;
+				researchPointsMap.put(s, points);
+				return points + " point" + (points == 1 ? "" : "s");
+			}
+		}));
+		effects.add(new EffectEntry("{user} hears a scream from nearby."));
+		effects.add(new EffectEntry("{user} gains some curse. {user} has {action} curse.", new Function<String, String>() {
+			@Override
+			public String apply(String s) {
+				if (!curseMap.containsKey(s))
+					curseMap.put(s, 0);
+				int curse = curseMap.get(s) +1;
+				return String.valueOf(curse);
+			}
+		}));
+		effects.add(new EffectEntry("{user}'s left sock is now cursed."));
+		effects.add(new EffectEntry("{user}'s feet tingle briefly."));
+		effects.add(new EffectEntry("{user} spots a shiny thing!"));
+		effects.add(new EffectEntry("{user} barely manages to catch a green shell that appears in front of them!", new Function<String, String>() {
+			@Override
+			public String apply(String user) {
+				Tonk.tonkSnipeRefill(user, Tonk.TonkSnipeType.GREEN);
+				return "";
+			}
+		}));
+		effects.add(new EffectEntry("{user} barely manages to catch a red shell that appears in front of them!", new Function<String, String>() {
+			@Override
+			public String apply(String user) {
+				Tonk.tonkSnipeRefill(user, Tonk.TonkSnipeType.RED);
+				return "";
+			}
+		}));
+		effects.add(new EffectEntry("{user} feels like they need to drink {appearance_p_lc} potion."));
+		effects.add(new EffectEntry("{user} feels like they need to drink {consistency_p_lc} potion."));
+		System.out.println("Registered " + effects.size() + " effects!");
+
+		effects = new ArrayList<>();
+		effects.add(new EffectEntry("The bottle turns into a piece of bacon. You have found {action} of bacon.",
+				"A piece of bacon appears in front of {user}.", new Function<String, String>() {
+			@Override
+			public String apply(String s) {
+				if (!baconMap.containsKey(s))
+					baconMap.put(s, 0);
+				int bacon = baconMap.get(s) +1;
+				baconMap.put(s, bacon);
+				return bacon + " piece" + (bacon == 1 ? "" : "s");
+			}
+		}));
 
 		//Never end with punctuation and always start with a space
 		//See above for valid tags
@@ -424,6 +484,16 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they eat a pie");
 		limits.add(" until they have an apple");
 		limits.add(" until they have a nap");
+		limits.add(" until they sneeze");
+		limits.add(" until someone stops looking at them");
+		limits.add(" until someone looks at them");
+		limits.add(" until someone stabs them");
+		limits.add(" until someone baps them");
+		limits.add(" until they tonk");
+		limits.add(" until have some bacon");
+		limits.add(" until they stop thinking about it");
+		limits.add(" until they recite the litany against fear");
+		limits.add(" until they find a lamp");
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		specialFluids.put("water", new ArrayList<>(Arrays.asList(
@@ -458,8 +528,22 @@ public class DrinkPotion extends AbstractListener {
 				try {
 					if (params.size() == 0 || params.get(0).equals("random")) {
 						potion = PotionHelper.getRandomPotion();
-						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffect(nick).toString(), nick));
-						return;
+						EffectEntry effect = potion.getEffect(nick);
+						if (effect != null) {
+							String action = "";
+							if (effect.action != null) {
+								System.out.println("Potion effect has action!");
+								if (potion.isNew)
+									action = effect.action.apply(nick);
+								else {
+									Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird and nothing seems to happen...");
+									return;
+								}
+							}
+							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick, null, action));
+							return;
+						} else
+							Helper.sendMessage(target, "Due to some unfortunate series of events I couldn't find an effect for this potion.");
 					} else if (params.get(0).equals("^")) {
 						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
@@ -485,10 +569,20 @@ public class DrinkPotion extends AbstractListener {
 
 						EffectEntry effect = potion.getEffect(nick);
 
-						if (effect != null)
-							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
-						else
-							Helper.sendMessage(target, "Due to some series of events I couldn't find any effect for this potion.");
+						if (effect != null) {
+							String action = "";
+							if (effect.action != null) {
+								System.out.println("Potion effect has action!");
+								if (potion.isNew)
+									action = effect.action.apply(nick);
+								else {
+									Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird and nothing seems to happen...");
+									return;
+								}
+							}
+							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick, null, action));
+						} else
+							Helper.sendMessage(target, "Due to some unfortunate series of events I couldn't find an effect for this potion.");
 					} catch (InvalidPotionException ex) {
 						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
 					}
@@ -533,7 +627,17 @@ public class DrinkPotion extends AbstractListener {
 						if (potionString == null || potionString.equals("random")) {
 							potion = PotionHelper.getRandomPotion();
 							EffectEntry effect = potion.getEffect(nick, true);
-							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
+							String action = "";
+							if (effect.action != null) {
+								System.out.println("Potion effect has action!");
+								if (potion.isNew)
+									action = effect.action.apply(nick);
+								else {
+									Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It tastes kinda oozes strangely but nothing seems to happen...");
+									return;
+								}
+							}
+							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick, action));
 							Defend.addEvent(nick, splashTarget, potion.consistency.getName(false, true) + " " + potion.appearance.getName(false, true) + " potion", Defend.EventTypes.POTION);
 							return;
 						} else if (potionString.equals("^")) {
@@ -561,7 +665,17 @@ public class DrinkPotion extends AbstractListener {
 							EffectEntry effect = potion.getEffect(nick);
 
 							if (effect != null) {
-								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
+								String action = "";
+								if (effect.action != null) {
+									System.out.println("Potion effect has action!");
+									if (potion.isNew)
+										action = effect.action.apply(nick);
+									else {
+										Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It tastes kinda oozes strangely but nothing seems to happen...");
+										return;
+									}
+								}
+								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick, action));
 							}
 						} catch (InvalidPotionException ex) {
 							Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
@@ -649,8 +763,8 @@ public class DrinkPotion extends AbstractListener {
 			int combinations = appearanceCount * consistencyCount;
 			int potionCount = potions.size();
 			int effectCount = 0;
-			for (String[] effect : effects) {
-				effectCount += PotionHelper.countEffectVariations(effect[0]);
+			for (EffectEntry effect : effects) {
+				effectCount += PotionHelper.countEffectVariations(effect.effectDrink);
 			}
 			float ratio = (float) effectCount / (float) combinations;
 			DecimalFormat format = new DecimalFormat("#.###");
@@ -672,7 +786,7 @@ public class DrinkPotion extends AbstractListener {
 					String consistency = consistencies.get(Integer.parseInt(potion[0])).getName();
 					String appearance = appearanceEntries.get(Integer.parseInt(potion[1])).getName();
 					EffectEntry entry = stringEffectEntryEntry.getValue();
-					potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(entry.Effect.replace("{user}", "User")).append("</td><td>").append(entry.Discoverer).append("</td></tr>");
+					potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(entry.effectDrink.replace("{user}", "User")).append("</td><td>").append(entry.discoverer).append("</td></tr>");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
