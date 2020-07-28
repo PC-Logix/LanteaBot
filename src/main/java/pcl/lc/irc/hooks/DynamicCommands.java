@@ -382,27 +382,27 @@ public class DynamicCommands extends AbstractListener {
 		}
 	}
 
-	public static void parseDynCommandAliases(String input, CommandsHaveBeenRun excludeList) {
-		StringBuilder output;
-		String aliasPattern = "%([a-zA-Z0-9]*?)%";
+	public static ArrayList<String> parseDynCommandAliases(String[] input, CommandsHaveBeenRun excludeList) {
+		ArrayList<String> commands = new ArrayList<>();
+		String aliasPattern = "%(\\w*?)%";
 		Pattern pattern = Pattern.compile(aliasPattern);
-		Matcher matcher = pattern.matcher(input);
+		Matcher matcher = pattern.matcher(input[0]);
 
 		while (matcher.find()) {
 			for (int i = 1; i <= matcher.groupCount(); i++) {
 				String match = matcher.group(i);
+				System.out.println("Match alias '" + match + "'");
 				if (!excludeList.hasCommand(match)) {
-					excludeList.addCommand(match);
-					parseDynCommandAliases(match, excludeList);
+					commands.add(match);
 				}
-				input = input.replace("%" + match + "%", "");
+				input[0] = input[0].replace("%" + match + "%", "");
 			}
 		}
+		return commands;
 	}
 
 	public static String parseDynCommandPlaceholders(String input, String user, String params) {
-
-		System.out.println("Done with aliases: '" + input + "'");
+		System.out.println("Parsing DynTags in: '" + input + "'");
 		if (input.startsWith("[lua]")) {
 			output = new StringBuilder();
 			output.append(runScriptInSandbox(input.replace("[lua]", "").trim()));
@@ -429,14 +429,22 @@ public class DynamicCommands extends AbstractListener {
 	}
 
 	public static void parseDynCommand(String command, String user, String target, String[] arguments){
+		parseDynCommand(command, user, target, arguments, new CommandsHaveBeenRun());
+	}
+	public static void parseDynCommand(String command, String user, String target, String[] arguments, CommandsHaveBeenRun excludeList){
 		String prefix = Config.commandprefix;
 
+		if (excludeList.hasCommand(command))
+			return;
+
+		ArrayList<String> commandAliases;
 		CommandItem com = CommandItem.GetByCommand(command.replace(prefix, "").toLowerCase());
 		if (com != null) {
 			String message = com.return_value;
-			parseDynCommandAliases(message, new CommandsHaveBeenRun());
+			String[] msg = new String[] {message};
+			commandAliases = parseDynCommandAliases(msg, excludeList);
 
-			message = parseDynCommandPlaceholders(message, user, String.join(" ", arguments));
+			message = parseDynCommandPlaceholders(msg[0], user, String.join(" ", arguments));
 
 			message = PotionHelper.replaceParamsInEffectString(message);
 
@@ -445,15 +453,24 @@ public class DynamicCommands extends AbstractListener {
 			} catch (Exception ignored) {}
 
 			Helper.AntiPings = Helper.getNamesFromTarget(target);
-			System.out.println("This is what's left: '" + message.replaceAll(" ", "") + "'");
-			if (message.replaceAll(" ", "").equals(""))
-				return;
-			if (message.startsWith("[action]")) {
-				message = message.replace("[action]", "");
-				Helper.sendAction(target, message);
+			System.out.println("This is what's left after aliases: '" + message.replaceAll(" ", "") + "'");
+			if (!message.replaceAll(" ", "").equals("")) {
+				if (message.startsWith("[action]")) {
+					message = message.replace("[action]", "");
+					Helper.sendAction(target, message);
+				} else {
+					Helper.sendMessage(target, message, user, true);
+				}
 			} else {
-				Helper.sendMessage(target, message, user, true);
+				System.out.println("Message empty in command '" + command + "'. Skipping sendMessage.");
 			}
+			for (String cmd : commandAliases) {
+				System.out.println("Execute command from alias '" + cmd + "'");
+				parseDynCommand(cmd, user, target, arguments, excludeList);
+				excludeList.addCommand(cmd);
+			}
+		} else {
+			System.out.println("No dynCommand '" + command + "' found.");
 		}
 	}
 
