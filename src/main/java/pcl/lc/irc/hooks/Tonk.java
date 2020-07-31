@@ -35,15 +35,10 @@ class PreparedStatementKeys {
  */
 public class Tonk extends AbstractListener {
 	private static final String numberFormat = "#.########";
-	private static final String tonk_record_key = "tonkrecord";
+	static final String tonk_record_key = "tonkrecord";
 	private static final String last_tonk_key = "lasttonk";
 	private static final String tonk_attempts_key = "tonkattempt";
-	private static final String tonk_snipe_key = "tonk_snipe";
-	private static final String tonk_snipe_shells_key = "tonk_snipe_shells";
-	private static final String tonk_snipe_last_hit_key = "tonk_snipe_last_hit";
 	private static final boolean applyBonusPoints = true;
-	private static final boolean enableTonkSnipe = true;
-	private static final int daysBetweenTonkSnipes = 5;
 	private static final int maxTonkFails = 2;
 	private Command local_command;
 	private Command reset_command;
@@ -565,14 +560,14 @@ public class Tonk extends AbstractListener {
 		tonk_destroy_scores.setHelpText("Wipes entries from the tonk scoreboard. Accepts as many names as arguments as will fit in a message.");
 
 		DecimalFormat tonkSnipePercentageFormat = new DecimalFormat("#");
-		tonk_snipe = new Command("tonksnipe", new CommandRateLimit(60)) {};
+		tonk_snipe = new Command("tonksnipe") {};
 		tonk_snipe.registerAlias("redshell", TonkSnipeType.RED.keyword);
 		tonk_snipe.registerAlias("blueshell", TonkSnipeType.BLUE.keyword);
 		tonk_snipe.registerAlias("greenshell", TonkSnipeType.GREEN.keyword);
 		tonk_snipe.registerAlias("shellcount", "count");
 		tonk_snipe.registerAlias("tonkshells", "count");
 		tonk_snipe.registerAlias("ammocount", "count");
-		tonk_snipe.setHelpText("If you are in last place on the tonk scoreboard you can attempt to snipe someone with a green, red, or blue shell. A successful snipe will remove a percentage (depending on the shell type) of the difference between your and their points, and give it to you. You can only succeed once. If it fails you can try again after " + daysBetweenTonkSnipes + " days.");
+		tonk_snipe.setHelpText("If you are in last place on the tonk scoreboard you can attempt to snipe someone with a green, red, or blue shell. A successful snipe will remove a percentage (depending on the shell type) of the difference between your and their points, and give it to you. You can only succeed once. If it fails you can try again after " + TonkSnipe.daysBetweenTonkSnipes + " days.");
 
 		tonk_snipe_blue = new Command(TonkSnipeType.BLUE.keyword) {
 			@Override
@@ -580,10 +575,10 @@ public class Tonk extends AbstractListener {
 				if (getMaxScoreboardPosition() <= 1) {
 					Helper.sendMessage(target, "There are not enough people on the scoreboard.", nick);
 				}
-				if (tonkSnipeCanUseType(nick, TonkSnipeType.BLUE)) {
+				if (TonkSnipe.canUseType(nick, TonkSnipeType.BLUE)) {
 					String leader = getByScoreboardPosition(1);
 					if (leader != null && !leader.equals(nick))
-						Helper.sendMessage(target, doSnipe(nick, leader, TonkSnipeType.BLUE), nick);
+						Helper.sendMessage(target, TonkSnipe.doSnipe(nick, leader, TonkSnipeType.BLUE), nick);
 					else if (leader == null)
 						Helper.sendMessage(target, "There seems to be no one in first position...", nick);
 					else
@@ -600,7 +595,7 @@ public class Tonk extends AbstractListener {
 				String targetUser = params.get(0);
 				try {
 					TonkSnipeType.RED.isValidTarget(nick, targetUser);
-					Helper.sendMessage(target, doSnipe(nick, targetUser, TonkSnipeType.RED), nick);
+					Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.RED), nick);
 				} catch (Exception e) {
 					Helper.sendMessage(target, e.getMessage(), nick);
 				}
@@ -614,7 +609,7 @@ public class Tonk extends AbstractListener {
 				String targetUser = params.get(0);
 				try {
 					TonkSnipeType.GREEN.isValidTarget(nick, targetUser);
-					Helper.sendMessage(target, doSnipe(nick, targetUser, TonkSnipeType.GREEN), nick);
+					Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.GREEN), nick);
 				} catch (Exception e) {
 					Helper.sendMessage(target, e.getMessage(), nick);
 				}
@@ -628,7 +623,7 @@ public class Tonk extends AbstractListener {
 				try {
 					ArrayList<String> shells = new ArrayList<>();
 					for (TonkSnipeType type : TonkSnipeType.values()) {
-						int shellCount = tonkSnipeShellCount(nick, type);
+						int shellCount = TonkSnipe.shellCount(nick, type);
 						shells.add(shellCount + " " + type.getDisplayName(shellCount != 1));
 					}
 					Helper.sendMessage(target, "You have " + Helper.oxfordJoin(shells, ", ", ", and "), nick);
@@ -639,14 +634,6 @@ public class Tonk extends AbstractListener {
 			}
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_count);
-	}
-
-	static void tonkSnipeSetSnipe(String sniper, String snipeTarget, boolean successful) {
-		try {
-			Database.storeJsonData(tonk_snipe_last_hit_key, sniper + ";" + snipeTarget + ";" + new Date().getTime() + ";" + (successful ? "true" : "false"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	static int GetHours(long tonk_time) {
@@ -674,7 +661,7 @@ public class Tonk extends AbstractListener {
 	 * @param nick Username
 	 * @return The scoreboard position of specified user. Returns -1 if users is not on scoreboard.
 	 */
-	private static int getScoreboardPosition(String nick) {
+	static int getScoreboardPosition(String nick) {
 		try {
 			PreparedStatement stop = Database.getPreparedStatement(PreparedStatementKeys.GET_TONK_USERS);
 			ResultSet result = stop.executeQuery();
@@ -742,7 +729,7 @@ public class Tonk extends AbstractListener {
 			this.user = user;
 		}
 	}
-	private static ScoreRemainingResult getScoreRemainingToAdvance(String nick) {
+	static ScoreRemainingResult getScoreRemainingToAdvance(String nick) {
 		try {
 			PreparedStatement stop = Database.getPreparedStatement(PreparedStatementKeys.GET_TONK_USERS);
 			ResultSet result = stop.executeQuery();
@@ -778,11 +765,12 @@ public class Tonk extends AbstractListener {
 			}
 
 			String sniperAmmo = "";
-			if (enableTonkSnipe) {
+			if (TonkSnipe.enableTonkSnipe) {
 				sniperAmmo += "<div style='margin-top:4px;'>" +
 						"<h2>Tonk Sniping</h2>" +
-						"<p>You can now launch attacks against someone. You have a certain number of each which resets on the complete reset only. You may be able to find more in certain ways. Find out how many by using the command '" + Config.commandprefix + "tonksnipe count' or one of its aliases.</p>" +
-						"<p>On a successful hit, determined by rolling a d20 and beating a DC, a percentage of the <b>difference</b> between yours and the targets points are removed from the target and transferred to you.</p>";
+						"<p>You can now launch attacks against someones. You have a certain number of each which resets on the complete reset only. You may be able to find more in certain ways. Find out how many by using the command '" + Config.commandprefix + "tonksnipe count' or one of its aliases.</p>" +
+						"<p>On a successful hit, determined by rolling a d20 and beating a DC, a percentage of the <b>difference</b> between yours and the targets points are removed from the target and transferred to you.</p>" +
+						"<p>Whether the snipe hit or missed the sniper cannot execute another snipe for 24 hours, and the target cannot be the target of a snipe from anyone for 24 hours.</p>";
 				sniperAmmo += "<ul>";
 				for (TonkSnipeType type : TonkSnipeType.values()) {
 					String canTarget = type.canTarget();
@@ -859,171 +847,6 @@ public class Tonk extends AbstractListener {
 	public static String displayTonkPoints(double points) {
 		DecimalFormat dec = new DecimalFormat(numberFormat);
 		return dec.format(points / 1000d);
-	}
-
-	private String doSnipe(String sniper, String snipeTarget, TonkSnipeType type) {
-		if (!enableTonkSnipe) {
-			return "You chuck the " + type.typeClass.toLowerCase() + " you got forward just before realizing it's just a plastic replica and it clatters to the ground in front of you...";
-		}
-		if (!tonkSnipeCanUseType(sniper, type)) {
-			return "You are out of " + type.getDisplayName(true);
-		}
-		long canTargetIn = tonkSnipeCanTargetIn(sniper, snipeTarget);
-		System.out.println("Can target in: " + canTargetIn);
-		if (canTargetIn > 0) {
-			return "You can't target this user right now. Try again in " + Helper.parseMilliseconds(canTargetIn).toString();
-		}
-		tonkSnipeSpend(sniper, type, 1);
-		int rollResult = Helper.rollDice("d20").getSum();
-		boolean snipeSuccess = rollResult >= type.hitDC;
-		tonkSnipeSetSnipe(sniper, snipeTarget, snipeSuccess);
-		if (snipeSuccess) {
-			String keySniper = tonk_record_key + "_" + sniper;
-			String keyTarget = tonk_record_key + "_" + snipeTarget;
-			double pointsSniper = 0;
-			double pointsTarget = 0;
-			try {
-				pointsSniper = Double.parseDouble(Database.getJsonData(keySniper));
-				pointsTarget = Double.parseDouble(Database.getJsonData(keyTarget));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			double diff = pointsTarget - pointsSniper;
-			if (diff > 0) {
-				int prePos = getScoreboardPosition(sniper);
-				diff = diff * type.pointTransferPercentage;
-				try {
-					double pointsLastNew = pointsSniper + diff;
-					double pointsTargetNew = pointsTarget - diff;
-					Database.storeJsonData(keySniper, String.valueOf(pointsLastNew));
-					Database.storeJsonData(keyTarget, String.valueOf(pointsTargetNew));
-					int postPos = getScoreboardPosition(sniper);
-					String pos = (prePos == postPos ? " Position #" + postPos : " Position #" + prePos + " => #" + postPos);
-					String overtook = "";
-					if (prePos != postPos)
-						overtook = " (Overtook " + getByScoreboardPosition(postPos + 1) + ")";
-
-					String advance = "";
-					ScoreRemainingResult sr = getScoreRemainingToAdvance(sniper);
-					if (sr != null && sr.user != null) {
-						advance = " Need " + displayTonkPoints(sr.score - pointsLastNew) + " more points to pass " + Helper.antiPing(sr.user) + "!";
-					}
-					return "You hit " + snipeTarget + "! They lost " + displayTonkPoints(diff) + " tonk points which you gain! Congratulations!" + pos + overtook + advance;
-				} catch (Exception e) {
-					e.printStackTrace();
-					return "Unable to save new scores...";
-				}
-			} else
-				return "You hit " + snipeTarget + " but nothing happened... (Point difference was not greater than zero)";
-		}
-		return "Unfortunately you missed with a " + rollResult + " vs " + type.hitDC + ".";
-	}
-
-	public static int tonkSnipeShellCount(String nick, TonkSnipeType type) {
-		try {
-			String key = tonk_snipe_shells_key + "_" + nick;
-			HashMap<String, Integer> shells = Database.getJsonHashMapInt(key);
-			if (shells == null || !shells.containsKey(type.keyword)) {
-				System.out.println("No data matched key '" + type.keyword + "'. Assuming default value.");
-				return type.maxUses;
-			}
-			System.out.println(shells);
-			return type.maxUses - shells.get(type.keyword);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	/**
-	 * @param nick A username
-	 * @param type The shell type
-	 * @return True if user has at least one use of the specified ammo type, otherwise false
-	 */
-	public static boolean tonkSnipeCanUseType(String nick, TonkSnipeType type) {
-		return tonkSnipeShellCount(nick, type) > 0;
-	}
-
-	/**
-	 * @param sniper The shooter's username
-	 * @param target The target's username
-	 * @return Returns the number of milliseconds until the user can target this target again, or 0 if they can target them now. Pass to Helper.parseMilliseconds to get a time string.
-	 */
-	public static long tonkSnipeCanTargetIn(String sniper, String target) {
-		String lastSnipe = null;
-		try {
-			lastSnipe = Database.getJsonData(tonk_snipe_last_hit_key);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (!lastSnipe.equals("")) {
-			String[] data = lastSnipe.split(";");
-			String dataSniper = data[0];
-			String dataTarget = data[1];
-			Date timeOfHit = new Date(Long.parseLong(data[2]));
-			Date compareTime = DateTime.now().minusHours(24).toDate();
-			if (dataSniper.equals(sniper) && dataTarget.equals(target))
-				compareTime = DateTime.now().minusHours(48).toDate();
-			if (dataTarget.equals(target) && timeOfHit.after(compareTime))
-				return Math.max(0, timeOfHit.getTime() - compareTime.getTime());
-		}
-		return 0;
-	}
-
-	/**
-	 * @param user The shooter's username
-	 * @param target The target's username
-	 * @return Returns true if the user can target this target right now, or false otherwise.
-	 */
-	public static boolean tonkSnipeCanTarget(String user, String target) {
-		return tonkSnipeCanTargetIn(user, target) == 0;
-	}
-
-	public static void tonkSnipeSpend(String nick, TonkSnipeType type) {
-		tonkSnipeSpend(nick, type, 1);
-	}
-
-	public static void tonkSnipeSpend(String nick, TonkSnipeType type, int uses) {
-		try {
-			HashMap<String, Integer> snipes;
-			String key = tonk_snipe_shells_key + "_" + nick;
-			snipes = Database.getJsonHashMapInt(key);
-			if (snipes != null) {
-				if (snipes.containsKey(type.keyword))
-					snipes.put(type.keyword, snipes.get(type.keyword) + uses);
-				else
-					snipes.put(type.keyword, uses);
-			} else {
-				snipes = new HashMap<>();
-				snipes.put(type.keyword, uses);
-			}
-			Database.storeJsonData(key, snipes);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void tonkSnipeRefill(String nick, TonkSnipeType type) {
-		tonkSnipeRefill(nick, type, 1);
-	}
-
-	public static void tonkSnipeRefill(String nick, TonkSnipeType type, int uses) {
-		try {
-			String key = tonk_snipe_shells_key + "_" + nick;
-			HashMap<String, Integer> snipes = Database.getJsonHashMapInt(key);
-			if (snipes != null) {
-				if (snipes.containsKey(type.keyword))
-					snipes.put(type.keyword, snipes.get(type.keyword) - uses);
-				else
-					snipes.put(type.keyword, -uses);
-			} else {
-				snipes = new HashMap<>();
-				snipes.put(type.keyword, -uses);
-			}
-			Database.storeJsonData(key, snipes);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public static void tonkPointsAdd(String user, int add) {
@@ -1125,6 +948,205 @@ public class Tonk extends AbstractListener {
 			long tonkTime = Long.parseLong(Database.getJsonData(last_tonk_key));
 			tonkTime += addTime;
 			Database.storeJsonData(last_tonk_key, String.valueOf(tonkTime));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+class TonkSnipe {
+	static final boolean enableTonkSnipe = true;
+	static final String shells_key = "tonk_snipe_shells";
+	static final String last_hit_key = "tonk_snipe_last_hit";
+	static final String last_snipe_key = "tonk_snipe_last_snipe";
+	static final int daysBetweenTonkSnipes = 5;
+
+	static String doSnipe(String sniper, String snipeTarget, Tonk.TonkSnipeType type) {
+		if (!enableTonkSnipe) {
+			return "You chuck the " + type.typeClass.toLowerCase() + " you got forward just before realizing it's just a plastic replica and it clatters to the ground in front of you...";
+		}
+		if (!canUseType(sniper, type)) {
+			return "You are out of " + type.getDisplayName(true);
+		}
+		long canSnipeIn = canSnipeIn(sniper);
+		System.out.println("Can snipe in: " + canSnipeIn);
+		if (canSnipeIn > 0)
+			return "You can't snipe right now. Try again in " + Helper.parseMilliseconds(canSnipeIn).toString() + ".";
+		long canTargetIn = canBeTargetedIn(snipeTarget);
+		System.out.println("Can target in: " + canTargetIn);
+		if (canTargetIn > 0)
+			return "You can't target this user right now. Try again in " + Helper.parseMilliseconds(canTargetIn).toString() + ".";
+		spend(sniper, type, 1);
+		int rollResult = Helper.rollDice("d20").getSum();
+		boolean snipeSuccess = rollResult >= type.hitDC;
+		setSnipe(sniper, snipeTarget);
+		if (snipeSuccess) {
+			String keySniper = Tonk.tonk_record_key + "_" + sniper;
+			String keyTarget = Tonk.tonk_record_key + "_" + snipeTarget;
+			double pointsSniper = 0;
+			double pointsTarget = 0;
+			try {
+				pointsSniper = Double.parseDouble(Database.getJsonData(keySniper));
+				pointsTarget = Double.parseDouble(Database.getJsonData(keyTarget));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			double diff = pointsTarget - pointsSniper;
+			if (diff > 0) {
+				int prePos = Tonk.getScoreboardPosition(sniper);
+				diff = diff * type.pointTransferPercentage;
+				try {
+					double pointsLastNew = pointsSniper + diff;
+					double pointsTargetNew = pointsTarget - diff;
+					Database.storeJsonData(keySniper, String.valueOf(pointsLastNew));
+					Database.storeJsonData(keyTarget, String.valueOf(pointsTargetNew));
+					int postPos = Tonk.getScoreboardPosition(sniper);
+					String pos = (prePos == postPos ? " Position #" + postPos : " Position #" + prePos + " => #" + postPos);
+					String overtook = "";
+					if (prePos != postPos)
+						overtook = " (Overtook " + Tonk.getByScoreboardPosition(postPos + 1) + ")";
+
+					String advance = "";
+					Tonk.ScoreRemainingResult sr = Tonk.getScoreRemainingToAdvance(sniper);
+					if (sr != null && sr.user != null) {
+						advance = " Need " + Tonk.displayTonkPoints(sr.score - pointsLastNew) + " more points to pass " + Helper.antiPing(sr.user) + "!";
+					}
+					return "You hit " + snipeTarget + "! They lost " + Tonk.displayTonkPoints(diff) + " tonk points which you gain! Congratulations!" + pos + overtook + advance;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return "Unable to save new scores...";
+				}
+			} else
+				return "You hit " + snipeTarget + " but nothing happened... (Point difference was not greater than zero)";
+		}
+		return "Unfortunately you missed with a " + rollResult + " vs " + type.hitDC + ".";
+	}
+
+	static int shellCount(String nick, Tonk.TonkSnipeType type) {
+		try {
+			String key = shells_key + "_" + nick;
+			HashMap<String, Integer> shells = Database.getJsonHashMapInt(key);
+			if (shells == null || !shells.containsKey(type.keyword)) {
+				System.out.println("No data matched key '" + type.keyword + "'. Assuming default value.");
+				return type.maxUses;
+			}
+			System.out.println(shells);
+			return type.maxUses - shells.get(type.keyword);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * @param nick A username
+	 * @param type The shell type
+	 * @return True if user has at least one use of the specified ammo type, otherwise false
+	 */
+	static boolean canUseType(String nick, Tonk.TonkSnipeType type) {
+		return shellCount(nick, type) > 0;
+	}
+
+	/**
+	 *
+	 * @param sniper The user who is attempting to snipe
+	 * @return The number of milliseconds the sniper needs to wait before they can snipe again.
+	 */
+	static long canSnipeIn(String sniper) {
+		String key = last_snipe_key + "_" + sniper;
+		try {
+			String lastSnipe = Database.getJsonData(key);
+			if (!lastSnipe.equals("")) {
+				Date timeOfLastSnipe = new Date(Long.parseLong(lastSnipe));
+				Date compareTime = DateTime.now().minusHours(24).toDate();
+				return Math.max(0, timeOfLastSnipe.getTime() - compareTime.getTime());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * @param target The user targeted by a snipe
+	 * @return The number of milliseconds the target has left before they are no longer immune to being sniped.
+	 */
+	static long canBeTargetedIn(String target) {
+		String key = last_hit_key + "_" + target;
+		try {
+			String lastSniped = Database.getJsonData(key);
+			if (!lastSniped.equals("")) {
+				Date timeOfHit = new Date(Long.parseLong(lastSniped));
+				Date compareTime = DateTime.now().minusHours(24).toDate();
+				return Math.max(0, timeOfHit.getTime() - compareTime.getTime());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * @param target The target's username
+	 * @return Returns true if the user can target this target right now, or false otherwise.
+	 */
+	static boolean canTarget(String target) {
+		return canBeTargetedIn(target) == 0;
+	}
+
+	static void spend(String nick, Tonk.TonkSnipeType type) {
+		spend(nick, type, 1);
+	}
+
+	static void spend(String nick, Tonk.TonkSnipeType type, int uses) {
+		try {
+			HashMap<String, Integer> snipes;
+			String key = shells_key + "_" + nick;
+			snipes = Database.getJsonHashMapInt(key);
+			if (snipes != null) {
+				if (snipes.containsKey(type.keyword))
+					snipes.put(type.keyword, snipes.get(type.keyword) + uses);
+				else
+					snipes.put(type.keyword, uses);
+			} else {
+				snipes = new HashMap<>();
+				snipes.put(type.keyword, uses);
+			}
+			Database.storeJsonData(key, snipes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	static void refill(String nick, Tonk.TonkSnipeType type) {
+		refill(nick, type, 1);
+	}
+
+	static void refill(String nick, Tonk.TonkSnipeType type, int uses) {
+		try {
+			String key = shells_key + "_" + nick;
+			HashMap<String, Integer> snipes = Database.getJsonHashMapInt(key);
+			if (snipes != null) {
+				if (snipes.containsKey(type.keyword))
+					snipes.put(type.keyword, snipes.get(type.keyword) - uses);
+				else
+					snipes.put(type.keyword, -uses);
+			} else {
+				snipes = new HashMap<>();
+				snipes.put(type.keyword, -uses);
+			}
+			Database.storeJsonData(key, snipes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	static void setSnipe(String sniper, String snipeTarget) {
+		try {
+			String keyTarget = last_hit_key + "_" + snipeTarget;
+			String keySniper = last_snipe_key + "_" + sniper;
+			Database.storeJsonData(keyTarget, String.valueOf(new Date().getTime()));
+			Database.storeJsonData(keySniper, String.valueOf(new Date().getTime()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

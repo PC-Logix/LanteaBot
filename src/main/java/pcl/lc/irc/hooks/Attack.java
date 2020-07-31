@@ -3,15 +3,11 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.utils.*;
 
-import javax.swing.Action;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Caitlyn

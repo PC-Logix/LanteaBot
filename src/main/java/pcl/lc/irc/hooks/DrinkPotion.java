@@ -438,20 +438,35 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} barely manages to catch a green shell that appears in front of them!", new Function<String, String>() {
 			@Override
 			public String apply(String user) {
-				Tonk.tonkSnipeRefill(user, Tonk.TonkSnipeType.GREEN);
+				TonkSnipe.refill(user, Tonk.TonkSnipeType.GREEN);
 				return "";
 			}
 		}));
 		effects.add(new EffectEntry("{user} barely manages to catch a red shell that appears in front of them!", new Function<String, String>() {
 			@Override
 			public String apply(String user) {
-				Tonk.tonkSnipeRefill(user, Tonk.TonkSnipeType.RED);
+				TonkSnipe.refill(user, Tonk.TonkSnipeType.RED);
 				return "";
 			}
 		}));
 		effects.add(new EffectEntry("{user} feels like they need to drink {appearance_p_lc} potion."));
 		effects.add(new EffectEntry("{user} feels like they need to drink {consistency_p_lc} potion."));
 		System.out.println("Registered " + effects.size() + " effects!");
+
+		if (IRCBot.getDebug()) {
+			effects = new ArrayList<>();
+			effects.add(new EffectEntry("The bottle turns into a piece of bacon. You have found {action} of bacon.",
+					"A piece of bacon appears in front of {user}.", new Function<String, String>() {
+				@Override
+				public String apply(String s) {
+					if (!baconMap.containsKey(s))
+						baconMap.put(s, 0);
+					int bacon = baconMap.get(s) + 1;
+					baconMap.put(s, bacon);
+					return bacon + " piece" + (bacon == 1 ? "" : "s");
+				}
+			}));
+		}
 
 		//Never end with punctuation and always start with a space
 		//See above for valid tags
