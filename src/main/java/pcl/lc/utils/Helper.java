@@ -1039,11 +1039,19 @@ public class Helper {
 			new String[]{"a", "Poofy cloud"},
 			new String[]{"a", "Hard cloud"},
 			new String[]{"a", "Pointy cloud"},
+			new String[]{"a", "Soft cloud"},
+			new String[]{"an", "Angry cloud"},
+			new String[]{"a", "Nice cloud"},
 			new String[]{"", "Another settlement that needs your help"},
 			new String[]{"a", "baseball cap with the Starbucks logo on it"},
 			new String[]{"a", "baseball cap with the McDonalds logo on it"},
 			new String[]{"a", "baseball cap with the IKEA logo on it"},
 			new String[]{"a", "baseball cap with the Walmart logo on it"},
+			new String[]{"a", "baseball cap with the BuyNLarge logo on it"}, //Wall-E
+			new String[]{"a", "baseball cap with the Mom's Friendly Robot Company logo on it"}, // Futurama
+			new String[]{"a", "baseball cap with the Octan logo on it"}, // LEGO
+			new String[]{"", "The perfect hiding place"},
+			new String[]{"an", "Incomplete ce"},
 	};
 
 	public static int getGarbageItemCount() {
