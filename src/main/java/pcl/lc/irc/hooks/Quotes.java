@@ -55,11 +55,6 @@ public class Quotes extends AbstractListener {
 	protected void initHook() {
 		httpd.registerContext("/quotes", new QuoteHandler(), "Quotes");
 		initCommands();
-		IRCBot.registerCommand(quote);
-		quote.registerAlias("q");
-		quote.registerSubCommand(add);
-		quote.registerSubCommand(delete);
-		quote.registerSubCommand(list);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Quotes(id INTEGER PRIMARY KEY, user, data)");
 		Database.addUpdateQuery(3, "ALTER TABLE Quotes ADD added_by DEFAULT NULL");
 		Database.addPreparedStatement("addQuote","INSERT INTO Quotes(id, user, data, added_by) VALUES (NULL, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
@@ -123,8 +118,10 @@ public class Quotes extends AbstractListener {
 					}
 				}
 			}
-		}; quote.setHelpText("Returns quotes from the quote database. Also Has sub-commands: add, del");
-		add = new Command("add", true) {
+		};
+		quote.setHelpText("Returns quotes from the quote database. Also Has sub-commands: add, del");
+
+		add = new Command("add") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 1) {
@@ -149,8 +146,10 @@ public class Quotes extends AbstractListener {
 					Helper.sendMessage(target, "An error occurred while trying to save the quote.", nick);
 				}
 			}
-		}; add.setHelpText("Adds a quote to the database");
-		delete = new Command("delete", null, true, true, Permissions.ADMIN) {
+		};
+		add.setHelpText("Adds a quote to the database");
+
+		delete = new Command("delete", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 0) {
@@ -170,9 +169,11 @@ public class Quotes extends AbstractListener {
 					Helper.sendMessage(target, "An error occurred while trying to set the value.", nick);
 				}
 			}
-		}; delete.setHelpText("Removes a quote from the database");
+		};
+		delete.setHelpText("Removes a quote from the database");
 		delete.registerAlias("del");
-		list = new Command("list", true) {
+
+		list = new Command("list") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 0) {
@@ -204,13 +205,21 @@ public class Quotes extends AbstractListener {
 					}
 				}
 			}
-		}; list.setHelpText("Returns list of ids for quotes belonging to user as well as their total quote count");
+		};
+		list.setHelpText("Returns list of ids for quotes belonging to user as well as their total quote count");
+
 		quotes = new Command("quotes") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, httpd.getBaseDomain() + "/quotes", nick);
 			}
 		};
+
+		IRCBot.registerCommand(quote);
+		quote.registerAlias("q");
+		quote.registerSubCommand(add);
+		quote.registerSubCommand(delete);
+		quote.registerSubCommand(list);
 	}
 
 	static class QuoteHandler implements HttpHandler {

@@ -2,7 +2,6 @@ package pcl.lc.irc;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.SyntaxGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,7 @@ public class Command {
 	private ArrayList<String> aliases;
 	private ArrayList<String> aliasesFixedArguments;
 	private ArrayList<Command> subCommands;
-	private boolean isSubCommand;
+	private ArrayList<Command> parentCommands;
 	private boolean isEnabled;
 	private String minRank;
 	private String helpText;
@@ -32,37 +31,29 @@ public class Command {
 	public String callingRelay = null;
 
 	public Command(String command) {
-		this(command, null, false, true, Permissions.EVERYONE);
+		this(command, null, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit) {
-		this(command, rateLimit, false, true, Permissions.EVERYONE);
-	}
-
-	public Command(String command, CommandRateLimit rateLimit, boolean isSubCommand) {
-		this(command, rateLimit, isSubCommand, true, Permissions.EVERYONE);
+		this(command, rateLimit, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit, String minRank) {
-		this(command, rateLimit, false, true, minRank);
+		this(command, rateLimit, true, minRank);
 	}
 
 	public Command(String command, String minRank) {
-		this(command, null, false, true, minRank);
+		this(command, null, true, minRank);
 	}
 
-	public Command(String command, boolean isSubCommand) {
-		this(command, null, isSubCommand, true, Permissions.EVERYONE);
-	}
-
-	public Command(String command, CommandRateLimit rateLimit, boolean isSubCommand, boolean isEnabled, String minRank) {
+	public Command(String command, CommandRateLimit rateLimit, boolean isEnabled, String minRank) {
 		this.command = command;
 		this.className = Thread.currentThread().getStackTrace()[2].getClassName();
 		this.rateLimit = rateLimit;
 		this.aliases = new ArrayList<>();
 		this.aliasesFixedArguments = new ArrayList<>();
 		this.subCommands = new ArrayList<>();
-		this.isSubCommand = isSubCommand;
+		this.parentCommands = new ArrayList<>();
 		this.isEnabled = isEnabled;
 		this.minRank = minRank;
 		this.helpText = "";
@@ -76,8 +67,8 @@ public class Command {
 		return this.helpText;
 	}
 
-	public void setActualCommand(String actialCommand) {
-		this.actualCommand = actialCommand;
+	public void setActualCommand(String actualCommand) {
+		this.actualCommand = actualCommand;
 	}
 
 	public void setPermissionLevel(String minRank) {
@@ -145,7 +136,7 @@ public class Command {
 	 */
 	public long shouldExecute(String command, GenericMessageEvent event, String nick) {
 		String prefix = "";
-		if (!this.isSubCommand)
+		if (this.parentCommands.size() == 0)
 			prefix = Config.commandprefix;
 
 		if (!command.toLowerCase().equals(prefix + this.command.toLowerCase()) && !hasAlias(command))
@@ -230,18 +221,32 @@ public class Command {
 	}
 
 	public ArrayList<String> getAliases() {
-		return this.aliases;
+		ArrayList<String> aliases = new ArrayList<>();
+		for (String alias : this.aliases) {
+			String parent = "";
+			if (this.parentCommands.size() > 0)
+				parent = this.parentCommands.get(0).command + " ";
+			aliases.add(Config.commandprefix + parent + alias);
+		}
+		for (Command cmd : this.parentCommands) {
+			for (int i = 0; i < cmd.aliases.size(); i++) {
+				if (cmd.aliasesFixedArguments.get(i).equals(this.command))
+					aliases.add(Config.commandprefix + cmd.aliases.get(i));
+			}
+		}
+		return aliases;
 	}
 
 	public void registerSubCommand(Command command) {
 		if (!this.subCommands.contains(command)) {
-			command.isSubCommand = true;
+			command.parentCommands.add(this);
 			this.subCommands.add(command);
 		}
 	}
 
 	public void unregisterSubCommand(Command command) {
 		if (this.subCommands.contains(command)) {
+			command.parentCommands.remove(this);
 			this.subCommands.remove(command);
 		}
 	}

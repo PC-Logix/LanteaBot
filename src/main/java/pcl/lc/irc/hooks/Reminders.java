@@ -108,7 +108,7 @@ public class Reminders extends AbstractListener {
 		};
 		remindSomeone.setHelpText("'remindthem gamax92 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot) to gamax92");
 		
-		list = new Command("list", true) {
+		list = new Command("list") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {

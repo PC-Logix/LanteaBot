@@ -64,13 +64,6 @@ public class Inventory extends AbstractListener {
 	@Override
 	protected void initHook() {
 		initCommands();
-		local_command.registerSubCommand(sub_command_list);
-		local_command.registerSubCommand(sub_command_create);
-		local_command.registerSubCommand(sub_command_remove);
-		local_command.registerSubCommand(sub_command_preserve);
-		local_command.registerSubCommand(sub_command_unpreserve);
-		local_command.registerSubCommand(sub_command_count);
-		local_command.registerSubCommand(sub_command_favourite);
 		IRCBot.registerCommand(local_command);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Inventory(id INTEGER PRIMARY KEY, item_name, uses_left INTEGER)");
 		Database.addUpdateQuery(2, "ALTER TABLE Inventory ADD is_favourite BOOLEAN DEFAULT 0 NULL");
@@ -110,7 +103,7 @@ public class Inventory extends AbstractListener {
 		};
 		local_command.registerAlias("inv");
 		local_command.setHelpText("Interact with the bots inventory");
-		sub_command_list = new Command("list", true) {
+		sub_command_list = new Command("list") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
@@ -141,7 +134,7 @@ public class Inventory extends AbstractListener {
 				}
 			}
 		};
-		sub_command_count = new Command("count", true) {
+		sub_command_count = new Command("count") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				try {
@@ -152,7 +145,7 @@ public class Inventory extends AbstractListener {
 				}
 			}
 		};
-		sub_command_create = new Command("create", new CommandRateLimit(60), true) {
+		sub_command_create = new Command("create", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.toLowerCase().equals("myself") || params.toLowerCase().equals(IRCBot.getOurNick()))
@@ -169,7 +162,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_create.registerAlias("add");
-		sub_command_remove = new Command("remove", new CommandRateLimit(60), true) {
+		sub_command_remove = new Command("remove", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
@@ -188,7 +181,7 @@ public class Inventory extends AbstractListener {
 		};
 		sub_command_remove.registerAlias("rem");
 		sub_command_remove.registerAlias("del");
-		sub_command_preserve = new Command("preserve", true) {
+		sub_command_preserve = new Command("preserve") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
@@ -206,7 +199,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_preserve.registerAlias("pre");
-		sub_command_unpreserve = new Command("unpreserve", true) {
+		sub_command_unpreserve = new Command("unpreserve") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
@@ -242,6 +235,14 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_favourite.registerAlias("fav");
+
+		local_command.registerSubCommand(sub_command_list);
+		local_command.registerSubCommand(sub_command_create);
+		local_command.registerSubCommand(sub_command_remove);
+		local_command.registerSubCommand(sub_command_preserve);
+		local_command.registerSubCommand(sub_command_unpreserve);
+		local_command.registerSubCommand(sub_command_count);
+		local_command.registerSubCommand(sub_command_favourite);
 	}
 
 	static class InventoryHandler implements HttpHandler {
