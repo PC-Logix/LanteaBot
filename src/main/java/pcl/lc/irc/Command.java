@@ -118,17 +118,17 @@ public class Command {
 		return this.rateLimit;
 	}
 
-	public long getLastExecution() {
-		return this.rateLimit.getLastExecution();
+	public long getLastExecution(String nick) {
+		return this.rateLimit.getLastExecution(nick);
 	}
 
-	public void setLastExecution(Integer lastExecution) {
-		this.rateLimit.setLastExecution(lastExecution);
+	public void setLastExecution(String nick, Integer lastExecution) {
+		this.rateLimit.setLastExecution(nick, lastExecution);
 	}
 
-	public void updateLastExecution() {
+	public void updateLastExecution(String nick) {
 		if (this.rateLimit != null)
-			this.rateLimit.updateLastExecution();
+			this.rateLimit.updateLastExecution(nick);
 	}
 
 	public long shouldExecute(String command, GenericMessageEvent event) {
@@ -160,7 +160,7 @@ public class Command {
 			return IGNORED;
 		if (this.rateLimit == null)
 			return 0;
-		return this.rateLimit.getHeatValue();
+		return this.rateLimit.getHeatValue(nick);
 	}
 
 	public boolean shouldExecuteBool(String command, GenericMessageEvent event) {
@@ -313,8 +313,7 @@ public class Command {
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
 			System.out.println("Error when attempting to execute '" + this.actualCommand + "'. Doesn't match '" + command + "'");
 			return false;
-		}
-		else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
+		} else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
 			this.actualCommand = command.replace(Config.commandprefix, "");
 			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
 			if (aliasIndex != -1) {
@@ -324,7 +323,7 @@ public class Command {
 				forcedParams.addAll(params);
 				params = forcedParams;
 			}
-			this.updateLastExecution();
+			this.updateLastExecution(nick);
 			if (!ignore_sub_commands && params.size() > 0) {
 				String firstParam = params.get(0);
 				for (Command sub : this.subCommands) {

@@ -30,7 +30,6 @@ public class Juggle extends AbstractListener {
 		local_command = new Command("juggle", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				local_command.updateLastExecution();
 				int item_amount = 3;
 				try {
 					item_amount = Integer.parseInt(params.get(0));
