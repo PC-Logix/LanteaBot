@@ -49,8 +49,8 @@ public class GenericEventListener extends AbstractListener{
 		}
 		try {
 			if (split[0].startsWith(Config.commandprefix)) {
-				command = split[0];
-				actualCommand = command.replaceFirst("\\" + Config.commandprefix, "").toLowerCase();
+				command = split[0].toLowerCase();
+				actualCommand = command.replaceFirst("\\" + Config.commandprefix, "");
 				System.out.println("Direct command '" + command + "' received");
 				user = event.getUser().getNick();
 				params = Arrays.copyOfRange(split, 1, split.length);
