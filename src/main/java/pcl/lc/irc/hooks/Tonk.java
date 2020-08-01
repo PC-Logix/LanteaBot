@@ -768,7 +768,7 @@ public class Tonk extends AbstractListener {
 			if (TonkSnipe.enableTonkSnipe) {
 				sniperAmmo += "<div style='margin-top:4px;'>" +
 						"<h2>Tonk Sniping</h2>" +
-						"<p>You can now launch attacks against someones. You have a certain number of each which resets on the complete reset only. You may be able to find more in certain ways. Find out how many by using the command '" + Config.commandprefix + "tonksnipe count' or one of its aliases.</p>" +
+						"<p>You can now launch attacks against someones tonk score. You have a certain number of each which resets on the complete reset only. You may be able to find more in certain ways. Find out how many by using the command '" + Config.commandprefix + "tonksnipe count' or one of its aliases.</p>" +
 						"<p>On a successful hit, determined by rolling a d20 and beating a DC, a percentage of the <b>difference</b> between yours and the targets points are removed from the target and transferred to you.</p>" +
 						"<p>Whether the snipe hit or missed the sniper cannot execute another snipe for 24 hours, and the target cannot be the target of a snipe from anyone for 24 hours.</p>";
 				sniperAmmo += "<ul>";
