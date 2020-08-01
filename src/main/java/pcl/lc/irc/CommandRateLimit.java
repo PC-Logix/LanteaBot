@@ -7,6 +7,7 @@ public class CommandRateLimit {
 	private int limit;
 	private long lastExecution;
 	private boolean perUserLimit;
+	private boolean ignorePermissions;
 	private HashMap<String, Long> lastExecutionPerUser;
 
 	public CommandRateLimit(int limitSeconds) {
@@ -14,18 +15,23 @@ public class CommandRateLimit {
 	}
 
 	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds) {
-		this(limitHours, limitMinutes, limitSeconds, false);
+		this(limitHours, limitMinutes, limitSeconds, false, false);
 	}
 
 	public CommandRateLimit(int limitSeconds, boolean perUserLimit) {
-		this(0, 0, limitSeconds, perUserLimit);
+		this(0, 0, limitSeconds, perUserLimit, false);
 	}
 
-	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds, boolean perUserLimit) {
+	public CommandRateLimit(int limitSeconds, boolean perUserLimit, boolean ignorePermissions) {
+		this(0, 0, limitSeconds, perUserLimit, ignorePermissions);
+	}
+
+	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds, boolean perUserLimit, boolean ignorePermissions) {
 		this.lastExecution = 0;
 		this.lastExecutionPerUser = new HashMap<>();
 		this.limit = limitSeconds + (limitMinutes * 60) + (limitHours * 60 * 60);
 		this.perUserLimit = perUserLimit;
+		this.ignorePermissions = ignorePermissions;
 	}
 
 	public void setLimitSeconds(int seconds) {
@@ -94,5 +100,13 @@ public class CommandRateLimit {
 			return new Timestamp(0);
 		}
 		return new Timestamp(this.lastExecution);
+	}
+
+	public boolean getIgnorePermissions() {
+		return this.ignorePermissions;
+	}
+
+	public void setIgnorePermissions(boolean ignorePermissions) {
+		this.ignorePermissions = ignorePermissions;
 	}
 }

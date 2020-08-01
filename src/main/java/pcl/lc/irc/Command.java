@@ -1,11 +1,9 @@
 package pcl.lc.irc;
 
-import com.sun.corba.se.impl.copyobject.FallbackObjectCopierImpl;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SyntaxGroup;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
@@ -313,7 +311,7 @@ public class Command {
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
 			System.out.println("Error when attempting to execute '" + this.actualCommand + "'. Doesn't match '" + command + "'");
 			return false;
-		} else if (shouldExecute == 0 || Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN)) {
+		} else if (shouldExecute == 0 || (!this.rateLimit.getIgnorePermissions() && Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN))) {
 			this.actualCommand = command.replace(Config.commandprefix, "");
 			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
 			if (aliasIndex != -1) {

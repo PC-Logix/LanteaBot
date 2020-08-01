@@ -23,7 +23,7 @@ public class Jiggle extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("jiggle", new CommandRateLimit(120, true)) {
+		local_command = new Command("jiggle", new CommandRateLimit(120, true, true)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int number = 0;
