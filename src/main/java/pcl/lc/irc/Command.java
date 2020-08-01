@@ -221,6 +221,10 @@ public class Command {
 	}
 
 	public ArrayList<String> getAliases() {
+		return this.aliases;
+	}
+
+	public ArrayList<String> getAliasesDisplay() {
 		ArrayList<String> aliases = new ArrayList<>();
 		for (String alias : this.aliases) {
 			String parent = "";
