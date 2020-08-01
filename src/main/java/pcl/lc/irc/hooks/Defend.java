@@ -158,7 +158,7 @@ public class Defend extends AbstractListener {
 						}
 						clearEventFor(nick);
 					} else {
-						Helper.sendMessage(target, "There's nothing to defend against, or you were too slow...");
+						Helper.sendMessage(target, "Nothing to defend against within the last " + reactionTimeMinutes + " minutes");
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
