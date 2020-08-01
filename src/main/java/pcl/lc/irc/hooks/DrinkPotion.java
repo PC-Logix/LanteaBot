@@ -560,7 +560,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 					} else {
 						if (specialFluids.containsKey(params.get(0))) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick));
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick, ""));
 							return;
 						}
 					}
@@ -656,7 +656,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 
 						if (specialFluids.containsKey(potionString)) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), splashTarget, nick));
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), splashTarget, nick, ""));
 							return;
 						}
 
