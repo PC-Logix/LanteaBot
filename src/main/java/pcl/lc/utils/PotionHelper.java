@@ -213,7 +213,7 @@ public class PotionHelper {
 				return input.replace(tag, Helper.getRandomGarbageItem());
 			return input.replace(tag, item.getNameRaw());
 		}),
-		ITEM_JUNK("item_junk", "{junk_or_item}", "Returns either a random item from the inventory or a junk item.", (input) -> {
+		ITEM_JUNK("item_junk", "{junk_or_item}", "Returns either a random item from the inventory or a junk item, without prefix, all lower case.", (input) -> {
 			String junkoritem = "nothing";
 			try {
 				junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
@@ -223,6 +223,17 @@ public class PotionHelper {
 				//Ignore no item found
 			}
 			return input.replace("{junk_or_item}", junkoritem);
+		}),
+		ITEM_JUNK_PREFIX("item_junk_prefix", "{junk_or_item_p}", "Returns either a random item from the inventory or a junk item, with prefix, all lower case.", (input) -> {
+			String junkoritem = "nothing";
+			try {
+				junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
+				if (Helper.getRandomInt(0, 1) == 1)
+					junkoritem = Helper.getRandomGarbageItem(true, true);
+			} catch (Exception ex) {
+				//Ignore no item found
+			}
+			return input.replace("{junk_or_item_p}", junkoritem);
 		}),
 		JUNK("junk", "{junk}", "Returns a random junk item, capitalized, without prefix", (input) -> {
 			return input.replace("{junk}", Helper.getRandomGarbageItem(false, false));

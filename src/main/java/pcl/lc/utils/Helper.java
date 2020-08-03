@@ -1385,4 +1385,85 @@ public class Helper {
 		}
 		return output.toString();
 	}
+
+	public static ArrayList<String[][]> smashTargets = new ArrayList<String[][]>() {{
+		add(new String[][] {new String[]{"A", "Statue"}, new String[]{
+				"Nothing but dust remains.",
+				"It is no longer recognizable.",
+				"Naught remains but gravel.",
+				"They've got some statue bits stuck in their hair now.",
+				"Other nearby statues are horrified by the display.",
+				"It turns out if you hit a statue just right it produces fireworks.",
+				"It never saw it coming.",
+				"If it could, the statue would be very surprised.",
+				"The statue had a shiny thing inside of it."}
+		});
+		add(new String[][] {new String[]{"A", "Vase"}, new String[]{
+				"It looked very expensive.",
+				"Until just now it was priceless.",
+				"You're sure it was your worst enemy's favourite vase.",
+				"It'll take someone quite some time to glue this back together.",
+				"You now have a great source of tiny sharp things.",
+				"Some would say it's more valuable now.",
+				"A future archeologist will ponder in awe over this display of destruction.",
+				"A particularly sharp piece hit someone you don't like in the face."
+		}});
+		add(new String[][] {new String[]{"A", "Pot"}, new String[]{
+				"{r:1-12:large green gem} of some sort fell out.",
+				"{r:1-8:large red gem} of some sort fell out.",
+				"{r:1-4:large blue gem} of some sort fell out.",
+				"A large purple gem of some sort fell out.",
+				"It took someone a good chunk of time to make this, and now it's gone.",
+				"For some reason you briefly feel like wearing a green tunic and pointy hat.",
+				"A small fairly appears, swirls around you. You feel as if you have multiple hearts now, weird.",
+				"Where the pot used to be there was a pressure plate, you hear a door open somewhere.",
+				"The pottery store owner yells at you, time to run away!"
+		}});
+		add(new String[][] {new String[]{"A", "Bust"}, new String[]{
+				"Taking a mallet to a bust is a great stress reliever.",
+				"You think it was supposed to be of some emperor or something.",
+				"Whoever this was supposed to be of it's not recognizable anymore.",
+				"The aftermath leaves a great 3D puzzle for a determined individual.",
+				"The bust was looking at you funny, so it deserved this.",
+				"It definitely bore a resemblance to someone you don't like.",
+				"It's nose was too big anyway."
+		}});
+		add(new String[][] {new String[]{"A", "Bug"}, new String[]{
+				"It never knew what hit it! But now there's suddenly {r:2-6} more.",
+				"Bu⊥ now ⊥hƐ charac⊥Ɛr Ɛncodings are all wronɓ.",
+				"You thought this was the last one, but there's {r:10-40} more behind it.",
+				"But now all the NPC's are upside down.",
+				"But it seems to have made things worse somewhow."
+		}});
+		add(new String[][] {new String[]{"A", "Box"}, new String[]{
+				"It turns out to be a loot crate. It contained {junk_or_item_p}.",
+				"It was empty, but your path is now clear.",
+				"It made a satisfying cracking sound as it shattered.",
+				"Another box falls down to take its place.",
+				"It drops {junk}"
+		}});
+	}};
+
+	public static String[][] getRandomSmashTarget() {
+		return smashTargets.get(getRandomInt(0, smashTargets.size() - 1));
+	}
+
+	public static String getRandomSmashString() {
+		return getRandomSmashString(true, true);
+	}
+
+	public static String getRandomSmashString(boolean prefix) {
+		return getRandomSmashString(prefix, true);
+	}
+
+	public static String getRandomSmashString(boolean prefix, boolean toLowerCase) {
+		String[][] target = getRandomSmashTarget();
+		String[] results = target[1];
+		String result = results[Helper.getRandomInt(0, results.length - 1)];
+		String output = "";
+		if (prefix)
+			output += (toLowerCase ? target[0][0].toLowerCase() : target[0][0]) + " ";
+		output += (toLowerCase || prefix ? target[0][1].toLowerCase() : target[0][1]) + ". " + result;
+		return PotionHelper.replaceParamsInEffectString(output);
+	}
 }
