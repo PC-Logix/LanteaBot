@@ -1,6 +1,5 @@
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import com.google.common.base.Charsets;
@@ -8,7 +7,6 @@ import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
@@ -16,7 +14,6 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +28,7 @@ import java.util.Map;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 

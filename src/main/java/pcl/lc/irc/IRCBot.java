@@ -8,6 +8,8 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pcl.lc.httpd.httpd;
+import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.irc.job.TaskScheduler;
 import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.Database;

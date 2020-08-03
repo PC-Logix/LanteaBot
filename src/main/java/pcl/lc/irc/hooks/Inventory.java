@@ -17,9 +17,11 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
+import pcl.lc.irc.entryClasses.Item;
 import pcl.lc.utils.PasteUtils;
 import pcl.lc.utils.db_items.InventoryItem;
 

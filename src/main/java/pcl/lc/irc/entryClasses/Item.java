@@ -1,8 +1,10 @@
-package pcl.lc.utils;
+package pcl.lc.irc.entryClasses;
 
 import com.google.api.client.util.DateTime;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.hooks.Inventory;
+import pcl.lc.utils.Database;
+import pcl.lc.utils.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -6,20 +6,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;

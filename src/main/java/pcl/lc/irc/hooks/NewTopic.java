@@ -2,25 +2,16 @@ package pcl.lc.irc.hooks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.Map.Entry;
 import java.util.Random;
 
-import org.pircbotx.Colors;
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
-import com.google.common.collect.Lists;
-
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
 
 public class NewTopic extends AbstractListener {
 	private Command command_newTopic;

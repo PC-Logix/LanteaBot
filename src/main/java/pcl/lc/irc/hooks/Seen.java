@@ -14,8 +14,7 @@ import org.pircbotx.hooks.events.QuitEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;

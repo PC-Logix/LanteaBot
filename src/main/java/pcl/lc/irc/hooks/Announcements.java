@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
-import org.pircbotx.hooks.events.MessageEvent;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.utils.CommentedProperties;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;

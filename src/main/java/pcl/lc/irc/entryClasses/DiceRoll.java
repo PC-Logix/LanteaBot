@@ -1,4 +1,6 @@
-package pcl.lc.utils;
+package pcl.lc.irc.entryClasses;
+
+import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
 import java.util.Collections;

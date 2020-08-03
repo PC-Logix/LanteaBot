@@ -1,4 +1,4 @@
-package pcl.lc.utils;
+package pcl.lc.irc.entryClasses;
 
 public class DiceRollResult {
     public int rollResult;

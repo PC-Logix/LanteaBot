@@ -2,15 +2,14 @@ package pcl.lc.utils;
 
 import org.joda.time.DateTime;
 import org.jvnet.inflector.Noun;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.hooks.DrinkPotion;
 import pcl.lc.irc.hooks.Inventory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.concurrent.Callable;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -17,6 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PasteUtils;
 

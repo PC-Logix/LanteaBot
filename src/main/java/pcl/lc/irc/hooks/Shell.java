@@ -5,13 +5,13 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Forecaster

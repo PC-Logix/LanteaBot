@@ -3,9 +3,10 @@
  */
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;

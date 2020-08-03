@@ -7,14 +7,10 @@ import java.text.NumberFormat;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
-import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.Config;
-import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.utils.Helper;
 
 /**

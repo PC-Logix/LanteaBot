@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
 import pcl.lc.utils.Exceptions.InvalidPotionException;
 

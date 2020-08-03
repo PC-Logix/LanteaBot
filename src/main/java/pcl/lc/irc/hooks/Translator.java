@@ -7,12 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.pircbotx.Colors;
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import com.google.common.collect.Lists;
@@ -20,6 +16,8 @@ import com.google.common.collect.Lists;
 import io.github.firemaples.language.Language;
 import io.github.firemaples.translate.Translate;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Helper;
 
 public class Translator extends AbstractListener {

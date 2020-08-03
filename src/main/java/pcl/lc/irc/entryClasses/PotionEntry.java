@@ -1,8 +1,9 @@
-package pcl.lc.utils;
+package pcl.lc.irc.entryClasses;
 
-import org.jvnet.inflector.Noun;
 import pcl.lc.irc.hooks.DrinkPotion;
 import pcl.lc.utils.Exceptions.InvalidPotionException;
+import pcl.lc.utils.Helper;
+import pcl.lc.utils.PotionHelper;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

@@ -13,9 +13,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.hooks.Defend;
+import pcl.lc.irc.entryClasses.DiceRollGroup;
 
-import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -24,7 +23,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.DateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

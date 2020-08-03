@@ -30,7 +30,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Database;

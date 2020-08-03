@@ -1,14 +1,12 @@
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * @author Caitlyn

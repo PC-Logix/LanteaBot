@@ -6,7 +6,7 @@ package pcl.lc.irc.hooks;
 import com.google.common.collect.Lists;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 

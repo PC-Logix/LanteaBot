@@ -1,14 +1,13 @@
 package pcl.lc.irc.hooks;
 
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.Command;
-import pcl.lc.irc.CommandRateLimit;
+import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
-import pcl.lc.utils.PotionEntry;
+import pcl.lc.irc.entryClasses.Item;
+import pcl.lc.irc.entryClasses.PotionEntry;
 import pcl.lc.utils.PotionHelper;
 
 import java.util.HashMap;

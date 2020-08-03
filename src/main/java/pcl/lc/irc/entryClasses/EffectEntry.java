@@ -1,4 +1,4 @@
-package pcl.lc.utils;
+package pcl.lc.irc.entryClasses;
 
 import java.util.function.Function;
 

@@ -2,7 +2,6 @@ package pcl.lc.irc.hooks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.pircbotx.Channel;
 import org.pircbotx.User;
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 

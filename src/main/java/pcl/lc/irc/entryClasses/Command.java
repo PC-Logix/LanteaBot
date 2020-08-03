@@ -1,6 +1,9 @@
-package pcl.lc.irc;
+package pcl.lc.irc.entryClasses;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.irc.Config;
+import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -99,7 +102,7 @@ public class Command {
 		return this.command;
 	}
 
-	String getClassName() {
+	public String getClassName() {
 		return this.className;
 	}
 

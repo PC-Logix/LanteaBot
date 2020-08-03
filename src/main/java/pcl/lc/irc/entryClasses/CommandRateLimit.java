@@ -1,4 +1,4 @@
-package pcl.lc.irc;
+package pcl.lc.irc.entryClasses;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

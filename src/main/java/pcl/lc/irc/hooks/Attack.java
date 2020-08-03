@@ -5,6 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
 
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class Attack extends AbstractListener {
 						Helper.sendMessage(target, nick + " is " + action.type.actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendAction(target,DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));
+						Helper.sendAction(target, DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

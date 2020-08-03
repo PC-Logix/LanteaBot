@@ -1,9 +1,6 @@
-package pcl.lc.utils;
+package pcl.lc.irc.entryClasses;
 
-import gcardone.junidecode.App;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Comparator;
 
 public class AppearanceEntry implements Comparable<AppearanceEntry> {
     public String Prefix;

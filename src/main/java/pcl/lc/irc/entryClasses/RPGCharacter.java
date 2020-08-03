@@ -1,8 +1,7 @@
-package pcl.lc.irc;
+package pcl.lc.irc.entryClasses;
 
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
-import pcl.lc.utils.Item;
 
 import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
