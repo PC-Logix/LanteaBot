@@ -126,7 +126,18 @@ public class RandomChoice extends AbstractListener {
 		local_command = new Command("choose") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String[] parts = params.split(" or ");
+				String splitOn = ", or | or |, ?";
+				String[] parts = params.split("; ?");
+				if (parts.length == 2) {
+					String[] subParts = parts[1].split(splitOn);
+					String choice = subParts[Helper.getRandomInt(0, subParts.length - 1)];
+					Helper.sendMessage(target, choice + " " + parts[0], nick);
+					return;
+				} else if (parts.length > 2) {
+					Helper.sendMessage(target, "What?!", nick);
+					return;
+				}
+				parts = params.split(splitOn);
 //				String msg = output.get(Helper.getRandomInt(0, output.size() - 1));
 				String msg = templates.getRandomTemplate(parts.length).template;
 
