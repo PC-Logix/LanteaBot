@@ -131,6 +131,10 @@ public class RandomChoice extends AbstractListener {
 				if (parts.length == 2) {
 					String[] subParts = parts[1].split(splitOn);
 					String choice = subParts[Helper.getRandomInt(0, subParts.length - 1)];
+					if (parts[0].contains("$")) {
+						Helper.sendMessage(target, parts[0].replace("$", choice), nick);
+						return;
+					}
 					Helper.sendMessage(target, choice + " " + parts[0], nick);
 					return;
 				} else if (parts.length > 2) {
