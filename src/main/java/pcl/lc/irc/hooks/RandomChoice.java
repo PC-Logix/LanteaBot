@@ -8,8 +8,11 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class TemplateCollection {
 	List<Template> templates;
@@ -127,30 +130,43 @@ public class RandomChoice extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String splitOn = ", or | or |, ?";
-				String[] parts = params.split("; ?");
-				if (parts.length == 2) {
-					String[] subParts = parts[1].split(splitOn);
-					String choice = subParts[Helper.getRandomInt(0, subParts.length - 1)];
-					if (parts[0].contains("$")) {
-						Helper.sendMessage(target, parts[0].replace("$", choice), nick);
+				ArrayList<String> parts = new ArrayList<>();
+				Collections.addAll(parts, params.split("; ?"));
+				if (parts.size() == 2) {
+					ArrayList<String> subParts = new ArrayList<>();
+					Collections.addAll(subParts, parts.get(1).split(splitOn));
+					String choice = subParts.get(Helper.getRandomInt(0, subParts.size() - 1));
+//					if (parts[0].matches())
+					Pattern pattern = Pattern.compile("\\$\\d\\d?");
+					Matcher matcher = pattern.matcher(parts.get(0));
+					ArrayList<String> groups = new ArrayList<>();
+					while (matcher.find())
+						if (!groups.contains(matcher.group()))
+							groups.add(matcher.group());
+					if (groups.size() > 0) {
+						Collections.shuffle(subParts);
+						Helper.sendMessage(target, Helper.replacePlaceholders(parts.get(0), subParts));
+						return;
+					} else if (parts.get(0).contains("$")) {
+						Helper.sendMessage(target, parts.get(0).replace("$", choice), nick);
 						return;
 					}
-					Helper.sendMessage(target, choice + " " + parts[0], nick);
+					Helper.sendMessage(target, choice + " " + parts.get(0), nick);
 					return;
-				} else if (parts.length > 2) {
+				} else if (parts.size() > 2) {
 					Helper.sendMessage(target, "What?!", nick);
 					return;
 				}
-				parts = params.split(splitOn);
+				Collections.addAll(parts, params.split(splitOn));
 //				String msg = output.get(Helper.getRandomInt(0, output.size() - 1));
-				String msg = templates.getRandomTemplate(parts.length).template;
+				String msg = templates.getRandomTemplate(parts.size()).template;
 
-				String choice = parts[Helper.getRandomInt(0, parts.length - 1)].trim();
+				String choice = parts.get(Helper.getRandomInt(0, parts.size() - 1)).trim();
 				msg = msg.replaceAll("\\{choice}", choice);
-				if (parts.length > 1) {
+				if (parts.size() > 1) {
 					String other_choice = "";
 					while (other_choice == "" || other_choice == choice) {
-						other_choice = parts[Helper.getRandomInt(0, parts.length - 1)].trim();
+						other_choice = parts.get(Helper.getRandomInt(0, parts.size() - 1)).trim();
 					}
 					msg = msg.replaceAll("\\{other_choice}", other_choice);
 				}
@@ -161,7 +177,7 @@ public class RandomChoice extends AbstractListener {
 				
 				RuleBasedNumberFormat ruleBasedNumberFormat = new RuleBasedNumberFormat( new Locale("EN", "US"), RuleBasedNumberFormat.SPELLOUT ); 
 				
-				switch (parts.length)
+				switch (parts.size())
 				{
 					case 1:
 						count = "the";
@@ -171,8 +187,8 @@ public class RandomChoice extends AbstractListener {
 						raw_count = "two";
 						break;
 					default:
-						count = "all " + ruleBasedNumberFormat.format(parts.length);
-						raw_count = "" + ruleBasedNumberFormat.format(parts.length);
+						count = "all " + ruleBasedNumberFormat.format(parts.size());
+						raw_count = "" + ruleBasedNumberFormat.format(parts.size());
 				}
 				msg = msg.replaceAll("\\{count}", count);
 				msg = msg.replaceAll("\\{raw_count}", raw_count);

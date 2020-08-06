@@ -1466,4 +1466,39 @@ public class Helper {
 		output += (toLowerCase || prefix ? target[0][1].toLowerCase() : target[0][1]) + ". " + result;
 		return PotionHelper.replaceParamsInEffectString(output);
 	}
+
+	public static String replacePlaceholders(String input, ArrayList<String> insert) {
+		return replacePlaceholders(input, insert, true);
+	}
+
+	/**
+	 * Replaces a sequence of $0 placeholders with items with the corresponding index from the insert array.
+	 *
+	 * The placeholders can start at 0 or 1, and have one or two digits.
+	 *
+	 * @param input A string containing placeholders to be replaced
+	 * @param insert An array of strings to be inserted
+	 * @param insertJunkItems If true, inserts junk items in place of any placeholder with an index that exceeds the insert array's highest index. If false these placeholders are left in the string.
+	 * @return Returns the input string with relevant placeholders replaced
+	 */
+	public static String replacePlaceholders(String input, ArrayList<String> insert, boolean insertJunkItems) {
+		if (!input.contains("$0")) {
+			ArrayList<String> dummy = new ArrayList<>();
+			dummy.add("Dummy");
+			dummy.addAll(insert);
+			insert = dummy;
+		}
+		Pattern pattern = Pattern.compile("(\\$\\d\\d?)");
+		Matcher matcher = pattern.matcher(input);
+		while (matcher.find()) {
+			String choice;
+			try {
+				choice = insert.get(Integer.parseInt(matcher.group(1).replace("$", "")));
+			} catch (Exception e) {
+				choice = Helper.getRandomGarbageItem(true, true);
+			}
+			input = input.replace(matcher.group(1), choice);
+		}
+		return input;
+	}
 }
