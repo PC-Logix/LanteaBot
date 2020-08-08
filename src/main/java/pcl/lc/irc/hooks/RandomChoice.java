@@ -157,6 +157,7 @@ public class RandomChoice extends AbstractListener {
 					Helper.sendMessage(target, "What?!", nick);
 					return;
 				}
+				parts = new ArrayList<>();
 				Collections.addAll(parts, params.split(splitOn));
 //				String msg = output.get(Helper.getRandomInt(0, output.size() - 1));
 				String msg = templates.getRandomTemplate(parts.size()).template;
