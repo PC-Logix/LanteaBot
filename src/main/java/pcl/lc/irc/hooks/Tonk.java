@@ -59,9 +59,9 @@ public class Tonk extends AbstractListener {
 	private CommandRateLimit rateLimit;
 
 	enum TonkSnipeType {
-		BLUE("blue", new String[] {"Blue Shell", "s"}, "Shell",0.5, 0, 1, "#1"),
-		RED("red", new String[] {"Red Shell", "s"}, "Shell", 0.35, 14, 3, "+5"),
-		GREEN("green", new String[] {"Green Shell", "s"}, "Shell", 0.2, 10, 5, "+3");
+		BLUE("blue", new String[] {"Blue Shell", "s"}, "Shell",0.2, 0, 1, "#1"),
+		RED("red", new String[] {"Red Shell", "s"}, "Shell", 0.50, 14, 3, "+5"),
+		GREEN("green", new String[] {"Green Shell", "s"}, "Shell", 0.30, 10, 5, "+3");
 
 		String keyword; //Keyword is used as the command but also as a collection key
 		String[] displayName;
