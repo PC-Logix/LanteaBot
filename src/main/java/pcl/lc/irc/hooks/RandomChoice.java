@@ -31,18 +31,16 @@ class TemplateCollection {
 
 	public Template getRandomTemplate(int arguments) {
 		System.out.println("Looking for template matching " + arguments + " arguments");
-		int counter = 0;
-		int maxIterations = 100;
-		int rand = 0;
-		Template template = null;
-		while (template == null && counter < maxIterations) {
-			counter++;
-			rand = Helper.getRandomInt(0, this.templates.size() - 1);
-			Template thisTemplate = this.templates.get(rand);
-			if (thisTemplate.min_arguments <= arguments && (thisTemplate.max_arguments == 0 || arguments <= thisTemplate.max_arguments))
-				template = thisTemplate;
+		List<Template> validTemplates = new ArrayList<>();
+		for (Template t : this.templates) {
+			if (t.min_arguments <= arguments && arguments <= t.max_arguments)
+				validTemplates.add(t);
 		}
-		return template;
+		System.out.println("Found " + validTemplates.size() + " valid candidate templates.");
+		if (validTemplates.size() == 0)
+			return null;
+		int rand = Helper.getRandomInt(0, validTemplates.size());
+		return validTemplates.get(rand);
 	}
 }
 
@@ -77,6 +75,16 @@ public class RandomChoice extends AbstractListener {
 	@Override
 	protected void initHook() {
 		templates = new TemplateCollection();
+		templates.add(new Template(0, "Ah, I was just about to do that!", 0));
+		templates.add(new Template(0, "Whatever you're thinking, don't.", 0));
+		templates.add(new Template(0, "Yes, but only if you do it right now.", 0));
+		templates.add(new Template(0, "Maybe. In a few minutes.", 0));
+		templates.add(new Template(0, "Does cats like knocking things off of other things?", 0));
+		templates.add(new Template(0, "If you pet me, yes, otherwise no.", 0));
+		templates.add(new Template(0, "Only if you stab Inari first.", 0));
+		templates.add(new Template(0, "Ohwouldyoulookatthetime! I suddenly need to be on the other side of the planet!", 0));
+		templates.add(new Template(0, "You haven't pet me recently, so no.", 0));
+		templates.add(new Template(0, "I wouldn't do that if I were you...", 0));
 		templates.add(new Template(1, "Why would you do that when you could do something else instead?", 1));
 		templates.add(new Template(1, "\"{choice}\" doesn't really seem like a good idea right now.", 1));
 		templates.add(new Template(1, "No, maybe tomorrow.", 1));
@@ -158,9 +166,18 @@ public class RandomChoice extends AbstractListener {
 					return;
 				}
 				parts = new ArrayList<>();
-				Collections.addAll(parts, params.split(splitOn));
+				for (String part : params.split(splitOn)) {
+					if (!part.replace(" ", "").equals(""))
+						parts.add(part);
+				}
+				System.out.println("Parts has " + parts.size() + " elements: " + parts);
 //				String msg = output.get(Helper.getRandomInt(0, output.size() - 1));
 				String msg = templates.getRandomTemplate(parts.size()).template;
+
+				if (parts.size() == 0) {
+					Helper.sendMessage(target, msg, nick);
+					return;
+				}
 
 				String choice = parts.get(Helper.getRandomInt(0, parts.size() - 1)).trim();
 				msg = msg.replaceAll("\\{choice}", choice);
