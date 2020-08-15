@@ -456,6 +456,8 @@ public class DrinkPotion extends AbstractListener {
 
 		if (IRCBot.getDebug()) {
 			effects = new ArrayList<>();
+			effects.add(new EffectEntry("{user} feels chill."));
+			/*
 			effects.add(new EffectEntry("The bottle turns into a piece of bacon. You have found {action} of bacon.",
 					"A piece of bacon appears in front of {user}.", new Function<String, String>() {
 				@Override
@@ -466,7 +468,7 @@ public class DrinkPotion extends AbstractListener {
 					baconMap.put(s, bacon);
 					return bacon + " piece" + (bacon == 1 ? "" : "s");
 				}
-			}));
+			}));*/
 		}
 
 		//Never end with punctuation and always start with a space

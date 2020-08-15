@@ -88,7 +88,7 @@ public class PotionEntry {
 					action = eff.action.apply(user);
 				}
 
-				effectp = PotionHelper.replaceParamsInEffectString(effectp, action);
+				effectp = PotionHelper.replaceParamsInEffectString(effectp, null, null, action);
 
 				try {
 					Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");

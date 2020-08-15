@@ -192,8 +192,8 @@ public class PotionHelper {
 		return replaceParamsInEffectString(effect, null);
 	}
 
-	public static String replaceParamsInEffectString(String effect, String action) {
-		return replaceParamsInEffectString(effect, null, action);
+	public static String replaceParamsInEffectString(String effect, String nick) {
+		return replaceParamsInEffectString(effect, nick, null);
 	}
 
 	/**
@@ -201,8 +201,8 @@ public class PotionHelper {
 	 * @param targetName The name of the target of the effect
 	 * @return Returns the effect string with name inserted
 	 */
-	public static String replaceParamsInEffectString(String effect, String targetName, String action) {
-		return replaceParamsInEffectString(effect, targetName, null, action);
+	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
+		return replaceParamsInEffectString(effect, targetName, triggererName, null);
 	}
 
 	public enum DynaParam {
