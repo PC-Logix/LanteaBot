@@ -533,17 +533,11 @@ public class DrinkPotion extends AbstractListener {
 						potion = PotionHelper.getRandomPotion();
 						EffectEntry effect = potion.getEffect(nick);
 						if (effect != null) {
-							String action = "";
-							if (effect.action != null) {
-								System.out.println("Potion effect has action!");
-								if (potion.isNew)
-									action = effect.action.apply(nick);
-								else {
-									Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird and nothing seems to happen...");
-									return;
-								}
+							if (effect.action != null && !potion.isNew) {
+								Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird, and nothing seems to happen...");
+								return;
 							}
-							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick, null, action));
+							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
 							return;
 						} else
 							Helper.sendMessage(target, "Due to some unfortunate series of events I couldn't find an effect for this potion.");
@@ -573,17 +567,11 @@ public class DrinkPotion extends AbstractListener {
 						EffectEntry effect = potion.getEffect(nick);
 
 						if (effect != null) {
-							String action = "";
-							if (effect.action != null) {
-								System.out.println("Potion effect has action!");
-								if (potion.isNew)
-									action = effect.action.apply(nick);
-								else {
-									Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird and nothing seems to happen...");
-									return;
-								}
+							if (effect.action != null && !potion.isNew) {
+								Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird, and nothing seems to happen...");
+								return;
 							}
-							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick, null, action));
+							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
 						} else
 							Helper.sendMessage(target, "Due to some unfortunate series of events I couldn't find an effect for this potion.");
 					} catch (InvalidPotionException ex) {
@@ -630,17 +618,11 @@ public class DrinkPotion extends AbstractListener {
 						if (potionString == null || potionString.equals("random")) {
 							potion = PotionHelper.getRandomPotion();
 							EffectEntry effect = potion.getEffect(nick, true);
-							String action = "";
-							if (effect.action != null) {
-								System.out.println("Potion effect has action!");
-								if (potion.isNew)
-									action = effect.action.apply(nick);
-								else {
-									Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It tastes kinda oozes strangely but nothing seems to happen...");
-									return;
-								}
+							if (effect.action != null && !potion.isNew) {
+								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It kinda oozes strangely, but nothing seems to happen...");
+								return;
 							}
-							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick, action));
+							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
 							Defend.addEvent(nick, splashTarget, potion.consistency.getName(false, true) + " " + potion.appearance.getName(false, true) + " potion", Defend.EventTypes.POTION);
 							return;
 						} else if (potionString.equals("^")) {
@@ -669,16 +651,11 @@ public class DrinkPotion extends AbstractListener {
 
 							if (effect != null) {
 								String action = "";
-								if (effect.action != null) {
-									System.out.println("Potion effect has action!");
-									if (potion.isNew)
-										action = effect.action.apply(nick);
-									else {
-										Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It tastes kinda oozes strangely but nothing seems to happen...");
-										return;
-									}
+								if (effect.action != null && !potion.isNew) {
+									Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It kinda oozes strangely, but nothing seems to happen...");
+									return;
 								}
-								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick, action));
+								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
 							}
 						} catch (InvalidPotionException ex) {
 							Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
