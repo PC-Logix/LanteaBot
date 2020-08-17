@@ -30,7 +30,7 @@ class TemplateCollection {
 	}
 
 	public Template getRandomTemplate(int arguments) {
-		System.out.println("Looking for template matching " + arguments + " arguments");
+		System.out.println("Looking for template matching " + arguments + " arguments.");
 		List<Template> validTemplates = new ArrayList<>();
 		for (Template t : this.templates) {
 			if (t.min_arguments <= arguments && arguments <= t.max_arguments)
@@ -57,7 +57,7 @@ class Template {
 
 	Template(int min_arguments, String template) {
 		this.min_arguments = min_arguments;
-		this.max_arguments = 0;
+		this.max_arguments = Integer.MAX_VALUE;
 		this.template = template;
 	}
 
