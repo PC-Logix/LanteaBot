@@ -365,7 +365,7 @@ public class DrinkPotion extends AbstractListener {
 					radiationMap.put(s, 0);
 				int rabs = radiationMap.get(s) + rads;
 				radiationMap.put(s, rabs);
-				return rads + ". {user}'s radiation level is " + rabs + ".";
+				return rads + ". {user}'s radiation level is " + rabs;
 			}
 		}));
 		effects.add(new EffectEntry("{user} smells something burning."));
