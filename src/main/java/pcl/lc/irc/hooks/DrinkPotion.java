@@ -279,8 +279,8 @@ public class DrinkPotion extends AbstractListener {
 				"{user} feels as if they should drink a potion for some reason."));
 		effects.add(new EffectEntry("For about a second {user} knows the location of a great treasure."));
 		effects.add(new EffectEntry("The potion was inside {user} all along."));
-		effects.add(new EffectEntry("{user} is suddenly wearings gloves they don't remember putting on."));
-		effects.add(new EffectEntry("{user} is suddenly wearings a tiny glove on each finger."));
+		effects.add(new EffectEntry("{user} is suddenly wearing gloves they don't remember putting on."));
+		effects.add(new EffectEntry("{user} is suddenly wearing a tiny glove on each finger."));
 		effects.add(new EffectEntry("A sudden craving for soup occupies {user}'s thoughts{limit}."));
 		effects.add(new EffectEntry("{user} suddenly forgets a random piece of trivia."));
 		effects.add(new EffectEntry("A {transformation} flies past that vaguely resembles someone {user} knows."));
