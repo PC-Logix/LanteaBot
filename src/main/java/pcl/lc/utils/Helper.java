@@ -1339,6 +1339,7 @@ public class Helper {
 
 	public static String cleanNick(String nick) {
 		nick = nick.replaceAll("\u200B", "");
+		nick = nick.replaceAll("^@", "");
 		return nick.replaceAll("\\p{C}", "");
 	}
 
