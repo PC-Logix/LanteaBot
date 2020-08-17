@@ -5,28 +5,23 @@ import pcl.lc.irc.hooks.Defend;
 import java.util.Date;
 
 public class DefendEvent {
-	public String triggerer;
+	public String triggeringUser;
+	public String targetUser;
 	public String target;
 	public Date time;
 	public int damage;
 	public String implement;
 	public Defend.EventTypes type;
+	public String result;
 
-	public DefendEvent(String triggerer, String target, Date time, int damage, String implement, Defend.EventTypes type) {
-		this.triggerer = triggerer;
+	public DefendEvent(String triggeringUser, String targetUser, String target, Date time, int damage, String implement, Defend.EventTypes type, String result) {
+		this.triggeringUser = triggeringUser;
+		this.targetUser = targetUser;
 		this.target = target;
 		this.time = time;
 		this.damage = damage;
 		this.implement = implement;
 		this.type = type;
-	}
-
-	public DefendEvent(String triggerer, String target, Date time, String implement, Defend.EventTypes type) {
-		this.triggerer = triggerer;
-		this.target = target;
-		this.time = time;
-		this.damage = 0;
-		this.implement = implement;
-		this.type = type;
+		this.result = result;
 	}
 }

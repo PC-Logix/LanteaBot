@@ -10,7 +10,10 @@ import pcl.lc.utils.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Forecaster
@@ -18,10 +21,15 @@ import java.util.HashMap;
  */
 @SuppressWarnings("rawtypes")
 public class Defend extends AbstractListener {
-	public static HashMap<String, DefendEvent> defendEventLog;
+	public static ArrayList<DefendEvent> defendEventLog;
+	private ScheduledFuture<?> executor;
 
-	private static String damageFormat = "#";
-	private static final int reactionTimeMinutes = 8;
+	private static final String damageFormat = "#";
+	public static final int reactionTimeMinutes = 5;
+
+	public static String getReactionTimeString() {
+		return reactionTimeMinutes + " minute" + (reactionTimeMinutes == 1 ? "" : "s");
+	}
 
 	public enum EventTypes {
 		ATTACK(12),
@@ -56,7 +64,7 @@ public class Defend extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		defendEventLog = new HashMap<>();
+		defendEventLog = new ArrayList<>();
 
 		ArrayList<String> acts = new ArrayList<>();
 		for (Actions act : Actions.values())
@@ -66,6 +74,20 @@ public class Defend extends AbstractListener {
 
 		initCommands();
 		IRCBot.registerCommand(local_command);
+
+		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+		executor = ses.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				Date expiredIfAfter = new Date(new Date().getTime() - (reactionTimeMinutes * 60 * 1000));
+				for (DefendEvent event : defendEventLog) {
+					if (expiredIfAfter.after(event.time)) {
+						Helper.sendMessage(event.target, event.result);
+						defendEventLog.remove(event);
+					}
+				}
+			}
+		}, 0, 15, TimeUnit.SECONDS);
 	}
 
 	private Actions getActionByType(String type) {
@@ -89,10 +111,14 @@ public class Defend extends AbstractListener {
 						Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 						return;
 					}
-					DefendEvent attack = getEventFor(nick, reactionTimeMinutes);
-					if (attack != null) {
-						int damage = attack.damage;
-						String implement = attack.implement;
+					ArrayList<DefendEvent> defendEvents = getEventsFor(nick);
+					if (defendEvents.size() > 0) {
+						DefendEvent defendEvent = defendEvents.get(0);
+						defendEventLog.remove(defendEvent);
+
+						int damage = defendEvent.damage;
+						int effectiveDamage = defendEvent.damage;
+						String implement = defendEvent.implement;
 						Item implementItem = null;
 						if (!implement.equals(""))
 							implementItem = new Item(implement, false);
@@ -107,7 +133,7 @@ public class Defend extends AbstractListener {
 						}
 
 						DiceRollBonusCollection attackBonus = DiceRollBonusCollection.getOffensiveItemBonus(implement);
-						int dc = attack.type.baseDC + attackBonus.getTotal();
+						int dc = defendEvent.type.baseDC + attackBonus.getTotal();
 						String dcString = attackBonus.toString();
 						dcString = dc + (dcString.equals("") ? "" : " (" + dcString + ")");
 
@@ -117,17 +143,17 @@ public class Defend extends AbstractListener {
 						int result = new DiceRoll(20).getSum() + defenseBonus.getTotal();
 						String resultString = defenseBonus.toString();
 						resultString = result + (resultString.equals("") ? "" : " (" + resultString + ")");
-						if (attack.type == EventTypes.ATTACK) {
+						if (defendEvent.type == EventTypes.ATTACK) {
 							String implementString = implementItem == null ? "" : "wielding " + implementItem.getName(true);
 							if (result >= (dc + 5)) {
-								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " " + attack.triggerer + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " avoided all of the damage! (" + dec.format(damage) + ")");
+								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " " + defendEvent.triggeringUser + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " avoided all of the damage!");
 							} else if (result >= dc) {
-								damage = (int) Math.max(1, Math.floor(damage / 2d));
-								Helper.sendMessage(target, nick + " managed to partially " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + attack.triggerer + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " only takes half damage. (" + dec.format(damage) + ")");
+								effectiveDamage = (int) Math.max(1, Math.floor(damage / 2d));
+								Helper.sendMessage(target, nick + " managed to partially " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + defendEvent.triggeringUser + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " only takes half of the " + dec.format(damage) + " damage.");
 							} else {
-								Helper.sendMessage(target, nick + " failed to " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + attack.triggerer + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " takes all of the damage. (" + dec.format(damage) + ")");
+								Helper.sendMessage(target, nick + " failed to " + getActionByType(method).type.actionNameWill.toLowerCase() + " " + defendEvent.triggeringUser + (implementString.equals("") ? "" : " " + implementString) + (defenseItem == null ? "" : " using " + defenseItem.getName(true)) + ". With " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + " " + nick + " takes the full " + dec.format(damage) + " damage.");
 							}
-						} else if (attack.type == EventTypes.POTION) {
+						} else if (defendEvent.type == EventTypes.POTION) {
 							if (result >= dc) {
 								String altTarget = Helper.getRandomTransformation(true, true, false, true);
 								AppearanceEntry con = PotionHelper.findConsistencyInString(implement);
@@ -144,22 +170,21 @@ public class Defend extends AbstractListener {
 										potionString = " " + effectString.substring(0, 1).toUpperCase() + effectString.substring(1);
 									}
 								}
-								Helper.sendMessage(target, nick + " manages to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + attack.implement + " " + attack.triggerer + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ". It splashes onto " + altTarget + " that was standing next to you." + potionString);
+								Helper.sendMessage(target, nick + " manages to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + defendEvent.implement + " " + defendEvent.triggeringUser + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ". It splashes onto " + altTarget + " that was standing next to you." + potionString);
 							} else
-								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill + " the " + attack.implement + " " + attack.triggerer + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ".");
-						} else if (attack.type == EventTypes.FLING) {
+								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill + " the " + defendEvent.implement + " " + defendEvent.triggeringUser + " threw with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ".");
+						} else if (defendEvent.type == EventTypes.FLING) {
 							if (result >= dc + 5) {
-								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " the " + attack.implement + " flung at them by " + attack.triggerer + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", avoiding all the damage (" + dec.format(damage) + ")");
+								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " the " + defendEvent.implement + " flung at them by " + defendEvent.triggeringUser + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", avoiding all the damage.");
 							} else if (result >= dc) {
-								damage = (int) Math.max(1, Math.floor(damage / 2d));
-								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " the " + attack.implement + " flung at them by " + attack.triggerer + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", taking only half damage. (" + dec.format(damage) + ")");
+								effectiveDamage = (int) Math.max(1, Math.floor(damage / 2d));
+								Helper.sendMessage(target, nick + " successfully " + getActionByType(method).type.actionNamePast.toLowerCase() + " the " + defendEvent.implement + " flung at them by " + defendEvent.triggeringUser + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", taking only half of " + dec.format(damage) + " damage.");
 							} else {
-								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + attack.implement + " flung at them by " + attack.triggerer + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", taking all of the damage. (" + dec.format(damage) + ")");
+								Helper.sendMessage(target, nick + " fails to " + getActionByType(method).type.actionNameWill.toLowerCase() + " the " + defendEvent.implement + " flung at them by " + defendEvent.triggeringUser + " with " + Helper.getNumberPrefix(result) + " " + resultString + " vs " + dcString + ", taking the full " + dec.format(effectiveDamage) + " damage.");
 							}
 						}
-						clearEventFor(nick);
 					} else {
-						Helper.sendMessage(target, "Nothing to defend against within the last " + reactionTimeMinutes + " minutes");
+						Helper.sendMessage(target, "Nothing to defend against right now.", nick);
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -176,47 +201,28 @@ public class Defend extends AbstractListener {
 
 	/**
 	 *
-	 * @param trigger String
-	 * @param target String
+	 * @param triggeringUser String
+	 * @param targetUser String
 	 * @param damage int
 	 * @param implement String
 	 * @param type String Supported types are `attack`, & `pet`
 	 */
-	public static void addEvent(String trigger, String target, int damage, String implement, EventTypes type) {
-		target = target.toLowerCase();
-		if (eventExistsFor(target))
-			defendEventLog.remove(target);
-		defendEventLog.put(target, new DefendEvent(trigger, target, new Date(), damage, implement, type));
+	public static void addEvent(String triggeringUser, String targetUser, String target, int damage, String implement, EventTypes type, String result) {
+		targetUser = targetUser.toLowerCase();
+		defendEventLog.add(new DefendEvent(Helper.cleanNick(triggeringUser), Helper.cleanNick(targetUser), target, new Date(), damage, implement, type, result));
 	}
 
-	public static void addEvent(String trigger, String target, String implement, EventTypes type) {
-		addEvent(trigger, target, 0, implement, type);
+	public static void addEvent(String triggeringUser, String targetUser, String target, String implement, EventTypes type, String result) {
+		defendEventLog.add(new DefendEvent(Helper.cleanNick(triggeringUser), Helper.cleanNick(targetUser), target, new Date(), 0, implement, type, result));
 	}
 
-	public static DefendEvent getEventFor(String player) {
-		return getEventFor(player, 2);
-	}
-
-	public static DefendEvent getEventFor(String player, int maxReactionTimeMinutes) {
-		player = player.toLowerCase();
-		if (defendEventLog.containsKey(player)) {
-			DefendEvent event = defendEventLog.get(player);
-			Date now = new Date(new Date().getTime() - (maxReactionTimeMinutes * 60 * 1000));
-			if (event.time.after(now))
-				return defendEventLog.get(player);
+	public static ArrayList<DefendEvent> getEventsFor(String user) {
+		user = user.toLowerCase();
+		ArrayList<DefendEvent> events = new ArrayList<>();
+		for (DefendEvent event : defendEventLog) {
+			if (event.targetUser.equals(user))
+				events.add(event);
 		}
-		return null;
-	}
-
-	public static boolean eventExistsFor(String player) {
-		return eventExistsFor(player, 2);
-	}
-
-	public static boolean eventExistsFor(String player, int maxReactionTimeMinutes) {
-		return getEventFor(player, maxReactionTimeMinutes) != null;
-	}
-
-	public static void clearEventFor(String player) {
-		defendEventLog.remove(player);
+		return events;
 	}
 }

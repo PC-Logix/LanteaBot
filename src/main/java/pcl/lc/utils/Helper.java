@@ -1337,7 +1337,8 @@ public class Helper {
 		return codeWords[getRandomInt(0, codeWords.length - 1)];
 	}
 
-	public static String cleanDiscordNick(String nick) {
+	public static String cleanNick(String nick) {
+		nick = nick.replaceAll("\u200B", "");
 		return nick.replaceAll("\\p{C}", "");
 	}
 

@@ -103,21 +103,21 @@ public abstract class AbstractListener extends ListenerAdapter
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
 		String[] splitMessage = event.getMessage().split(" ");
-		String nickClean = Helper.cleanDiscordNick(event.getUser().getNick());
-		String nick = Helper.cleanDiscordNick(event.getUser().getNick());
+		String nickClean = Helper.cleanNick(event.getUser().getNick());
+		String nick = Helper.cleanNick(event.getUser().getNick());
 		if (splitMessage[0].startsWith(Config.commandprefix)) {
 			if (!IRCBot.isIgnored(nickClean)) {
 				handleCommand(nick, event, splitMessage[0], Arrays.copyOfRange(splitMessage, 1, splitMessage.length), null);
 			}
 		} else if (Config.parseBridgeCommandsFromUsers.contains(nickClean) && (splitMessage[0].startsWith("<") && splitMessage[0].endsWith(">") || splitMessage[0].startsWith("(") && splitMessage[0].endsWith(")")) && splitMessage[1].startsWith(Config.commandprefix)) {
-			String sender = Helper.cleanDiscordNick(splitMessage[0].substring(1,splitMessage[0].length()-1));
+			String sender = Helper.cleanNick(splitMessage[0].substring(1,splitMessage[0].length()-1));
 			if (!IRCBot.isIgnored(sender)) {
 				handleMessage(sender, event, Arrays.copyOfRange(splitMessage,2,splitMessage.length));
 				handleCommand(sender, event, splitMessage[1], Arrays.copyOfRange(splitMessage,2,splitMessage.length), nickClean);
 			}
 		} else {
-			if (!IRCBot.isIgnored(Helper.cleanDiscordNick(event.getUser().getNick()))) {
-				handleMessage(Helper.cleanDiscordNick(event.getUser().getNick()), event, Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
+			if (!IRCBot.isIgnored(Helper.cleanNick(event.getUser().getNick()))) {
+				handleMessage(Helper.cleanNick(event.getUser().getNick()), event, Arrays.copyOfRange(splitMessage, 1, splitMessage.length));
 			}
 		}
 	}

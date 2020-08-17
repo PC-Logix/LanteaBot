@@ -50,7 +50,7 @@ public class Attack extends AbstractListener {
 				acts.add(act.command);
 		actionList = String.join(", ", acts);
 
-		local_command = new Command("attack", new CommandRateLimit(60)) {
+		local_command = new Command("attack", new CommandRateLimit(300, true)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() == 0) {
@@ -125,8 +125,9 @@ public class Attack extends AbstractListener {
 						else
 							dmgString += " damage";
 						String itemName = item != null ? item.getName() : "";
-						Defend.addEvent(nick, attackTarget, dmg.getTotal(), itemName, Defend.EventTypes.ATTACK);
-						Helper.sendMessage(target, nick + " is " + action.type.actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust);
+						String result = nick + " is " + action.type.actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust;
+						Defend.addEvent(nick, attackTarget, target, dmg.getTotal(), itemName, Defend.EventTypes.ATTACK, result);
+						Helper.sendMessage(target, nick + " is trying to " + action.type.actionNameWill.toLowerCase() + " " + attackTarget + "! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
 					} else {
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
 						Helper.sendAction(target, DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));

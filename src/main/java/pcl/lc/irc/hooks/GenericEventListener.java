@@ -69,7 +69,7 @@ public class GenericEventListener extends AbstractListener{
 								endBracket = brackets.substring(1, 2);
 							}
 							if (split[0].startsWith(startBracket) && split[0].endsWith(endBracket)) {
-								user = Helper.cleanDiscordNick(split[0].substring(1, split[0].length() - 1));
+								user = Helper.cleanNick(split[0].substring(1, split[0].length() - 1));
 								command = split[1].toLowerCase();
 								if (command.startsWith(Config.commandprefix)) {
 									System.out.println("Command received over bridge");
