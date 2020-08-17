@@ -83,7 +83,9 @@ public class Shell extends AbstractListener {
 					}
 					if (potion != null) {
 					    Helper.AntiPings = Helper.getNamesFromTarget(target);
-					    EffectEntry effect = potion.getEffect(nick, true);
+					    EffectEntry effect = potion.getEffectSplash(shellTarget, nick);
+					    effect.action.apply(new EffectActionParameters(shellTargetSecondary, nick, true));
+					    effect.action.apply(new EffectActionParameters(shellTargetTertriary, nick, true));
 					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.effectDrink, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
                     } else {
                         int itemDamage = 0;

@@ -40,14 +40,16 @@ public class PotionEntry {
 		this.isNew = potion.isNew;
 	}
 
-	public EffectEntry getEffect(String user) {
-		return getEffect(user, false);
+	public EffectEntry getEffectSplash(String targetName, String triggererName) {
+		return getEffect(targetName, true, triggererName);
 	}
 
-	public EffectEntry getEffect(String user, boolean splash) {
-		if (this.effect != null)
-			return this.effect;
-		else {
+	public EffectEntry getEffect(String targetName) {
+		return getEffect(targetName, false, null);
+	}
+
+	public EffectEntry getEffect(String targetName, boolean splash, String triggererName) {
+		if (this.effect == null) {
 			if (appearance == null || consistency == null) {
 				return null;
 			}
@@ -70,46 +72,50 @@ public class PotionEntry {
 				int effect = Helper.getRandomInt(min, max);
 				System.out.println("No effect recorded for " + key + ", Assign effect with index: " + effect);
 
-				String effectp = null;
 				EffectEntry eff = DrinkPotion.effects.get(effect);
+				String effect_drink = eff.effectDrink;
+				String effect_splash = eff.effectSplash != null ? eff.effectSplash : eff.effectDrink;
 
-				if (splash) {
-					try {
-						effectp = eff.effectSplash;
-					} catch (Exception ignored) {
-					}
-				}
-
-				if (effectp == null)
-					effectp = eff.effectDrink;
-
-				String action = "";
 				if (eff.action != null) {
-					action = eff.action.apply(user);
+					EffectActionParameters parameters_drink = new EffectActionParameters(targetName, triggererName, false);
+					EffectActionParameters parameters_splash = new EffectActionParameters(targetName, triggererName, true);
+					effect_drink = eff.action.apply(parameters_drink);
+					effect_splash = eff.action.apply(parameters_splash);
 				}
 
-				effectp = PotionHelper.replaceParamsInEffectString(effectp, null, null, action);
+				effect_drink = PotionHelper.replaceParamsInEffectString(effect_drink, null, null);
+				effect_splash = PotionHelper.replaceParamsInEffectString(effect_splash, null, null);
 
 				try {
 					Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
-					Matcher matcher = pattern.matcher(effectp);
+					Matcher matcher = pattern.matcher(effect_drink);
 					while (matcher.find()) {
 						String appearance_item = matcher.group(1);
 						boolean use_prefix = false;
 						if (matcher.group(2).equals("p"))
 							use_prefix = true;
-						effectp = effectp.replace(matcher.group(0), PotionHelper.getAppearance().appearanceItem(appearance_item, use_prefix));
+						effect_drink = effect_drink.replace(matcher.group(0), PotionHelper.getAppearance().appearanceItem(appearance_item, use_prefix));
+					}
+					matcher = pattern.matcher(effect_splash);
+					while (matcher.find()) {
+						String appearance_item = matcher.group(1);
+						boolean use_prefix = false;
+						if (matcher.group(2).equals("p"))
+							use_prefix = true;
+						effect_splash = effect_splash.replace(matcher.group(0), PotionHelper.getAppearance().appearanceItem(appearance_item, use_prefix));
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 
 				this.isNew = true;
-				this.effect = new EffectEntry(effectp, user, eff.action, user);
+				this.effect = eff;
+				String discoverer = splash ? triggererName + " (" + targetName + ")" : targetName;
+				this.effect.setDiscovered(discoverer, effect_drink, effect_splash);
 				PotionHelper.setCombinationEffect(consistency, appearance, this.effect);
 			}
-			return this.effect;
 		}
+		return this.effect;
 	}
 
 	public static PotionEntry setFromString(String str) {
@@ -129,5 +135,17 @@ public class PotionEntry {
 			System.out.println("No appearance found in '" + str + "'. Using '" + appearance.Name + "'");
 		}
 		return new PotionEntry(consistency, appearance, !PotionHelper.combinationHasEffect(consistency, appearance));
+	}
+
+	public String getEffectString() {
+		return getEffectString(false);
+	}
+
+	public String getEffectString(boolean splash) {
+		if (effect == null)
+			return "No effect.";
+		if (!isNew && this.effect.action != null)
+			return effect.getEffectString(splash);
+		return effect.getEffectStringDiscovered(splash);
 	}
 }

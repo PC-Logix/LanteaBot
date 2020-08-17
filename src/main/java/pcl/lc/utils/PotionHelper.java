@@ -196,15 +196,6 @@ public class PotionHelper {
 		return replaceParamsInEffectString(effect, nick, null);
 	}
 
-	/**
-	 * @param effect The effect string to replace {user} and {trigger} tags within
-	 * @param targetName The name of the target of the effect
-	 * @return Returns the effect string with name inserted
-	 */
-	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
-		return replaceParamsInEffectString(effect, targetName, triggererName, null);
-	}
-
 	public enum DynaParam {
 		ITEM("item", "{item}", "Replaced with a random item from the inventory, or a random junk item if nothing is found.", (input) -> {
 			String tag = "{item}";
@@ -346,16 +337,13 @@ public class PotionHelper {
 		}
 	}
 
-	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName, String action) {
+	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
 		String tempEffect = "";
 		int timeout = 10;
 		while (timeout > 0) {
 			timeout++;
 
 			effect = DynaParam.ITEM.replace.apply(effect);
-
-			if (action != null)
-				effect = effect.replace("{action}", action);
 
 			effect = DiceRoll.rollDiceInString(effect, true);
 

@@ -339,15 +339,17 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} feels the need to use \"" + Config.commandprefix + "fling\"."));
 		effects.add(new EffectEntry("The bottle turns into a pie.",
 				"A pie appears in front of {user}."));
-		effects.add(new EffectEntry("The bottle turns into a piece of bacon. You have found {action} of bacon.",
-				"A piece of bacon appears in front of {user}.", new Function<String, String>() {
+		effects.add(new EffectEntry("The fluid smells faintly of bacon...", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String s) {
-				if (!baconMap.containsKey(s))
-					baconMap.put(s, 0);
-				int bacon = baconMap.get(s) +1;
-				baconMap.put(s, bacon);
-				return bacon + " piece" + (bacon == 1 ? "" : "s");
+			public String apply(EffectActionParameters parameters) {
+				if (!baconMap.containsKey(parameters.targetName))
+					baconMap.put(parameters.targetName, 0);
+				int bacon = baconMap.get(parameters.targetName) +1;
+				baconMap.put(parameters.targetName, bacon);
+				String prem = "The bottle turns into a piece of bacon. " + parameters.targetName + " has found ";
+				if (parameters.isSplash)
+					prem = "A piece of bacon appears in front of {user}. " + parameters.targetName + " has found ";
+				return prem + bacon + " piece" + (bacon == 1 ? "" : "s") + " of bacon so far.";
 			}
 		}));
 		effects.add(new EffectEntry("The bottle turns into an apple.",
@@ -357,15 +359,15 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} now has a mullet{limit}."));
 		effects.add(new EffectEntry("The next remote {user} looks for is extra hard to find."));
 		effects.add(new EffectEntry("{user} gets a sudden Spice infusion. {user} can see the universe. [Spice Addiction +1]"));
-		effects.add(new EffectEntry("{user}'s radiation level goes up by {action}.", new Function<String, String>() {
+		effects.add(new EffectEntry("{user} feels ever so slightly warmer...", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String s) {
+			public String apply(EffectActionParameters parameters) {
 				int rads = Helper.getRandomInt(1, 4);
-				if (!radiationMap.containsKey(s))
-					radiationMap.put(s, 0);
-				int rabs = radiationMap.get(s) + rads;
-				radiationMap.put(s, rabs);
-				return rads + ". {user}'s radiation level is " + rabs;
+				if (!radiationMap.containsKey(parameters.targetName))
+					radiationMap.put(parameters.targetName, 0);
+				int rabs = radiationMap.get(parameters.targetName) + rads;
+				radiationMap.put(parameters.targetName, rabs);
+				return parameters.targetName + "'s radiation level goes up by " + rads + ". " + parameters.targetName + "'s radiation level is " + rabs + ".";
 			}
 		}));
 		effects.add(new EffectEntry("{user} smells something burning."));
@@ -387,67 +389,67 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("A swinging blade comes flying towards {user} from nowhere! {evade:16:1d8}"));
 		effects.add(new EffectEntry("A trapdoor suddenly opens up under {user}! There are spikes at the bottom. {evade:15:1d6}"));
 		effects.add(new EffectEntry("A giant boulder is rolling towards {user}! {evade:15:1d6}"));
-		effects.add(new EffectEntry("Tonk moved forward {action}.", new Function<String, String>() {
+		effects.add(new EffectEntry("Time passes. As it does.", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String user) {
+			public String apply(EffectActionParameters parameters) {
 				int hours = Helper.getRandomInt(1, 4);
 				Tonk.tonkTimeAdd(hours + "h");
-				return hours + " hour" + (hours == 1 ? "" : "s");
+				return "Tonk moved forward " + hours + " hour" + (hours == 1 ? "" : "s") + ".";
 			}
 		}));
-		effects.add(new EffectEntry("Tonk moved back {action}.", new Function<String, String>() {
+		effects.add(new EffectEntry("{user} feels as if time tried to go in reverse for a bit, but couldn't...", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String user) {
+			public String apply(EffectActionParameters parameters) {
 				int hours = Helper.getRandomInt(1, 4);
 				Tonk.tonkTimeRemove(hours + "h");
-				return hours + " hour" + (hours == 1 ? "" : "s");
+				return "Tonk moved back " + hours + " hour" + (hours == 1 ? "" : "s") + ".";
 			}
 		}));
-		effects.add(new EffectEntry("{user} gained {action} tonk points.", new Function<String, String>() {
+		effects.add(new EffectEntry("Some tonk points fly by. {user} fails to catch them.", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String user) {
+			public String apply(EffectActionParameters parameters) {
 				int points = Helper.getRandomInt(1, 100);
-				Tonk.tonkPointsAdd(user, points);
-				return Tonk.displayTonkPoints(points);
+				Tonk.tonkPointsAdd(parameters.targetName, points);
+				return parameters.targetName + " gained " + Tonk.displayTonkPoints(points) + " tonk points.";
 			}
 		}));
 		effects.add(new EffectEntry("Someone just had some of {user}'s favourite food and they didn't get any!"));
 		effects.add(new EffectEntry("A bunch of people in white coats approach {user}. {evade:12:0}"));
-		effects.add(new EffectEntry("{user} gains one research point. {user} now has {action}.", new Function<String, String>() {
+		effects.add(new EffectEntry("For a second it felt like {user} was going to have a huge epiphany. It was just a fart...", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String s) {
-				if (!researchPointsMap.containsKey(s))
-					researchPointsMap.put(s, 0);
-				int points = researchPointsMap.get(s) +1;
-				researchPointsMap.put(s, points);
-				return points + " point" + (points == 1 ? "" : "s");
+			public String apply(EffectActionParameters parameters) {
+				if (!researchPointsMap.containsKey(parameters.targetName))
+					researchPointsMap.put(parameters.targetName, 0);
+				int points = researchPointsMap.get(parameters.targetName) +1;
+				researchPointsMap.put(parameters.targetName, points);
+				return parameters.targetName + " gains one research point. {user} now has " + points + " point" + (points == 1 ? "" : "s") + ".";
 			}
 		}));
 		effects.add(new EffectEntry("{user} hears a scream from nearby."));
-		effects.add(new EffectEntry("{user} gains some curse. {user} has {action} curse.", new Function<String, String>() {
+		effects.add(new EffectEntry("{user} feels as if they managed to avoid a terrible curse...", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String s) {
-				if (!curseMap.containsKey(s))
-					curseMap.put(s, 0);
-				int curse = curseMap.get(s) +1;
-				return String.valueOf(curse);
+			public String apply(EffectActionParameters parameters) {
+				if (!curseMap.containsKey(parameters.targetName))
+					curseMap.put(parameters.targetName, 0);
+				int curse = curseMap.get(parameters.targetName) +1;
+				return parameters.targetName + " gains some curse. " + parameters.targetName + " has " + String.valueOf(curse) + " curse.";
 			}
 		}));
 		effects.add(new EffectEntry("{user}'s left sock is now cursed."));
 		effects.add(new EffectEntry("{user}'s feet tingle briefly."));
 		effects.add(new EffectEntry("{user} spots a shiny thing!"));
-		effects.add(new EffectEntry("{user} barely manages to catch a green shell that appears in front of them!", new Function<String, String>() {
+		effects.add(new EffectEntry("A green shell flies by! Just out of reach.", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String user) {
-				TonkSnipe.refill(user, Tonk.TonkSnipeType.GREEN);
-				return "";
+			public String apply(EffectActionParameters parameters) {
+				TonkSnipe.refill(parameters.targetName, Tonk.TonkSnipeType.GREEN);
+				return parameters.targetName + " barely manages to catch a green shell that appears in front of them!";
 			}
 		}));
-		effects.add(new EffectEntry("{user} barely manages to catch a red shell that appears in front of them!", new Function<String, String>() {
+		effects.add(new EffectEntry("A red shell flies by! If only {user} could have reached it.", new Function<EffectActionParameters, String>() {
 			@Override
-			public String apply(String user) {
-				TonkSnipe.refill(user, Tonk.TonkSnipeType.RED);
-				return "";
+			public String apply(EffectActionParameters parameters) {
+				TonkSnipe.refill(parameters.targetName, Tonk.TonkSnipeType.RED);
+				return parameters.targetName + " barely manages to catch a red shell that appears in front of them!";
 			}
 		}));
 		effects.add(new EffectEntry("{user} feels like they need to drink {appearance_p_lc} potion."));
@@ -457,18 +459,21 @@ public class DrinkPotion extends AbstractListener {
 		if (IRCBot.getDebug()) {
 			effects = new ArrayList<>();
 			effects.add(new EffectEntry("{user} feels chill."));
-			/*
-			effects.add(new EffectEntry("The bottle turns into a piece of bacon. You have found {action} of bacon.",
-					"A piece of bacon appears in front of {user}.", new Function<String, String>() {
+//			/*
+			effects.add(new EffectEntry("The fluid smells faintly of bacon...", new Function<EffectActionParameters, String>() {
 				@Override
-				public String apply(String s) {
-					if (!baconMap.containsKey(s))
-						baconMap.put(s, 0);
-					int bacon = baconMap.get(s) + 1;
-					baconMap.put(s, bacon);
-					return bacon + " piece" + (bacon == 1 ? "" : "s");
+				public String apply(EffectActionParameters parameters) {
+					if (!baconMap.containsKey(parameters.targetName))
+						baconMap.put(parameters.targetName, 0);
+					int bacon = baconMap.get(parameters.targetName) +1;
+					baconMap.put(parameters.targetName, bacon);
+					String prem = "The bottle turns into a piece of bacon. " + parameters.targetName + " has found ";
+					if (parameters.isSplash)
+						prem = "A piece of bacon appears in front of {user}. " + parameters.targetName + " has found ";
+					return prem + bacon + " piece" + (bacon == 1 ? "" : "s") + " of bacon so far.";
 				}
-			}));*/
+			}));
+//			*/
 		}
 
 		//Never end with punctuation and always start with a space
@@ -533,16 +538,9 @@ public class DrinkPotion extends AbstractListener {
 				try {
 					if (params.size() == 0 || params.get(0).equals("random")) {
 						potion = PotionHelper.getRandomPotion();
-						EffectEntry effect = potion.getEffect(nick);
-						if (effect != null) {
-							if (effect.action != null && !potion.isNew) {
-								Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird, and nothing seems to happen...");
-								return;
-							}
-							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
-							return;
-						} else
-							Helper.sendMessage(target, "Due to some unfortunate series of events I couldn't find an effect for this potion.");
+						potion.getEffect(nick);
+						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(), nick));
+						return;
 					} else if (params.get(0).equals("^")) {
 						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
@@ -557,7 +555,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 					} else {
 						if (specialFluids.containsKey(params.get(0))) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick, ""));
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick));
 							return;
 						}
 					}
@@ -566,16 +564,8 @@ public class DrinkPotion extends AbstractListener {
 						potion = new PotionEntry();
 						potion.setFromCommandParameters(params);
 
-						EffectEntry effect = potion.getEffect(nick);
-
-						if (effect != null) {
-							if (effect.action != null && !potion.isNew) {
-								Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". It tastes kinda weird, and nothing seems to happen...");
-								return;
-							}
-							Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), nick));
-						} else
-							Helper.sendMessage(target, "Due to some unfortunate series of events I couldn't find an effect for this potion.");
+						potion.getEffect(nick);
+						Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(), nick));
 					} catch (InvalidPotionException ex) {
 						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
 					}
@@ -619,12 +609,8 @@ public class DrinkPotion extends AbstractListener {
 						PotionEntry potion;
 						if (potionString == null || potionString.equals("random")) {
 							potion = PotionHelper.getRandomPotion();
-							EffectEntry effect = potion.getEffect(nick, true);
-							if (effect.action != null && !potion.isNew) {
-								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It kinda oozes strangely, but nothing seems to happen...");
-								return;
-							}
-							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
+							potion.getEffectSplash(splashTarget, nick);
+							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(true), splashTarget, nick));
 							Defend.addEvent(nick, splashTarget, potion.consistency.getName(false, true) + " " + potion.appearance.getName(false, true) + " potion", Defend.EventTypes.POTION);
 							return;
 						} else if (potionString.equals("^")) {
@@ -641,7 +627,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 
 						if (specialFluids.containsKey(potionString)) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), splashTarget, nick, ""));
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), splashTarget, nick));
 							return;
 						}
 
@@ -649,16 +635,8 @@ public class DrinkPotion extends AbstractListener {
 							potion = new PotionEntry();
 							potion.setFromCommandParameters(potionString);
 
-							EffectEntry effect = potion.getEffect(nick);
-
-							if (effect != null) {
-								String action = "";
-								if (effect.action != null && !potion.isNew) {
-									Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ".  It kinda oozes strangely, but nothing seems to happen...");
-									return;
-								}
-								Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(effect.toString(), splashTarget, nick));
-							}
+							potion.getEffect(nick);
+							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(true), splashTarget, nick));
 						} catch (InvalidPotionException ex) {
 							Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
 						}
