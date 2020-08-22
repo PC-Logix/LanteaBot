@@ -576,7 +576,9 @@ public class Admin extends AbstractListener {
 		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
 		for (Command subCommand : command.getSubCommands()) {
 			String subHelp = subCommand.getHelpText();
-			if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
+			if (Permissions.getPermLevel(subCommand.getPermissionLevel()) > 0)
+				subHelp = "[" + subCommand.getPermissionLevel() + "] " + subHelp;
+			else if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
 				subHelp = "[" + command.getPermissionLevel() + "] " + subHelp;
 			item += "<tr><td style='white-space: nowrap;'> ⌞ " + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
 		}
