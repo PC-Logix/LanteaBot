@@ -29,7 +29,7 @@ public class TimedBans extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		command_timed = new Command("timed") {
+		command_timed = new Command("timed", Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, trySubCommandsMessage(params), nick);
