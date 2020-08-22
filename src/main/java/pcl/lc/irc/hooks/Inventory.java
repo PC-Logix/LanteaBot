@@ -183,7 +183,7 @@ public class Inventory extends AbstractListener {
 		};
 		sub_command_remove.registerAlias("rem");
 		sub_command_remove.registerAlias("del");
-		sub_command_preserve = new Command("preserve") {
+		sub_command_preserve = new Command("preserve", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
@@ -201,7 +201,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_preserve.registerAlias("pre");
-		sub_command_unpreserve = new Command("unpreserve") {
+		sub_command_unpreserve = new Command("unpreserve", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
@@ -219,7 +219,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_unpreserve.registerAlias("unpre");
-		sub_command_favourite = new Command("favourite") {
+		sub_command_favourite = new Command("favourite", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				try {
