@@ -36,7 +36,7 @@ public class DrinkPotion extends AbstractListener {
 	public static ArrayList<EffectEntry> effects = new ArrayList<>();
 	public static HashMap<String, EffectEntry> potions = new HashMap<>();
 	public static ArrayList<String> limits = new ArrayList<>();
-	public static HashMap<String, ArrayList<EffectEntry>> specialFluids = new HashMap<>();
+	public static HashMap<String, EffectEntry> specialFluids = new HashMap<>();
 
 	public static HashMap<String, Integer> curseMap = new HashMap<>();
 	public static HashMap<String, Integer> researchPointsMap = new HashMap<>();
@@ -506,21 +506,11 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they find a lamp");
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
-		specialFluids.put("water", new ArrayList<>(Arrays.asList(
-				new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"),
-				new EffectEntry("You splash {user} with some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"))));
-		specialFluids.put("soda", new ArrayList<>(Arrays.asList(
-				new EffectEntry("{user} has some soda. It's fizzy and sweet."),
-				new EffectEntry("You splash {user} with some soda. It's fizzy and sticky."))));
-		specialFluids.put("coffee", new ArrayList<>(Arrays.asList(
-				new EffectEntry("{user} has some coffee. It's hot and bitter."),
-				new EffectEntry("You splash {user} with coffee. It's scalding hot! {user} takes 1d6 fire damage!"))));
-		specialFluids.put("everything", new ArrayList<>(Arrays.asList(
-				new EffectEntry("{user} explodes!"),
-				new EffectEntry("You fail to lift the container containing all the potions. It's too heavy."))));
-		specialFluids.put("antidote", new ArrayList<>(Arrays.asList(
-				new EffectEntry("{user} reverts to their original state before any potions."),
-				new EffectEntry("You splash {user} with some antidote. {user} reverts to their original state before any potions."))));
+		specialFluids.put("water", new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!", "You splash {user} with some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"));
+		specialFluids.put("soda", new EffectEntry("{user} has some soda. It's fizzy and sweet.", "You splash {user} with some soda. It's fizzy and sticky."));
+		specialFluids.put("coffee", new EffectEntry("{user} has some coffee. It's hot and bitter.", "You splash {user} with coffee. It's scalding hot! {user} takes 1d6 fire damage!"));
+		specialFluids.put("everything", new EffectEntry("{user} explodes!", "You fail to lift the container containing all the potions. It's too heavy."));
+		specialFluids.put("antidote", new EffectEntry("{user} reverts to their original state before any potions.", "You splash {user} with some antidote. {user} reverts to their original state before any potions."));
 	}
 
 	static String html;
@@ -555,7 +545,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 					} else {
 						if (specialFluids.containsKey(params.get(0))) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).get(0).toString(), nick));
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).getEffectString(), nick));
 							return;
 						}
 					}
@@ -629,7 +619,7 @@ public class DrinkPotion extends AbstractListener {
 						}
 
 						if (specialFluids.containsKey(potionString)) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).get(1).toString(), splashTarget, nick));
+							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).getEffectString(true), splashTarget, nick));
 							return;
 						}
 
