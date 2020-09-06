@@ -9,7 +9,8 @@ enum Action {
     DIVIDE,
     ADD,
     SUB,
-    EXPONENT
+    EXPONENT,
+    MODULUS
 }
 
 public class MathParseExpression {
@@ -26,7 +27,7 @@ public class MathParseExpression {
         steps = new ArrayList<>();
         int i = 0;
 
-        Pattern groupPattern = Pattern.compile("\\(([,. a-zA-Z+*\\-\\d]+)\\)");
+        Pattern groupPattern = Pattern.compile("\\(([,. a-zA-Z+*\\-\\d^%]+)\\)");
 
         while (i < maxIteration) {
             Matcher matcher = groupPattern.matcher(inputString);
@@ -61,6 +62,13 @@ public class MathParseExpression {
                 for (int y = 1; y < maxY; y++) {
                     math = math * Float.parseFloat(matcher.group(1));
                 }
+            } else if (action.equals(Action.MODULUS)) {
+                System.out.println(input);
+                System.out.println(matcher.group(1));
+                System.out.println(matcher.group(2));
+                int grp1 = Integer.parseInt(matcher.group(1));
+                int grp2 = Integer.parseInt(matcher.group(2));
+                math = Math.floorMod(grp1, grp2);
             } else if (action.equals(Action.MULTIPLY))
                 math = Float.parseFloat(matcher.group(1)) * Float.parseFloat(matcher.group(2));
             else if (action.equals(Action.DIVIDE))
@@ -82,11 +90,12 @@ public class MathParseExpression {
         int i = 0;
 
         Pattern findDiceGroups = Pattern.compile("\\[([\\d,]+)]");
-        Pattern findMultiplication = Pattern.compile("([\\d,.]+) *[x*]+ *([\\d,.]+)");
-        Pattern findDivision = Pattern.compile("([\\d,.]+) *[/÷]+ *([\\d,.]+)");
-        Pattern findSubtraction = Pattern.compile("([\\d,.]+) *[-]+ *([\\d,.]+)");
-        Pattern findAddition = Pattern.compile("([\\d,.]+) *[+]+ *([\\d,.]+)");
-        Pattern findExponent = Pattern.compile("([\\d,.]+) *[\\^]+ *([\\d,.]+)");
+        Pattern findMultiplication = Pattern.compile("(-?[\\d,.]+) *(?:x|\\*|multiplied by) *(-?[\\d,.]+)");
+        Pattern findDivision = Pattern.compile("(-?[\\d,.]+) *(?:/|÷|divided by) *(-?[\\d,.]+)");
+        Pattern findSubtraction = Pattern.compile("(-?[\\d,.]+) *(?:-|minus) *(-?[\\d,.]+)");
+        Pattern findAddition = Pattern.compile("(-?[\\d,.]+) *(?:\\+|plus) *(-?[\\d,.]+)");
+        Pattern findExponent = Pattern.compile("(-?[\\d,.]+) *(?:\\^|exp) *(-?[\\d,.]+)");
+        Pattern findModulus = Pattern.compile("(-?[\\d,.]+) *(?:%|mod) *(-?[\\d,.]+)");
 
         while (i < maxIteration) {
             Matcher matcher = findDiceGroups.matcher(mathString);
@@ -105,6 +114,7 @@ public class MathParseExpression {
         mathString = doPatternSearch(mathString, findDivision, Action.DIVIDE);
         mathString = doPatternSearch(mathString, findSubtraction, Action.SUB);
         mathString = doPatternSearch(mathString, findAddition, Action.ADD);
+        mathString = doPatternSearch(mathString, findModulus, Action.MODULUS);
         return mathString;
     }
 }
