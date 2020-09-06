@@ -68,7 +68,7 @@ if (System.getenv().BUILD_NUMBER != null)
 	ext.buildNumber = System.getenv().BUILD_NUMBER?.toInteger()
 else
 	ext.buildNumber = 0
-println System.getenv( 'BUILD_NUMBER' )
+	
 archivesBaseName = "LanteaBot"
 
 class Version {
@@ -94,7 +94,6 @@ class Version {
         "${getMajor()}.${getMinor()}.${getRevision()}"
     }
 }
-println versionObj.getBuild()
 def filteredSourceDir = file("${buildDir}/filtered")
 
 sourceSets {
@@ -118,6 +117,7 @@ task processVersion (type: Copy) {
             versionRevision: versionObj.getRevision(),
             versionBuild: versionObj.getBuild()
     ])
+    println versionObj.getBuild()
 }
 task downloadMultipleFiles(type: Download) {
     src([
