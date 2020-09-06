@@ -94,7 +94,7 @@ class Version {
         "${getMajor()}.${getMinor()}.${getRevision()}"
     }
 }
-
+println versionObj.getBuild()
 def filteredSourceDir = file("${buildDir}/filtered")
 
 sourceSets {
