@@ -68,7 +68,7 @@ if (System.getenv().BUILD_NUMBER != null)
 	ext.buildNumber = System.getenv().BUILD_NUMBER?.toInteger()
 else
 	ext.buildNumber = 0
-
+println System.getenv( 'BUILD_NUMBER' )
 archivesBaseName = "LanteaBot"
 
 class Version {
