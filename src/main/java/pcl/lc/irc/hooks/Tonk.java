@@ -278,7 +278,7 @@ public class Tonk extends AbstractListener {
 									System.out.println("No points gained because nick equals record holder (Lost: " + hours + " * " + record_hours + " = " + (hours * record_hours) + ")");
 								}
 
-								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
+								Helper.sendMessage(target, Exclamation.getRandomExpression() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								Helper.sendMessage(target, nick + "'s new record is " + Helper.timeString(Helper.parseMilliseconds(diff)) + "! " + ((Helper.round(hours / 1000d, 8) > 0) ? (!nick_is_recorder ? (" " + nick + " also gained " + displayTonkPoints(hours * record_hours) + (record_hours > 1 ? " (" + displayTonkPoints(hours) + " x " + record_hours + ")" : "") + " tonk points for stealing the tonk.") : " No points gained for stealing from yourself. (Lost out on " + displayTonkPoints(hours) + (record_hours > 1 ? " x " + record_hours + " = " + displayTonkPoints(hours * record_hours) : "") + ")") : "") + position + overtook + advance);
 								Database.storeJsonData(tonk_record_key, diff + ";" + nick);
 								Database.storeJsonData(last_tonk_key, String.valueOf(now));
@@ -420,7 +420,7 @@ public class Tonk extends AbstractListener {
 									advance = " Need " + displayTonkPoints(sr.score - tonk_record_personal) + " more points to pass " + Helper.antiPing(sr.user) + "!";
 								}
 
-								Helper.sendMessage(target, CurseWord.getRandomCurse() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
+								Helper.sendMessage(target, Exclamation.getRandomExpression() + "! " + Helper.antiPing(nick) + "! You beat " + (nick_is_recorder ? "your own" : Helper.antiPing(recorder) + "'s") + " previous record of " + Helper.timeString(Helper.parseMilliseconds(tonk_record_long)) + " (By " + Helper.timeString(Helper.parseMilliseconds(diff - tonk_record_long)) + ")! I hope you're happy!");
 								if (nick_is_recorder)
 									Helper.sendMessage(target, Helper.antiPing(nick) + " has tonked out! Tonk has been reset! They gained " + displayTonkPoints(hours) + " tonk points!" + (applyPoints ? " plus " + displayTonkPoints(2d * (hours - 1)) + " bonus points for consecutive hours!" : "") + " Current score: " + displayTonkPoints(tonk_record_personal) + ", " + position + overtook + advance);
 								else

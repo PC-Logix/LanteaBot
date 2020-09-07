@@ -864,6 +864,8 @@ public class Helper {
 		for (int i = minLength; i < maxLength; i++) {
 			output += chars[getRandomInt(0, chars.length - 1)];
 		}
+		if (!output.contains("!"))
+			output += "!";
 		return output;
 	}
 
