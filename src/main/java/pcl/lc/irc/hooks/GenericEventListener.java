@@ -12,7 +12,10 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.PasteUtils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,22 +86,28 @@ public class GenericEventListener extends AbstractListener{
 					}
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-		if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
-			try {
+			if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
+				try {
+					String target = Helper.getTarget(event);
+					DynamicCommands.parseDynCommand(actualCommand, user, target, params);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (IRCBot.commands.containsKey(actualCommand)) {
+				Command cmd = IRCBot.commands.get(actualCommand);
+				cmd.callingRelay = callingRelay;
 				String target = Helper.getTarget(event);
-				DynamicCommands.parseDynCommand(actualCommand, user, target, params);
-			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
 			}
-		} else if (IRCBot.commands.containsKey(actualCommand)) {
-			Command cmd = IRCBot.commands.get(actualCommand);
-			cmd.callingRelay = callingRelay;
-			String target = Helper.getTarget(event);
-			System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
+		} catch (Exception e) {
+			System.out.println("Command exception!");
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			String pasteURL = PasteUtils.paste(sw.toString(), PasteUtils.Formats.NONE);
+			Helper.sendMessage(Helper.getTarget(event), "I had an exception... ow. Here's the stacktrace: " + pasteURL);
+			e.printStackTrace();
 		}
 
 		super.onGenericMessage(event);

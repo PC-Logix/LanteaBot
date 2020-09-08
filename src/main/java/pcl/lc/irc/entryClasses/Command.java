@@ -342,25 +342,20 @@ public class Command {
 						subParams = new ArrayList<>(params.subList(1, params.size()));
 					else
 						subParams = new ArrayList<>();
-					if (sub.tryExecute(firstParam, nick, target, event, subParams, false))
-						return true;
+					return sub.tryExecute(firstParam, nick, target, event, subParams, false);
 				}
 			}
-			try {
-				this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
-//				System.out.println("Called onExecuteSuccess with String[]");
-				this.onExecuteSuccess(this, nick, target, event, params);
-//				System.out.println("Called onExecuteSuccess with ArrayList<String>");
-				String message = String.join(" ", params);
-				message = message.replaceAll("^\\s+", "");
-				this.onExecuteSuccess(this, nick, target, event, message);
-//				System.out.println("Called onExecuteSuccess with String");
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
+			this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
+//			System.out.println("Called onExecuteSuccess with String[]");
+			this.onExecuteSuccess(this, nick, target, event, params);
+//			System.out.println("Called onExecuteSuccess with ArrayList<String>");
+			String message = String.join(" ", params);
+			message = message.replaceAll("^\\s+", "");
+			this.onExecuteSuccess(this, nick, target, event, message);
+//			System.out.println("Called onExecuteSuccess with String");
 		} else {
 			this.onExecuteFail(this, nick, target, shouldExecute);
+			return false;
 		}
 		return true;
 	}
