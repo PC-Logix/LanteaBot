@@ -241,6 +241,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} loses exactly a handful of luck."));
 		effects.add(new EffectEntry("{user}'s pockets suddenly contain 1d10 {appearance:marbles:}."));
 		effects.add(new EffectEntry("{user}'s favourite hat is suddenly on fire."));
+		effects.add(new EffectEntry("{user}'s favourite hat is suddenly fire."));
+		effects.add(new EffectEntry("{user}'s favourite shirt is suddenly on fire."));
+		effects.add(new EffectEntry("{user}'s favourite shirt is suddenly fire."));
+		effects.add(new EffectEntry("{user}'s favourite skin is suddenly on fire."));
+		effects.add(new EffectEntry("{user}'s favourite skin is suddenly fire."));
+		effects.add(new EffectEntry("{user}'s favourite pants are suddenly on fire."));
+		effects.add(new EffectEntry("{user}'s favourite pants are suddenly fire."));
 		effects.add(new EffectEntry("{user} has a single tear roll down their cheek for some reason."));
 		effects.add(new EffectEntry("{user}'s nose vanish{limit}."));
 		effects.add(new EffectEntry("{user} feels like a champion!"));
