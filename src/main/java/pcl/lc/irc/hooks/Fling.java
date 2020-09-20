@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pcl.lc.irc.hooks;
 
@@ -35,77 +35,72 @@ public class Fling extends AbstractListener {
 		local_command = new Command("fling") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String[] split = params.split("^? ?at ", 2);
+				String flingTarget = "";
+				String with;
+				if (split.length == 1) {
+					with = split[0].trim();
+				} else {
+					with = split[0].trim();
+					flingTarget = split[1].trim();
+				}
+
+				Item item = null;
 				try {
-					String[] split = params.split("^? ?at ", 2);
-					String flingTarget = "";
-					String with;
-					if (split.length == 1) {
-						with = split[0].trim();
-					} else {
-						with = split[0].trim();
-						flingTarget = split[1].trim();
-					}
-
-					Item item = null;
-					try {
-						if (with.equals(""))
-							item = Inventory.getRandomItem(false);
-						else
-							item = new Item(with, false);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					if (item != null) {
-						String action = " flings ";
-						if (this.getActualCommand().equals(ALIAS_SLING))
-							action = " slings ";
-						else if (this.getActualCommand().equals(ALIAS_SHOOT))
-							action = " shoots ";
-						else if (this.getActualCommand().equals(ALIAS_LAUNCH))
-							action = " launches ";
-
-						if (flingTarget.equals(""))
-							flingTarget = Helper.getRandomUser(event);
-						if (!Helper.doInteractWith(flingTarget))
-							flingTarget = nick;
-						Helper.AntiPings = Helper.getNamesFromTarget(target);
-						DiceRoll hit = Helper.rollDice("1d100").getFirstGroupOrNull();
-						int itemDamage = 0;
-						if (hit != null && hit.getSum() > 20) {
-							DiceRollResult dmg = item.getDamage();
-							dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
-
-							String dmgString = dmg.getResultString();
-							if (dmgString == null)
-								dmgString = "no damage";
-							else
-								dmgString += " damage";
-							String result = nick + action + item.getName() + " in a random direction. It hits " + flingTarget + " " + Helper.getHitPlace() + ". They take " + dmgString + "!";
-							Defend.addEvent(nick, flingTarget, target, dmg.getTotal(), item.getName(), Defend.EventTypes.FLING, result);
-							Helper.sendMessage(target, nick + " is flinging something at " + flingTarget + "! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
-							itemDamage = 1;
-						} else {
-							Helper.sendMessage(target, nick + action + item.getName() + " in a random direction. It hits the ground near " + flingTarget);
-							itemDamage = 2;
-						}
-						String dust = item.damage(itemDamage, false, true, true);
-						if (!dust.equals(""))
-							Helper.sendAction(target, dust);
-					} else {
-						String action = "flinging";
-						if (this.getActualCommand().equals(ALIAS_SLING))
-							action = "slinging";
-						else if (this.getActualCommand().equals(ALIAS_SHOOT))
-							action = "shooting";
-						else if (this.getActualCommand().equals(ALIAS_LAUNCH))
-							action = "launching";
-
-						Helper.sendMessage(target, nick + " makes a " + action + " motion but realizes there was nothing there...");
-					}
+					if (with.equals(""))
+						item = Inventory.getRandomItem(false);
+					else
+						item = new Item(with, false);
 				} catch (Exception e) {
 					e.printStackTrace();
-					Helper.sendMessage(target, "Something wrong happened.");
+				}
+
+				if (item != null) {
+					String action = " flings ";
+					if (this.getActualCommand().equals(ALIAS_SLING))
+						action = " slings ";
+					else if (this.getActualCommand().equals(ALIAS_SHOOT))
+						action = " shoots ";
+					else if (this.getActualCommand().equals(ALIAS_LAUNCH))
+						action = " launches ";
+
+					if (flingTarget.equals(""))
+						flingTarget = Helper.getRandomUser(event);
+					if (!Helper.doInteractWith(flingTarget))
+						flingTarget = nick;
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					DiceRoll hit = Helper.rollDice("1d100").getFirstGroupOrNull();
+					int itemDamage = 0;
+					if (hit != null && hit.getSum() > 20) {
+						DiceRollResult dmg = item.getDamage();
+						dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
+
+						String dmgString = dmg.getResultString();
+						if (dmgString == null)
+							dmgString = "no damage";
+						else
+							dmgString += " damage";
+						String result = nick + action + item.getName() + " in a random direction. It hits " + flingTarget + " " + Helper.getHitPlace() + ". They take " + dmgString + "!";
+						Defend.addEvent(nick, flingTarget, target, dmg.getTotal(), item.getName(), Defend.EventTypes.FLING, result);
+						Helper.sendMessage(target, nick + " is flinging something at " + flingTarget + "! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
+						itemDamage = 1;
+					} else {
+						Helper.sendMessage(target, nick + action + item.getName() + " in a random direction. It hits the ground near " + flingTarget);
+						itemDamage = 2;
+					}
+					String dust = item.damage(itemDamage, false, true, true);
+					if (!dust.equals(""))
+						Helper.sendAction(target, dust);
+				} else {
+					String action = "flinging";
+					if (this.getActualCommand().equals(ALIAS_SLING))
+						action = "slinging";
+					else if (this.getActualCommand().equals(ALIAS_SHOOT))
+						action = "shooting";
+					else if (this.getActualCommand().equals(ALIAS_LAUNCH))
+						action = "launching";
+
+					Helper.sendMessage(target, nick + " makes a " + action + " motion but realizes there was nothing there...");
 				}
 			}
 		};

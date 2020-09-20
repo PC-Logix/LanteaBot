@@ -47,23 +47,23 @@ public class RPG extends AbstractListener {
 //			"deaths INT," +
 //			"revives INT)");
 		Database.addPreparedStatement("newRPGCharacter", "INSERT INTO RPGUsers (account, userName, health, xp, level, strength, defense, accuracy, dodge, gainStrength, gainDefense, gainAccuracy, gainDodge, numAttacked, numAttacks, deaths, revives)" +
-			" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		Database.addPreparedStatement("updateRPGCharacter", "UPDATE RPGUsers SET userName = ?, " +
-			"health = ?, " +
-			"xp = ?, " +
-			"level = ?, " +
-			"strength = ?, " +
-			"defense = ?, " +
-			"accuracy = ?, " +
-			"dodge = ?, " +
-			"gainStrength = ?, " +
-			"gainDefense = ?, " +
-			"gainAccuracy = ?, " +
-			"gainDodge = ?, " +
-			"numAttacked = ?, " +
-			"numAttacks = ?, " +
-			"deaths = ?, " +
-			"revives = ? WHERE account = ?");
+				"health = ?, " +
+				"xp = ?, " +
+				"level = ?, " +
+				"strength = ?, " +
+				"defense = ?, " +
+				"accuracy = ?, " +
+				"dodge = ?, " +
+				"gainStrength = ?, " +
+				"gainDefense = ?, " +
+				"gainAccuracy = ?, " +
+				"gainDodge = ?, " +
+				"numAttacked = ?, " +
+				"numAttacks = ?, " +
+				"deaths = ?, " +
+				"revives = ? WHERE account = ?");
 		Database.addPreparedStatement("getRPGCharacter", "SELECT * FROM RPGUsers WHERE account = ?");
 
 		rpg = new Command("rpg", Permissions.EVERYONE) {
@@ -91,25 +91,20 @@ public class RPG extends AbstractListener {
 
 		stats = new Command("stats", Permissions.EVERYONE) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return;
 				String account = Account.getAccount(nick, event);
-				try {
-					RPGCharacter character = new RPGCharacter(account, nick, target);
-					Helper.sendMessage(target, character.toString());
-					Helper.sendMessage(target, character.getStrength() + " strength, " + character.getDefense() + " defense, " + character.getAccuracy() + " accuracy & " + character.getDodge() + " dodge.");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "I couldn't get the character.");
-				}
+				RPGCharacter character = new RPGCharacter(account, nick, target);
+				Helper.sendMessage(target, character.toString());
+				Helper.sendMessage(target, character.getStrength() + " strength, " + character.getDefense() + " defense, " + character.getAccuracy() + " accuracy & " + character.getDodge() + " dodge.");
 			}
 		};
 		rpg.registerSubCommand(stats);
 
 		givexp = new Command("givexp", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return;
 				if (params.size() != 2) {
@@ -117,117 +112,88 @@ public class RPG extends AbstractListener {
 					return;
 				}
 				String account = Account.getAccount(params.get(0), event);
-				try {
-					RPGCharacter character = new RPGCharacter(account, nick, target);
-					character.gainExperience(Double.parseDouble(params.get(1)));
-					boolean levelup = character.levelUp();
-					if (!levelup)
-						Helper.sendMessage(target, character.getUserName() + " now has " + character.getXp() + " experience! (" + (character.experienceToNextLevel() - character.getXp()) + " until next level)");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "I couldn't get the character.");
-				}
+				RPGCharacter character = new RPGCharacter(account, nick, target);
+				character.gainExperience(Double.parseDouble(params.get(1)));
+				boolean levelup = character.levelUp();
+				if (!levelup)
+					Helper.sendMessage(target, character.getUserName() + " now has " + character.getXp() + " experience! (" + (character.experienceToNextLevel() - character.getXp()) + " until next level)");
 			}
-		}; givexp.setHelpText("Gives xp to user by name");
+		};
+		givexp.setHelpText("Gives xp to user by name");
 		rpg.registerSubCommand(givexp);
 
 		strength = new Command("strength", Permissions.EVERYONE) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return;
 				String account = Account.getAccount(nick, event);
-				try {
-					RPGCharacter character = new RPGCharacter(account, nick, target);
-					int gain = character.applyStrength();
-					if (gain > 0)
-						Helper.sendMessage(target, "You gained " + gain + " strength! You now have " + character.getStrength());
-					else
-						Helper.sendMessage(target, "You have no strength to gain at the moment.");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "I couldn't get the character.");
-				}
+				RPGCharacter character = new RPGCharacter(account, nick, target);
+				int gain = character.applyStrength();
+				if (gain > 0)
+					Helper.sendMessage(target, "You gained " + gain + " strength! You now have " + character.getStrength());
+				else
+					Helper.sendMessage(target, "You have no strength to gain at the moment.");
 			}
 		};
 		rpg.registerSubCommand(strength);
 
 		defense = new Command("defense", Permissions.EVERYONE) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return;
 				String account = Account.getAccount(nick, event);
-				try {
-					RPGCharacter character = new RPGCharacter(account, nick, target);
-					int gain = character.applyDefense();
-					if (gain > 0)
-						Helper.sendMessage(target, "You gained " + gain + " defense! You now have " + character.getDefense());
-					else
-						Helper.sendMessage(target, "You have no defense to gain at the moment.");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "I couldn't get the character.");
-				}
+				RPGCharacter character = new RPGCharacter(account, nick, target);
+				int gain = character.applyDefense();
+				if (gain > 0)
+					Helper.sendMessage(target, "You gained " + gain + " defense! You now have " + character.getDefense());
+				else
+					Helper.sendMessage(target, "You have no defense to gain at the moment.");
 			}
 		};
 		rpg.registerSubCommand(defense);
 
 		accuracy = new Command("accuracy", Permissions.EVERYONE) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return;
 				String account = Account.getAccount(nick, event);
-				try {
-					RPGCharacter character = new RPGCharacter(account, nick, target);
-					int gain = character.applyAccuracy();
-					if (gain > 0)
-						Helper.sendMessage(target, "You gained " + gain + " accuracy! You now have " + character.getAccuracy());
-					else
-						Helper.sendMessage(target, "You have no accuracy to gain at the moment.");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "I couldn't get the character.");
-				}
+				RPGCharacter character = new RPGCharacter(account, nick, target);
+				int gain = character.applyAccuracy();
+				if (gain > 0)
+					Helper.sendMessage(target, "You gained " + gain + " accuracy! You now have " + character.getAccuracy());
+				else
+					Helper.sendMessage(target, "You have no accuracy to gain at the moment.");
 			}
 		};
 		rpg.registerSubCommand(accuracy);
 
 		dodge = new Command("dodge", Permissions.EVERYONE) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return;
 				String account = Account.getAccount(nick, event);
-				try {
-					RPGCharacter character = new RPGCharacter(account, nick, target);
-					int gain = character.applyDodge();
-					if (gain > 0)
-						Helper.sendMessage(target, "You gained " + gain + " dodge! You now have " + character.getDodge());
-					else
-						Helper.sendMessage(target, "You have no dodge to gain at the moment.");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "I couldn't get the character.");
-				}
+				RPGCharacter character = new RPGCharacter(account, nick, target);
+				int gain = character.applyDodge();
+				if (gain > 0)
+					Helper.sendMessage(target, "You gained " + gain + " dodge! You now have " + character.getDodge());
+				else
+					Helper.sendMessage(target, "You have no dodge to gain at the moment.");
 			}
 		};
 		rpg.registerSubCommand(dodge);
 
 		status = new Command("status", Permissions.EVERYONE) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return;
 				String account = Account.getAccount(nick, event);
-				try {
-					RPGCharacter character = new RPGCharacter(account, nick, target);
-					Helper.sendMessage(target, "Your status is \"" + character.getStatus(true) + "\"");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "I couldn't get the character.");
-				}
+				RPGCharacter character = new RPGCharacter(account, nick, target);
+				Helper.sendMessage(target, "Your status is \"" + character.getStatus(true) + "\"");
 			}
 		};
 		rpg.registerSubCommand(status);

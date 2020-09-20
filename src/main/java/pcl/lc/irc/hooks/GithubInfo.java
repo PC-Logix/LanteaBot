@@ -77,7 +77,6 @@ public class GithubInfo extends AbstractListener {
 				    Helper.AntiPings = Helper.getNamesFromTarget(event.getChannel().getName());
 				    Helper.sendMessage(event.getChannel().getName(), Colors.BOLD + "Title: " + Colors.NORMAL + title.getAsString() + Colors.BOLD + " | Posted by: " + Colors.NORMAL + user.getAsString() + Colors.BOLD + " | Posted: " + Colors.NORMAL + date + Colors.BOLD + " | Status: " + Colors.NORMAL + status.getAsString());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

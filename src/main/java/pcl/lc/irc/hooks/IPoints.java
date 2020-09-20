@@ -49,20 +49,17 @@ public class IPoints extends AbstractListener {
 				try {
 					getPoints = Database.getPreparedStatement("getPoints");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
 					getPoints.setString(1, user);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				ResultSet points = null;
 				try {
 					points = getPoints.executeQuery();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
@@ -70,22 +67,19 @@ public class IPoints extends AbstractListener {
 						try {
 							Helper.sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has " + points.getBigDecimal(1) + " points");
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					} else {
 						Helper.sendMessage(target, Helper.antiPing(nick) + ": " +  user + " has 0 points");
 					}
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}; command_points.setHelpText("Checks the points for yourself, or another user");
 		command_reset_points = new Command("resetpoints", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 					PreparedStatement setPoints = Database.getPreparedStatement("setPoints");
 					String[] splitMessage = params.split(" ");
 					String user;
@@ -104,11 +98,6 @@ public class IPoints extends AbstractListener {
 					setPoints.executeUpdate();
 
 					Helper.sendMessage(target, nick + ": points reset");
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, nick + ": " +  "An error occurred while processing this command");
-				}
 			}
 		}; command_reset_points.setHelpText("Resets a users points, requires Bot Admin");
 		IRCBot.registerCommand(command_points);

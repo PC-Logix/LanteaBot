@@ -70,7 +70,7 @@ public class Reminders extends AbstractListener {
 
 		remindSomeone = new Command("remindthem") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() > 1) {
 					long time = Helper.getFutureTime(params.get(1));
 					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
@@ -80,7 +80,6 @@ public class Reminders extends AbstractListener {
 						message += " " + params.get(i);
 					}
 					message = message.trim();
-					try {
 						PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
 						addReminder.setString(1, target);
 						if (event.getUser().getNick().equals("Corded")) {
@@ -93,9 +92,6 @@ public class Reminders extends AbstractListener {
 							Helper.sendMessage(target, "I'll remind "+ params.get(0)+" about \"" + message.trim() + "\" at " + newTime);
 							return;
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 					Helper.sendMessage(target, "Something went wrong", nick);
 				} else if (params.size() == 0) {
 					Helper.sendMessage(target, "Specify user to remind", nick);
@@ -136,7 +132,7 @@ public class Reminders extends AbstractListener {
 		list.setHelpText("Gives you a list of your next 3 reminders");
 		reminders = new Command("reminders") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				list.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};

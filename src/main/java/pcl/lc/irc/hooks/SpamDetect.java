@@ -19,6 +19,7 @@ import pcl.lc.utils.TimedHashMap;
 
 public class SpamDetect extends ListenerAdapter {
 	List<String> enabledChannels = new ArrayList<String>();
+
 	public SpamDetect() {
 		try {
 			PreparedStatement checkHook = IRCBot.getInstance().getPreparedStatement("checkHook");
@@ -31,25 +32,26 @@ public class SpamDetect extends ListenerAdapter {
 			e.printStackTrace();
 		}
 	}
+
 	TimedHashMap<String, String> newUsers = new TimedHashMap<String, String>(5000, null);
+
 	public void onJoin(final JoinEvent join) throws Exception {
 		newUsers.put(join.getUser().getNick(), join.getChannel().getName());
 	}
-	public static boolean isAllUpperCase(String s)
-	{
+
+	public static boolean isAllUpperCase(String s) {
 		if (!StringUtils.isAlphanumeric(s)) {
 			return false;
 		}
-		for (int i=0; i<s.length(); i++)
-		{
-			if (Character.isLowerCase(s.charAt(i)))
-			{
+		for (int i = 0; i < s.length(); i++) {
+			if (Character.isLowerCase(s.charAt(i))) {
 				return false;
 			}
 		}
 		return true;
 	}
-	@SuppressWarnings({ "unchecked" })
+
+	@SuppressWarnings({"unchecked"})
 	@Override
 	public void onMessage(final MessageEvent event) throws Exception {
 		super.onMessage(event);
@@ -59,7 +61,7 @@ public class SpamDetect extends ListenerAdapter {
 			if (event.getMessage().length() > 1) {
 				if (enabledChannels.contains(event.getChannel().getName())) {
 					if (isAllUpperCase(event.getMessage()) && newUsers.containsKey(event.getUser().getNick())) {
-						event.getBot().sendIRC().message("chanserv", "kick " + event.getChannel().getName() + " " + event.getUser().getNick() +" Possible Spam detected!");
+						event.getBot().sendIRC().message("chanserv", "kick " + event.getChannel().getName() + " " + event.getUser().getNick() + " Possible Spam detected!");
 					}
 				}
 				String[] firstWord = StringUtils.split(trigger);
@@ -102,7 +104,7 @@ public class SpamDetect extends ListenerAdapter {
 						}
 					}
 				}
-			}		
+			}
 		}
 	}
 }

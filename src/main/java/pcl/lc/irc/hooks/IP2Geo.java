@@ -61,7 +61,6 @@ public class IP2Geo extends AbstractListener {
 				}			
 				cleanup();
 			} catch (IOException | ArchiveException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -71,7 +70,6 @@ public class IP2Geo extends AbstractListener {
 			try {
 				reader = new DatabaseReader.Builder(ip2geodb).withCache(new CHMCache()).build();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -127,7 +125,6 @@ public class IP2Geo extends AbstractListener {
 			City city = response.getCity();
 			return country.getName() + " " + subdivision.getName() + " " + city.getName();
 		} catch (IOException | GeoIp2Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "N/A";
 		}

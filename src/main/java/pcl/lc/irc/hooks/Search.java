@@ -89,21 +89,21 @@ public class Search extends AbstractListener {
 		search.registerSubCommand(youtube);
 		g = new Command("g") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				google.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
 		g.registerAlias("google");
 		yt = new Command("yt") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				youtube.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
 		yt.registerAlias("youtube");
 		wik = new Command("wiki") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				wiki.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
@@ -111,7 +111,7 @@ public class Search extends AbstractListener {
 		wik.registerAlias("wikipedia");
 		cf = new Command("cf") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				curseForge.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
@@ -119,7 +119,7 @@ public class Search extends AbstractListener {
 		cf.registerAlias("curseforge");
 		urb = new Command("urban") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				urban.onExecuteSuccess(command, nick, target, event, params);
 			}
 		};
@@ -132,7 +132,6 @@ public class Search extends AbstractListener {
 				try {
 					Helper.sendMessage(target, "https://lmgtfy.com/?q=" + URLEncoder.encode(params, "UTF-8"), nick, true);
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

@@ -306,19 +306,18 @@ public class Command {
 		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) {
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) throws Exception {
 		return tryExecute(command, nick, target, event, new ArrayList<>(Arrays.asList(params)), false);
 	}
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 		return tryExecute(command, nick, target, event, params, false);
 	}
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) throws Exception {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
 	}
 
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands)
-	{
+	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
 			System.out.println("Error when attempting to execute '" + this.actualCommand + "'. Doesn't match '" + command + "'");
@@ -360,13 +359,13 @@ public class Command {
 		return true;
 	}
 
-	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params) { forceExecute(nick, target, event, params, false); }
-	public void forceExecute(String nick, String target, GenericMessageEvent event, ArrayList<String> params) { forceExecute(nick, target, event, params, false);}
-	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) {
+	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params) throws Exception { forceExecute(nick, target, event, params, false); }
+	public void forceExecute(String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception { forceExecute(nick, target, event, params, false);}
+	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) throws Exception {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		forceExecute(nick, target, event, arguments, ignore_sub_commands);
 	}
-	public void forceExecute(String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) {
+	public void forceExecute(String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
 		this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[] {}));
 		this.onExecuteSuccess(this, nick, target, event, params);
 		String message = "";
@@ -382,10 +381,10 @@ public class Command {
 	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
 		System.out.println("Called default onExecuteSuccess (String[])");
 	}
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 		System.out.println("Called default onExecuteSuccess (String)");
 	}
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 		System.out.println("Called default onExecuteSuccess (ArrayList<String>)");
 	}
 	public void onExecuteFail(Command command, String nick, String target, long timeout) {

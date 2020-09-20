@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pcl.lc.irc.hooks;
 
@@ -33,7 +33,7 @@ public class Pet extends AbstractListener {
 
 		local_command = new Command("pet") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (params.length() == 0) {
 					Helper.sendMessage(target, nick + " flails at nothingness...");
 					return;
@@ -45,20 +45,15 @@ public class Pet extends AbstractListener {
 						with = split[1].trim();
 
 					if (nick.equals(petTarget)) {
-						Helper.sendMessage(target,"Don't pet yourself in public.", nick);
+						Helper.sendMessage(target, "Don't pet yourself in public.", nick);
 						return;
 					}
 
 					Item item = null;
-					try {
-						if (with != null)
-							item = new Item(with, false);
-						else
-							item = Inventory.getRandomItem();
-					} catch (Exception e) {
-						Helper.sendMessage(target, "I think something went wrong...");
-						e.printStackTrace();
-					}
+					if (with != null)
+						item = new Item(with, false);
+					else
+						item = Inventory.getRandomItem();
 
 					String dust = "";
 					if (item != null) {

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 /**
  * @author Forecaster
- *
  */
 @SuppressWarnings("rawtypes")
 public class PhraseBan extends AbstractListener {
@@ -65,45 +64,37 @@ public class PhraseBan extends AbstractListener {
 
 		add = new Command("add", Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				if (params.isEmpty()) {
 					Helper.sendMessage(target, "You must specify a nick.", nick);
 					return;
 				}
 				Statement statement;
-				try {
-					statement = Database.getConnection().createStatement();
-					ResultSet result = statement.executeQuery("SELECT * FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
-					if (result.next()) {
-						Helper.sendMessage(target, "Phrase already banned.", nick);
-						return;
-					}
-					statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + params.toLowerCase() + "')");
-					Helper.sendMessage(target, "Added phrase to banlist", nick);
-					phrases.add(params.toLowerCase());
-				} catch (SQLException e) {
-					e.printStackTrace();
+				statement = Database.getConnection().createStatement();
+				ResultSet result = statement.executeQuery("SELECT * FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
+				if (result.next()) {
+					Helper.sendMessage(target, "Phrase already banned.", nick);
+					return;
 				}
+				statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + params.toLowerCase() + "')");
+				Helper.sendMessage(target, "Added phrase to banlist", nick);
+				phrases.add(params.toLowerCase());
 			}
 		};
 		local_command.registerSubCommand(add);
 
 		del = new Command("del", Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				if (params.isEmpty()) {
 					Helper.sendMessage(target, "You must specify a nick.", nick);
 					return;
 				}
 				Statement statement;
-				try {
-					statement = Database.getConnection().createStatement();
-					statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
-					Helper.sendMessage(target, "Removed phrase from banlist", nick);
-					phrases.remove(params.toLowerCase());
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				statement = Database.getConnection().createStatement();
+				statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
+				Helper.sendMessage(target, "Removed phrase from banlist", nick);
+				phrases.remove(params.toLowerCase());
 			}
 		};
 		del.registerAlias("rem");
@@ -119,56 +110,44 @@ public class PhraseBan extends AbstractListener {
 
 		clear = new Command("clear", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					Statement statement = Database.getConnection().createStatement();
-					statement.executeUpdate("DELETE FROM BannedPhrases");
-					phrases.clear();
-					Helper.sendMessage(target, "All banned phrases cleared!", nick);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
+				Statement statement = Database.getConnection().createStatement();
+				statement.executeUpdate("DELETE FROM BannedPhrases");
+				phrases.clear();
+				Helper.sendMessage(target, "All banned phrases cleared!", nick);
 			}
 		};
 		local_command.registerSubCommand(clear);
 
 		exadd = new Command("exadd", Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				if (params.isEmpty()) {
 					Helper.sendMessage(target, "You must specify a nick.", nick);
 					return;
 				}
-				try {
-					Statement statement = Database.getConnection().createStatement();
-					ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
-					if (result.next()) {
-						Helper.sendMessage(target, "Nick already exempt.", nick);
-						return;
-					}
-					statement.executeUpdate("INSERT INTO ExemptNicks (nick) VALUES ('" + params.get(0).toLowerCase() + "')");
-					Helper.sendMessage(target, "Added to exempt list!", nick);
-				} catch (SQLException e) {
-					e.printStackTrace();
+				Statement statement = Database.getConnection().createStatement();
+				ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
+				if (result.next()) {
+					Helper.sendMessage(target, "Nick already exempt.", nick);
+					return;
 				}
+				statement.executeUpdate("INSERT INTO ExemptNicks (nick) VALUES ('" + params.get(0).toLowerCase() + "')");
+				Helper.sendMessage(target, "Added to exempt list!", nick);
 			}
 		};
 		local_command.registerSubCommand(exadd);
 
 		exdel = new Command("exdel", Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				if (params.isEmpty()) {
 					Helper.sendMessage(target, "You must specify a nick.", nick);
 					return;
 				}
-				try {
-					Statement statement = Database.getConnection().createStatement();
-					statement.executeUpdate("DELETE FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
-					Helper.sendMessage(target, "Removed from exempt list");
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				Statement statement = Database.getConnection().createStatement();
+				statement.executeUpdate("DELETE FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
+				Helper.sendMessage(target, "Removed from exempt list");
 			}
 		};
 		exdel.registerAlias("exrem");
@@ -176,23 +155,18 @@ public class PhraseBan extends AbstractListener {
 
 		set = new Command("set", Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() < 2) {
 					Helper.sendMessage(target, "Specify setting to set then value. Settings: 'duration'", nick);
 					return;
 				}
-				try {
-					switch (params.get(0)) {
-						case "duration":
-							Database.storeJsonData("phraseban_duration", params.get(1));
-							Helper.sendMessage(target, "Setting updated!");
-							return;
-						default:
-							Helper.sendMessage(target, "Unknown setting '" + params.get(0) + "'", nick);
-					}
-				} catch (Exception ex) {
-					Helper.sendMessage(target, "An error occurred while updating values.");
-					ex.printStackTrace();
+				switch (params.get(0)) {
+					case "duration":
+						Database.storeJsonData("phraseban_duration", params.get(1));
+						Helper.sendMessage(target, "Setting updated!");
+						return;
+					default:
+						Helper.sendMessage(target, "Unknown setting '" + params.get(0) + "'", nick);
 				}
 			}
 		};
@@ -201,6 +175,7 @@ public class PhraseBan extends AbstractListener {
 
 	public String chan;
 	public String target = null;
+
 	@Override
 	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		chan = event.getChannel().getName();

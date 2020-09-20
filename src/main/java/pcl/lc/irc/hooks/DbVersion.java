@@ -12,7 +12,6 @@ import java.sql.SQLException;
 
 /**
  * @author Forecaster
- *
  */
 @SuppressWarnings("rawtypes")
 public class DbVersion extends AbstractListener {
@@ -27,14 +26,10 @@ public class DbVersion extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("dbversion") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					ResultSet result = Database.ExecuteQuery("PRAGMA user_version");
-					if (result.next()) {
-						Helper.sendAction(target, "Database version: " + result.getString("user_version"));
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
+				ResultSet result = Database.ExecuteQuery("PRAGMA user_version");
+				if (result.next()) {
+					Helper.sendAction(target, "Database version: " + result.getString("user_version"));
 				}
 			}
 		};

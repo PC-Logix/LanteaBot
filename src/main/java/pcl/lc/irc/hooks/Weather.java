@@ -32,7 +32,6 @@ import pcl.lc.utils.Helper;
 
 /**
  * @author Caitlyn
- *
  */
 @SuppressWarnings("rawtypes")
 public class Weather extends AbstractListener {
@@ -45,13 +44,8 @@ public class Weather extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("weather") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					Helper.sendMessage(target, getWeather(params));
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, e.getCause().getMessage());
-				}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
+				Helper.sendMessage(target, getWeather(params));
 			}
 		};
 		local_command.registerAlias("w");
@@ -72,21 +66,20 @@ public class Weather extends AbstractListener {
 		}
 	}
 
-	public boolean isNumeric(String s) {  
-		return s != null && s.matches("[-+]?\\d*\\.?\\d+");  
-	} 
+	public boolean isNumeric(String s) {
+		return s != null && s.matches("[-+]?\\d*\\.?\\d+");
+	}
 
 	public String getWeather(String location) throws XPathExpressionException, ParserConfigurationException, MalformedURLException, SAXException, IOException {
 		if (Config.botConfig.containsKey("WeatherAPI")) {
 			if (Config.botConfig.containsKey("AzureTextAPI")) {
 				Translate.setSubscriptionKey(Config.AzureTextAPI);
 			}
-			if (!isNumeric(location)){
+			if (!isNumeric(location)) {
 				if (Config.botConfig.containsKey("AzureTextAPI")) {
 					try {
 						location = Translate.execute(location, Language.AUTO_DETECT, Language.ENGLISH);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -100,9 +93,9 @@ public class Weather extends AbstractListener {
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			location = location.trim().replace("+", "%20").replace(" ",  "%20").replace("-", "%20");
-			System.out.println("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions/q/" + location + ".xml");
-			Document doc = db.parse(new URL("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions/q/" + location + ".xml").openStream());
+			location = location.trim().replace("+", "%20").replace(" ", "%20").replace("-", "%20");
+			System.out.println("http://api.wunderground.com/api/" + Config.weatherAPI + "/conditions/q/" + location + ".xml");
+			Document doc = db.parse(new URL("http://api.wunderground.com/api/" + Config.weatherAPI + "/conditions/q/" + location + ".xml").openStream());
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			XPath xpath = xPathfactory.newXPath();
 			XPathExpression expr = xpath.compile("//response/results/result/l");
@@ -111,9 +104,9 @@ public class Weather extends AbstractListener {
 			NodeList nodes = (NodeList) result;
 			if (nodes.getLength() > 0) {
 				String newpath = (String) xpath.evaluate("/response/results/result/l", doc, XPathConstants.STRING);
-				System.out.println("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions" + newpath + ".xml");
-				doc = db.parse(new URL("http://api.wunderground.com/api/" +Config.weatherAPI + "/conditions" + newpath + ".xml").openStream());
-			} 
+				System.out.println("http://api.wunderground.com/api/" + Config.weatherAPI + "/conditions" + newpath + ".xml");
+				doc = db.parse(new URL("http://api.wunderground.com/api/" + Config.weatherAPI + "/conditions" + newpath + ".xml").openStream());
+			}
 
 			String location_name = (String) xpath.evaluate("/response/current_observation/display_location/full", doc, XPathConstants.STRING);
 			String temp_C = (String) xpath.evaluate("/response/current_observation/temp_c", doc, XPathConstants.STRING);
@@ -127,7 +120,7 @@ public class Weather extends AbstractListener {
 			String winddir16Point = (String) xpath.evaluate("/response/current_observation/wind_dir", doc, XPathConstants.STRING);
 
 			if (location_name.length() > 0) {
-				return ("Current weather for " + location_name + " Current Temp: " + temp_F + "°F/" + temp_C + "°C Feels Like: " + FeelsLikeF + "°F/" + FeelsLikeC + "°C Current Humidity: " + humidity + " Wind: From the " + winddir16Point + " " + windspeedMiles + " Mph/" + windspeedKmph + " Km/h Conditions: " + weather);					
+				return ("Current weather for " + location_name + " Current Temp: " + temp_F + "°F/" + temp_C + "°C Feels Like: " + FeelsLikeF + "°F/" + FeelsLikeC + "°C Current Humidity: " + humidity + " Wind: From the " + winddir16Point + " " + windspeedMiles + " Mph/" + windspeedKmph + " Km/h Conditions: " + weather);
 			} else {
 				return ("No data returned");
 			}

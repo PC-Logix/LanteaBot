@@ -11,7 +11,6 @@ import pcl.lc.irc.entryClasses.Item;
 
 /**
  * @author Forecaster
- *
  */
 @SuppressWarnings("rawtypes")
 public class Zap extends AbstractListener {

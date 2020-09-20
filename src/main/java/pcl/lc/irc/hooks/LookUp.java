@@ -86,14 +86,8 @@ public class LookUp extends AbstractListener {
 		}; local_command_lookup.setHelpText("Returns DNS information");
 		local_command_rdns = new Command("rdns") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				InetAddress addr = null;
-				try {
-					addr = InetAddress.getByName(params.get(0));
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws UnknownHostException {
+				InetAddress addr = InetAddress.getByName(params.get(0));
 				String host = addr.getCanonicalHostName();
 				String output = "Reverse DNS Info for " + params.get(0) + " " + host;
 				Helper.sendMessage(target, output, nick);

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pcl.lc.irc.hooks;
 
@@ -36,7 +36,10 @@ public class Attack extends AbstractListener {
 		private final String command;
 		private ActionType type;
 
-		Actions(String command, ActionType type) { this.command = command; this.type = type; }
+		Actions(String command, ActionType type) {
+			this.command = command;
+			this.type = type;
+		}
 	}
 
 	private static String actionList = "";
@@ -52,88 +55,82 @@ public class Attack extends AbstractListener {
 
 		local_command = new Command("attack", new CommandRateLimit(300, true)) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() == 0) {
 					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 					return;
 				}
-				try
-				{
-					String method = params.remove(0);
-					if (!actionList.contains(method.toLowerCase())) {
-						Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
-						return;
-					}
-					Actions action = Actions.valueOf(method.toUpperCase());
+				String method = params.remove(0);
+				if (!actionList.contains(method.toLowerCase())) {
+					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
+					return;
+				}
+				Actions action = Actions.valueOf(method.toUpperCase());
 
-					String message = "";
-					for (String aParam : params)
-					{
-						message += " " + aParam;
-					}
+				String message = "";
+				for (String aParam : params) {
+					message += " " + aParam;
+				}
 
-					String[] split = message.trim().split(" with ", 2);
-					String attackTarget = split[0].trim();
-					String with = null;
-					if (split.length > 1)
-						with = split[1].trim();
+				String[] split = message.trim().split(" with ", 2);
+				String attackTarget = split[0].trim();
+				String with = null;
+				if (split.length > 1)
+					with = split[1].trim();
 
-					Item item = null;
+				Item item = null;
 
-					ArrayList<Actions> nonItemActions = new ArrayList<>();
-					nonItemActions.add(Actions.BITE);
-					nonItemActions.add(Actions.CLAW);
-					nonItemActions.add(Actions.PUNCH);
+				ArrayList<Actions> nonItemActions = new ArrayList<>();
+				nonItemActions.add(Actions.BITE);
+				nonItemActions.add(Actions.CLAW);
+				nonItemActions.add(Actions.PUNCH);
 
-					if (!nonItemActions.contains(action)) {
-						if (with == null)
-							item = Inventory.getRandomItem(false);
-						else
-							item = new Item(with, false);
-					}
+				if (!nonItemActions.contains(action)) {
+					if (with == null)
+						item = Inventory.getRandomItem(false);
+					else
+						item = new Item(with, false);
+				}
 
-					String dust = "";
+				String dust = "";
+				if (item != null) {
+					dust = item.decrementUses(false, true, true);
+					if (!dust.equals(""))
+						dust = " " + dust;
+				}
+
+				//action = Helper.getRandomInt(0, actions.size() - 1);
+
+				if (attackTarget.equals(""))
+					Helper.sendMessage(target, nick + " flails at nothingness" + (item != null ? " with " + item.getName() : ""));
+				else if (Helper.doInteractWith(attackTarget)) {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+
+					DiceRollResult dmg;
 					if (item != null) {
-						dust = item.decrementUses(false, true, true);
-						if (!dust.equals(""))
-							dust = " " + dust;
-					}
-
-					//action = Helper.getRandomInt(0, actions.size() - 1);
-
-					if (attackTarget.equals(""))
-						Helper.sendMessage(target,nick + " flails at nothingness" + (item != null ? " with " + item.getName() : ""));
-					else if (Helper.doInteractWith(attackTarget)) {
-						Helper.AntiPings = Helper.getNamesFromTarget(target);
-
-						DiceRollResult dmg;
-						if (item != null) {
-							dmg = item.getDamage();
-							dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
-						} else if (action == Actions.BITE) {
-							dmg = Item.getGenericRoll(1, 6);
-						} else if (action == Actions.CLAW) {
-							dmg = Item.getGenericRoll(1, 6);
-						} else if (action == Actions.PUNCH) {
-							dmg = Item.getGenericRoll(1, 4);
-						} else {
-							dmg = Item.getGenericRoll(1, 4);
-						}
-						String dmgString = dmg.getResultString();
-						if (dmgString == null)
-							dmgString = "no damage";
-						else
-							dmgString += " damage";
-						String itemName = item != null ? item.getName() : "";
-						String result = nick + " is " + action.type.actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust;
-						Defend.addEvent(nick, attackTarget, target, dmg.getTotal(), itemName, Defend.EventTypes.ATTACK, result);
-						Helper.sendMessage(target, nick + " is trying to " + action.type.actionNameWill.toLowerCase() + " " + attackTarget + "! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
+						dmg = item.getDamage();
+						dmg.bonus = DiceRollBonusCollection.getOffensiveItemBonus(item);
+					} else if (action == Actions.BITE) {
+						dmg = Item.getGenericRoll(1, 6);
+					} else if (action == Actions.CLAW) {
+						dmg = Item.getGenericRoll(1, 6);
+					} else if (action == Actions.PUNCH) {
+						dmg = Item.getGenericRoll(1, 4);
 					} else {
-						Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendAction(target, DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));
+						dmg = Item.getGenericRoll(1, 4);
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+					String dmgString = dmg.getResultString();
+					if (dmgString == null)
+						dmgString = "no damage";
+					else
+						dmgString += " damage";
+					String itemName = item != null ? item.getName() : "";
+					String result = nick + " is " + action.type.actionNameIs.toLowerCase() + " " + attackTarget + (item != null ? " with " + item.getName() : "") + " for " + dmgString + "!" + dust;
+					Defend.addEvent(nick, attackTarget, target, dmg.getTotal(), itemName, Defend.EventTypes.ATTACK, result);
+					Helper.sendMessage(target, nick + " is trying to " + action.type.actionNameWill.toLowerCase() + " " + attackTarget + "! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
+				} else {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendAction(target, DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));
 				}
 			}
 		};

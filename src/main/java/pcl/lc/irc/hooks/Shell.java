@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pcl.lc.irc.hooks;
 
@@ -53,8 +53,8 @@ public class Shell extends AbstractListener {
 				}
 
 				PotionEntry potion = PotionEntry.setFromString(with);
-                if (potion == null && with != null && with.contains("random potion"))
-				    potion = PotionHelper.getRandomPotion();
+				if (potion == null && with != null && with.contains("random potion"))
+					potion = PotionHelper.getRandomPotion();
 
 				Item item = null;
 				try {
@@ -82,44 +82,44 @@ public class Shell extends AbstractListener {
 						return;
 					}
 					if (potion != null) {
-					    Helper.AntiPings = Helper.getNamesFromTarget(target);
-					    EffectEntry effect = potion.getEffectSplash(shellTarget, nick);
-					    effect.action.apply(new EffectActionParameters(shellTargetSecondary, nick, true));
-					    effect.action.apply(new EffectActionParameters(shellTargetTertriary, nick, true));
-					    Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.effectDrink, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
-                    } else {
-                        int itemDamage = 0;
-                        String dust;
-                        String strike = "Seems it was a dud...";
-                        try {
-                            boolean hit = false;
-                            if (roll != null && roll.getSum() < hitChance)
-                                hit = true;
-                            DiceRollResult dmg1 = item.getDamage(1, item.getDiceSizeFromItemName() + (hit ? 4 : 2), 4);
-                            DiceRollResult dmg2 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
-                            DiceRollResult dmg3 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
-                            String dmgString1 = dmg1.getResultString();
-                            String dmgString2 = dmg2.getResultString();
-                            String dmgString3 = dmg3.getResultString();
-                            itemDamage = (hit ? 1 : 2);
+						Helper.AntiPings = Helper.getNamesFromTarget(target);
+						EffectEntry effect = potion.getEffectSplash(shellTarget, nick);
+						effect.action.apply(new EffectActionParameters(shellTargetSecondary, nick, true));
+						effect.action.apply(new EffectActionParameters(shellTargetTertriary, nick, true));
+						Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.effectDrink, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
+					} else {
+						int itemDamage = 0;
+						String dust;
+						String strike = "Seems it was a dud...";
+						try {
+							boolean hit = false;
+							if (roll != null && roll.getSum() < hitChance)
+								hit = true;
+							DiceRollResult dmg1 = item.getDamage(1, item.getDiceSizeFromItemName() + (hit ? 4 : 2), 4);
+							DiceRollResult dmg2 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
+							DiceRollResult dmg3 = item.getDamage(1, item.getDiceSizeFromItemName() + 2, 2);
+							String dmgString1 = dmg1.getResultString();
+							String dmgString2 = dmg2.getResultString();
+							String dmgString3 = dmg3.getResultString();
+							itemDamage = (hit ? 1 : 2);
 
-                            if (hit) {
-                                String auxiliary_damage = (dmgString2.equals(dmgString3) ? dmgString2 + " damage each" : dmgString2 + ", and " + dmgString3 + " damage respectively");
-                                strike = "It strikes " + shellTarget + ". They take " + dmgString1 + " damage. " + shellTargetSecondary + " and " + shellTargetTertriary + " stood too close and take " + auxiliary_damage + ".";
-                            } else {
-                                String damage = (dmgString1.equals(dmgString2) && dmgString1.equals(dmgString3) ? dmgString1 + " damage each" : dmgString1 + ", " + dmgString2 + ", and " + dmgString3 + " splash damage respectively");
-                                strike = "It strikes the ground near " + shellTarget + ", " + shellTargetSecondary + ", and " + shellTargetTertriary + ". They take " + damage + ".";
-                            }
-                        } catch (NullPointerException ignored) {
-                        }
-                        Helper.AntiPings = Helper.getNamesFromTarget(target);
-                        Helper.sendMessage(target, nick + " loads " + item.getName(false) + " into a shell and fires it. " + strike);
-                        dust = item.damage(itemDamage, false, true, true);
-                        if (!dust.equals("")) {
-                            Helper.AntiPings = Helper.getNamesFromTarget(target);
-                            Helper.sendMessage(target, dust);
-                        }
-                    }
+							if (hit) {
+								String auxiliary_damage = (dmgString2.equals(dmgString3) ? dmgString2 + " damage each" : dmgString2 + ", and " + dmgString3 + " damage respectively");
+								strike = "It strikes " + shellTarget + ". They take " + dmgString1 + " damage. " + shellTargetSecondary + " and " + shellTargetTertriary + " stood too close and take " + auxiliary_damage + ".";
+							} else {
+								String damage = (dmgString1.equals(dmgString2) && dmgString1.equals(dmgString3) ? dmgString1 + " damage each" : dmgString1 + ", " + dmgString2 + ", and " + dmgString3 + " splash damage respectively");
+								strike = "It strikes the ground near " + shellTarget + ", " + shellTargetSecondary + ", and " + shellTargetTertriary + ". They take " + damage + ".";
+							}
+						} catch (NullPointerException ignored) {
+						}
+						Helper.AntiPings = Helper.getNamesFromTarget(target);
+						Helper.sendMessage(target, nick + " loads " + item.getName(false) + " into a shell and fires it. " + strike);
+						dust = item.damage(itemDamage, false, true, true);
+						if (!dust.equals("")) {
+							Helper.AntiPings = Helper.getNamesFromTarget(target);
+							Helper.sendMessage(target, dust);
+						}
+					}
 				} else {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, nick + " found nothing to load into the shell...");

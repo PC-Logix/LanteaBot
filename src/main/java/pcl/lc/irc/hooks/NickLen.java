@@ -37,13 +37,13 @@ public class NickLen extends ListenerAdapter {
 
 	@Override
 	public void onNickChange(final NickChangeEvent event) {
-		if (!IRCBot.isIgnored(event.getUser().getNick())) {					
+		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			ImmutableSortedSet<Channel> chans = IRCBot.bot.getUserChannelDao().getAllChannels();
 			for (Iterator<Channel> iter = chans.iterator(); iter.hasNext(); ) {
 				Channel chan = iter.next();
 				if (enabledChannels.contains(chan.getName())) {
 					if (event.getUser().getNick().length() >= 18) {
-						event.getUser().send().notice("Your nick is longer than the current allowed limit of 18 characters.  You have been automatically quieted, and will have to /part the channel to change your name.");			
+						event.getUser().send().notice("Your nick is longer than the current allowed limit of 18 characters.  You have been automatically quieted, and will have to /part the channel to change your name.");
 					}
 				}
 			}
@@ -57,7 +57,7 @@ public class NickLen extends ListenerAdapter {
 		if (!IRCBot.isIgnored(event.getUser().getNick())) {
 			if (enabledChannels.contains(event.getChannel().getName())) {
 				if (event.getUser().getNick().length() >= 18) {
-					event.getUser().send().notice("Your nick is longer than the current allowed limit. You have been automatically quieted, and will have to part the channel to change your nickname.");			
+					event.getUser().send().notice("Your nick is longer than the current allowed limit. You have been automatically quieted, and will have to part the channel to change your nickname.");
 				}
 			}
 		}
@@ -79,7 +79,7 @@ public class NickLen extends ListenerAdapter {
 					if (enabledChannels.contains(event.getChannel().getName())) {
 						try {
 							enabledChannels.remove(event.getChannel().getName());
-							PreparedStatement disableHook = IRCBot.getInstance().getPreparedStatement("disableHook");
+							PreparedStatement disableHook = Database.getPreparedStatement("disableHook");
 							disableHook.setString(1, "nicklen");
 							disableHook.setString(2, event.getChannel().getName());
 							disableHook.executeUpdate();
@@ -93,7 +93,7 @@ public class NickLen extends ListenerAdapter {
 					if (!enabledChannels.contains(event.getChannel().getName())) {
 						try {
 							enabledChannels.add(event.getChannel().getName());
-							PreparedStatement enableHook = IRCBot.getInstance().getPreparedStatement("enableHook");
+							PreparedStatement enableHook = Database.getPreparedStatement("enableHook");
 							enableHook.setString(1, "nicklen");
 							enableHook.setString(2, event.getChannel().getName());
 							enableHook.executeUpdate();

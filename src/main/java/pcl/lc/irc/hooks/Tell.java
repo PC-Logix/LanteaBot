@@ -31,41 +31,36 @@ public class Tell extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("tell") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				try {
-					PreparedStatement addTell = Database.getPreparedStatement("addTell");
-					if (params.size() == 0) {
-						Helper.sendMessage(target, "Who did you want to tell?", nick);
-						return;
-					}
-					String recipient = params.get(0);
-					recipient = recipient.replaceAll("\\s*\\p{Punct}+\\s*$", "");
-					if (params.size() == 1) {
-						Helper.sendMessage(target, "What did you want to say to " + recipient + "?", nick);
-						return;
-					}
-					String channel = dest;
-					SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
-					f.setTimeZone(TimeZone.getTimeZone("UTC"));
-					String messageOut = String.join(" ", params) + " on " + f.format(new Date()) + " UTC";
-					addTell.setString(1, nick);
-					addTell.setString(2, recipient.toLowerCase());
-					addTell.setString(3, channel);
-					addTell.setString(4, messageOut);
-					addTell.executeUpdate();
-					Helper.sendMessage(target, recipient + " will be notified of this message when next seen.", nick);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "An error occurred while processing this command (" + Config.commandprefix + "tell)", nick);
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+				PreparedStatement addTell = Database.getPreparedStatement("addTell");
+				if (params.size() == 0) {
+					Helper.sendMessage(target, "Who did you want to tell?", nick);
+					return;
 				}
+				String recipient = params.get(0);
+				recipient = recipient.replaceAll("\\s*\\p{Punct}+\\s*$", "");
+				if (params.size() == 1) {
+					Helper.sendMessage(target, "What did you want to say to " + recipient + "?", nick);
+					return;
+				}
+				String channel = dest;
+				SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
+				f.setTimeZone(TimeZone.getTimeZone("UTC"));
+				String messageOut = String.join(" ", params) + " on " + f.format(new Date()) + " UTC";
+				addTell.setString(1, nick);
+				addTell.setString(2, recipient.toLowerCase());
+				addTell.setString(3, channel);
+				addTell.setString(4, messageOut);
+				addTell.executeUpdate();
+				Helper.sendMessage(target, recipient + " will be notified of this message when next seen.", nick);
 			}
 		};
 		local_command.setHelpText("Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");
 		IRCBot.registerCommand(local_command);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Tells(id, sender, rcpt, channel, message, time)");
-		Database.addPreparedStatement("addTell","INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);");
-		Database.addPreparedStatement("getTells","SELECT rowid, sender, channel, message FROM Tells WHERE LOWER(rcpt) = ?;");
-		Database.addPreparedStatement("removeTells","DELETE FROM Tells WHERE LOWER(rcpt) = ?;");
+		Database.addPreparedStatement("addTell", "INSERT INTO Tells(sender, rcpt, channel, message) VALUES (?, ?, ?, ?);");
+		Database.addPreparedStatement("getTells", "SELECT rowid, sender, channel, message FROM Tells WHERE LOWER(rcpt) = ?;");
+		Database.addPreparedStatement("removeTells", "DELETE FROM Tells WHERE LOWER(rcpt) = ?;");
 	}
 
 	@Override
@@ -110,7 +105,7 @@ public class Tell extends AbstractListener {
 	}
 
 	@Override
-	public void handleMessage(String sender, MessageEvent event,  String[] args) {
+	public void handleMessage(String sender, MessageEvent event, String[] args) {
 		try {
 			String nick = "";
 			if (nick.contains("@")) {
@@ -119,7 +114,7 @@ public class Tell extends AbstractListener {
 				checkTells.setString(1, nick.toLowerCase());
 				ResultSet results = checkTells.executeQuery();
 				while (results.next()) {
-					Helper.sendMessage("Corded", nick.replace("@", "") +": " + results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
+					Helper.sendMessage("Corded", nick.replace("@", "") + ": " + results.getString(2) + " in " + results.getString(3) + " said: " + results.getString(4));
 				}
 				PreparedStatement clearTells = Database.getPreparedStatement("removeTells");
 				clearTells.setString(1, nick.toLowerCase());

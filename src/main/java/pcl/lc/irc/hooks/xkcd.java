@@ -24,7 +24,6 @@ import pcl.lc.utils.SearchResult;
 
 /**
  * @author Caitlyn
- *
  */
 @SuppressWarnings("rawtypes")
 public class xkcd extends AbstractListener {
@@ -41,7 +40,7 @@ public class xkcd extends AbstractListener {
 			int read;
 			char[] chars = new char[1024];
 			while ((read = reader.read(chars)) != -1)
-				buffer.append(chars, 0, read); 
+				buffer.append(chars, 0, read);
 
 			return buffer.toString();
 		} finally {
@@ -50,10 +49,8 @@ public class xkcd extends AbstractListener {
 		}
 	}
 
-	public static boolean isNumeric(String str)
-	{
-		for (char c : str.toCharArray())
-		{
+	public static boolean isNumeric(String str) {
+		for (char c : str.toCharArray()) {
 			if (!Character.isDigit(c)) return false;
 		}
 		return true;
@@ -63,69 +60,36 @@ public class xkcd extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("xkcd") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-					if(params.size() > 0) {
-						if (isNumeric(params.get(0))) {
-							String json = null;
-							try {
-								json = readUrl("https://xkcd.com/" + params.get(0) + "/info.0.json");
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							JSONObject obj = null;
-							try {
-								obj = new JSONObject(json);
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-							String name = null;
-							try {
-								name = obj.get("safe_title").toString();
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-							Helper.sendMessage(target, "XKCD Comic Name: " + name + " URL: https://xkcd.com/" + params.get(0));
-						} else {
-							if (Config.googleAPI.equals("")) {
-								Helper.sendMessage(target, "No Google API key has been set. This is required for this search feature.", nick);
-								return;
-							}
-							String filter = "site:xkcd.com";
-							try {
-								String terms = String.join(" ", params);
-								String suggestedReturn = performSearch(filter, terms).get(0).getSuggestedReturn();
-								Helper.sendMessage(target, suggestedReturn, nick);
-							} catch (Exception e) {
-								e.printStackTrace();
-								Helper.sendMessage(target, "Something went wrong.", nick);
-							}
-						}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+				if (params.size() > 0) {
+					if (isNumeric(params.get(0))) {
+						String json = null;
+						json = readUrl("https://xkcd.com/" + params.get(0) + "/info.0.json");
+						JSONObject obj = null;
+						obj = new JSONObject(json);
+						String name = null;
+						name = obj.get("safe_title").toString();
+						Helper.sendMessage(target, "XKCD Comic Name: " + name + " URL: https://xkcd.com/" + params.get(0));
 					} else {
-						URLConnection con = null;
-						try {
-							con = new URL( "https://dynamic.xkcd.com/random/comic/" ).openConnection();
-						} catch (IOException e) {
-							e.printStackTrace();
+						if (Config.googleAPI.equals("")) {
+							Helper.sendMessage(target, "No Google API key has been set. This is required for this search feature.", nick);
+							return;
 						}
-						try {
-							con.connect();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						InputStream is = null;
-						try {
-							is = con.getInputStream();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						String newurl = con.getURL().toString();
-						try {
-							is.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						Helper.sendMessage(target, "Random XKCD Comic: " + newurl);
+						String filter = "site:xkcd.com";
+						String terms = String.join(" ", params);
+						String suggestedReturn = performSearch(filter, terms).get(0).getSuggestedReturn();
+						Helper.sendMessage(target, suggestedReturn, nick);
 					}
+				} else {
+					URLConnection con = null;
+					con = new URL("https://dynamic.xkcd.com/random/comic/").openConnection();
+					con.connect();
+					InputStream is = null;
+					is = con.getInputStream();
+					String newurl = con.getURL().toString();
+					is.close();
+					Helper.sendMessage(target, "Random XKCD Comic: " + newurl);
+				}
 			}
 		};
 		local_command.setHelpText("XKCD stuff");
@@ -137,10 +101,10 @@ public class xkcd extends AbstractListener {
 		chan = event.getChannel().getName();
 		if (event.getMessage().contains("xkcd.com") && enabledChannels.contains(event.getChannel().getName())) {
 			Pattern pattern = Pattern.compile(
-					"(?:https?:\\/\\/)?(?:www\\.)?(?<!what-if\\.)xkcd\\.com\\/([0-9]+)", 
+					"(?:https?:\\/\\/)?(?:www\\.)?(?<!what-if\\.)xkcd\\.com\\/([0-9]+)",
 					Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(event.getMessage());
-			if (matcher.find()){
+			if (matcher.find()) {
 				String json = null;
 				try {
 					json = readUrl("https://xkcd.com/" + matcher.group(1) + "/info.0.json");
@@ -165,7 +129,7 @@ public class xkcd extends AbstractListener {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-			} 
+			}
 		}
 	}
 

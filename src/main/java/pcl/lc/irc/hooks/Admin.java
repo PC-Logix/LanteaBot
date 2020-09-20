@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pcl.lc.irc.hooks;
 
@@ -68,6 +68,7 @@ public class Admin extends AbstractListener {
 	private Command command_whatami;
 	private Command command_ami;
 	static String html;
+
 	@Override
 	protected void initHook() {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Ignore(username PRIMARY KEY, time INTEGER)");
@@ -81,9 +82,8 @@ public class Admin extends AbstractListener {
 			while (resultSet.next()) {
 				IRCBot.ignoredUsers.add(resultSet.getString(1));
 				//items += resultSet.getString(2) + ((resultSet.getInt(3) == -1) ? " (*)" : "") + "\n";
-			}	
+			}
 		} catch (Exception e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		try {
@@ -91,7 +91,6 @@ public class Admin extends AbstractListener {
 			InputStream htmlIn = getClass().getResourceAsStream("/html/help.html");
 			html = CharStreams.toString(new InputStreamReader(htmlIn, Charsets.UTF_8));
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		command_prefix = new Command("prefix", Permissions.ADMIN) {
@@ -100,44 +99,35 @@ public class Admin extends AbstractListener {
 				Config.prop.setProperty("commandprefix", params);
 				Config.commandprefix = params;
 				Config.saveProps();
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Prefix changed to " + params);
 			}
-		}; command_prefix.setHelpText("Changes the prefix that the bot responds to, requires Bot Admin");
+		};
+		command_prefix.setHelpText("Changes the prefix that the bot responds to, requires Bot Admin");
 		command_join = new Command("join", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					PreparedStatement addChannel = Database.getPreparedStatement("addChannel");
-					addChannel.setString(1, params);
-					addChannel.executeUpdate();
-					event.getBot().sendIRC().joinChannel(params);
-				    Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target, "Joined channel " + params);
-				} catch (Exception e) {
-					e.printStackTrace();
-				    Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target, "Something went wrong!");
-				}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				PreparedStatement addChannel = Database.getPreparedStatement("addChannel");
+				addChannel.setString(1, params);
+				addChannel.executeUpdate();
+				event.getBot().sendIRC().joinChannel(params);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.sendMessage(target, "Joined channel " + params);
 			}
-		}; command_join.setHelpText("Joins the channel supplied in the first arg, requires Bot Admin");
+		};
+		command_join.setHelpText("Joins the channel supplied in the first arg, requires Bot Admin");
 		command_part = new Command("part", Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					PreparedStatement removeChannel = Database.getPreparedStatement("removeChannel");
-					removeChannel.setString(1, params);
-					removeChannel.executeUpdate();
-					event.getBot().getUserChannelDao().getChannel(params).send().part();
-				    Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target, "Left channel " + params);
-				} catch (Exception e) {
-					e.printStackTrace();
-				    Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target,  "Something went wrong!");
-				}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				PreparedStatement removeChannel = Database.getPreparedStatement("removeChannel");
+				removeChannel.setString(1, params);
+				removeChannel.executeUpdate();
+				event.getBot().getUserChannelDao().getChannel(params).send().part();
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.sendMessage(target, "Left channel " + params);
 			}
-		}; command_part.setHelpText("Parts the channel supplied in the first arg, requires Bot Admin, or Channel Op");
+		};
+		command_part.setHelpText("Parts the channel supplied in the first arg, requires Bot Admin, or Channel Op");
 		command_shutdown = new Command("shutdown", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
@@ -146,11 +136,12 @@ public class Admin extends AbstractListener {
 					//IRCBot.httpServer.stop();
 				}
 				//WikiChangeWatcher.stop();
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Exiting");
 				System.exit(1);
 			}
-		}; command_shutdown.setHelpText("Stops the bot, requires Bot Admin");
+		};
+		command_shutdown.setHelpText("Stops the bot, requires Bot Admin");
 		command_cycle = new Command("cycle", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -161,48 +152,55 @@ public class Admin extends AbstractListener {
 				partChannel(channel, event);
 				joinChannel(channel, event);
 			}
-		}; command_cycle.setHelpText("Quickly parts and rejoins the current channel, requires Bot Admin");
+		};
+		command_cycle.setHelpText("Quickly parts and rejoins the current channel, requires Bot Admin");
 		command_raw = new Command("raw", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				event.getBot().sendRaw().rawLine(params);
 			}
-		}; command_raw.setHelpText("Sends RAW IRC commands to the server, this can break stuff, requires Bot Admin");
+		};
+		command_raw.setHelpText("Sends RAW IRC commands to the server, this can break stuff, requires Bot Admin");
 		command_chnick = new Command("chnick", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				event.getBot().sendRaw().rawLineNow("NICK " + params);
 			}
-		}; command_chnick.setHelpText("Changes the bots nick to the supplied nick, requires Bot Admin");
+		};
+		command_chnick.setHelpText("Changes the bots nick to the supplied nick, requires Bot Admin");
 		command_hashcount = new Command("hashcount", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.messages.size(), nick);
 			}
-		}; command_hashcount.setHelpText("Gets the current size of the hash table for various things, Requires Bot Admin");
+		};
+		command_hashcount.setHelpText("Gets the current size of the hash table for various things, Requires Bot Admin");
 		command_usercount = new Command("usercount") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Current usercount is: " + IRCBot.users.size(), nick);
 			}
-		}; command_usercount.setHelpText("Count users");
+		};
+		command_usercount.setHelpText("Count users");
 		command_authcount = new Command("authcount") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Current auth count is: " + IRCBot.authed.size(), nick);
 			}
-		}; command_authcount.setHelpText("Count authed users");
+		};
+		command_authcount.setHelpText("Count authed users");
 		command_flushhash = new Command("flushhash", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				IRCBot.messages.clear();
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Hashmap size: " + IRCBot.messages.size(), nick);
 			}
-		}; command_flushhash.setHelpText("Flushes the hash table used for various things, requires Bot Admin");
+		};
+		command_flushhash.setHelpText("Flushes the hash table used for various things, requires Bot Admin");
 		command_flushauth = new Command("flushauth", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -211,47 +209,44 @@ public class Admin extends AbstractListener {
 				/*for(Channel chan : event.getBot().getUserBot().getChannels()) {
 						IRCBot.bot.sendRaw().rawLineNow("who " + chan.getName() + " %an");
 					}*/
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Authed hashmap size: " + IRCBot.authed.size(), nick);
 			}
-		}; command_flushauth.setHelpText("Prints the current authed user list, requires Bot Admin, or Channel Op");
+		};
+		command_flushauth.setHelpText("Prints the current authed user list, requires Bot Admin, or Channel Op");
 		command_ignore = new Command("ignore", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String user = null;
 				if (params.contains("@")) {
-					String s = IRCBot.getDiscordID(params.replace("\"","").replaceAll("\\p{C}", ""));
+					String s = IRCBot.getDiscordID(params.replace("\"", "").replaceAll("\\p{C}", ""));
 					user = s;
 					IRCBot.ignoredUsers.add(s);
 				} else {
 					user = params;
 					IRCBot.ignoredUsers.add(params);
 				}
-				try {
-					PreparedStatement add = Database.getPreparedStatement("addIgnore");
-					add.setString(1, user);
-					add.setInt(2, 0);
-					if (add.executeUpdate() > 0) {
-					    Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendMessage(target, "User added to ignore list");
-					} else {
-					    Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendMessage(target, "ERROR!");
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				PreparedStatement add = Database.getPreparedStatement("addIgnore");
+				add.setString(1, user);
+				add.setInt(2, 0);
+				if (add.executeUpdate() > 0) {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "User added to ignore list");
+				} else {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "ERROR!");
 				}
 				//Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
 				//Config.saveProps();
 			}
-		}; command_ignore.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
+		};
+		command_ignore.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
 		command_unignore = new Command("unignore", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String user = null;
 				if (params.contains("@")) {
-					String s = IRCBot.getDiscordID(params.replace("\"","").replaceAll("\\p{C}", ""));
+					String s = IRCBot.getDiscordID(params.replace("\"", "").replaceAll("\\p{C}", ""));
 					user = s;
 					IRCBot.ignoredUsers.remove(s);
 				} else {
@@ -259,74 +254,73 @@ public class Admin extends AbstractListener {
 					IRCBot.ignoredUsers.remove(params);
 				}
 
-				try {
-					PreparedStatement rem = Database.getPreparedStatement("removeIgnore");
-					rem.setString(1, user);
-					if (rem.executeUpdate() > 0) {
-					    Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendMessage(target, "User removed from ignore list");
-					} else {
-					    Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendMessage(target, "ERROR!");
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				PreparedStatement rem = Database.getPreparedStatement("removeIgnore");
+				rem.setString(1, user);
+				if (rem.executeUpdate() > 0) {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "User removed from ignore list");
+				} else {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "ERROR!");
 				}
 
 				//Config.prop.setProperty("ignoredUsers", Joiner.on(",").join(IRCBot.ignoredUsers));
 				//Config.saveProps();
 			}
-		}; command_unignore.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
+		};
+		command_unignore.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
 		command_ignorelist = new Command("ignorelist", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Ignored Users: " + IRCBot.ignoredUsers.toString(), nick);
 			}
-		}; command_ignorelist.setHelpText("Prints the list of ignored users");
+		};
+		command_ignorelist.setHelpText("Prints the list of ignored users");
 		command_load = new Command("load", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IllegalAccessException, InstantiationException {
 				try {
-					Config.config.addListener((Listener) Class.forName( "pcl.lc.irc.hooks." + params ).newInstance());
+					Config.config.addListener((Listener) Class.forName("pcl.lc.irc.hooks." + params).newInstance());
 					event.respond("Module " + params + " Loaded");
-				} catch( ClassNotFoundException e ) {
+				} catch (ClassNotFoundException e) {
 					event.respond("Module " + params + " not loaded " + e.fillInStackTrace());
-				} catch (IllegalAccessException | InstantiationException e) {
-					e.printStackTrace();
 				}
 			}
-		}; command_load.setHelpText("Load module");
+		};
+		command_load.setHelpText("Load module");
 		command_commands = new Command("commands") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String listString = "";
 				Iterator it = IRCBot.commands.entrySet().iterator();
 				while (it.hasNext()) {
-					Map.Entry pair = (Map.Entry)it.next();
+					Map.Entry pair = (Map.Entry) it.next();
 					listString += pair.getKey() + ", ";
 				}
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Current commands: " + listString.replaceAll(", $", ""));
 			}
-		}; command_commands.setHelpText("List commands");
+		};
+		command_commands.setHelpText("List commands");
 		command_charset = new Command("charset", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Default Charset=" + Charset.defaultCharset(), nick);
 			}
-		}; command_charset.setHelpText("Current default charset");
+		};
+		command_charset.setHelpText("Current default charset");
 		command_ram = new Command("ram", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Runtime rt = Runtime.getRuntime();
 				long m0 = rt.totalMemory() - rt.freeMemory();
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Used RAM: " + FormatUtils.convertToStringRepresentation(m0));
 			}
-		}; command_ram.setHelpText("Current ram");
+		};
+		command_ram.setHelpText("Current ram");
 		command_restart = new Command("restart", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -336,11 +330,12 @@ public class Admin extends AbstractListener {
 					e.printStackTrace();
 				}
 			}
-		}; command_restart.setHelpText("Restart");
+		};
+		command_restart.setHelpText("Restart");
 		command_test = new Command("test", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, "Success", nick);
 			}
 
@@ -351,19 +346,21 @@ public class Admin extends AbstractListener {
 				else
 					super.onExecuteFail(command, nick, target, timeout);
 			}
-		}; command_test.setHelpText("Test");
+		};
+		command_test.setHelpText("Test");
 		command_listadmins = new Command("listadmins") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-			    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, IRCBot.getInstance().getOps().toString(), nick);
 			}
-		}; command_listadmins.setHelpText("List current admins");
+		};
+		command_listadmins.setHelpText("List current admins");
 		command_help = new Command("help") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (Config.httpdEnable.equals("true") && params.size() == 0){
-				    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				if (Config.httpdEnable.equals("true") && params.size() == 0) {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Command list: " + httpd.getBaseDomain() + "/help", nick);
 				} else {
 					if (params.size() == 0) {
@@ -375,31 +372,28 @@ public class Admin extends AbstractListener {
 						event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
 					} else {
 						String nickClean = nick.replaceAll("\\p{C}", "");
-						try {
-							String l_command = params.get(0);
 
-							Command com = Command.findCommand(l_command);
-							if (com == null) {
-								Helper.sendNotice(nick, "Unable to find the command '" + l_command + "'", this.callingRelay);
-							} else {
-								ArrayList<String> aliases = com.getAliases();
-								String helpText = com.getHelpText();
-								Helper.sendNotice(nick, "help for command '" + l_command + "': " + helpText, this.callingRelay);
-								if (com.getPermissionLevel() != null)
-									Helper.sendNotice(nick, "Required permission level: " + com.getPermissionLevel(), this.callingRelay);
-								else
-									Helper.sendNotice(nick, "This is a dynamic command", this.callingRelay);
-								if (aliases.size() > 0)
-									Helper.sendNotice(nick, "Aliases:  " + String.join(", ", aliases), this.callingRelay);
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							Helper.sendNotice(nick, "Something went wrong!", this.callingRelay);
+						String l_command = params.get(0);
+
+						Command com = Command.findCommand(l_command);
+						if (com == null) {
+							Helper.sendNotice(nick, "Unable to find the command '" + l_command + "'", this.callingRelay);
+						} else {
+							ArrayList<String> aliases = com.getAliases();
+							String helpText = com.getHelpText();
+							Helper.sendNotice(nick, "help for command '" + l_command + "': " + helpText, this.callingRelay);
+							if (com.getPermissionLevel() != null)
+								Helper.sendNotice(nick, "Required permission level: " + com.getPermissionLevel(), this.callingRelay);
+							else
+								Helper.sendNotice(nick, "This is a dynamic command", this.callingRelay);
+							if (aliases.size() > 0)
+								Helper.sendNotice(nick, "Aliases:  " + String.join(", ", aliases), this.callingRelay);
 						}
 					}
 				}
 			}
-		}; command_help.setHelpText("If you can read this you don't need help with help.");
+		};
+		command_help.setHelpText("If you can read this you don't need help with help.");
 		command_syntax = new Command("syntax", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -414,37 +408,35 @@ public class Admin extends AbstractListener {
 		command_authed = new Command("authed", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if(IRCBot.authed.containsKey(event.getUser().getNick())) {
-				    Helper.AntiPings = Helper.getNamesFromTarget(target);
+				if (IRCBot.authed.containsKey(event.getUser().getNick())) {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Authenticated to Nickserv account " + IRCBot.authed.get(event.getUser().getNick()), nick);
 				} else {
-				    Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Nope.", nick);
 				}
 			}
-		}; command_authed.setHelpText("Check if executer is authed");
+		};
+		command_authed.setHelpText("Check if executer is authed");
 		command_addadmin = new Command("addadmin", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				try {
-					String newOpNick = params.get(0);
-					User newOp = event.getBot().getUserChannelDao().getUser(newOpNick);
-					if (!newOp.isVerified()) {
-					    Helper.AntiPings = Helper.getNamesFromTarget(target);
-						Helper.sendMessage(target, "User " + newOpNick + " is not a registered user.", nick);
-						return;
-					}
-					String nsRegistration = Account.getAccount(newOpNick, event);
-					IRCBot.getInstance().getOps().add(nsRegistration);
-					PreparedStatement addOp = Database.getPreparedStatement("addOp");
-					addOp.setString(1, nsRegistration);
-					addOp.executeUpdate();
-					Helper.sendMessage(target, "User " + newOpNick + " (" + nsRegistration + ") added to list.", nick);
-				} catch (Exception e) {
-					e.printStackTrace();
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+				String newOpNick = params.get(0);
+				User newOp = event.getBot().getUserChannelDao().getUser(newOpNick);
+				if (!newOp.isVerified()) {
+					Helper.AntiPings = Helper.getNamesFromTarget(target);
+					Helper.sendMessage(target, "User " + newOpNick + " is not a registered user.", nick);
+					return;
 				}
+				String nsRegistration = Account.getAccount(newOpNick, event);
+				IRCBot.getInstance().getOps().add(nsRegistration);
+				PreparedStatement addOp = Database.getPreparedStatement("addOp");
+				addOp.setString(1, nsRegistration);
+				addOp.executeUpdate();
+				Helper.sendMessage(target, "User " + newOpNick + " (" + nsRegistration + ") added to list.", nick);
 			}
-		}; command_addadmin.setHelpText("Add a new admin");
+		};
+		command_addadmin.setHelpText("Add a new admin");
 		command_time_test = new Command("timetest") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
@@ -553,19 +545,18 @@ public class Admin extends AbstractListener {
 	}
 
 	private static void relaunch() throws InterruptedException, UnsupportedEncodingException {
-		String command = "/"+FilenameUtils.getPath(IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
+		String command = "/" + FilenameUtils.getPath(IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(command);
 			p.waitFor();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	static ArrayList<String> includedCommands = new ArrayList<>();
+
 	public static String getHelpRow(Command command) {
 		if (includedCommands.contains(command.getCommand()))
 			return "";
@@ -620,8 +611,8 @@ public class Admin extends AbstractListener {
 			String navData = "";
 			Iterator it = httpd.pages.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry pair = (Map.Entry)it.next();
-				navData += "<div class=\"innertube\"><h1><a href=\""+ pair.getValue() +"\">"+ pair.getKey() +"</a></h1></div>";
+				Map.Entry pair = (Map.Entry) it.next();
+				navData += "<div class=\"innertube\"><h1><a href=\"" + pair.getValue() + "\">" + pair.getKey() + "</a></h1></div>";
 			}
 
 			// convert String into InputStream
@@ -630,7 +621,7 @@ public class Admin extends AbstractListener {
 				String line = null;
 
 				while ((line = br.readLine()) != null) {
-					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items).replace("#NAVIGATION#", navData)+"\n";
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items).replace("#NAVIGATION#", navData) + "\n";
 				}
 			}
 			System.out.println(response);

@@ -72,7 +72,6 @@ public class IRCBot {
 				Scanner s = new Scanner(url.openStream());
 				return s.next();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -162,7 +161,6 @@ public class IRCBot {
 				return;
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -172,7 +170,6 @@ public class IRCBot {
 
 				httpd.setup();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -184,10 +181,8 @@ public class IRCBot {
 				log.info("[DEPRECIATED] Loading " + s.getCanonicalName());
 				Config.config.addListener((Listener) s.newInstance());
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -205,10 +200,8 @@ public class IRCBot {
 				Config.config.addListener((Listener) s.newInstance());
 				count_success++;
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

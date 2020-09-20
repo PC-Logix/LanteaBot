@@ -37,67 +37,52 @@ public class TimedBans extends AbstractListener {
 		};
 		command_ban = new Command("ban") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() < 2) {
 					Helper.sendMessage(target, "You must specify a target, a time and optionally a reason.");
 					return;
 				}
-				try {
-					setTimedEvent("ban", nick, target, params.get(0), params.get(1), String.join(" ", Arrays.copyOfRange(params.toArray(new String[]{}), 2, params.size())), null);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "Something went wrong.", nick);
-				}
+				setTimedEvent("ban", nick, target, params.get(0), params.get(1), String.join(" ", Arrays.copyOfRange(params.toArray(new String[]{}), 2, params.size())), null);
 			}
 		};
 		command_ban.setHelpText("Timed ban: %tban User Time Reason Ex: %tban MGR 24h Spamming");
 		command_quiet = new Command("quiet") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() < 2) {
 					Helper.sendMessage(target, "You must specify a target, a time and optionally a reason.");
 					return;
 				}
-				try {
-					setTimedEvent("quiet", nick, target, params.get(0), params.get(1), String.join(" ", Arrays.copyOfRange(params.toArray(new String[]{}), 2, params.size())), null);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "Something went wrong.", nick);
-				}
+				setTimedEvent("quiet", nick, target, params.get(0), params.get(1), String.join(" ", Arrays.copyOfRange(params.toArray(new String[]{}), 2, params.size())), null);
 			}
 		};
 		command_quiet.setHelpText("Timed quiet: %tquiet User Time Reason Ex: %tquiet MGR 24h Spamming");
 		command_list = new Command("list") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBansForChannel");
-					getTimedBans.setString(1, target);
-					ResultSet results = getTimedBans.executeQuery();
-					int count = 0;
-					while (results.next()) {
-						count++;
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBansForChannel");
+				getTimedBans.setString(1, target);
+				ResultSet results = getTimedBans.executeQuery();
+				int count = 0;
+				while (results.next()) {
+					count++;
 //						IRCBot.getInstance();
-						if (results.getString(7).equals("ban")){
-							Date date = new Date(results.getLong(4));
-							DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-							format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
-							String formatted = format.format(date);
-							Helper.sendMessage(target, "Timed ban of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
-						} else {
-							Date date = new Date(results.getLong(4));
-							DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-							format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
-							String formatted = format.format(date);
-							Helper.sendMessage(target, "Timed quiet of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
-						}
+					if (results.getString(7).equals("ban")) {
+						Date date = new Date(results.getLong(4));
+						DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+						format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+						String formatted = format.format(date);
+						Helper.sendMessage(target, "Timed ban of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
+					} else {
+						Date date = new Date(results.getLong(4));
+						DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+						format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+						String formatted = format.format(date);
+						Helper.sendMessage(target, "Timed quiet of " + results.getString(2) + " Expires at " + formatted + " UTC. Placed by: " + results.getString(5));
 					}
-					if (count == 0)
-						Helper.sendMessage(target, "There are no bans or quiets at the moment. Why not add a few?");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "Something went wrong.", nick);
 				}
+				if (count == 0)
+					Helper.sendMessage(target, "There are no bans or quiets at the moment. Why not add a few?");
 			}
 		};
 		command_list.setHelpText("List timed bans and quiets.");
@@ -129,7 +114,7 @@ public class TimedBans extends AbstractListener {
 							IRCBot.getInstance();
 							for (Channel chan : IRCBot.bot.getUserBot().getChannels()) {
 								if (chan.getName().equals(results.getString(1))) {
-									if (results.getString(7).equals("ban")){
+									if (results.getString(7).equals("ban")) {
 										Helper.sendMessage("chanserv", "unban " + results.getString(1) + " " + results.getString(3));
 									} else {
 										Helper.sendMessage("chanserv", "unquiet " + results.getString(1) + " " + results.getString(3));
@@ -195,12 +180,12 @@ public class TimedBans extends AbstractListener {
 			//1 channel,2 username,3 hostmask,4 expires,5 placedby,6 reason,7 type
 			addTimedBan.setString(1, channel.getName());
 			addTimedBan.setString(2, nick);
-			for(User u : channel.getUsers()) {
+			for (User u : channel.getUsers()) {
 				if (u.getNick().equals(nick)) {
 					hostname = u.getHostname();
 				}
 			}
-			addTimedBan.setString(3, "*!*@"+hostname);
+			addTimedBan.setString(3, "*!*@" + hostname);
 			addTimedBan.setLong(4, time);
 			addTimedBan.setString(5, module);
 			addTimedBan.setString(6, reason);

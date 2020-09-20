@@ -62,13 +62,11 @@ public class Config {
 		try {
 			output = new FileOutputStream("config.properties");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			prop.store(output, null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

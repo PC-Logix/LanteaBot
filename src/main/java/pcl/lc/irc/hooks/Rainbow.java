@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pcl.lc.irc.hooks;
 
@@ -29,7 +29,7 @@ public class Rainbow extends AbstractListener {
 	public String makeRainbow(String message) {
 		Integer rainbow = 0;
 		String messageOut = "";
-		for(int i : message.codePoints().toArray()){
+		for (int i : message.codePoints().toArray()) {
 			char[] ch = Character.toChars(i);
 			String c = new String(ch);
 			if (rainbow == 0) {
@@ -61,19 +61,19 @@ public class Rainbow extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("^")) {
-		            List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-		            for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-		              if (entry.getValue().get(0).equals(target)) {
-		                Helper.sendMessage(target, makeRainbow(entry.getValue().get(2)), nick);
-		                return;
-		              }
-		            }
+					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+						if (entry.getValue().get(0).equals(target)) {
+							Helper.sendMessage(target, makeRainbow(entry.getValue().get(2)), nick);
+							return;
+						}
+					}
 				} else {
 					Helper.sendMessage(target, makeRainbow(params), nick);
 				}
-				//Helper.sendMessage(target, makeRainbow(params), nick);
 			}
-		}; local_command.setHelpText("Replies with a rainbow version of the supplied text");
+		};
+		local_command.setHelpText("Replies with a rainbow version of the supplied text");
 		IRCBot.registerCommand(local_command);
 	}
 }

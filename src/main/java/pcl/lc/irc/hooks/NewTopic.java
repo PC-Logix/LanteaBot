@@ -17,6 +17,7 @@ public class NewTopic extends AbstractListener {
 	private Command command_newTopic;
 	private Command command_delTopic;
 	private Command command_addTopic;
+
 	@Override
 	protected void initHook() {
 
@@ -27,17 +28,13 @@ public class NewTopic extends AbstractListener {
 
 		command_newTopic = new Command("newtopic") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String msg = "";
-				try {
-					PreparedStatement statement;
-					statement = Database.getPreparedStatement("getRandomTopic");
-					ResultSet resultSet = statement.executeQuery();
-					if (resultSet.next())
-						msg = "#" + resultSet.getInt(1) + " " + resultSet.getString(2);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				PreparedStatement statement;
+				statement = Database.getPreparedStatement("getRandomTopic");
+				ResultSet resultSet = statement.executeQuery();
+				if (resultSet.next())
+					msg = "#" + resultSet.getInt(1) + " " + resultSet.getString(2);
 				if (msg.contains("[randomitem]")) {
 					msg = msg.replace("[randomitem]", Inventory.getRandomItem().getName(true));
 				}
@@ -53,37 +50,27 @@ public class NewTopic extends AbstractListener {
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, msg, nick);
 			}
-		}; command_newTopic.setHelpText("Generates a new topic");
+		};
+		command_newTopic.setHelpText("Generates a new topic");
 
 		command_addTopic = new Command("addtopic", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					PreparedStatement addCommand = Database.getPreparedStatement("addTopic");
-					addCommand.setString(1, params);
-					addCommand.executeUpdate();
-					Helper.sendMessage(target, "Ok", nick);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					event.respond("An error occurred while processing this command");
-				}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				PreparedStatement addCommand = Database.getPreparedStatement("addTopic");
+				addCommand.setString(1, params);
+				addCommand.executeUpdate();
+				Helper.sendMessage(target, "Ok", nick);
 			}
 		};
 
 		command_delTopic = new Command("deltopic", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					PreparedStatement delCommand = Database.getPreparedStatement("delTopic");
-					delCommand.setInt(1, Integer.valueOf(params));
-					delCommand.executeUpdate();
-					Helper.sendMessage(target, "Ok", nick);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					event.respond("An error occurred while processing this command");
-				}
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+
+				PreparedStatement delCommand = Database.getPreparedStatement("delTopic");
+				delCommand.setInt(1, Integer.valueOf(params));
+				delCommand.executeUpdate();
+				Helper.sendMessage(target, "Ok", nick);
 			}
 		};
 

@@ -52,33 +52,29 @@ public class Seen extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("seen") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String dest;
 				if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 					dest = target;
 				} else {
 					dest = "query";
 				}
-				try {
-					PreparedStatement getSeen = Database.getPreparedStatement("getLastSeen");
-					String targetNick = params.get(0);
-					getSeen.setString(1, targetNick.toLowerCase());
-					ResultSet results = getSeen.executeQuery();
-					if (results.next()) {
-						if (dest.equals("query")) {
-							event.respond(targetNick + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2).isEmpty()) ? "No Record" : results.getString(2)));
-						} else {
-							Helper.sendMessage(dest, targetNick + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
-						}
+				PreparedStatement getSeen = Database.getPreparedStatement("getLastSeen");
+				String targetNick = params.get(0);
+				getSeen.setString(1, targetNick.toLowerCase());
+				ResultSet results = getSeen.executeQuery();
+				if (results.next()) {
+					if (dest.equals("query")) {
+						event.respond(targetNick + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. Saying: " + ((results.getString(2).isEmpty()) ? "No Record" : results.getString(2)));
 					} else {
-						if (dest.equals("query")) {
-							event.respond(targetNick + " has not been seen");
-						} else {
-							event.getBot().sendIRC().message(dest, targetNick + " has not been seen");
-						}
+						Helper.sendMessage(dest, targetNick + " was last seen " + formatTime(System.currentTimeMillis() - results.getLong(1)) + "ago. " + ((results.getString(2) == null) ? "No Record" : results.getString(2)));
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				} else {
+					if (dest.equals("query")) {
+						event.respond(targetNick + " has not been seen");
+					} else {
+						event.getBot().sendIRC().message(dest, targetNick + " has not been seen");
+					}
 				}
 			}
 		};
@@ -86,8 +82,8 @@ public class Seen extends AbstractListener {
 		IRCBot.registerCommand(local_command);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS LastSeen(user PRIMARY KEY, timestamp, doing)");
 		Database.addUpdateQuery(4, "ALTER TABLE LastSeen ADD doing DEFAULT NULL");
-		Database.addPreparedStatement("updateLastSeen","REPLACE INTO LastSeen(user, timestamp, doing) VALUES (?, ?, ?);");
-		Database.addPreparedStatement("getLastSeen","SELECT timestamp, doing FROM LastSeen WHERE LOWER(user) = ? GROUP BY LOWER(user) ORDER BY timestamp desc");
+		Database.addPreparedStatement("updateLastSeen", "REPLACE INTO LastSeen(user, timestamp, doing) VALUES (?, ?, ?);");
+		Database.addPreparedStatement("getLastSeen", "SELECT timestamp, doing FROM LastSeen WHERE LOWER(user) = ? GROUP BY LOWER(user) ORDER BY timestamp desc");
 		//I Have NO idea where these came from, or why they are here.
 		//Database.addPreparedStatement("updateInfo","REPLACE INTO Info(key, data, doing) VALUES (?, ?, ?);");
 		//Database.addPreparedStatement("getInfo","SELECT data FROM Info WHERE key = ?;");

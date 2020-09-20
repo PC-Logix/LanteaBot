@@ -33,12 +33,11 @@ public class MCInfo extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("mcinfo") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws IOException {
 				String server = "";
 				try {
 					server = params.get(0);
 				} catch (Exception e) {
-					e.printStackTrace();
 					Helper.sendMessage(target, "No server specified. Specify an address or IP.");
 					return;
 				}
@@ -55,9 +54,6 @@ public class MCInfo extends AbstractListener {
 					Helper.sendMessage(target, "Server could not be found.", nick);
 				} catch (SocketTimeoutException e) {
 					Helper.sendMessage(target, "Connection timed out on port " + port + ". " + ((port == "25565") ? "Does the server use a custom port?" : "Did you specify the right port?"), nick);
-				} catch (IOException e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "Something went wrong.", nick);
 				}
 			}
 		};

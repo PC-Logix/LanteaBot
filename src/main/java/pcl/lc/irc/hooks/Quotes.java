@@ -69,21 +69,17 @@ public class Quotes extends AbstractListener {
 	private void initCommands() {
 		quote = new Command("quote") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (params.length() == 0) {
-					try {
 						PreparedStatement getAnyQuote = Database.getPreparedStatement("getAnyQuote");
 						ResultSet results = getAnyQuote.executeQuery();
 						if (results.next()) {
 							Helper.sendMessage(target, "Quote #" + results.getString(1) + ": <" + pcl.lc.utils.Helper.antiPing(results.getString(2)) + "> " + results.getString(3));
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 				} else {
 					if (params.substring(0, 1).equals(idIdentificationCharacter)) {
 						String id = params.replace(idIdentificationCharacter, "");
-						try {
+
 							PreparedStatement getQuote = Database.getPreparedStatement("getIdQuote");
 							getQuote.setString(1, id);
 							ResultSet results = getQuote.executeQuery();
@@ -93,13 +89,8 @@ public class Quotes extends AbstractListener {
 							else {
 								Helper.sendMessage(target, "No quote found for id #" + id, nick);
 							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-						}
 					}
 					else {
-						try	{
 							PreparedStatement getQuote = Database.getPreparedStatement("getUserQuote");
 							getQuote.setString(1, params.toLowerCase());
 							ResultSet results = getQuote.executeQuery();
@@ -109,10 +100,6 @@ public class Quotes extends AbstractListener {
 							else {
 								Helper.sendMessage(target, "No quotes found for name '" + pcl.lc.utils.Helper.antiPing(params) + "'", nick);
 							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-						}
 					}
 				}
 			}
@@ -121,7 +108,7 @@ public class Quotes extends AbstractListener {
 
 		add = new Command("add") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() > 1) {
 					String key = params.get(0);
 					String data = "";
@@ -129,7 +116,6 @@ public class Quotes extends AbstractListener {
 						data += " " + params.get(i);
 					}
 					data = data.trim();
-					try {
 						PreparedStatement addQuote = Database.getPreparedStatement("addQuote");
 						addQuote.setString(1, key);
 						addQuote.setString(2, data);
@@ -138,9 +124,6 @@ public class Quotes extends AbstractListener {
 							Helper.sendMessage(target, "Quote added at id: " + addQuote.getGeneratedKeys().getInt(1), nick);
 							return;
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 					Helper.sendMessage(target, "An error occurred while trying to save the quote.", nick);
 				}
 			}
@@ -149,11 +132,10 @@ public class Quotes extends AbstractListener {
 
 		delete = new Command("delete", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() > 0) {
 					String key = params.get(0).replace(idIdentificationCharacter, "");
 					//String data = StringUtils.join(args, " ", 1, args.length);
-					try {
 						PreparedStatement removeQuote = Database.getPreparedStatement("removeQuote");
 						removeQuote.setString(1, key);
 						//removeQuote.setString(2, data);
@@ -161,9 +143,6 @@ public class Quotes extends AbstractListener {
 							Helper.sendMessage(target, "Quote removed.", nick);
 							return;
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 					Helper.sendMessage(target, "An error occurred while trying to set the value.", nick);
 				}
 			}
@@ -173,11 +152,10 @@ public class Quotes extends AbstractListener {
 
 		list = new Command("list") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() > 0) {
 					String key = params.get(0);
-					try	{
-						PreparedStatement getUserQuoteAll = IRCBot.getInstance().getPreparedStatement("getUserQuoteAll");
+						PreparedStatement getUserQuoteAll = Database.getPreparedStatement("getUserQuoteAll");
 						getUserQuoteAll.setString(1, key.toLowerCase());
 						ResultSet results = getUserQuoteAll.executeQuery();
 
@@ -197,10 +175,6 @@ public class Quotes extends AbstractListener {
 						else {
 							Helper.sendMessage(target, "No quotes found for user '" + key + "'", nick);
 						}
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
 				}
 			}
 		};

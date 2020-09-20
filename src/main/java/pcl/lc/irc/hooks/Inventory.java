@@ -108,7 +108,6 @@ public class Inventory extends AbstractListener {
 		sub_command_list = new Command("list") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
 					if (Config.httpdEnable.equals("true")){
 						Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory", nick);
 					} else {
@@ -130,10 +129,6 @@ public class Inventory extends AbstractListener {
 							e.printStackTrace();
 						}
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "Wrong things happened! (5)", nick);
-				}
 			}
 		};
 		sub_command_count = new Command("count") {
@@ -185,44 +180,27 @@ public class Inventory extends AbstractListener {
 		sub_command_remove.registerAlias("del");
 		sub_command_preserve = new Command("preserve", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
-					try {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
 						preserveItem.setString(1, params);
 						preserveItem.executeUpdate();
 						Helper.sendMessage(target, "Item preserved", nick);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
-				}
 			}
 		};
 		sub_command_preserve.registerAlias("pre");
 		sub_command_unpreserve = new Command("unpreserve", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN)) {
-					try {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");
 						unPreserveItem.setString(1, params);
 						unPreserveItem.executeUpdate();
 						Helper.sendMessage(target, "Item un-preserved", nick);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					Helper.sendMessage(target, "I'm afraid you don't have the power to preserve this item.", nick);
-				}
 			}
 		};
 		sub_command_unpreserve.registerAlias("unpre");
 		sub_command_favourite = new Command("favourite", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				try {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 					PreparedStatement getFav = Database.getPreparedStatement("getFavouriteItem");
 					ResultSet fav = getFav.executeQuery();
 					if (fav.next()) {
@@ -230,10 +208,6 @@ public class Inventory extends AbstractListener {
 					} else {
 						Helper.sendMessage(target, "I have no favourite item right now.", nick);
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					Helper.sendMessage(target, "Something went wrong.", nick);
-				}
 			}
 		};
 		sub_command_favourite.registerAlias("fav");

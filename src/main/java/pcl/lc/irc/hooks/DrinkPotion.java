@@ -351,7 +351,7 @@ public class DrinkPotion extends AbstractListener {
 			public String apply(EffectActionParameters parameters) {
 				if (!baconMap.containsKey(parameters.targetName))
 					baconMap.put(parameters.targetName, 0);
-				int bacon = baconMap.get(parameters.targetName) +1;
+				int bacon = baconMap.get(parameters.targetName) + 1;
 				baconMap.put(parameters.targetName, bacon);
 				String prem = "The bottle turns into a piece of bacon. " + parameters.targetName + " has found ";
 				if (parameters.isSplash)
@@ -427,7 +427,7 @@ public class DrinkPotion extends AbstractListener {
 			public String apply(EffectActionParameters parameters) {
 				if (!researchPointsMap.containsKey(parameters.targetName))
 					researchPointsMap.put(parameters.targetName, 0);
-				int points = researchPointsMap.get(parameters.targetName) +1;
+				int points = researchPointsMap.get(parameters.targetName) + 1;
 				researchPointsMap.put(parameters.targetName, points);
 				return parameters.targetName + " gains one research point. {user} now has " + points + " point" + (points == 1 ? "" : "s") + ".";
 			}
@@ -438,7 +438,7 @@ public class DrinkPotion extends AbstractListener {
 			public String apply(EffectActionParameters parameters) {
 				if (!curseMap.containsKey(parameters.targetName))
 					curseMap.put(parameters.targetName, 0);
-				int curse = curseMap.get(parameters.targetName) +1;
+				int curse = curseMap.get(parameters.targetName) + 1;
 				return parameters.targetName + " gains some curse. " + parameters.targetName + " has " + String.valueOf(curse) + " curse.";
 			}
 		}));
@@ -472,7 +472,7 @@ public class DrinkPotion extends AbstractListener {
 				public String apply(EffectActionParameters parameters) {
 					if (!baconMap.containsKey(parameters.targetName))
 						baconMap.put(parameters.targetName, 0);
-					int bacon = baconMap.get(parameters.targetName) +1;
+					int bacon = baconMap.get(parameters.targetName) + 1;
 					baconMap.put(parameters.targetName, bacon);
 					String prem = "The bottle turns into a piece of bacon. " + parameters.targetName + " has found ";
 					if (parameters.isSplash)
@@ -588,60 +588,56 @@ public class DrinkPotion extends AbstractListener {
 		splash = new Command("splash", new CommandRateLimit(10)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					if (params.length() == 0) {
-						Helper.sendMessage(target, "Try " + Config.commandprefix + this.getCommand() + " <target>[ with <potion>]");
+				if (params.length() == 0) {
+					Helper.sendMessage(target, "Try " + Config.commandprefix + this.getCommand() + " <target>[ with <potion>]");
+				} else {
+					String[] split = params.split(" with ");
+
+					String splashTarget;
+					String potionString = null;
+					if (split.length == 1) {
+						splashTarget = params;
 					} else {
-						String[] split = params.split(" with ");
+						splashTarget = split[0].trim();
+						potionString = split[1].trim();
+					}
 
-						String splashTarget;
-						String potionString = null;
-						if (split.length == 1) {
-							splashTarget = params;
-						} else {
-							splashTarget = split[0].trim();
-							potionString = split[1].trim();
-						}
-
-						PotionEntry potion;
-						if (potionString == null || potionString.equals("random")) {
-							potion = PotionHelper.getRandomPotion();
-							potion.getEffectSplash(splashTarget, nick);
-							String result = nick + " flings " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(true), splashTarget, nick);
-							Helper.sendMessage(target, result);
+					PotionEntry potion;
+					if (potionString == null || potionString.equals("random")) {
+						potion = PotionHelper.getRandomPotion();
+						potion.getEffectSplash(splashTarget, nick);
+						String result = nick + " flings " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(true), splashTarget, nick);
+						Helper.sendMessage(target, result);
 //							Defend.addEvent(nick, splashTarget, target, potion.consistency.getName(false, true) + " " + potion.appearance.getName(false, true) + " potion", Defend.EventTypes.POTION, result);
 //							Helper.sendMessage(target, nick + " is trying to splash " + splashTarget + " with a " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
-							return;
-						} else if (potionString.equals("^")) {
-							List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-							for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-								if (entry.getValue().get(0).equals(target)) {
-									System.out.println(entry.getValue().get(2));
-									if (entry.getValue().get(2).toLowerCase().contains("potion")) {
-										potionString = entry.getValue().get(2);
-										break;
-									}
+						return;
+					} else if (potionString.equals("^")) {
+						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+							if (entry.getValue().get(0).equals(target)) {
+								System.out.println(entry.getValue().get(2));
+								if (entry.getValue().get(2).toLowerCase().contains("potion")) {
+									potionString = entry.getValue().get(2);
+									break;
 								}
 							}
 						}
-
-						if (specialFluids.containsKey(potionString)) {
-							Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).getEffectString(true), splashTarget, nick));
-							return;
-						}
-
-						try {
-							potion = new PotionEntry();
-							potion.setFromCommandParameters(potionString);
-
-							potion.getEffect(nick);
-							Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(true), splashTarget, nick));
-						} catch (InvalidPotionException ex) {
-							Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
-						}
 					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
+
+					if (specialFluids.containsKey(potionString)) {
+						Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(potionString).getEffectString(true), splashTarget, nick));
+						return;
+					}
+
+					try {
+						potion = new PotionEntry();
+						potion.setFromCommandParameters(potionString);
+
+						potion.getEffect(nick);
+						Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(true), splashTarget, nick));
+					} catch (InvalidPotionException ex) {
+						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
+					}
 				}
 			}
 		};
@@ -739,16 +735,12 @@ public class DrinkPotion extends AbstractListener {
 					"<div>There are <b>" + effectCount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. <b>" + unique_effect_count + "</b> unique effect" + (unique_effect_count == 1 ? "" : "s") + " " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<div style='margin-top: 6px;'>A valid potion string (for use with <b>" + Config.commandprefix + "drink</b>) needs an appearance keyword, consistency keyword and the word \"<b>potion</b>\" in it.</div>" +
 					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>");
-			try {
-				for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
-					String[] potion = stringEffectEntryEntry.getKey().split(",");
-					String consistency = consistencies.get(Integer.parseInt(potion[0])).getName();
-					String appearance = appearanceEntries.get(Integer.parseInt(potion[1])).getName();
-					EffectEntry entry = stringEffectEntryEntry.getValue();
-					potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(entry.effectDrinkDiscovered.replace("{user}", "User")).append("</td><td>").append(entry.discoverer).append("</td></tr>");
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
+				String[] potion = stringEffectEntryEntry.getKey().split(",");
+				String consistency = consistencies.get(Integer.parseInt(potion[0])).getName();
+				String appearance = appearanceEntries.get(Integer.parseInt(potion[1])).getName();
+				EffectEntry entry = stringEffectEntryEntry.getValue();
+				potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(entry.effectDrinkDiscovered.replace("{user}", "User")).append("</td><td>").append(entry.discoverer).append("</td></tr>");
 			}
 			potionShelf.append("</table>");
 			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(), "utf-8");

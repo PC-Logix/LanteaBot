@@ -8,7 +8,6 @@ import pcl.lc.utils.Helper;
 
 /**
  * @author Forecaster
- *
  */
 @SuppressWarnings("rawtypes")
 public class Aliases extends AbstractListener {

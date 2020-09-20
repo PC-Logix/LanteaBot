@@ -33,7 +33,6 @@ public class Juggle extends AbstractListener {
 				try {
 					item_amount = Integer.parseInt(params.get(0));
 				} catch (Exception ex) {
-					ex.printStackTrace();
 					System.out.println("No valid amount specified. Defaulting to " + item_amount);
 				}
 				item_amount = Math.min(6, item_amount);

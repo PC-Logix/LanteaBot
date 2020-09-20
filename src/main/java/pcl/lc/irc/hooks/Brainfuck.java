@@ -12,6 +12,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.ZeroInputStream;
+
 public class Brainfuck extends AbstractListener {
 
 	private Command local_command;
@@ -24,25 +25,24 @@ public class Brainfuck extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("bf") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				Helper.sendMessage(target, parse(params, null));
 			}
-		}; local_command.setHelpText("Does brainfuck");
+		};
+		local_command.setHelpText("Does brainfuck");
 		IRCBot.registerCommand(local_command);
 	}
-	public String parse(String code, String message) {
+
+	public String parse(String code, String message) throws Exception {
 		if (code == null) return "";
-		try {
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			InputStream is;
-			if (message == null)
-				is = new ZeroInputStream();
-			else
-				is = new ByteArrayInputStream(message.getBytes());
-			BrainfuckEngine bfe = new BrainfuckEngine(code.length(),os,is);
-			bfe.interpret(code);
-			return os.toString("UTF-8");
-		} catch (Exception e) {e.printStackTrace();}
-		return "";
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		InputStream is;
+		if (message == null)
+			is = new ZeroInputStream();
+		else
+			is = new ByteArrayInputStream(message.getBytes());
+		BrainfuckEngine bfe = new BrainfuckEngine(code.length(), os, is);
+		bfe.interpret(code);
+		return os.toString("UTF-8");
 	}
 }

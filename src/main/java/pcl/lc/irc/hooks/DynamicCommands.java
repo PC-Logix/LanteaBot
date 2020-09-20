@@ -37,7 +37,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("rawtypes")
 public class DynamicCommands extends AbstractListener {
 	static ArrayList<String> dynamicCommands;
-	private static NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();;
+	private static NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();
+	;
 	private static final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
 	private static final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
 
@@ -84,18 +85,18 @@ public class DynamicCommands extends AbstractListener {
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Commands(command STRING UNIQUE PRIMARY KEY, return, help)");
 		Database.addUpdateQuery(5, "ALTER TABLE Commands ADD help STRING DEFAULT NULL NULL;");
 		Database.addUpdateQuery(6, "BEGIN TRANSACTION;\n" +
-			"DROP INDEX sqlite_autoindex_Commands_1;\n" +
-			"CREATE TABLE Commands0d9e\n" +
-			"(\n" +
-			"    command STRING PRIMARY KEY,\n" +
-			"    return_value STRING,\n" +
-			"    help STRING DEFAULT NULL\n" +
-			");\n" +
-			"CREATE UNIQUE INDEX sqlite_autoindex_Commands_1 ON Commands0d9e (command, return_value);\n" +
-			"INSERT INTO Commands0d9e(command, return_value, help) SELECT command, return, help FROM Commands;\n" +
-			"DROP TABLE Commands;\n" +
-			"ALTER TABLE Commands0d9e RENAME TO Commands;\n" +
-			"COMMIT;");
+				"DROP INDEX sqlite_autoindex_Commands_1;\n" +
+				"CREATE TABLE Commands0d9e\n" +
+				"(\n" +
+				"    command STRING PRIMARY KEY,\n" +
+				"    return_value STRING,\n" +
+				"    help STRING DEFAULT NULL\n" +
+				");\n" +
+				"CREATE UNIQUE INDEX sqlite_autoindex_Commands_1 ON Commands0d9e (command, return_value);\n" +
+				"INSERT INTO Commands0d9e(command, return_value, help) SELECT command, return, help FROM Commands;\n" +
+				"DROP TABLE Commands;\n" +
+				"ALTER TABLE Commands0d9e RENAME TO Commands;\n" +
+				"COMMIT;");
 		Database.addPreparedStatement("addCommand", "INSERT OR REPLACE INTO Commands(command, return_value) VALUES (?, ?);");
 		Database.addPreparedStatement("addCommandHelp", "UPDATE Commands SET help = ? WHERE command = ?");
 		Database.addPreparedStatement("searchCommands", "SELECT command, help FROM Commands");
@@ -106,7 +107,6 @@ public class DynamicCommands extends AbstractListener {
 		try {
 			luasb = CharStreams.toString(new InputStreamReader(luain, Charsets.UTF_8));
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 
@@ -114,24 +114,17 @@ public class DynamicCommands extends AbstractListener {
 		local_command_add = new Command("addcommand", Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				try {
-					System.out.println("Received params '" + String.join(" ", params) + "'");
-					String cmd = params.remove(0).toLowerCase();
-					String content = String.join(" ", params);
-					if (!IRCBot.commands.containsKey(cmd)) {
-						CommandItem item = new CommandItem(cmd, content, null);
-						item.Save();
-						event.respond("Command Added! Don't forget to set help text with " + local_command_addhelp.getCommand() + "!");
+				System.out.println("Received params '" + String.join(" ", params) + "'");
+				String cmd = params.remove(0).toLowerCase();
+				String content = String.join(" ", params);
+				if (!IRCBot.commands.containsKey(cmd)) {
+					CommandItem item = new CommandItem(cmd, content, null);
+					item.Save();
+					event.respond("Command Added! Don't forget to set help text with " + local_command_addhelp.getCommand() + "!");
 //						IRCBot.registerCommand(cmd, "Dynamic commands module, who knows what it does?!");
-						dynamicCommands.add(cmd);
-					}
-					else {
-						event.respond("Can't override existing commands.");
-					}
-				}
-				catch (Exception e) {
-					Helper.sendMessage(target, "An error occurred while processing this command");
-					e.printStackTrace();
+					dynamicCommands.add(cmd);
+				} else {
+					event.respond("Can't override existing commands.");
 				}
 			}
 		};
@@ -144,7 +137,6 @@ public class DynamicCommands extends AbstractListener {
 					Helper.sendMessage(target, "Specify command to delete", nick);
 					return;
 				}
-				try {
 					String cmd = params.remove(0).toLowerCase();
 					CommandItem item = CommandItem.GetByCommand(cmd);
 					if (item != null)
@@ -152,15 +144,10 @@ public class DynamicCommands extends AbstractListener {
 					event.respond("Command deleted");
 //					IRCBot.unregisterCommand(cmd);
 					dynamicCommands.remove(cmd);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					event.respond("An error occurred while processing this command");
-				}
 			}
 		};
 		local_command_del.setHelpText("Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
-		local_command_print = new Command ("printcommand") {
+		local_command_print = new Command("printcommand") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PreparedStatement getCommand;
@@ -178,12 +165,11 @@ public class DynamicCommands extends AbstractListener {
 
 			}
 		};
-		local_command_edit = new Command ("editcommand", Permissions.TRUSTED) {
+		local_command_edit = new Command("editcommand", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
-					PreparedStatement getCommand= Database.getPreparedStatement("getCommand");
+					PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
 					String[] message = params.split(" ", 2);
 					getCommand.setString(1, message[0].toLowerCase());
 					ResultSet command1 = getCommand.executeQuery();
@@ -194,26 +180,19 @@ public class DynamicCommands extends AbstractListener {
 						addCommand.executeUpdate();
 						event.respond("Command Edited");
 						IRCBot.registerCommand(message[0].toLowerCase(), command1.getString(2));
-					}
-					else {
+					} else {
 						event.respond("Can't add new commands with edit!");
 					}
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					event.respond("An error occurred while processing this command");
-				}
 			}
 		};
-		local_command_addhelp = new Command ("addcommandhelp", Permissions.TRUSTED) {
+		local_command_addhelp = new Command("addcommandhelp", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommandHelp;
-				try {
 					addCommandHelp = Database.getPreparedStatement("addCommandHelp");
 					String arr[] = params.split(" ", 2);
 					String theCommand = arr[0];
-					String theHelp = arr[1]; 
+					String theHelp = arr[1];
 					if (IRCBot.commands.containsKey(theCommand)) {
 						try {
 							addCommandHelp.setString(1, theHelp);
@@ -228,17 +207,13 @@ public class DynamicCommands extends AbstractListener {
 					} else {
 						event.respond("fail 2 ");
 					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
-					event.respond("fail 3");
-				}
 			}
 		};
 		local_command_addhelp.setHelpText("Sets help on dynamic commands");
 		IRCBot.registerCommand(local_command_del);
 		IRCBot.registerCommand(local_command_addhelp);
 
-		
+
 		toggle_command = new Command("dyncmd", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -249,9 +224,10 @@ public class DynamicCommands extends AbstractListener {
 					Helper.sendMessage(target, "dyncmd is " + isEnabled + " in this channel", nick);
 				}
 			}
-		}; toggle_command.setHelpText("Dynamic command module");
+		};
+		toggle_command.setHelpText("Dynamic command module");
 		IRCBot.registerCommand(toggle_command);
-		
+
 		try {
 			PreparedStatement searchCommands = Database.getPreparedStatement("searchCommands");
 			ResultSet commands = searchCommands.executeQuery();
@@ -262,8 +238,7 @@ public class DynamicCommands extends AbstractListener {
 					IRCBot.registerCommand(commands.getString(1), "Dynamic commands module, who knows what it does?!");
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			IRCBot.log.info("An error occurred while processing this command");
 		}
@@ -278,7 +253,7 @@ public class DynamicCommands extends AbstractListener {
 
 		add = new Command("add", local_command_add.getPermissionLevel()) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				System.out.println("Send '" + params + "' to add command");
 				local_command_add.forceExecute(nick, target, event, params.split(" "));
 			}
@@ -286,7 +261,7 @@ public class DynamicCommands extends AbstractListener {
 
 		del = new Command("del", local_command_del.getPermissionLevel()) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				local_command_del.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
@@ -296,31 +271,31 @@ public class DynamicCommands extends AbstractListener {
 
 		addhelp = new Command("addhelp", local_command_addhelp.getPermissionLevel()) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				local_command_addhelp.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
 		print = new Command("print", local_command_print.getPermissionLevel()) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				local_command_print.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
 		edit = new Command("edit", local_command_edit.getPermissionLevel()) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				local_command_edit.forceExecute(nick, target, event, params.split(" "));
 			}
 		};
 
 		alias = new Command("alias", Permissions.TRUSTED) {
-            @Override
-            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-                Helper.sendMessage(target, "To add an alias create a dynamic command with one or more commands to execute between two % like %command%.");
-            }
-        };
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				Helper.sendMessage(target, "To add an alias create a dynamic command with one or more commands to execute between two % like %command%.");
+			}
+		};
 
 		placeholders = new Command("placeholders", Permissions.TRUSTED) {
 			@Override
@@ -356,7 +331,7 @@ public class DynamicCommands extends AbstractListener {
 				String command = resultSet.getString("command");
 				System.out.println("Register dyncommand '" + command + "'");
 				Command dynCmd = new Command(command) {
-//					final public String message = resultSet.getString("return_value");
+					//					final public String message = resultSet.getString("return_value");
 					@Override
 					public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 						try {
@@ -375,7 +350,7 @@ public class DynamicCommands extends AbstractListener {
 				}
 				dynamicCommands.add(dynCmd.getCommand());
 			}
-			System.out.println("Registered " + count  + " dyn command" + (count == 1 ? "" : "s"));
+			System.out.println("Registered " + count + " dyn command" + (count == 1 ? "" : "s"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -408,11 +383,11 @@ public class DynamicCommands extends AbstractListener {
 			input = output.toString();
 		} else if (input.startsWith("[js]")) {
 			if (engineFactory == null) return input;
-			NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
+			NashornScriptEngine engine = (NashornScriptEngine) engineFactory.getScriptEngine(new String[]{"-strict", "--no-java", "--no-syntax-extensions"});
 			output = new StringBuilder();
 			output.append(eval(engine, input.replace("[js]", "").trim()));
-			if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
-				output.setLength(output.length()-1);
+			if (output.length() > 0 && output.charAt(output.length() - 1) == '\n')
+				output.setLength(output.length() - 1);
 			input = output.toString().replace("\n", " | ").replace("\r", "");
 		}
 		if (input.contains("[drama]")) {
@@ -427,10 +402,11 @@ public class DynamicCommands extends AbstractListener {
 		return input;
 	}
 
-	public static void parseDynCommand(String command, String user, String target, String[] arguments){
+	public static void parseDynCommand(String command, String user, String target, String[] arguments) {
 		parseDynCommand(command, user, target, arguments, new CommandsHaveBeenRun());
 	}
-	public static void parseDynCommand(String command, String user, String target, String[] arguments, CommandsHaveBeenRun excludeList){
+
+	public static void parseDynCommand(String command, String user, String target, String[] arguments, CommandsHaveBeenRun excludeList) {
 		String prefix = Config.commandprefix;
 
 		if (excludeList.hasCommand(command))
@@ -440,7 +416,7 @@ public class DynamicCommands extends AbstractListener {
 		CommandItem com = CommandItem.GetByCommand(command.replace(prefix, "").toLowerCase());
 		if (com != null) {
 			String message = com.return_value;
-			String[] msg = new String[] {message};
+			String[] msg = new String[]{message};
 			commandAliases = parseDynCommandAliases(msg, excludeList);
 
 			message = parseDynCommandPlaceholders(msg[0], user, String.join(" ", arguments));
@@ -449,7 +425,8 @@ public class DynamicCommands extends AbstractListener {
 
 			try {
 				message = MessageFormat.format(message, (Object[]) arguments);
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+			}
 
 			Helper.AntiPings = Helper.getNamesFromTarget(target);
 			System.out.println("This is what's left after aliases: '" + message.replaceAll(" ", "") + "'");
@@ -501,7 +478,7 @@ public class DynamicCommands extends AbstractListener {
 		if (luaState != null) {
 			luaState.close();
 		}
-		luaState = new LuaState(1024*1024);
+		luaState = new LuaState(1024 * 1024);
 		luaState.openLib(Library.BASE);
 		luaState.openLib(Library.COROUTINE);
 		luaState.openLib(Library.TABLE);
@@ -556,15 +533,12 @@ public class DynamicCommands extends AbstractListener {
 		try {
 			Future<String> f = service.submit(r);
 			output = f.get(5, unit);
-		}
-		catch(TimeoutException e) {
+		} catch (TimeoutException e) {
 			output = "Script timed out";
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			output = e.getMessage();
-		}
-		finally {
+		} finally {
 			service.shutdown();
 		}
 		if (output == null)
@@ -595,8 +569,7 @@ public class DynamicCommands extends AbstractListener {
 					return sw.toString();
 				if (out != null)
 					return out.toString();
-			}
-			catch(ScriptException ex) {
+			} catch (ScriptException ex) {
 				return ex.getMessage();
 			}
 			return null;
