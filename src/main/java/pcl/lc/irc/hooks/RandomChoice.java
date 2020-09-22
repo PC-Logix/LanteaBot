@@ -39,7 +39,7 @@ class TemplateCollection {
 		System.out.println("Found " + validTemplates.size() + " valid candidate templates.");
 		if (validTemplates.size() == 0)
 			return null;
-		int rand = Helper.getRandomInt(0, validTemplates.size());
+		int rand = Helper.getRandomInt(0, validTemplates.size() -1);
 		return validTemplates.get(rand);
 	}
 }
