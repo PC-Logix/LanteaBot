@@ -141,7 +141,6 @@ public class Command {
 		String prefix = "";
 		if (this.parentCommands.size() == 0)
 			prefix = Config.commandprefix;
-
 		if (!command.toLowerCase().equals(prefix + this.command.toLowerCase()) && !hasAlias(command))
 			return INVALID_COMMAND;
 		if (!this.isEnabled)
@@ -318,6 +317,7 @@ public class Command {
 	}
 
 	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
+		System.out.println("tryExecute: " + command);
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
 			System.out.println("Error when attempting to execute '" + this.actualCommand + "'. Doesn't match '" + command + "'");
@@ -341,7 +341,8 @@ public class Command {
 						subParams = new ArrayList<>(params.subList(1, params.size()));
 					else
 						subParams = new ArrayList<>();
-					return sub.tryExecute(firstParam, nick, target, event, subParams, false);
+					if (sub.tryExecute(firstParam, nick, target, event, subParams, false))
+						return true;
 				}
 			}
 			this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
