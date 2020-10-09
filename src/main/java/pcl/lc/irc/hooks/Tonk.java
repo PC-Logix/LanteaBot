@@ -535,6 +535,10 @@ public class Tonk extends AbstractListener {
 		tonk_snipe_red = new Command(TonkSnipeType.RED.keyword) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+				if (params.size() == 0) {
+					Helper.sendMessage(target, "Provide a target that is within range of you.", nick);
+					return;
+				}
 				String targetUser = params.get(0);
 				TonkSnipeType.RED.isValidTarget(nick, targetUser);
 				Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.RED), nick);
@@ -545,6 +549,10 @@ public class Tonk extends AbstractListener {
 		tonk_snipe_green = new Command(TonkSnipeType.GREEN.keyword) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+				if (params.size() == 0) {
+					Helper.sendMessage(target, "Provide a target that is within range of you.", nick);
+					return;
+				}
 				String targetUser = params.get(0);
 				TonkSnipeType.GREEN.isValidTarget(nick, targetUser);
 				Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.GREEN), nick);
