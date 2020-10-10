@@ -320,7 +320,7 @@ public class Command {
 		System.out.println("tryExecute: " + command);
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
-			System.out.println("Error when attempting to execute '" + this.actualCommand + "'. Doesn't match '" + command + "'");
+			System.out.println("Error when attempting to execute '" + this.command + "'. Doesn't match '" + command + "'");
 			return false;
 		} else if (shouldExecute == 0 || (!this.rateLimit.getIgnorePermissions() && Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN))) {
 			this.actualCommand = command.replace(Config.commandprefix, "");

@@ -11,6 +11,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandHelper;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PasteUtils;
 
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Caitlyn
@@ -37,77 +40,63 @@ public class GenericEventListener extends AbstractListener{
 
 	@Override
 	public void onGenericMessage(final GenericMessageEvent event) {
-		String[] split = event.getMessage().split(" ");
-		String command = "";
-		String actualCommand = "";
-		String callingRelay = null;
-		String user = "";
-		String[] params = new String[]{};
+		if (event.getUser() == null) {
+			return;
+		}
 		for (String str : Config.ignoreMessagesEndingWith) {
 			if (event.getMessage().endsWith(str)) {
 				System.out.println("Ignored '" + event.getMessage() + "' because it ends with '" + str + "'");
 				return;
 			}
 		}
-		try {
-			if (split[0].startsWith(Config.commandprefix)) {
-				command = split[0].toLowerCase();
-				actualCommand = command.replaceFirst("\\" + Config.commandprefix, "");
-				System.out.println("Direct command '" + command + "' received");
-				user = event.getUser().getNick();
-				params = Arrays.copyOfRange(split, 1, split.length);
-			} else {
-				if (event.getUser() != null && Config.parseBridgeCommandsFromUsers.contains(event.getUser().getNick())) {
-					for (String brackets : Config.overBridgeUsernameBrackets) {
-						if (brackets.equals("")) {
-							// Ignore empty bracket slot
-						} else {
-							String startBracket;
-							String endBracket;
-							if (brackets.length() == 1) {
-								startBracket = brackets;
-								endBracket = brackets;
-							} else {
-								startBracket = brackets.substring(0, 1);
-								endBracket = brackets.substring(1, 2);
-							}
-							if (split[0].startsWith(startBracket) && split[0].endsWith(endBracket)) {
-								user = Helper.cleanNick(split[0].substring(1, split[0].length() - 1));
-								command = split[1].toLowerCase();
-								if (command.startsWith(Config.commandprefix)) {
-									System.out.println("Command received over bridge");
-									actualCommand = command.replaceFirst("\\" + Config.commandprefix, "");
-									params = Arrays.copyOfRange(split, 2, split.length);
-									callingRelay = event.getUser().getNick();
-								}
-								break;
-							}
-						}
-					}
-				}
-			}
+		String user;
+		String callingRelay = null;
+		String bracketsPre = "";
+		String bracketsPost = "";
+		for (String brackets : Config.overBridgeUsernameBrackets) {
+			bracketsPre += "\\" + brackets.substring(0,1);
+			bracketsPost += "\\" + brackets.substring(1,2);
+		}
+		Pattern pattern = Pattern.compile("[" + bracketsPre + "](.*)[" + bracketsPost + "] ");
+		Matcher matcher = pattern.matcher(event.getMessage());
+		if (Config.parseBridgeCommandsFromUsers.contains(event.getUser().getNick()) && matcher.find()) {
+			user = Helper.cleanNick(matcher.group(1));
+			callingRelay = event.getUser().getNick();
+		} else {
+			user = event.getUser().getNick();
+		}
 
-			if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
-				try {
+		ArrayList<ArrayList<String>> commands = CommandHelper.findCommandInString(event.getMessage());
+		for (ArrayList<String> thisCmd : commands) {
+			try {
+				String command = thisCmd.get(0).toLowerCase();
+				String actualCommand = command.replaceFirst("\\" + Config.commandprefix, "");;
+				String[] params = new String[]{};
+				if (thisCmd.size() > 1)
+					params = thisCmd.subList(1, thisCmd.size()).toArray(new String[]{});
+				System.out.println("CMD: " + command + ", params: " + String.join(";", params));
+				if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
+					try {
+						String target = Helper.getTarget(event);
+						DynamicCommands.parseDynCommand(actualCommand, user, target, params);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else if (IRCBot.commands.containsKey(actualCommand)) {
+					Command cmd = IRCBot.commands.get(actualCommand);
+					cmd.callingRelay = callingRelay;
 					String target = Helper.getTarget(event);
-					DynamicCommands.parseDynCommand(actualCommand, user, target, params);
-				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
 				}
-			} else if (IRCBot.commands.containsKey(actualCommand)) {
-				Command cmd = IRCBot.commands.get(actualCommand);
-				cmd.callingRelay = callingRelay;
-				String target = Helper.getTarget(event);
-				System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
+			} catch (Exception e) {
+				System.out.println("Command exception!");
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				String pasteURL = PasteUtils.paste(sw.toString(), PasteUtils.Formats.NONE);
+				Helper.sendMessage(Helper.getTarget(event), "I had an exception... ow. Here's the stacktrace: " + pasteURL);
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			System.out.println("Command exception!");
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			String pasteURL = PasteUtils.paste(sw.toString(), PasteUtils.Formats.NONE);
-			Helper.sendMessage(Helper.getTarget(event), "I had an exception... ow. Here's the stacktrace: " + pasteURL);
-			e.printStackTrace();
 		}
 
 		super.onGenericMessage(event);
