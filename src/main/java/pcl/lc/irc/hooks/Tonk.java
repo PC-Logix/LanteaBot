@@ -540,7 +540,12 @@ public class Tonk extends AbstractListener {
 					return;
 				}
 				String targetUser = params.get(0);
-				TonkSnipeType.RED.isValidTarget(nick, targetUser);
+				try {
+					TonkSnipeType.RED.isValidTarget(nick, targetUser);
+				} catch (Exception ex) {
+					Helper.sendMessage(target, ex.getMessage(), nick);
+					return;
+				}
 				Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.RED), nick);
 			}
 		};
@@ -554,7 +559,12 @@ public class Tonk extends AbstractListener {
 					return;
 				}
 				String targetUser = params.get(0);
-				TonkSnipeType.GREEN.isValidTarget(nick, targetUser);
+				try {
+					TonkSnipeType.GREEN.isValidTarget(nick, targetUser);
+				} catch (Exception ex) {
+					Helper.sendMessage(target, ex.getMessage(), nick);
+					return;
+				}
 				Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.GREEN), nick);
 			}
 		};
