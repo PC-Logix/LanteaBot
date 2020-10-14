@@ -170,10 +170,10 @@ public class Command {
 	private String getCannotExecuteReason(long shouldExecuteResult) {
 		if (shouldExecuteResult > 0)
 			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parseMilliseconds(shouldExecuteResult)) + ".";
-		else if (shouldExecuteResult == INVALID_COMMAND)
+		else if (shouldExecuteResult == INVALID_COMMAND) //This should never happen since a command that isn't registered is ignored
 			return "";
 		else if (shouldExecuteResult == IGNORED)
-			return "";
+			return "I'm ignoring you. You know what you did.";
 		else if (shouldExecuteResult == NO_PERMISSION)
 			return "You do not have sufficient privileges to use this command.";
 		else if (shouldExecuteResult == DISABLED)
@@ -322,7 +322,7 @@ public class Command {
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
 			System.out.println("Error when attempting to execute '" + this.command + "'. Doesn't match '" + command + "'");
 			return false;
-		} else if (shouldExecute == 0 || (!this.rateLimit.getIgnorePermissions() && Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN))) {
+		} else if (shouldExecute == 0 || (this.rateLimit != null && !this.rateLimit.getIgnorePermissions() && Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN))) {
 			this.actualCommand = command.replace(Config.commandprefix, "");
 			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
 			if (aliasIndex != -1) {
