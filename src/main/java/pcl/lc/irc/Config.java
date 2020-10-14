@@ -45,6 +45,7 @@ public class Config {
 	public static List<String> parseBridgeCommandsFromUsers = null;
 	public static List<String> overBridgeUsernameBrackets = null;
 	public static List<String> ignoreMessagesEndingWith = null;
+	public static int maxNumberOfCommandsPerMessage = 2;
 
 	public static String mysqlDbHost = null;
 	public static String mysqlDbPort = null;
@@ -128,6 +129,9 @@ public class Config {
 			parseBridgeCommandsFromUsers = Arrays.asList(prop.getProperty("parseBridgeCommandsFromUsers", "").split(","));
 			overBridgeUsernameBrackets = Arrays.asList(prop.getProperty("overBridgeUsernameBrackets", "<>,()").split(","));
 			ignoreMessagesEndingWith = Arrays.asList(prop.getProperty("ignoreMessagesEndingWith", "%*%").split(","));
+			try {
+				maxNumberOfCommandsPerMessage = Integer.parseInt(prop.getProperty("maxNumberOfCommandsPerMessage", "2"));
+			} catch (Exception ignored) {}
 
 			mysqlDbHost = prop.getProperty("mysqlDbHost", "");
 			mysqlDbPort = prop.getProperty("mysqlDbPort", "");
