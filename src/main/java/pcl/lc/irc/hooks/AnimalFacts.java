@@ -16,6 +16,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,29 +64,28 @@ public class AnimalFacts extends AbstractListener {
     private void initCommands() {
         local_command = new Command("catfact") {
             @Override
-            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-                try {
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
                     JSONObject json = readJsonFromUrl("https://catfact.ninja/fact");
                     Helper.sendMessage(target, json.get("fact").toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         };
 
         local_command2 = new Command("fact") {
             @Override
-            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-                try {
-                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/facts/" + params);
-                    Helper.sendMessage(target, json.get("fact").toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
+                if (params.equals("bird")) {
+                    params = "birb"; //Cause this API is dumb. *sigh*
+                } else if (params.equals("red panda")) {
+                    params = "red_panda";
                 }
+                List<String> animalNames = Arrays.asList("dog", "cat", "panda", "fox", "red_panda", "koala", "birb", "racoon", "kangaroo");
+                if (params.equals("random")) {
+                    Random rand = new Random();
+                    params = animalNames.get(rand.nextInt(animalNames.size()));
+                }
+
+                JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/" + params);
+                Helper.sendMessage(target, params.substring(0, 1).toUpperCase() + params.substring(1) + " fact: " + json.get("fact").toString());
             }
         };
         local_command.registerAlias("catfacts");
