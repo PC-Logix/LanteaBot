@@ -238,3 +238,5 @@ lanteabot.jar
 *.db
 .idea/
 *.iml
+src/main/resources/jnlua/selene/init.lua
+src/main/resources/jnlua/selene/parser.lua

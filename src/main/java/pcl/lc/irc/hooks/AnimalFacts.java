@@ -3,17 +3,11 @@
  */
 package pcl.lc.irc.hooks;
 
-import com.google.common.collect.Lists;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,13 +25,15 @@ import org.json.JSONObject;
  *
  */
 @SuppressWarnings("rawtypes")
-public class CatFacts extends AbstractListener {
+public class AnimalFacts extends AbstractListener {
     private Command local_command;
+    private Command local_command2;
 
     @Override
     protected void initHook() {
         initCommands();
         IRCBot.registerCommand(local_command);
+        IRCBot.registerCommand(local_command2);
     }
 
 
@@ -62,18 +58,26 @@ public class CatFacts extends AbstractListener {
         }
     }
 
-    //public static void main(String[] args) throws IOException, JSONException {
-    //    JSONObject json = readJsonFromUrl("https://catfact.ninja/fact");
-    //    System.out.println(json.toString());
-        //System.out.println(json.get("fact"));
-    //}
-
     private void initCommands() {
         local_command = new Command("catfact") {
             @Override
             public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
                 try {
                     JSONObject json = readJsonFromUrl("https://catfact.ninja/fact");
+                    Helper.sendMessage(target, json.get("fact").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        local_command2 = new Command("fact") {
+            @Override
+            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+                try {
+                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/facts/" + params);
                     Helper.sendMessage(target, json.get("fact").toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
