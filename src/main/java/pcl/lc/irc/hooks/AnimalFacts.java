@@ -90,5 +90,6 @@ public class AnimalFacts extends AbstractListener {
         };
         local_command.registerAlias("catfacts");
         local_command.setHelpText("Cat Facts!");
+        local_command2.setHelpText("Animal facts!");
     }
 }
