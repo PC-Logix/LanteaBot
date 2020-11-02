@@ -79,7 +79,7 @@ public class AnimalFacts extends AbstractListener {
                     params = "red_panda";
                 }
                 List<String> animalNames = Arrays.asList("dog", "cat", "panda", "fox", "red_panda", "koala", "birb", "racoon", "kangaroo");
-                if (params.equals("random")) {
+                if (params.equals("random") || params.equals("")) {
                     Random rand = new Random();
                     params = animalNames.get(rand.nextInt(animalNames.size()));
                 }
