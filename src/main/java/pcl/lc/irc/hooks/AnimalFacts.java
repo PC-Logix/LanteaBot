@@ -87,7 +87,7 @@ public class AnimalFacts extends AbstractListener {
                     JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/" + params);
                     Helper.sendMessage(target, params.substring(0, 1).toUpperCase() + params.substring(1) + " fact: " + json.get("fact").toString());
                 } else {
-                    Helper.sendMessage(target, "Not a valid option. " + String.join(",", animalNames));
+                    Helper.sendMessage(target, "Not a valid option. " + String.join(", ", animalNames));
                 }
             }
         };
