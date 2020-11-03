@@ -83,9 +83,12 @@ public class AnimalFacts extends AbstractListener {
                     Random rand = new Random();
                     params = animalNames.get(rand.nextInt(animalNames.size()));
                 }
-
-                JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/" + params);
-                Helper.sendMessage(target, params.substring(0, 1).toUpperCase() + params.substring(1) + " fact: " + json.get("fact").toString());
+                if (animalNames.contains(params)) {
+                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/" + params);
+                    Helper.sendMessage(target, params.substring(0, 1).toUpperCase() + params.substring(1) + " fact: " + json.get("fact").toString());
+                } else {
+                    Helper.sendMessage(target, "Not a valid option. " + String.join(",", animalNames));
+                }
             }
         };
         local_command.registerAlias("catfacts");
