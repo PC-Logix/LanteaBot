@@ -235,7 +235,7 @@ public class PotionHelper {
 		JUNK_PREFIX_LOWER("junk_p_lc", "{junk_p_lc}", "Returns a random junk item, in lowercase, with prefix", (input) -> {
 			return input.replace("{junk_p_lc}", Helper.getRandomGarbageItem(true, true));
 		}),
-		EVADE("evade", "{evade:DC:damage}", "Allows triggering an evade event. A d20 roll is made and compared against the DC. On a failure damage is taken.", (input) -> {
+		EVADE_DAMAGE("evade", "{evade:DC:damage}", "Allows triggering an evade event, resulting in damage on failure. A d20 roll is made and compared against the DC.", (input) -> {
 			Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(.*)}");
 			Matcher evadeMatcher = evadePattern.matcher(input);
 			if (evadeMatcher.find()) {
@@ -247,6 +247,16 @@ public class PotionHelper {
 				else
 					damage = "";
 				input = Helper.replaceSubstring(input, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
+			}
+			return input;
+		}),
+		EVADE_CONSEQUENCE("evade_qc", "{evade_qc:DC:success:fail}", "Allows triggering an evade event, resulting in a consequence on failure. A d20 roll is made and compared against the DC.", (input) -> {
+			Pattern evadePattern = Pattern.compile("\\{evade_qc:(\\d+):(.*):(.*)}");
+			Matcher evadeMatcher = evadePattern.matcher(input);
+			if (evadeMatcher.find()) {
+				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), evadeMatcher.group(2) + " ({result} vs DC {DC})", evadeMatcher.group(3) + " ({result} vs DC {DC})");
+				test.doCheck();
+				input = Helper.replaceSubstring(input, test.getLine(), evadeMatcher.start(), evadeMatcher.end());
 			}
 			return input;
 		}),
