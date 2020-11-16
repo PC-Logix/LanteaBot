@@ -137,7 +137,7 @@ public class RandomChoice extends AbstractListener {
 		local_command = new Command("choose") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String splitOn = ", or | or |, ?";
+				String splitOn = ", or | or |(?! ),(?! )";
 				ArrayList<String> parts = new ArrayList<>();
 				Collections.addAll(parts, params.split("; ?"));
 				if (parts.size() == 2) {
