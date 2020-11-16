@@ -7,6 +7,8 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,9 +87,19 @@ public class Defend extends AbstractListener {
 			public void run() {
 				Date expiredIfAfter = new Date(new Date().getTime() - (reactionTimeMinutes * 60 * 1000));
 				for (DefendEvent event : defendEventLog) {
-					if (expiredIfAfter.after(event.time)) {
-						Helper.sendMessage(event.target, event.result);
-						defendEventLog.remove(event);
+					try {
+						if (expiredIfAfter.after(event.time)) {
+							Helper.sendMessage(event.target, event.result);
+							defendEventLog.remove(event);
+						}
+					} catch (Exception e) {
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						e.printStackTrace(pw);
+						String pasteURL = PasteUtils.paste(sw.toString(), PasteUtils.Formats.NONE);
+						Helper.sendMessage("#MichiBot", "An exception occurred parsing a scheduled defend entry: " + pasteURL);
+						System.out.println("An exception occurred parsing a scheduled defend entry:");
+						e.printStackTrace();
 					}
 				}
 			}
