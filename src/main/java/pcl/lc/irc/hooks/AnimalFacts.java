@@ -65,7 +65,7 @@ public class AnimalFacts extends AbstractListener {
         local_command = new Command("catfact") {
             @Override
             public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
-                    JSONObject json = readJsonFromUrl("https://catfact.ninja/fact");
+                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/cat");
                     Helper.sendMessage(target, json.get("fact").toString());
             }
         };
