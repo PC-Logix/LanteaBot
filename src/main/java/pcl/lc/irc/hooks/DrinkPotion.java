@@ -141,6 +141,10 @@ public class DrinkPotion extends AbstractListener {
 		appearanceEntries.add(new AppearanceEntry("Violet", "A"));
 		appearanceEntries.add(new AppearanceEntry("Crimson", "A"));
 		appearanceEntries.add(new AppearanceEntry("Grathnode", "A", "{appearance} colored {item}", "the color of {appearance}")); // Ar Tonelico
+		appearanceEntries.add(new AppearanceEntry("Nectar", "A"));
+		appearanceEntries.add(new AppearanceEntry("Honey", "A"));
+		appearanceEntries.add(new AppearanceEntry("Apple", "An"));
+		appearanceEntries.add(new AppearanceEntry("Pear", "A"));
 		System.out.println("Registered " + appearanceEntries.size() + " appearance entries!");
 
 		consistencies.add(new AppearanceEntry("Viscous", "A"));
@@ -184,6 +188,14 @@ public class DrinkPotion extends AbstractListener {
 		consistencies.add(new AppearanceEntry("Mutable", "A"));
 		consistencies.add(new AppearanceEntry("Liquid", "A"));
 		consistencies.add(new AppearanceEntry("Smelly", "A"));
+		consistencies.add(new AppearanceEntry("Powdery", "A"));
+		consistencies.add(new AppearanceEntry("Dusty", "A"));
+		consistencies.add(new AppearanceEntry("Diluted", "A"));
+		consistencies.add(new AppearanceEntry("Concentrated", "A"));
+		consistencies.add(new AppearanceEntry("Invisible", "An"));
+		consistencies.add(new AppearanceEntry("Simulated", "A"));
+		consistencies.add(new AppearanceEntry("Forked", "A"));
+		consistencies.add(new AppearanceEntry("Spooned", "A"));
 		System.out.println("Registered " + consistencies.size() + "consistencies!");
 
 		//See `PotionHelper.DynaParam` for tag list and descriptions.
