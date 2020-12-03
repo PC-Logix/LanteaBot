@@ -34,7 +34,7 @@ public class Reminders extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				if (params.size() > 1) {
 					long time = Helper.getFutureTime(params.get(0));
-					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy mm:ss:hh a");
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 					String newTime = sdf.format(new Date(time));
 					String message = "";
 					for (int i = 1; i < params.size(); i++) {
@@ -73,7 +73,7 @@ public class Reminders extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() > 1) {
 					long time = Helper.getFutureTime(params.get(1));
-					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy mm:ss:hh a");
+					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 					String newTime = sdf.format(new Date(time));
 					String message = "";
 					for (int i = 2; i < params.size(); i++) {
