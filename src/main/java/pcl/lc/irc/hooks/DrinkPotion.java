@@ -507,7 +507,7 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until someone stabs them");
 		limits.add(" until someone baps them");
 		limits.add(" until they tonk");
-		limits.add(" until have some bacon");
+		limits.add(" until they have some bacon");
 		limits.add(" until they stop thinking about it");
 		limits.add(" until they recite the litany against fear");
 		limits.add(" until they find a lamp");
