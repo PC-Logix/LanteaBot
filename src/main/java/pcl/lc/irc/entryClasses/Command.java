@@ -169,7 +169,7 @@ public class Command {
 	 */
 	private String getCannotExecuteReason(long shouldExecuteResult) {
 		if (shouldExecuteResult > 0)
-			return "I cannot execute this command right now. Wait " + Helper.timeString(Helper.parseMilliseconds(shouldExecuteResult)) + ".";
+			return this.rateLimit.getFailMessage(shouldExecuteResult);
 		else if (shouldExecuteResult == INVALID_COMMAND) //This should never happen since a command that isn't registered is ignored
 			return "";
 		else if (shouldExecuteResult == IGNORED)

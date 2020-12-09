@@ -528,7 +528,8 @@ public class DrinkPotion extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("drink") {
+		CommandRateLimit rateLimit = new CommandRateLimit(0, 10, 0, "Having another potion seems like a really bad idea right now...");
+		local_command = new Command("drink", rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				PotionEntry potion;

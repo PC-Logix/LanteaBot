@@ -1,5 +1,7 @@
 package pcl.lc.irc.entryClasses;
 
+import pcl.lc.utils.Helper;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
 
@@ -8,6 +10,7 @@ public class CommandRateLimit {
 	private long lastExecution;
 	private boolean perUserLimit;
 	private boolean ignorePermissions;
+	private String customFailMessage;
 	private HashMap<String, Long> lastExecutionPerUser;
 
 	public CommandRateLimit(int limitSeconds) {
@@ -15,23 +18,40 @@ public class CommandRateLimit {
 	}
 
 	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds) {
-		this(limitHours, limitMinutes, limitSeconds, false, false);
-	}
-
-	public CommandRateLimit(int limitSeconds, boolean perUserLimit) {
-		this(0, 0, limitSeconds, perUserLimit, false);
-	}
-
-	public CommandRateLimit(int limitSeconds, boolean perUserLimit, boolean ignorePermissions) {
-		this(0, 0, limitSeconds, perUserLimit, ignorePermissions);
+		this(limitHours, limitMinutes, limitSeconds, false, false, null);
 	}
 
 	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds, boolean perUserLimit, boolean ignorePermissions) {
+		this(limitHours, limitMinutes, limitSeconds, perUserLimit, ignorePermissions, null);
+	}
+
+	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds, String customFailMessage) {
+		this(limitHours, limitMinutes, limitSeconds, false, false, customFailMessage);
+	}
+
+	public CommandRateLimit(int limitSeconds, boolean perUserLimit) {
+		this(0, 0, limitSeconds, perUserLimit, false, null);
+	}
+
+	public CommandRateLimit(int limitSeconds, boolean perUserLimit, String customFailMessage) {
+		this(0, 0, limitSeconds, perUserLimit, false, customFailMessage);
+	}
+
+	public CommandRateLimit(int limitSeconds, boolean perUserLimit, boolean ignorePermissions) {
+		this(0, 0, limitSeconds, perUserLimit, ignorePermissions, null);
+	}
+
+	public CommandRateLimit(int limitSeconds, boolean perUserLimit, boolean ignorePermissions, String customFailMessage) {
+		this(0, 0, limitSeconds, perUserLimit, ignorePermissions, customFailMessage);
+	}
+
+	public CommandRateLimit(int limitHours, int limitMinutes, int limitSeconds, boolean perUserLimit, boolean ignorePermissions, String customFailMessage) {
 		this.lastExecution = 0;
 		this.lastExecutionPerUser = new HashMap<>();
 		this.limit = limitSeconds + (limitMinutes * 60) + (limitHours * 60 * 60);
 		this.perUserLimit = perUserLimit;
 		this.ignorePermissions = ignorePermissions;
+		this.customFailMessage = customFailMessage;
 	}
 
 	public void setLimitSeconds(int seconds) {
@@ -108,5 +128,14 @@ public class CommandRateLimit {
 
 	public void setIgnorePermissions(boolean ignorePermissions) {
 		this.ignorePermissions = ignorePermissions;
+	}
+
+	public String getFailMessage(long timeout) {
+		String appendString = "";
+		if (timeout > 0)
+			appendString = " Wait " + Helper.timeString(Helper.parseMilliseconds(timeout)) + ".";
+		if (this.customFailMessage != null)
+			return this.customFailMessage + appendString;
+		return "I cannot execute this command right now." + appendString;
 	}
 }
