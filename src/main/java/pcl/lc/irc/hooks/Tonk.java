@@ -15,7 +15,10 @@ import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
@@ -56,6 +59,7 @@ public class Tonk extends AbstractListener {
 	private Command tonk_snipe_red;
 	private Command tonk_snipe_green;
 	private Command tonk_snipe_count;
+	private Command tonk_code;
 	private CommandRateLimit rateLimit;
 
 	enum TonkSnipeType {
@@ -186,6 +190,7 @@ public class Tonk extends AbstractListener {
 		IRCBot.registerCommand(tonk_snipe);
 		IRCBot.registerCommand(wind_back_command);
 		IRCBot.registerCommand(tonkreseteverything_command);
+		IRCBot.registerCommand(tonk_code);
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_COUNT, "SELECT count(*) FROM JsonData;");
 		Database.addPreparedStatement(PreparedStatementKeys.GET_TONK_USERS, "SELECT mykey, store FROM JsonData WHERE mykey LIKE '" + tonk_record_key + "_%' ORDER BY CAST(store AS DECIMAL) DESC;");
 		Database.addPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK, "DELETE FROM JsonData WHERE mykey like '" + tonk_record_key + "_%' OR mykey ='" + tonk_record_key + "' OR mykey = '" + last_tonk_key + "'");
@@ -205,9 +210,17 @@ public class Tonk extends AbstractListener {
 		local_command = new Command("tonk", rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				if (getScoreboardPosition(nick) == -1) {
+					if (!params.equals(getVerificationCode())) {
+						Helper.sendMessage(target, "You should probably read this: https://michibot.pc-logix.com/tonk", nick);
+						rateLimit.reset();
+						return;
+					}
+				}
 				int attempts = getTonkFails(nick);
 				if (attempts >= maxTonkFails) {
 					Helper.sendMessage(target, "A sad trumpet plays for an uncomfortably long time...");
+					rateLimit.reset();
 					return;
 				}
 
@@ -316,9 +329,17 @@ public class Tonk extends AbstractListener {
 		tonkout_command = new Command("tonkout", rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				if (getScoreboardPosition(nick) == -1) {
+					if (!params.equals(getVerificationCode())) {
+						Helper.sendMessage(target, "You should probably read this: https://michibot.pc-logix.com/tonk", nick);
+						rateLimit.reset();
+						return;
+					}
+				}
 				int attempts = getTonkFails(nick);
 				if (attempts >= maxTonkFails) {
 					Helper.sendMessage(target, "A sad flute plays for an uncomfortably long time...");
+					rateLimit.reset();
 					return;
 				}
 
@@ -582,6 +603,13 @@ public class Tonk extends AbstractListener {
 			}
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_count);
+
+		tonk_code = new Command("tonkcode", Permissions.ADMIN) {
+			@Override
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				Helper.sendMessage(target, getVerificationCode(), nick);
+			}
+		};
 	}
 
 	static int GetHours(long tonk_time) {
@@ -738,6 +766,7 @@ public class Tonk extends AbstractListener {
 					"<p>Instead of Tonking you can Tonkout, this works the same as Tonk, except after claiming the new record, the entire record is converted to points.</p>" +
 					"<p>If the number of hours in the record is over 2 hours you get bonus points, with a multiplier based on the number of hours in the record minus 1.</p>" +
 					"<p>If you held the previous record you get 100% of the multiplied bonus, if not you get 50%.</p>" +
+					"<p>If you have read this far, you may perform your first tonk by typing <code>" + getVerificationCode() + "</code> as an argument when using the %tonk or %tonkout command. Note that if you fail to gain any points you must keep providing the code until you gain a spot on the scoreboard.</p>" +
 					"</div>" +
 					"<div style='margin-top:4px;'>" +
 					"<h2>Failed Tonks</h2>" +
@@ -782,6 +811,19 @@ public class Tonk extends AbstractListener {
 			os.write(response.getBytes());
 			os.close();
 		}
+	}
+
+	private static String getVerificationCode() {
+		String hash = "?";
+		try {
+			MessageDigest md = MessageDigest.getInstance("md5");
+			md.update(DateTime.now().toString("yyyy-MM-dd").getBytes());
+			byte[] digest = md.digest();
+			hash = DatatypeConverter.printHexBinary(digest);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return hash.substring(0,5);
 	}
 
 	public static String displayTonkPoints(int points) {

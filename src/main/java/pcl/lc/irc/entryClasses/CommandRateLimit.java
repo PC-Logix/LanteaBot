@@ -138,4 +138,8 @@ public class CommandRateLimit {
 			return this.customFailMessage + appendString;
 		return "I cannot execute this command right now." + appendString;
 	}
+
+	public void reset() {
+		this.lastExecution = 0;
+	}
 }
