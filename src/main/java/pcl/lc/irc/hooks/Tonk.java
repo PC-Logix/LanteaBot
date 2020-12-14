@@ -817,7 +817,7 @@ public class Tonk extends AbstractListener {
 		String hash = "?";
 		try {
 			MessageDigest md = MessageDigest.getInstance("md5");
-			md.update(DateTime.now().toString("yyyy-MM-dd").getBytes());
+			md.update(DateTime.now().toString("yyyy-MM-dd hh").getBytes());
 			byte[] digest = md.digest();
 			hash = DatatypeConverter.printHexBinary(digest);
 		} catch (NoSuchAlgorithmException e) {
