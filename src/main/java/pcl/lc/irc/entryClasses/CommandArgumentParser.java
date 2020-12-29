@@ -10,7 +10,7 @@ public class CommandArgumentParser {
 	public final ArrayList<CommandArgument> arguments;
 
 	Pattern patternEscapedString = Pattern.compile("^\"(.*?)\"");
-	Pattern patternString = Pattern.compile("^([\\w-.^]*)");
+	Pattern patternString = Pattern.compile("^([\\w-.:;\\\\/^]*)");
 	Pattern patternInteger = Pattern.compile("^(\\d+) ");
 	Pattern patternDouble = Pattern.compile("^(\\d+\\.?\\d*)");
 	Pattern patternBoolean = Pattern.compile("^(true|false|1|0)");
