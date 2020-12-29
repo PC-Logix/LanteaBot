@@ -17,11 +17,9 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
-import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
-import pcl.lc.irc.entryClasses.Item;
 import pcl.lc.utils.PasteUtils;
 import pcl.lc.utils.db_items.InventoryItem;
 
@@ -142,28 +140,30 @@ public class Inventory extends AbstractListener {
 				}
 			}
 		};
-		sub_command_create = new Command("create", new CommandRateLimit(60)) {
+		sub_command_create = new Command("create", new CommandArgumentParser(1, new CommandArgument("Item", "String")), new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.toLowerCase().equals("myself") || params.toLowerCase().equals(IRCBot.getOurNick()))
+				String item = this.argumentParser.getArgument("Item");
+				if (item.toLowerCase().equals("myself") || item.toLowerCase().equals(IRCBot.getOurNick()))
 					Helper.sendMessage(target, "I can't add myself to the inventory.", nick);
-				else if (nick.toLowerCase().equals(params.toLowerCase()))
+				else if (nick.toLowerCase().equals(item.toLowerCase()))
 					Helper.sendMessage(target, "You can't add yourself to the inventory.", nick);
 				else {
-					params = params.replaceAll("[.!?,‽]$", "");
-					if (params.length() > 0)
-						Helper.sendAction(target, addItem(params, nick, false, true));
+					item = item.replaceAll("[.!?,‽]$", "");
+					if (item.length() > 0)
+						Helper.sendAction(target, addItem(item, nick, false, true));
 					else
 						Helper.sendAction(target, "adds nothing to " + Helper.parseSelfReferral("his") + " inventory.");
 				}
 			}
 		};
 		sub_command_create.registerAlias("add");
-		sub_command_remove = new Command("remove", new CommandRateLimit(60)) {
+		sub_command_remove = new Command("remove", new CommandArgumentParser(1, new CommandArgument("Item", "String")), new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String item = this.argumentParser.getArgument("Item");
 				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
-				int removeResult = removeItem(params, hasPermission, hasPermission);
+				int removeResult = removeItem(item, hasPermission, hasPermission);
 				if (removeResult == 0)
 					Helper.sendMessage(target, "Removed item from inventory", nick);
 				else if (removeResult == ERROR_ITEM_IS_FAVOURITE)
@@ -178,21 +178,21 @@ public class Inventory extends AbstractListener {
 		};
 		sub_command_remove.registerAlias("rem");
 		sub_command_remove.registerAlias("del");
-		sub_command_preserve = new Command("preserve", Permissions.TRUSTED) {
+		sub_command_preserve = new Command("preserve", new CommandArgumentParser(1, new CommandArgument("Item", "String")), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
-						preserveItem.setString(1, params);
+						preserveItem.setString(1, this.argumentParser.getArgument("Item"));
 						preserveItem.executeUpdate();
 						Helper.sendMessage(target, "Item preserved", nick);
 			}
 		};
 		sub_command_preserve.registerAlias("pre");
-		sub_command_unpreserve = new Command("unpreserve", Permissions.TRUSTED) {
+		sub_command_unpreserve = new Command("unpreserve", new CommandArgumentParser(1, new CommandArgument("Item", "String")), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");
-						unPreserveItem.setString(1, params);
+						unPreserveItem.setString(1, this.argumentParser.getArgument("Item"));
 						unPreserveItem.executeUpdate();
 						Helper.sendMessage(target, "Item un-preserved", nick);
 			}

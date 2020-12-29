@@ -28,6 +28,8 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 /**
@@ -42,10 +44,10 @@ public class Weather extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("weather") {
+		local_command = new Command("weather", new CommandArgumentParser(1, new CommandArgument("Location", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
-				Helper.sendMessage(target, getWeather(params));
+				Helper.sendMessage(target, getWeather(this.argumentParser.getArgument("Location")));
 			}
 		};
 		local_command.registerAlias("w");

@@ -74,7 +74,7 @@ public class GenericEventListener extends AbstractListener{
 				String[] params = new String[]{};
 				if (thisCmd.size() > 1)
 					params = thisCmd.subList(1, thisCmd.size()).toArray(new String[]{});
-				System.out.println("CMD: " + command + ", params: " + String.join(";", params));
+//				System.out.println("CMD: " + command + ", params: " + String.join(";", params));
 				if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
 					try {
 						String target = Helper.getTarget(event);

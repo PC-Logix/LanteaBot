@@ -18,6 +18,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;
@@ -58,26 +60,26 @@ public class xkcd extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("xkcd") {
+		local_command = new Command("xkcd", new CommandArgumentParser(0, new CommandArgument("Comic", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() > 0) {
-					if (isNumeric(params.get(0))) {
+				String id_or_terms = this.argumentParser.getArgument("Comic");
+				if (id_or_terms != null) {
+					if (isNumeric(id_or_terms)) {
 						String json = null;
-						json = readUrl("https://xkcd.com/" + params.get(0) + "/info.0.json");
+						json = readUrl("https://xkcd.com/" + id_or_terms + "/info.0.json");
 						JSONObject obj = null;
 						obj = new JSONObject(json);
 						String name = null;
 						name = obj.get("safe_title").toString();
-						Helper.sendMessage(target, "XKCD Comic Name: " + name + " URL: https://xkcd.com/" + params.get(0));
+						Helper.sendMessage(target, "XKCD Comic Name: " + name + " URL: https://xkcd.com/" + id_or_terms);
 					} else {
 						if (Config.googleAPI.equals("")) {
 							Helper.sendMessage(target, "No Google API key has been set. This is required for this search feature.", nick);
 							return;
 						}
 						String filter = "site:xkcd.com";
-						String terms = String.join(" ", params);
-						String suggestedReturn = performSearch(filter, terms).get(0).getSuggestedReturn();
+						String suggestedReturn = performSearch(filter, id_or_terms).get(0).getSuggestedReturn();
 						Helper.sendMessage(target, suggestedReturn, nick);
 					}
 				} else {

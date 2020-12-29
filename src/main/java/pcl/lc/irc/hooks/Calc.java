@@ -11,6 +11,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 /**
@@ -23,13 +25,14 @@ public class Calc extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		local_command = new Command("calc") {
+		local_command = new Command("calc", new CommandArgumentParser(1, new CommandArgument("Expression", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.equalsIgnoreCase("the meaning of life")) {
+				String expression = this.argumentParser.getArgument("Expression");
+				if (expression.equalsIgnoreCase("the meaning of life")) {
 					Helper.sendMessage(target, "42", nick);
 				} else {
-					Expression e = new ExpressionBuilder(params).build();
+					Expression e = new ExpressionBuilder(expression).build();
 					double result = e.evaluate();
 					NumberFormat formatter = new DecimalFormat("#,###.##");
 					formatter.setRoundingMode(RoundingMode.DOWN);
@@ -37,6 +40,7 @@ public class Calc extends AbstractListener {
 				}
 			}
 		}; local_command.setHelpText("Does basic math on the expression passed to the command Ex: 2+2");
+// 		This is handled by the dice command now.
 //		IRCBot.registerCommand(local_command);
 	}
 }

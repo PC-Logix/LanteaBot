@@ -4,6 +4,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -18,10 +20,11 @@ public class EightBall extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("eightball") {
+		local_command = new Command("eightball", new CommandArgumentParser(0, new CommandArgument("Question", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if ((params.length() > 6 && params.matches(".*\\?$")) || params.equals("^")) {
+				String question = this.argumentParser.getArgument("Question");
+				if (question != null && ((question.length() > 6 && question.matches(".*\\?$")) || question.equals("^"))) {
 					ArrayList<String> messages = new ArrayList<>();
 					messages.add("Signs point to yes");
 					messages.add("Without a doubt");
@@ -29,8 +32,12 @@ public class EightBall extends AbstractListener {
 					messages.add("Ask again later");
 					messages.add("My reply is no");
 					messages.add("Outlook not so good");
-					messages.add("[ The Bowling ball doesn't answer ]");
-					Helper.sendMessage(target, messages.get(Helper.getRandomInt(0, messages.size() - 1)), nick);
+					messages.add("*The Bowling ball doesn't answer");
+					String msg = messages.get(Helper.getRandomInt(0, messages.size() - 1));
+					if (msg.startsWith("*"))
+						Helper.sendAction(target, msg.replaceFirst("\\*", ""));
+					else
+						Helper.sendMessage(target, msg, nick);
 					return;
 				}
 				Helper.sendMessage(target, "I don't think that's a question...", nick);

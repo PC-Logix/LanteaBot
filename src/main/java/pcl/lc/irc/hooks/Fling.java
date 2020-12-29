@@ -5,13 +5,9 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.entryClasses.DiceRoll;
-import pcl.lc.irc.entryClasses.DiceRollBonusCollection;
-import pcl.lc.irc.entryClasses.DiceRollResult;
-import pcl.lc.irc.entryClasses.Item;
 import pcl.lc.utils.*;
 
 /**
@@ -32,22 +28,15 @@ public class Fling extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("fling") {
+		local_command = new Command("fling", new CommandArgumentParser(1, new CommandArgument("Target", "String"), new CommandArgument("Item", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String[] split = params.split("^? ?at ", 2);
-				String flingTarget = "";
-				String with;
-				if (split.length == 1) {
-					with = split[0].trim();
-				} else {
-					with = split[0].trim();
-					flingTarget = split[1].trim();
-				}
+				String flingTarget = this.argumentParser.getArgument("Target");
+				String with = this.argumentParser.getArgument("Item");
 
 				Item item = null;
 				try {
-					if (with.equals(""))
+					if (with == null || with.equals(""))
 						item = Inventory.getRandomItem(false);
 					else
 						item = new Item(with, false);

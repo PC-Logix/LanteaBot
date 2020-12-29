@@ -16,6 +16,8 @@ import com.google.common.collect.Lists;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 /**
@@ -28,10 +30,11 @@ public class Rot13 extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		rot = new Command("rot13") {
+		rot = new Command("rot13", new CommandArgumentParser(1, new CommandArgument("String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.equals("^")) {
+				String str = this.argumentParser.getArgument(0);
+				if (str.equals("^")) {
 					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 						if (entry.getValue().get(0).equals(target)) {
@@ -40,7 +43,7 @@ public class Rot13 extends AbstractListener {
 						}
 					}
 				} else {
-					Helper.sendMessage(target, rot13(Colors.removeFormattingAndColors(params)), nick);
+					Helper.sendMessage(target, rot13(Colors.removeFormattingAndColors(str)), nick);
 				}
 			}
 		};

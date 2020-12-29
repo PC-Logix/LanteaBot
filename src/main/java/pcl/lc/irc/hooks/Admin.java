@@ -20,6 +20,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.FormatUtils;
@@ -93,38 +95,41 @@ public class Admin extends AbstractListener {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		command_prefix = new Command("prefix", Permissions.ADMIN) {
+		command_prefix = new Command("prefix", new CommandArgumentParser(1, new CommandArgument("Prefix", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Config.prop.setProperty("commandprefix", params);
-				Config.commandprefix = params;
+				String prefix = this.argumentParser.getArgument("Prefix");
+				Config.prop.setProperty("commandprefix", prefix);
+				Config.commandprefix = prefix;
 				Config.saveProps();
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendMessage(target, "Prefix changed to " + params);
+				Helper.sendMessage(target, "Prefix changed to " + prefix);
 			}
 		};
 		command_prefix.setHelpText("Changes the prefix that the bot responds to, requires Bot Admin");
-		command_join = new Command("join", Permissions.ADMIN) {
+		command_join = new Command("join", new CommandArgumentParser(1, new CommandArgument("Channel", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				String channel = this.argumentParser.getArgument("Channel");
 				PreparedStatement addChannel = Database.getPreparedStatement("addChannel");
-				addChannel.setString(1, params);
+				addChannel.setString(1, channel);
 				addChannel.executeUpdate();
-				event.getBot().sendIRC().joinChannel(params);
-				Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendMessage(target, "Joined channel " + params);
+				event.getBot().sendIRC().joinChannel(channel);
+				Helper.AntiPings = Helper.getNamesFromTarget(channel);
+				Helper.sendMessage(target, "Joined channel " + channel);
 			}
 		};
 		command_join.setHelpText("Joins the channel supplied in the first arg, requires Bot Admin");
-		command_part = new Command("part", Permissions.MOD) {
+		command_part = new Command("part", new CommandArgumentParser(1, new CommandArgument("Channel", "String")), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				String channel = this.argumentParser.getArgument("Channel");
 				PreparedStatement removeChannel = Database.getPreparedStatement("removeChannel");
-				removeChannel.setString(1, params);
+				removeChannel.setString(1, channel);
 				removeChannel.executeUpdate();
-				event.getBot().getUserChannelDao().getChannel(params).send().part();
+				event.getBot().getUserChannelDao().getChannel(channel).send().part();
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
-				Helper.sendMessage(target, "Left channel " + params);
+				Helper.sendMessage(target, "Left channel " + channel);
 			}
 		};
 		command_part.setHelpText("Parts the channel supplied in the first arg, requires Bot Admin, or Channel Op");
@@ -142,32 +147,32 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_shutdown.setHelpText("Stops the bot, requires Bot Admin");
-		command_cycle = new Command("cycle", Permissions.ADMIN) {
+		command_cycle = new Command("cycle", new CommandArgumentParser(0, new CommandArgument("Channel", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String channel = params;
-				if (params.isEmpty()) {
+				String channel = this.argumentParser.getArgument("Channel");
+				if (channel == null || params.isEmpty()) {
 					channel = ((MessageEvent) event).getChannel().getName();
 				}
 				partChannel(channel, event);
 				joinChannel(channel, event);
 			}
 		};
-		command_cycle.setHelpText("Quickly parts and rejoins the current channel, requires Bot Admin");
-		command_raw = new Command("raw", Permissions.ADMIN) {
+		command_cycle.setHelpText("Quickly parts and rejoins the current or specified channel.");
+		command_raw = new Command("raw", new CommandArgumentParser(1, new CommandArgument("Message", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				event.getBot().sendRaw().rawLine(params);
+				event.getBot().sendRaw().rawLine(this.argumentParser.getArgument("Message"));
 			}
 		};
 		command_raw.setHelpText("Sends RAW IRC commands to the server, this can break stuff, requires Bot Admin");
-		command_chnick = new Command("chnick", Permissions.ADMIN) {
+		command_chnick = new Command("chnick", new CommandArgumentParser(1, new CommandArgument("Nick", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				event.getBot().sendRaw().rawLineNow("NICK " + params);
+				event.getBot().sendRaw().rawLineNow("NICK " + this.argumentParser.getArgument("Nick"));
 			}
 		};
-		command_chnick.setHelpText("Changes the bots nick to the supplied nick, requires Bot Admin");
+		command_chnick.setHelpText("Changes the bots nick to the supplied nick.");
 		command_hashcount = new Command("hashcount", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -175,7 +180,7 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "Current hashmap size is: " + IRCBot.messages.size(), nick);
 			}
 		};
-		command_hashcount.setHelpText("Gets the current size of the hash table for various things, Requires Bot Admin");
+		command_hashcount.setHelpText("Gets the current size of the hash table for various things.");
 		command_usercount = new Command("usercount") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -200,7 +205,7 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "Hashmap size: " + IRCBot.messages.size(), nick);
 			}
 		};
-		command_flushhash.setHelpText("Flushes the hash table used for various things, requires Bot Admin");
+		command_flushhash.setHelpText("Flushes the hash table used for various things.");
 		command_flushauth = new Command("flushauth", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -213,18 +218,19 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "Authed hashmap size: " + IRCBot.authed.size(), nick);
 			}
 		};
-		command_flushauth.setHelpText("Prints the current authed user list, requires Bot Admin, or Channel Op");
-		command_ignore = new Command("ignore", Permissions.ADMIN) {
+		command_flushauth.setHelpText("Prints the current authed user list.");
+		command_ignore = new Command("ignore", new CommandArgumentParser(1, new CommandArgument("Nick", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				String name = this.argumentParser.getArgument("Nick");
 				String user = null;
-				if (params.contains("@")) {
-					String s = IRCBot.getDiscordID(params.replace("\"", "").replaceAll("\\p{C}", ""));
+				if (name.contains("@")) {
+					String s = IRCBot.getDiscordID(name.replace("\"", "").replaceAll("\\p{C}", ""));
 					user = s;
 					IRCBot.ignoredUsers.add(s);
 				} else {
-					user = params;
-					IRCBot.ignoredUsers.add(params);
+					user = name;
+					IRCBot.ignoredUsers.add(name);
 				}
 				PreparedStatement add = Database.getPreparedStatement("addIgnore");
 				add.setString(1, user);
@@ -240,18 +246,19 @@ public class Admin extends AbstractListener {
 				//Config.saveProps();
 			}
 		};
-		command_ignore.setHelpText("Makes the bot ignore a user, requires Bot Admin, or Channel Op *THIS IS A GLOBAL IGNORE!*");
-		command_unignore = new Command("unignore", Permissions.ADMIN) {
+		command_ignore.setHelpText("Makes the bot ignore a user. *THIS IS A GLOBAL IGNORE!*");
+		command_unignore = new Command("unignore", new CommandArgumentParser(1, new CommandArgument("Nick", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				String name = this.argumentParser.getArgument("Nick");
 				String user = null;
-				if (params.contains("@")) {
-					String s = IRCBot.getDiscordID(params.replace("\"", "").replaceAll("\\p{C}", ""));
+				if (name.contains("@")) {
+					String s = IRCBot.getDiscordID(name.replace("\"", "").replaceAll("\\p{C}", ""));
 					user = s;
 					IRCBot.ignoredUsers.remove(s);
 				} else {
-					user = params;
-					IRCBot.ignoredUsers.remove(params);
+					user = name;
+					IRCBot.ignoredUsers.remove(name);
 				}
 
 				PreparedStatement rem = Database.getPreparedStatement("removeIgnore");
@@ -268,7 +275,7 @@ public class Admin extends AbstractListener {
 				//Config.saveProps();
 			}
 		};
-		command_unignore.setHelpText("Unignores a user, requires Bot Admin, or Channel Op");
+		command_unignore.setHelpText("Unignores a user.");
 		command_ignorelist = new Command("ignorelist", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -276,19 +283,20 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "Ignored Users: " + IRCBot.ignoredUsers.toString(), nick);
 			}
 		};
-		command_ignorelist.setHelpText("Prints the list of ignored users");
-		command_load = new Command("load", Permissions.ADMIN) {
+		command_ignorelist.setHelpText("Prints the list of ignored users.");
+		command_load = new Command("load", new CommandArgumentParser(1, new CommandArgument("Module", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IllegalAccessException, InstantiationException {
+				String module = this.argumentParser.getArgument("Module");
 				try {
-					Config.config.addListener((Listener) Class.forName("pcl.lc.irc.hooks." + params).newInstance());
-					event.respond("Module " + params + " Loaded");
+					Config.config.addListener((Listener) Class.forName("pcl.lc.irc.hooks." + module).newInstance());
+					event.respond("Module " + module + " Loaded");
 				} catch (ClassNotFoundException e) {
-					event.respond("Module " + params + " not loaded " + e.fillInStackTrace());
+					event.respond("Module " + module + " not loaded " + e.fillInStackTrace());
 				}
 			}
 		};
-		command_load.setHelpText("Load module");
+		command_load.setHelpText("Load module.");
 		command_commands = new Command("commands") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -302,7 +310,7 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "Current commands: " + listString.replaceAll(", $", ""));
 			}
 		};
-		command_commands.setHelpText("List commands");
+		command_commands.setHelpText("List commands.");
 		command_charset = new Command("charset", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -310,7 +318,7 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "Default Charset=" + Charset.defaultCharset(), nick);
 			}
 		};
-		command_charset.setHelpText("Current default charset");
+		command_charset.setHelpText("Returns current default charset.");
 		command_ram = new Command("ram", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -320,7 +328,7 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "Used RAM: " + FormatUtils.convertToStringRepresentation(m0));
 			}
 		};
-		command_ram.setHelpText("Current ram");
+		command_ram.setHelpText("Returns current used ram.");
 		command_restart = new Command("restart", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -331,7 +339,7 @@ public class Admin extends AbstractListener {
 				}
 			}
 		};
-		command_restart.setHelpText("Restart");
+		command_restart.setHelpText("Restart the bot.");
 		command_test = new Command("test", Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -347,7 +355,7 @@ public class Admin extends AbstractListener {
 					super.onExecuteFail(command, nick, target, timeout);
 			}
 		};
-		command_test.setHelpText("Test");
+		command_test.setHelpText("Test.");
 		command_listadmins = new Command("listadmins") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -355,10 +363,11 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, IRCBot.getInstance().getOps().toString(), nick);
 			}
 		};
-		command_listadmins.setHelpText("List current admins");
-		command_help = new Command("help") {
+		command_listadmins.setHelpText("List current admins.");
+		command_help = new Command("help", new CommandArgumentParser(1, new CommandArgument("Command", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				String cmd = this.argumentParser.getArgument("Command");
 				if (Config.httpdEnable.equals("true") && params.size() == 0) {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Command list: " + httpd.getBaseDomain() + "/help", nick);
@@ -373,15 +382,13 @@ public class Admin extends AbstractListener {
 					} else {
 						String nickClean = nick.replaceAll("\\p{C}", "");
 
-						String l_command = params.get(0);
-
-						Command com = Command.findCommand(l_command);
+						Command com = Command.findCommand(cmd);
 						if (com == null) {
-							Helper.sendNotice(nick, "Unable to find the command '" + l_command + "'", this.callingRelay);
+							Helper.sendNotice(nick, "Unable to find the command '" + cmd + "'", this.callingRelay);
 						} else {
 							ArrayList<String> aliases = com.getAliases();
 							String helpText = com.getHelpText();
-							Helper.sendNotice(nick, "help for command '" + l_command + "': " + helpText, this.callingRelay);
+							Helper.sendNotice(nick, "help for command '" + cmd + "': " + helpText, this.callingRelay);
 							if (com.getPermissionLevel() != null)
 								Helper.sendNotice(nick, "Required permission level: " + com.getPermissionLevel(), this.callingRelay);
 							else
@@ -394,17 +401,22 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_help.setHelpText("If you can read this you don't need help with help.");
-		command_syntax = new Command("syntax", Permissions.EVERYONE) {
+		command_syntax = new Command("syntax", new CommandArgumentParser(1, new CommandArgument("Command", "String")), Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Command cmd = Command.findCommand(params);
+				String com = this.argumentParser.getArgument("Command");
+				Command cmd = Command.findCommand(com);
 				if (cmd == null) {
-					Helper.sendMessage(target, "Unable to find command '" + params + "'", nick);
+					Helper.sendMessage(target, "Unable to find command '" + com + "'", nick);
 				} else {
-					Helper.sendMessage(target, "Syntax: " + cmd.printSyntax(), nick);
+					if (cmd.argumentParser != null)
+						Helper.sendMessage(target, Config.commandprefix + cmd.getCommand() + " " + cmd.argumentParser.getArgumentSyntax(), nick);
+					else
+						Helper.sendMessage(target, "Syntax: " + cmd.printSyntax(), nick);
 				}
 			}
 		};
+		command_syntax.setHelpText("This probably does what you'd imagine it does.");
 		command_authed = new Command("authed", Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
@@ -417,11 +429,11 @@ public class Admin extends AbstractListener {
 				}
 			}
 		};
-		command_authed.setHelpText("Check if executer is authed");
-		command_addadmin = new Command("addadmin", Permissions.ADMIN) {
+		command_authed.setHelpText("Check if executing user is authed.");
+		command_addadmin = new Command("addadmin", new CommandArgumentParser(1, new CommandArgument("Nick", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				String newOpNick = params.get(0);
+				String newOpNick = this.argumentParser.getArgument("Nick");
 				User newOp = event.getBot().getUserChannelDao().getUser(newOpNick);
 				if (!newOp.isVerified()) {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
@@ -436,19 +448,19 @@ public class Admin extends AbstractListener {
 				Helper.sendMessage(target, "User " + newOpNick + " (" + nsRegistration + ") added to list.", nick);
 			}
 		};
-		command_addadmin.setHelpText("Add a new admin");
-		command_time_test = new Command("timetest") {
+		command_addadmin.setHelpText("Add a new admin.");
+		command_time_test = new Command("timetest", new CommandArgumentParser(1, new CommandArgument("Amount", "Integer"), new CommandArgument("Unit", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (params.size() > 1)
-					if (params.get(1).equals("ms"))
-						Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(Long.parseLong(params.get(0)))));
-					else
-						Helper.sendMessage(target, Helper.timeString(Helper.parseSeconds(Long.parseLong(params.get(0)))));
+				String amount = this.argumentParser.getArgument("Amount");
+				String unit = this.argumentParser.getArgument("Unit");
+				if (unit.equals("ms"))
+					Helper.sendMessage(target, Helper.timeString(Helper.parseMilliseconds(Long.parseLong(amount))));
 				else
-					Helper.sendMessage(target, "I need arguments.", nick);
+					Helper.sendMessage(target, Helper.timeString(Helper.parseSeconds(Long.parseLong(amount))));
 			}
 		};
+		command_time_test.setHelpText("This just takes a number of seconds or milliseconds (pass `ms` as the second argument) and outputs a formatted time string such as `1 hour, 5 minutes and 4 seconds.");
 		command_whatami = new Command("whatami") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
@@ -460,10 +472,11 @@ public class Admin extends AbstractListener {
 					Helper.sendMessage(target, "You are nothing! NOTHING!");
 			}
 		};
-		command_ami = new Command("ami") {
+		command_whatami.setHelpText("Returns the rank of the executing users rank if any.");
+		command_ami = new Command("ami", new CommandArgumentParser(1, new CommandArgument("Something", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (nick.equals(params))
+				if (nick.equals(this.argumentParser.getArgument("Something")))
 					Helper.sendMessage(target, "Yes you are.");
 				else
 					Helper.sendMessage(target, "No, you are not '" + params + "', you are '" + nick + "'");
@@ -494,6 +507,7 @@ public class Admin extends AbstractListener {
 		IRCBot.registerCommand(command_help);
 		IRCBot.registerCommand(command_authed);
 		IRCBot.registerCommand(command_addadmin);
+		IRCBot.registerCommand(command_time_test);
 		IRCBot.registerCommand(command_whatami);
 		IRCBot.registerCommand(command_ami);
 	}

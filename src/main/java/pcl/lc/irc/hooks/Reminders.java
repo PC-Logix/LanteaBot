@@ -3,6 +3,8 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -29,76 +31,57 @@ public class Reminders extends AbstractListener {
 	private ScheduledFuture<?> executor;
 	@Override
 	protected void initHook() {
-		remind = new Command("remind") {
+		remind = new Command("remind", new CommandArgumentParser(2, new CommandArgument("Time", "String"), new CommandArgument("Message", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (params.size() > 1) {
-					long time = Helper.getFutureTime(params.get(0));
-					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-					String newTime = sdf.format(new Date(time));
-					String message = "";
-					for (int i = 1; i < params.size(); i++) {
-						message += " " + params.get(i);
+				String timeString = this.argumentParser.getArgument("Time");
+				String message = this.argumentParser.getArgument("Message");
+				long time = Helper.getFutureTime(timeString);
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+				String newTime = sdf.format(new Date(time));
+				try {
+					PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
+					addReminder.setString(1, target);
+					if (event.getUser().getNick().equals("Corded")) {
+						nick = "@" + nick;
 					}
-					message = message.trim();
-					try {
-						PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
-						addReminder.setString(1, target);
-						if (event.getUser().getNick().equals("Corded")) {
-							nick = "@" + nick;
-						}
-						addReminder.setString(2, nick.replaceAll("​", ""));
-						addReminder.setLong(3, time);
-						addReminder.setString(4, message.trim());
-						if (addReminder.executeUpdate() > 0) {
-							Helper.sendMessage(target, "I'll remind you about \"" + message.trim() + "\" at " + newTime);
-							return;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
+					addReminder.setString(2, nick.replaceAll("​", ""));
+					addReminder.setLong(3, time);
+					addReminder.setString(4, message.trim());
+					if (addReminder.executeUpdate() > 0) {
+						Helper.sendMessage(target, "I'll remind you about \"" + message.trim() + "\" at " + newTime);
+						return;
 					}
-					Helper.sendMessage(target, "Something went wrong", nick);
-				} else if (params.size() == 0) {
-					Helper.sendMessage(target, "Specify time (eg 1h20m10s)", nick);
-				} else if (params.size() == 1) {
-					Helper.sendMessage(target, "Specify a remind message after the time.", nick);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				Helper.sendMessage(target, "Something went wrong", nick);
 			}
 		};
 		remind.registerAlias("remindme");
 		remind.setHelpText("'remindme 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 
-		remindSomeone = new Command("remindthem") {
+		remindSomeone = new Command("remindthem", new CommandArgumentParser(3, new CommandArgument("Nick", "String"), new CommandArgument("Time", "String"), new CommandArgument("Message", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() > 1) {
-					long time = Helper.getFutureTime(params.get(1));
-					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-					String newTime = sdf.format(new Date(time));
-					String message = "";
-					for (int i = 2; i < params.size(); i++) {
-						message += " " + params.get(i);
-					}
-					message = message.trim();
-						PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
-						addReminder.setString(1, target);
-						if (event.getUser().getNick().equals("Corded")) {
-							nick = "@" + nick;
-						}
-						addReminder.setString(2, params.get(0));
-						addReminder.setLong(3, time);
-						addReminder.setString(4, message.trim());
-						if (addReminder.executeUpdate() > 0) {
-							Helper.sendMessage(target, "I'll remind "+ params.get(0)+" about \"" + message.trim() + "\" at " + newTime);
-							return;
-						}
-					Helper.sendMessage(target, "Something went wrong", nick);
-				} else if (params.size() == 0) {
-					Helper.sendMessage(target, "Specify user to remind", nick);
-				} else if (params.size() == 1) {
-					Helper.sendMessage(target, "Specify time (eg 1h20m10s)", nick);
-				} else if (params.size() == 2) {
-					Helper.sendMessage(target, "Specify a remind message after the time.", nick);
+				String user = this.argumentParser.getArgument("Nick");
+				String timeString = this.argumentParser.getArgument("Time");
+				String message = this.argumentParser.getArgument("Message");
+
+				long time = Helper.getFutureTime(timeString);
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+				String newTime = sdf.format(new Date(time));
+				PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
+				addReminder.setString(1, target);
+				if (event.getUser().getNick().equals("Corded")) {
+					nick = "@" + nick;
+				}
+				addReminder.setString(2, user);
+				addReminder.setLong(3, time);
+				addReminder.setString(4, message.trim());
+				if (addReminder.executeUpdate() > 0) {
+					Helper.sendMessage(target, "I'll remind " + user + " about \"" + message.trim() + "\" at " + newTime);
+					return;
 				}
 			}
 		};

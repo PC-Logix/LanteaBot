@@ -2,12 +2,10 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.entryClasses.DiceRoll;
 import pcl.lc.utils.Helper;
-import pcl.lc.irc.entryClasses.Item;
 
 /**
  * @author Forecaster
@@ -23,17 +21,14 @@ public class Zap extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("zap") {
+		local_command = new Command("zap", new CommandArgumentParser(0, new CommandArgument("Nick", "String"), new CommandArgument("Item", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.length() == 0)
+				String zapTarget = this.argumentParser.getArgument("Nick");
+				if (zapTarget == null)
 					Helper.sendAction(target, nick + " makes some sparks");
 				else {
-					String[] split = params.split(" with ", 2);
-					String zapTarget = split[0].trim();
-					String with = null;
-					if (split.length > 1)
-						with = split[1].trim();
+					String with = this.argumentParser.getArgument("Item");
 
 					if (Helper.doInteractWith(params)) {
 						Item item = null;

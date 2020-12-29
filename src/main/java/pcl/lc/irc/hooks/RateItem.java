@@ -2,11 +2,9 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.entryClasses.DiceRollBonusCollection;
 import pcl.lc.utils.Helper;
-import pcl.lc.irc.entryClasses.Item;
 
 /**
  * @author Forecaster
@@ -44,10 +42,11 @@ public class RateItem extends AbstractListener {
 		};
 		local_command.setHelpText("Rates items attack, defense or healing bonuses");
 
-		sub_command_attack = new Command("attack") {
+		sub_command_attack = new Command("attack", new CommandArgumentParser(0, new CommandArgument("Item", "String"))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String itemName) {
-				if (itemName.length() == 0) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String itemName = this.argumentParser.getArgument("Item");
+				if (itemName == null || itemName.equals("")) {
 					Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
 					return;
 				}
@@ -67,10 +66,11 @@ public class RateItem extends AbstractListener {
 		};
 		sub_command_attack.registerAlias("att");
 
-		sub_command_defense = new Command("defense") {
+		sub_command_defense = new Command("defense", new CommandArgumentParser(1, new CommandArgument("Item", "String"))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String itemName) {
-				if (itemName.length() == 0) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String itemName = this.argumentParser.getArgument("Item");
+				if (itemName == null || itemName.equals("")) {
 					Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
 					return;
 				}
@@ -90,10 +90,11 @@ public class RateItem extends AbstractListener {
 		};
 		sub_command_defense.registerAlias("def");
 
-		sub_command_healing = new Command("healing") {
+		sub_command_healing = new Command("healing", new CommandArgumentParser(1, new CommandArgument("Item", "String"))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String itemName) {
-				if (itemName.length() == 0) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String itemName = this.argumentParser.getArgument("Item");
+				if (itemName != null || itemName.equals("")) {
 					Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
 					return;
 				}

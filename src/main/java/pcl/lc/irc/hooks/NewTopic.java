@@ -10,6 +10,8 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -53,22 +55,21 @@ public class NewTopic extends AbstractListener {
 		};
 		command_newTopic.setHelpText("Generates a new topic");
 
-		command_addTopic = new Command("addtopic", Permissions.TRUSTED) {
+		command_addTopic = new Command("addtopic", new CommandArgumentParser(1, new CommandArgument("Topic", "String")), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommand = Database.getPreparedStatement("addTopic");
-				addCommand.setString(1, params);
+				addCommand.setString(1, this.argumentParser.getArgument("Topic"));
 				addCommand.executeUpdate();
 				Helper.sendMessage(target, "Ok", nick);
 			}
 		};
 
-		command_delTopic = new Command("deltopic", Permissions.TRUSTED) {
+		command_delTopic = new Command("deltopic", new CommandArgumentParser(1, new CommandArgument("TopicID", "Integer")), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-
 				PreparedStatement delCommand = Database.getPreparedStatement("delTopic");
-				delCommand.setInt(1, Integer.valueOf(params));
+				delCommand.setInt(1, this.argumentParser.getInt("TopicID"));
 				delCommand.executeUpdate();
 				Helper.sendMessage(target, "Ok", nick);
 			}

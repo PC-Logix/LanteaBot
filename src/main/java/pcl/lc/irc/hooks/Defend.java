@@ -115,15 +115,11 @@ public class Defend extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("defend") {
+		local_command = new Command("defend", new CommandArgumentParser(0, new CommandArgument("Action", "String"), new CommandArgument("Item", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() == 0) {
-					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
-					return;
-				}
-				String method = params.remove(0);
-				if (!actionList.contains(method.toLowerCase())) {
+				String method = this.argumentParser.getArgument("Action");
+				if (method == null || !actionList.contains(method.toLowerCase())) {
 					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 					return;
 				}
@@ -141,10 +137,9 @@ public class Defend extends AbstractListener {
 
 					DecimalFormat dec = new DecimalFormat(damageFormat);
 
+					String item = this.argumentParser.getArgument("Item");
 					Item defenseItem = null;
-					if (params.size() > 0) {
-						if (params.get(0).equals("with"))
-							params.remove(0);
+					if (item != null) {
 						defenseItem = new Item(String.join(" ", params), false);
 					}
 
@@ -214,6 +209,16 @@ public class Defend extends AbstractListener {
 	/**
 	 * @param triggeringUser String
 	 * @param targetUser     String
+	 * @param implement      String
+	 * @param type           String Supported types are `attack`, & `pet`
+	 */
+	public static void addEvent(String triggeringUser, String targetUser, String target, String implement, EventTypes type, String result) {
+		addEvent(triggeringUser, targetUser, target, 0, implement, type, result);
+	}
+
+	/**
+	 * @param triggeringUser String
+	 * @param targetUser     String
 	 * @param damage         int
 	 * @param implement      String
 	 * @param type           String Supported types are `attack`, & `pet`
@@ -221,10 +226,6 @@ public class Defend extends AbstractListener {
 	public static void addEvent(String triggeringUser, String targetUser, String target, int damage, String implement, EventTypes type, String result) {
 		targetUser = targetUser.toLowerCase();
 		defendEventLog.add(new DefendEvent(Helper.cleanNick(triggeringUser), Helper.cleanNick(targetUser), target, new Date(), damage, implement, type, result));
-	}
-
-	public static void addEvent(String triggeringUser, String targetUser, String target, String implement, EventTypes type, String result) {
-		defendEventLog.add(new DefendEvent(Helper.cleanNick(triggeringUser), Helper.cleanNick(targetUser), target, new Date(), 0, implement, type, result));
 	}
 
 	public static ArrayList<DefendEvent> getEventsFor(String user) {

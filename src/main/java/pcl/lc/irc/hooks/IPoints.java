@@ -16,6 +16,8 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Account;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
@@ -30,16 +32,10 @@ public class IPoints extends AbstractListener {
 		Database.addPreparedStatement("getPoints", "SELECT Points FROM InternetPoints WHERE nick = ?;");
 		Database.addPreparedStatement("addPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
 		Database.addPreparedStatement("setPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
-		command_points = new Command("points") {
+		command_points = new Command("points", new CommandArgumentParser(1, new CommandArgument("Nick", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String[] splitMessage = event.getMessage().split(" ");
-				String user;
-				if (splitMessage.length == 1) {
-					user = event.getUser().getNick();
-				} else {
-					user = splitMessage[1];
-				}
+				String user = this.argumentParser.getArgument("User");
 
 				if (Account.getAccount(user, event) != null) {
 					user = Account.getAccount(user, event);
@@ -77,18 +73,11 @@ public class IPoints extends AbstractListener {
 				}
 			}
 		}; command_points.setHelpText("Checks the points for yourself, or another user");
-		command_reset_points = new Command("resetpoints", Permissions.ADMIN) {
+		command_reset_points = new Command("resetpoints", new CommandArgumentParser(1, new CommandArgument("Nick", "String")), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 					PreparedStatement setPoints = Database.getPreparedStatement("setPoints");
-					String[] splitMessage = params.split(" ");
-					String user;
-					if (splitMessage[0].isEmpty()) {
-						user = event.getUser().getNick();
-					} else {
-						user = splitMessage[0];
-					}
-
+					String user = this.argumentParser.getArgument("Nick");
 					if (Account.getAccount(user, event) != null) {
 						user = Account.getAccount(user, event);
 					}

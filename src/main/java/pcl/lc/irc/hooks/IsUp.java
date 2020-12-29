@@ -7,6 +7,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 import java.io.IOException;
@@ -40,22 +42,18 @@ public class IsUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("isup") {
+		local_command = new Command("isup", new CommandArgumentParser(1, new CommandArgument("URL", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (params.size() > 0) {
-					String site = params.get(0);
-					if (!site.startsWith("http://") && !site.startsWith("https://")) {
-						Helper.sendMessage(target, "https is " + ((ping("https://" + site, 1000)) ? "UP" : "DOWN (Might be using untrusted certificates)"), nick);
-						Helper.sendMessage(target, "http  is " + ((ping("http://" + site, 1000)) ? "UP" : "DOWN"), nick);
-					} else {
-						Helper.sendMessage(target, site + " is " + ((ping(site, 1000)) ? "UP" : "DOWN"));
-					}
+				String site = this.argumentParser.getArgument("URL");
+				if (!site.startsWith("http://") && !site.startsWith("https://")) {
+					Helper.sendMessage(target, "https is " + ((ping("https://" + site, 1000)) ? "UP" : "DOWN (Might be using untrusted certificates)"), nick);
+					Helper.sendMessage(target, "http  is " + ((ping("http://" + site, 1000)) ? "UP" : "DOWN"), nick);
 				} else {
-					Helper.sendMessage(target, "Specify a site address!", nick);
+					Helper.sendMessage(target, site + " is " + ((ping(site, 1000)) ? "UP" : "DOWN"));
 				}
 			}
-		}; local_command.setHelpText("Checks if a website is up");
+		}; local_command.setHelpText("Checks if a website is up or down.");
 		IRCBot.registerCommand(local_command);
 	}
 }

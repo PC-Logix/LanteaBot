@@ -18,6 +18,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -35,28 +37,26 @@ public class TimedBans extends AbstractListener {
 				Helper.sendMessage(target, trySubCommandsMessage(params), nick);
 			}
 		};
-		command_ban = new Command("ban") {
+		command_ban = new Command("ban", new CommandArgumentParser(2, new CommandArgument("Nick", "String"), new CommandArgument("Time", "String"), new CommandArgument("Reason", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() < 2) {
-					Helper.sendMessage(target, "You must specify a target, a time and optionally a reason.");
-					return;
-				}
-				setTimedEvent("ban", nick, target, params.get(0), params.get(1), String.join(" ", Arrays.copyOfRange(params.toArray(new String[]{}), 2, params.size())), null);
+				String reason = this.argumentParser.getArgument("Reason");
+				if (reason == null)
+					reason = "";
+				setTimedEvent("ban", nick, target, this.argumentParser.getArgument("Nick"), this.argumentParser.getArgument("Time"), reason, null);
 			}
 		};
-		command_ban.setHelpText("Timed ban: %tban User Time Reason Ex: %tban MGR 24h Spamming");
-		command_quiet = new Command("quiet") {
+		command_ban.setHelpText("Issue a timed ban.");
+		command_quiet = new Command("quiet", new CommandArgumentParser(2, new CommandArgument("Nick", "String"), new CommandArgument("Time", "String"), new CommandArgument("Reason", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() < 2) {
-					Helper.sendMessage(target, "You must specify a target, a time and optionally a reason.");
-					return;
-				}
-				setTimedEvent("quiet", nick, target, params.get(0), params.get(1), String.join(" ", Arrays.copyOfRange(params.toArray(new String[]{}), 2, params.size())), null);
+				String reason = this.argumentParser.getArgument("Reason");
+				if (reason == null)
+					reason = "";
+				setTimedEvent("quiet", nick, target, this.argumentParser.getArgument("Nick"), this.argumentParser.getArgument("Time"), reason, null);
 			}
 		};
-		command_quiet.setHelpText("Timed quiet: %tquiet User Time Reason Ex: %tquiet MGR 24h Spamming");
+		command_quiet.setHelpText("Issue a timed quiet.");
 		command_list = new Command("list") {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {

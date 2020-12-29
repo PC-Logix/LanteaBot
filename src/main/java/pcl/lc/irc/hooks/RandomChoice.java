@@ -5,6 +5,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -134,12 +136,12 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "I want a divorce. I'm taking half the \"{choice}\"."));
 		templates.add(new Template(2, "Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
 
-		local_command = new Command("choose") {
+		local_command = new Command("choose", new CommandArgumentParser(1, new CommandArgument("String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String splitOn = ", or | or |,(?! )";
 				ArrayList<String> parts = new ArrayList<>();
-				Collections.addAll(parts, params.split("; ?"));
+				Collections.addAll(parts, this.argumentParser.getArgument(0).split("; ?"));
 				if (parts.size() == 2) {
 					ArrayList<String> subParts = new ArrayList<>();
 					Collections.addAll(subParts, parts.get(1).split(splitOn));

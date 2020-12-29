@@ -429,7 +429,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 
 			Helper.AntiPings = Helper.getNamesFromTarget(target);
-			System.out.println("This is what's left after aliases: '" + message.replaceAll(" ", "") + "'");
+//			System.out.println("This is what's left after aliases: '" + message.replaceAll(" ", "") + "'");
 			if (!message.replaceAll(" ", "").equals("")) {
 				if (message.startsWith("[action]")) {
 					message = message.replace("[action]", "");

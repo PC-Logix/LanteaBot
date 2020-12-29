@@ -16,6 +16,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -50,7 +52,7 @@ public class Seen extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("seen") {
+		local_command = new Command("seen", new CommandArgumentParser(1, new CommandArgument("Nick", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String dest;
@@ -60,7 +62,7 @@ public class Seen extends AbstractListener {
 					dest = "query";
 				}
 				PreparedStatement getSeen = Database.getPreparedStatement("getLastSeen");
-				String targetNick = params.get(0);
+				String targetNick = this.argumentParser.getArgument("Nick");
 				getSeen.setString(1, targetNick.toLowerCase());
 				ResultSet results = getSeen.executeQuery();
 				if (results.next()) {

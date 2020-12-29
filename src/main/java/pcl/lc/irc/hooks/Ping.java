@@ -8,6 +8,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TimedHashMap;
 
@@ -35,25 +37,27 @@ public class Ping extends AbstractListener {
 	private static TimedHashMap<String, List<Object>> usersMSP = new TimedHashMap<String, List<Object>>(60000, null);
 
 	private void initCommands() {
-		ping = new Command("ping") {
+		ping = new Command("ping", new CommandArgumentParser(0, new CommandArgument("Nick", "List"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (this.callingRelay != null && params.size() == 0) {
+				ArrayList<String> targetUsers = this.argumentParser.getList("Nick");
+				if (this.callingRelay != null && targetUsers.size() == 0) {
 					Helper.sendMessage(target, "Sorry. You can't get your ping from over a bridge. You can ping irc users by passing one or more as arguments.", nick);
 					return;
 				}
-				sendPing(params, nick, false, target);
+				sendPing(targetUsers, nick, false, target);
 			}
 		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
 		ping.registerAlias("p");
-		msp = new Command("msp") {
+		msp = new Command("msp", new CommandArgumentParser(0, new CommandArgument("Nick", "List"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (this.callingRelay != null && params.size() == 0) {
+				ArrayList<String> targetUsers = this.argumentParser.getList("Nick");
+				if (this.callingRelay != null && targetUsers.size() == 0) {
 					Helper.sendMessage(target, "Sorry. You can't get your ping from over a bridge. You can ping irc users by passing one or more as arguments.", nick);
 					return;
 				}
-				sendPing(params, nick, true, target);
+				sendPing(targetUsers, nick, true, target);
 			}
 		}; msp.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency, replies with milliseconds");
 		msp.registerAlias("msping");

@@ -8,6 +8,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 import pcl.lc.irc.entryClasses.Item;
 
@@ -23,20 +25,15 @@ public class Give extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("give") {
+		local_command = new Command("give", new CommandArgumentParser(1, new CommandArgument("Nick", "String"), new CommandArgument("Item", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				String target_argument = params.get(0);
-				String item_name = "";
-				for (int i = 1; i < params.size(); i++)
-				{
-					item_name += params.get(i) + " ";
-				}
-				item_name = item_name.trim();
+				String target_argument = this.argumentParser.getArgument("Nick");
+				String item_name = this.argumentParser.getArgument("Item");
 
 				if (!target_argument.equals(IRCBot.getOurNick())) {
 					Item item;
-					if (item_name.equals("random")) {
+					if (item_name == null || item_name.equals("random")) {
 						System.out.println("Get random item");
 						item = Inventory.getRandomItem(false);
 					} else

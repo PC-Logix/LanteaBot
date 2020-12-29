@@ -17,6 +17,8 @@ import io.github.firemaples.language.Language;
 import io.github.firemaples.translate.Translate;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Helper;
 
@@ -72,10 +74,13 @@ public class Translator extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("translate", new CommandRateLimit(5)) {
+		local_command = new Command("translate", new CommandArgumentParser(1, new CommandArgument("Text", "String"), new CommandArgument("FromLanguage", "String"), new CommandArgument("ToLanguage", "String")), new CommandRateLimit(5)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.equals("^")) {
+				String str = this.argumentParser.getArgument("Text");
+				String from = this.argumentParser.getArgument("FromLanguage");
+				String to = this.argumentParser.getArgument("ToLanguage");
+				if (str.equals("^")) {
 					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 						if (entry.getValue().get(0).equals(target)) {
@@ -83,10 +88,12 @@ public class Translator extends AbstractListener {
 							return;
 						}
 					}
-				} else if (params.split(" ").length > 2) {
-					Helper.sendMessage(target, doTranslate(params.split(" ")[0], params.split(" ")[1], params));
+				} else if (to != null) {
+					Helper.sendMessage(target, doTranslate(from, to, str));
+				} else if (from == null) {
+					Helper.sendMessage(target, doTranslate(from, "auto", str));
 				} else {
-					Helper.sendMessage(target, doTranslate("auto", "auto", params));
+					Helper.sendMessage(target, doTranslate("auto", "auto", str));
 				}
 			}
 		};

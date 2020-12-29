@@ -5,6 +5,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -27,12 +29,13 @@ public class Garbage extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("garbage") {
+		local_command = new Command("garbage", new CommandArgumentParser(0, new CommandArgument("String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.equals("")) {
+				String item = this.argumentParser.getArgument(0);
+				if (item == null || item.equals("")) {
 					Helper.sendAction(target, "kicks a can " + Helper.getGarbageDisposal());
-				} else if (params.equals("^")) {
+				} else if (item.equals("^")) {
 					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 						if (entry.getValue().get(0).equals(target)) {
@@ -41,7 +44,7 @@ public class Garbage extends AbstractListener {
 						}
 					}
 				} else {
-					Helper.sendAction(target, "throws '" + params + "' " + Helper.getGarbageDisposal() + ", it was never seen again.");
+					Helper.sendAction(target, "throws '" + item + "' " + Helper.getGarbageDisposal() + ", it was never seen again.");
 				}
 			}
 		};

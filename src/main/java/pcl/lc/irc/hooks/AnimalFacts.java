@@ -7,6 +7,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 import java.io.BufferedReader;
@@ -70,22 +72,23 @@ public class AnimalFacts extends AbstractListener {
             }
         };
 
-        local_command2 = new Command("fact") {
+        local_command2 = new Command("fact", new CommandArgumentParser(0, new CommandArgument("Animal", "String"))) {
             @Override
             public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
-                if (params.equals("bird")) {
-                    params = "birb"; //Cause this API is dumb. *sigh*
-                } else if (params.equals("red panda")) {
-                    params = "red_panda";
+                String aminal = this.argumentParser.getArgument("Animal");
+                if (aminal.equals("bird")) {
+                    aminal = "birb"; //Cause this API is dumb. *sigh*
+                } else if (aminal.equals("red panda")) {
+                    aminal = "red_panda";
                 }
                 List<String> animalNames = Arrays.asList("dog", "cat", "panda", "fox", "red_panda", "koala", "birb", "racoon", "kangaroo");
-                if (params.equals("random") || params.equals("")) {
+                if (aminal == null || aminal.equals("random") || aminal.equals("")) {
                     Random rand = new Random();
-                    params = animalNames.get(rand.nextInt(animalNames.size()));
+                    aminal = animalNames.get(rand.nextInt(animalNames.size()));
                 }
-                if (animalNames.contains(params)) {
-                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/" + params);
-                    Helper.sendMessage(target, params.substring(0, 1).toUpperCase() + params.substring(1) + " fact: " + json.get("fact").toString());
+                if (animalNames.contains(aminal)) {
+                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/" + aminal);
+                    Helper.sendMessage(target, aminal.substring(0, 1).toUpperCase() + aminal.substring(1) + " fact: " + json.get("fact").toString());
                 } else {
                     Helper.sendMessage(target, "Not a valid option. " + String.join(", ", animalNames));
                 }

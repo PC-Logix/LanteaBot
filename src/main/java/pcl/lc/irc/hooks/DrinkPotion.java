@@ -529,37 +529,35 @@ public class DrinkPotion extends AbstractListener {
 
 	private void initCommands() {
 		CommandRateLimit rateLimit = new CommandRateLimit(0, 10, 0, "Having another potion seems like a really bad idea right now...");
-		local_command = new Command("drink", rateLimit) {
+		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument("Potion", "String")), rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+				String pot = this.argumentParser.getArgument("Potion");
 				PotionEntry potion;
-				if (params.size() == 0 || params.get(0).equals("random")) {
+				if (pot == null || pot.equals("random")) {
 					potion = PotionHelper.getRandomPotion();
 					potion.getEffect(nick);
 					Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(), nick));
 					return;
-				} else if (params.get(0).equals("^")) {
+				} else if (pot.equals("^")) {
 					List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 					for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 						if (entry.getValue().get(0).equals(target)) {
 							if (entry.getValue().get(2).toLowerCase().contains("potion")) {
-								String[] words = entry.getValue().get(2).split(" ");
-								params = new ArrayList<>();
-								params.addAll(Arrays.asList(words));
-								break;
+								pot = entry.getValue().get(2);
 							}
 						}
 					}
 				} else {
-					if (specialFluids.containsKey(params.get(0))) {
-						Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(params.get(0)).getEffectString(), nick));
+					if (specialFluids.containsKey(pot)) {
+						Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(pot).getEffectString(), nick));
 						return;
 					}
 				}
 
 				try {
 					potion = new PotionEntry();
-					potion.setFromCommandParameters(params);
+					potion.setFromCommandParameters(pot);
 
 					potion.getEffect(nick);
 					Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(), nick));

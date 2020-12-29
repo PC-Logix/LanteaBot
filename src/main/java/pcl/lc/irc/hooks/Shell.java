@@ -29,28 +29,14 @@ public class Shell extends AbstractListener {
 	}
 
 	private void initCommands() {
-		shell = new Command("shell") {
+		shell = new Command("shell", new CommandArgumentParser(1, new CommandArgument("Target1", "String"), new CommandArgument("Target2", "String"), new CommandArgument("Target3", "String"), new CommandArgument("Item", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();
-				String shellTarget = null;
-				String shellTargetSecondary = null;
-				String shellTargetTertriary = null;
-				String with = null;
-
-				if (params.length() > 0) {
-					String[] split = params.split("with ", 2);
-					shellTarget = split[0].trim();
-					if (split.length > 1 && !split[1].trim().equals(""))
-						with = split[1].trim();
-
-					String[] targets = shellTarget.split(" and ", 3);
-					shellTarget = targets[0].trim();
-					if (targets.length > 1)
-						shellTargetSecondary = targets[1].trim();
-					if (targets.length > 2)
-						shellTargetTertriary = targets[2].trim();
-				}
+				String shellTarget = this.argumentParser.getArgument("Target1");
+				String shellTargetSecondary = this.argumentParser.getArgument("Target2");
+				String shellTargetTertriary = this.argumentParser.getArgument("Target3");
+				String with = this.argumentParser.getArgument("Item");
 
 				PotionEntry potion = PotionEntry.setFromString(with);
 				if (potion == null && with != null && with.contains("random potion"))

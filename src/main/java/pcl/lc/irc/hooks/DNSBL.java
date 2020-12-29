@@ -21,6 +21,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
@@ -100,11 +102,12 @@ public class DNSBL extends AbstractListener {
 			e1.printStackTrace();
 		}
 
-		toggle_command = new Command("dnsbl", new CommandRateLimit(10), Permissions.MOD) {
+		toggle_command = new Command("dnsbl", new CommandArgumentParser(0, new CommandArgument("State", "String")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.equals("disable") || params.equals("enable")) {
-					Helper.toggleCommand("DNSBL", target, params);
+				String state = this.argumentParser.getArgument("State");
+				if (state != null && (state.equals("disable") || state.equals("enable"))) {
+					Helper.toggleCommand("DNSBL", target, state);
 				} else {
 					String isEnabled = Helper.isEnabledHere(target, "DNSBL") ? "enabled" : "disabled";
 					Helper.sendMessage(target, "DNSBL is " + isEnabled + " in this channel", nick);
@@ -115,12 +118,13 @@ public class DNSBL extends AbstractListener {
 		IRCBot.registerCommand(toggle_command);
 
 
-		check_command = new Command("checkdnsbl", new CommandRateLimit(10), Permissions.EVERYONE) {
+		check_command = new Command("checkdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", "String")), new CommandRateLimit(10), Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String addr = this.argumentParser.getArgument("Address");
 				InetAddress address = null;
 				try {
-					address = InetAddress.getByName(params);
+					address = InetAddress.getByName(addr);
 				} catch (Exception e) {
 				}
 				System.out.println(address.toString().split("/")[1]);
@@ -141,7 +145,7 @@ public class DNSBL extends AbstractListener {
 					}
 				}
 				if (foundOn.length() > 1) {
-					Helper.sendMessage(target, params + " found on " + foundOn.replaceAll(", $", ""));
+					Helper.sendMessage(target, addr + " found on " + foundOn.replaceAll(", $", ""));
 				} else {
 					Helper.sendMessage(target, "Host wasn't found on any tracked DNSBLs");
 				}
@@ -151,39 +155,35 @@ public class DNSBL extends AbstractListener {
 		IRCBot.registerCommand(check_command);
 
 
-		adddnsbl_command = new Command("adddnsbl", new CommandRateLimit(10), Permissions.MOD) {
+		adddnsbl_command = new Command("adddnsbl", new CommandArgumentParser(1, new CommandArgument("Address", "String")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				if (params.length() > 0 && !(params.length() < 1)) {
-					PreparedStatement addDNSBL = Database.getPreparedStatement("addDNSBL");
-					addDNSBL.setString(1, params.trim());
-					if (addDNSBL.executeUpdate() > 0) {
-						dnsbls.add(params.trim());
-						Helper.sendMessage(target, "Added " + params.trim(), nick);
-						return;
-					}
-					Helper.sendMessage(target, "An error occurred while trying to add the service.", nick);
+				String address = this.argumentParser.getArgument("Address");
+				PreparedStatement addDNSBL = Database.getPreparedStatement("addDNSBL");
+				addDNSBL.setString(1, address.trim());
+				if (addDNSBL.executeUpdate() > 0) {
+					dnsbls.add(address.trim());
+					Helper.sendMessage(target, "Added " + address.trim(), nick);
+					return;
 				}
+				Helper.sendMessage(target, "An error occurred while trying to add the service.", nick);
 			}
 		};
 		toggle_command.setHelpText("Add DNSBL Service");
 		IRCBot.registerCommand(adddnsbl_command);
 
-
-		remdnsbl_command = new Command("remdnsbl", new CommandRateLimit(10), Permissions.MOD) {
+		remdnsbl_command = new Command("remdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", "String")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				if (params.length() > 0 && !(params.length() < 1)) {
-
-					PreparedStatement removeDNSBL = Database.getPreparedStatement("removeDNSBL");
-					removeDNSBL.setString(1, params.trim());
-					if (removeDNSBL.executeUpdate() > 0) {
-						dnsbls.remove(params.trim());
-						Helper.sendMessage(target, "Removed " + params.trim(), nick);
-						return;
-					}
-					Helper.sendMessage(target, "An error occurred while trying to remove the service.", nick);
+				String address = this.argumentParser.getArgument("Address");
+				PreparedStatement removeDNSBL = Database.getPreparedStatement("removeDNSBL");
+				removeDNSBL.setString(1, address.trim());
+				if (removeDNSBL.executeUpdate() > 0) {
+					dnsbls.remove(address.trim());
+					Helper.sendMessage(target, "Removed " + address.trim(), nick);
+					return;
 				}
+				Helper.sendMessage(target, "An error occurred while trying to remove the service.", nick);
 			}
 		};
 		toggle_command.setHelpText("Remove DNSBL Service");

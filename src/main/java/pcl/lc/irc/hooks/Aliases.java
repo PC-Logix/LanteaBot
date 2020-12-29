@@ -3,6 +3,8 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Helper;
 
@@ -20,14 +22,15 @@ public class Aliases extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("aliases", new CommandRateLimit(60)) {
+		local_command = new Command("aliases", new CommandArgumentParser(1, new CommandArgument("Command", "String")), new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Command cmd = Command.findCommand(params);
+				String com = this.argumentParser.getArgument("Command");
+				Command cmd = Command.findCommand(com);
 				if (cmd != null)
 					Helper.sendMessage(target, cmd.toString(), nick);
 				else
-					Helper.sendMessage(target, "No command or alias found matching '" + params + "'", nick);
+					Helper.sendMessage(target, "No command or alias found matching '" + com + "'", nick);
 			}
 		};
 		local_command.setHelpText("Get aliases for a command, or find the root command for an alias. Syntax: " + Config.commandprefix + local_command.getCommand() + " <command or alias>");

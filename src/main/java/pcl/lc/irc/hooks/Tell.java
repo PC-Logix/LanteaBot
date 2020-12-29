@@ -16,6 +16,8 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -29,24 +31,16 @@ public class Tell extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("tell") {
+		local_command = new Command("tell", new CommandArgumentParser(2, new CommandArgument("Nick", "String"), new CommandArgument("Message", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				PreparedStatement addTell = Database.getPreparedStatement("addTell");
-				if (params.size() == 0) {
-					Helper.sendMessage(target, "Who did you want to tell?", nick);
-					return;
-				}
-				String recipient = params.get(0);
+				String recipient = this.argumentParser.getArgument("Nick");
 				recipient = recipient.replaceAll("\\s*\\p{Punct}+\\s*$", "");
-				if (params.size() == 1) {
-					Helper.sendMessage(target, "What did you want to say to " + recipient + "?", nick);
-					return;
-				}
 				String channel = dest;
 				SimpleDateFormat f = new SimpleDateFormat("MMM dd @ HH:mm");
 				f.setTimeZone(TimeZone.getTimeZone("UTC"));
-				String messageOut = String.join(" ", params) + " on " + f.format(new Date()) + " UTC";
+				String messageOut = String.join(" ", this.argumentParser.getArgument("Message")) + " on " + f.format(new Date()) + " UTC";
 				addTell.setString(1, nick);
 				addTell.setString(2, recipient.toLowerCase());
 				addTell.setString(3, channel);

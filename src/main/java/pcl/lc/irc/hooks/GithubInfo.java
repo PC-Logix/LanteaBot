@@ -22,6 +22,8 @@ import com.google.gson.JsonParser;
 
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Helper;
 
@@ -35,11 +37,12 @@ public class GithubInfo extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("github", new CommandRateLimit(10), Permissions.MOD) {
+		local_command = new Command("github", new CommandArgumentParser(1, new CommandArgument("State", "String")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.equals("disable") || params.equals("enable")) {
-					Helper.toggleCommand("github", target, params);
+				String state = this.argumentParser.getArgument("State").toLowerCase();
+				if (state.equals("disable") || state.equals("enable")) {
+					Helper.toggleCommand("github", target, state);
 				} else {
 					String isEnabled = Helper.isEnabledHere(target, "github") ? "enabled" : "disabled";
 					Helper.sendMessage(target, "GitHub Info is " + isEnabled + " in this channel", nick);

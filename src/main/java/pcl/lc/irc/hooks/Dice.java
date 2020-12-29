@@ -7,6 +7,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.irc.entryClasses.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.MathParseExpression;
@@ -21,21 +23,22 @@ public class Dice extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("dice") {
+		local_command = new Command("dice", new CommandArgumentParser(1, new CommandArgument("Expression", "string"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				params = DiceRoll.rollDiceInString(params);
+				String expression = this.argumentParser.getArgument("Expression");
+				expression = DiceRoll.rollDiceInString(expression);
 				if (params.contains("=>")) {
-					Helper.sendMessage(target, params);
+					Helper.sendMessage(target, expression);
 					return;
 				}
 
-				MathParseExpression exp = new MathParseExpression(params);
+				MathParseExpression exp = new MathParseExpression(expression);
 
-				if (params.equals(String.valueOf(exp.result)))
+				if (expression.equals(String.valueOf(exp.result)))
 					Helper.sendMessage(target, String.valueOf(exp.result));
 				else
-					Helper.sendMessage(target, params + " => " + exp.result);
+					Helper.sendMessage(target, expression + " => " + exp.result);
 			}
 		}; local_command.setHelpText("Rolls dice and solves mathematical expressions using + - * and /, and even both at the same time.. (Dice are expressed as eg 1d20 or d20 and supports the following additional parameters which can be chained in this order: k# or kh# - keep highest # of results, kl# - keep lowest # of results, ! or !! - ! rolls exploding dice separately and !! adds the result onto the original dice, <# - count results equal to or lower than # as successes, ># - count results equal to or higher than # as successes.)");
 		local_command.registerAlias("roll");

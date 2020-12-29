@@ -25,6 +25,8 @@ import com.maxmind.geoip2.record.Subdivision;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.UnTarGZ;
 
@@ -74,12 +76,13 @@ public class IP2Geo extends AbstractListener {
 			}
 		}
 
-		local_command = new Command("geoip") {
+		local_command = new Command("geoip", new CommandArgumentParser(0, new CommandArgument("Location", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.AntiPings = Helper.getNamesFromTarget(target);
-				if (params.length() > 0) {
-					Helper.sendMessage(target, getGeoIP(params), nick);
+				String location = this.argumentParser.getArgument("Location");
+				Helper.AntiPings = Helper.getNamesFromTarget(location);
+				if (location != null) {
+					Helper.sendMessage(target, getGeoIP(location), nick);
 				} else {
 					Helper.sendMessage(target, getGeoIP(event.getUserHostmask().getHostname()), nick);					
 				}

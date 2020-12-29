@@ -8,6 +8,8 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -30,14 +32,14 @@ public class Moo extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("moo") {
+		local_command = new Command("moo", new CommandArgumentParser(0, new CommandArgument("String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String str = "";
-				if (params.equals("")) {
+				String str = this.argumentParser.getArgument(0);
+				if (str == null) {
 					Helper.sendMessage(target, "Moo?", nick);
 				} else {
-					if (params.equals("^")) {
+					if (str.equals("^")) {
 						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 							if (entry.getValue().get(0).equals(target)) {
@@ -47,8 +49,6 @@ public class Moo extends AbstractListener {
 								}
 							}
 						}
-					} else {
-						str = params;
 					}
 					str = str.replaceAll("u", "o").replaceAll("U", "O");
 					Helper.sendMessage(target, str.replaceAll("o", "oo").replaceAll("O", "OO"));

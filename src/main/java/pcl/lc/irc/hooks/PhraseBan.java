@@ -7,6 +7,8 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -62,37 +64,31 @@ public class PhraseBan extends AbstractListener {
 		local_command.setHelpText("Ban phrases, all of them");
 		local_command.registerAlias("pb");
 
-		add = new Command("add", Permissions.MOD) {
+		add = new Command("add", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
-				if (params.isEmpty()) {
-					Helper.sendMessage(target, "You must specify a nick.", nick);
-					return;
-				}
+				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement;
 				statement = Database.getConnection().createStatement();
-				ResultSet result = statement.executeQuery("SELECT * FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
+				ResultSet result = statement.executeQuery("SELECT * FROM BannedPhrases WHERE phrase = '" + phrase.toLowerCase() + "'");
 				if (result.next()) {
 					Helper.sendMessage(target, "Phrase already banned.", nick);
 					return;
 				}
-				statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + params.toLowerCase() + "')");
+				statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + phrase.toLowerCase() + "')");
 				Helper.sendMessage(target, "Added phrase to banlist", nick);
 				phrases.add(params.toLowerCase());
 			}
 		};
 		local_command.registerSubCommand(add);
 
-		del = new Command("del", Permissions.MOD) {
+		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
-				if (params.isEmpty()) {
-					Helper.sendMessage(target, "You must specify a nick.", nick);
-					return;
-				}
+				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement;
 				statement = Database.getConnection().createStatement();
-				statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + params.toLowerCase() + "'");
+				statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + phrase.toLowerCase() + "'");
 				Helper.sendMessage(target, "Removed phrase from banlist", nick);
 				phrases.remove(params.toLowerCase());
 			}
@@ -119,54 +115,46 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(clear);
 
-		exadd = new Command("exadd", Permissions.MOD) {
+		exadd = new Command("exadd", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
-				if (params.isEmpty()) {
-					Helper.sendMessage(target, "You must specify a nick.", nick);
-					return;
-				}
+				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement = Database.getConnection().createStatement();
-				ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
+				ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + phrase.toLowerCase() + "'");
 				if (result.next()) {
 					Helper.sendMessage(target, "Nick already exempt.", nick);
 					return;
 				}
-				statement.executeUpdate("INSERT INTO ExemptNicks (nick) VALUES ('" + params.get(0).toLowerCase() + "')");
+				statement.executeUpdate("INSERT INTO ExemptNicks (nick) VALUES ('" + phrase.toLowerCase() + "')");
 				Helper.sendMessage(target, "Added to exempt list!", nick);
 			}
 		};
 		local_command.registerSubCommand(exadd);
 
-		exdel = new Command("exdel", Permissions.MOD) {
+		exdel = new Command("exdel", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
-				if (params.isEmpty()) {
-					Helper.sendMessage(target, "You must specify a nick.", nick);
-					return;
-				}
+				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement = Database.getConnection().createStatement();
-				statement.executeUpdate("DELETE FROM ExemptNicks WHERE nick = '" + params.get(0).toLowerCase() + "'");
+				statement.executeUpdate("DELETE FROM ExemptNicks WHERE nick = '" + phrase.toLowerCase() + "'");
 				Helper.sendMessage(target, "Removed from exempt list");
 			}
 		};
 		exdel.registerAlias("exrem");
 		local_command.registerSubCommand(exdel);
 
-		set = new Command("set", Permissions.MOD) {
+		set = new Command("set", new CommandArgumentParser(2, new CommandArgument("Setting", "String"), new CommandArgument("Value", "String")), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() < 2) {
-					Helper.sendMessage(target, "Specify setting to set then value. Settings: 'duration'", nick);
-					return;
-				}
-				switch (params.get(0)) {
+				String setting = this.argumentParser.getArgument("Setting");
+				String value = this.argumentParser.getArgument("Value");
+				switch (setting.toLowerCase()) {
 					case "duration":
-						Database.storeJsonData("phraseban_duration", params.get(1));
+						Database.storeJsonData("phraseban_duration", value);
 						Helper.sendMessage(target, "Setting updated!");
 						return;
 					default:
-						Helper.sendMessage(target, "Unknown setting '" + params.get(0) + "'", nick);
+						Helper.sendMessage(target, "Unknown setting '" + setting + "'", nick);
 				}
 			}
 		};

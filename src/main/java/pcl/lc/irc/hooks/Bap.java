@@ -5,6 +5,8 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
 import pcl.lc.irc.entryClasses.Item;
 
@@ -23,18 +25,14 @@ public class Bap extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bap") {
+		local_command = new Command("bap", new CommandArgumentParser(0, new CommandArgument("Target", "String"), new CommandArgument("Item", "String"))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				if (params.length() == 0)
+				String bapTarget = this.argumentParser.getArgument("Target");
+				String with = this.argumentParser.getArgument("Item");
+				if (bapTarget == null)
 					Helper.sendWorldAction(target, nick + " flails at the darkness");
 				else {
-					String[] split = params.split(" with ", 2);
-					String bapTarget = split[0].trim();
-					String with = null;
-					if (split.length > 1)
-						with = split[1].trim();
-
 					if (Helper.doInteractWith(params)) {
 						Item item = null;
 						if (with == null)

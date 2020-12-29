@@ -6,12 +6,9 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
-import pcl.lc.irc.entryClasses.Item;
-import pcl.lc.irc.entryClasses.ItemCollection;
 
 import java.util.ArrayList;
 
@@ -26,15 +23,12 @@ public class Juggle extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("juggle", new CommandRateLimit(60)) {
+		local_command = new Command("juggle", new CommandArgumentParser(0, new CommandArgument("Number", "Integer")), new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				int item_amount = 3;
-				try {
-					item_amount = Integer.parseInt(params.get(0));
-				} catch (Exception ex) {
-					System.out.println("No valid amount specified. Defaulting to " + item_amount);
-				}
+				int item_amount = this.argumentParser.getInt("Number");
+				if (item_amount == Integer.MIN_VALUE)
+					item_amount = 3;
 				item_amount = Math.min(6, item_amount);
 				item_amount = Math.max(1, item_amount);
 

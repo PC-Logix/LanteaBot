@@ -53,31 +53,17 @@ public class Attack extends AbstractListener {
 				acts.add(act.command);
 		actionList = String.join(", ", acts);
 
-		local_command = new Command("attack", new CommandRateLimit(300, true)) {
+		local_command = new Command("attack", new CommandArgumentParser(2, new CommandArgument("Action", "String"), new CommandArgument("Target", "String"), new CommandArgument("Item", "String")), new CommandRateLimit(300, true)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() == 0) {
-					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
-					return;
-				}
-				String method = params.remove(0);
+				String method = this.argumentParser.getArgument("Action");
 				if (!actionList.contains(method.toLowerCase())) {
 					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
 					return;
 				}
 				Actions action = Actions.valueOf(method.toUpperCase());
-
-				String message = "";
-				for (String aParam : params) {
-					message += " " + aParam;
-				}
-
-				String[] split = message.trim().split(" with ", 2);
-				String attackTarget = split[0].trim();
-				String with = null;
-				if (split.length > 1)
-					with = split[1].trim();
-
+				String attackTarget = this.argumentParser.getArgument("Target");
+				String with = this.argumentParser.getArgument("Item");
 				Item item = null;
 
 				ArrayList<Actions> nonItemActions = new ArrayList<>();
