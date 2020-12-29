@@ -1,10 +1,13 @@
 package pcl.lc.irc.entryClasses;
 
+import java.util.ArrayList;
+
 public class CommandArgument {
 	public String name;
 	public String description;
 	public String type;
 	public String arg;
+	public ArrayList<String> argList;
 
 	public CommandArgument(String type) {
 		this.name = null;
@@ -23,5 +26,6 @@ public class CommandArgument {
 		this.description = description;
 		this.type = type;
 		this.arg = null;
+		this.argList = new ArrayList<>();
 	}
 }
