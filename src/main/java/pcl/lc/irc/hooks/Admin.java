@@ -564,6 +564,9 @@ public class Admin extends AbstractListener {
 		String help = command.getHelpText();
 		if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
 			help = "[" + command.getPermissionLevel() + "] " + help;
+		if (command.argumentParser != null) {
+			help += "<br/>Arguments: " + command.argumentParser.getArgumentSyntax();
+		}
 		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
 		for (Command subCommand : command.getSubCommands()) {
 			String subHelp = subCommand.getHelpText();

@@ -21,10 +21,11 @@ public class Command {
 	private String command;
 	private String className;
 	private CommandRateLimit rateLimit;
+	public CommandArgumentParser argumentParser;
 	private ArrayList<String> aliases;
 	private ArrayList<String> aliasesFixedArguments;
 	private ArrayList<Command> subCommands;
-	private ArrayList<Command> parentCommands;
+	public ArrayList<Command> parentCommands;
 	private boolean isEnabled;
 	private String minRank;
 	private String helpText;
@@ -34,25 +35,46 @@ public class Command {
 	public String callingRelay = null;
 
 	public Command(String command) {
-		this(command, null, true, Permissions.EVERYONE);
+		this(command, null, null, true, Permissions.EVERYONE);
+	}
+
+	public Command(String command, CommandArgumentParser argumentParser) {
+		this(command, argumentParser, null, true, Permissions.EVERYONE);
+	}
+
+	public Command(String command, CommandArgumentParser argumentParser, CommandRateLimit rateLimit) {
+		this(command, argumentParser, rateLimit, true, Permissions.EVERYONE);
+	}
+
+	public Command(String command, CommandArgumentParser argumentParser, CommandRateLimit rateLimit, String minRank) {
+		this(command, argumentParser, rateLimit, true, minRank);
+	}
+
+	public Command(String command, CommandArgumentParser argumentParser, String minRank) {
+		this(command, argumentParser, null, true, minRank);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit) {
-		this(command, rateLimit, true, Permissions.EVERYONE);
+		this(command, null, rateLimit, true, Permissions.EVERYONE);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit, String minRank) {
-		this(command, rateLimit, true, minRank);
-	}
-
-	public Command(String command, String minRank) {
-		this(command, null, true, minRank);
+		this(command, null, rateLimit, true, minRank);
 	}
 
 	public Command(String command, CommandRateLimit rateLimit, boolean isEnabled, String minRank) {
+		this(command, null, rateLimit, isEnabled, minRank);
+	}
+
+	public Command(String command, String minRank) {
+		this(command, null, null, true, minRank);
+	}
+
+	public Command(String command, CommandArgumentParser argumentParser, CommandRateLimit rateLimit, boolean isEnabled, String minRank) {
 		this.command = command;
 		this.className = Thread.currentThread().getStackTrace()[2].getClassName();
 		this.rateLimit = rateLimit;
+		this.argumentParser = argumentParser;
 		this.aliases = new ArrayList<>();
 		this.aliasesFixedArguments = new ArrayList<>();
 		this.subCommands = new ArrayList<>();
@@ -317,10 +339,10 @@ public class Command {
 	}
 
 	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
-		System.out.println("tryExecute: " + command);
+//		System.out.println("tryExecute: " + command);
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
-			System.out.println("Error when attempting to execute '" + this.command + "'. Doesn't match '" + command + "'");
+//			System.out.println("Error when attempting to execute '" + this.command + "'. Doesn't match '" + command + "'");
 			return false;
 		} else if (shouldExecute == 0 || (this.rateLimit != null && !this.rateLimit.getIgnorePermissions() && Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN))) {
 			this.actualCommand = command.replace(Config.commandprefix, "");
@@ -344,6 +366,20 @@ public class Command {
 					if (sub.tryExecute(firstParam, nick, target, event, subParams, false))
 						return true;
 				}
+			}
+			if (this.argumentParser != null) {
+				if (params.size() > 0 && params.get(0).equals("syntax")) {
+					Helper.sendMessage(target, Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax(), nick);
+					return true;
+				}
+				int arguments = this.argumentParser.parseArguments(params);
+				if (!this.argumentParser.validateArguments(arguments)) {
+					Helper.sendMessage(target, "Invalid arguments. " + Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax(), nick);
+					return false;
+				}
+			} else if (params.size() > 0 && params.get(0).equals("syntax")) {
+				Helper.sendMessage(target, "This command has no argument syntax defined.", nick);
+				return true;
 			}
 			this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
 //			System.out.println("Called onExecuteSuccess with String[]");
