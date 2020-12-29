@@ -578,17 +578,18 @@ public class Admin extends AbstractListener {
 		String help = command.getHelpText();
 		if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
 			help = "[" + command.getPermissionLevel() + "] " + help;
+		String argumentSyntax = "";
 		if (command.argumentParser != null) {
-			help += "<br/>Arguments: " + command.argumentParser.getArgumentSyntax();
+			argumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(command.argumentParser.getArgumentSyntax());
 		}
-		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
+		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + argumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
 		for (Command subCommand : command.getSubCommands()) {
 			String subHelp = subCommand.getHelpText();
 			if (Permissions.getPermLevel(subCommand.getPermissionLevel()) > 0)
 				subHelp = "[" + subCommand.getPermissionLevel() + "] " + subHelp;
 			else if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
 				subHelp = "[" + command.getPermissionLevel() + "] " + subHelp;
-			item += "<tr><td style='white-space: nowrap;'>" + StringEscapeUtils.escapeHtml4(" ⌞ ") + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
+			item += "<tr><td style='white-space: nowrap;'> * " + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
 		}
 		return item;
 	}
