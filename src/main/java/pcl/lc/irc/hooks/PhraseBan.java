@@ -4,6 +4,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericChannelUserEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
@@ -64,7 +65,7 @@ public class PhraseBan extends AbstractListener {
 		local_command.setHelpText("Ban phrases, all of them");
 		local_command.registerAlias("pb");
 
-		add = new Command("add", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
+		add = new Command("add", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -82,7 +83,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(add);
 
-		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
+		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -115,7 +116,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(clear);
 
-		exadd = new Command("exadd", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
+		exadd = new Command("exadd", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -131,7 +132,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(exadd);
 
-		exdel = new Command("exdel", new CommandArgumentParser(1, new CommandArgument("Phrase", "String")), Permissions.MOD) {
+		exdel = new Command("exdel", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -143,7 +144,7 @@ public class PhraseBan extends AbstractListener {
 		exdel.registerAlias("exrem");
 		local_command.registerSubCommand(exdel);
 
-		set = new Command("set", new CommandArgumentParser(2, new CommandArgument("Setting", "String"), new CommandArgument("Value", "String")), Permissions.MOD) {
+		set = new Command("set", new CommandArgumentParser(2, new CommandArgument("Setting", ArgumentTypes.STRING), new CommandArgument("Value", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String setting = this.argumentParser.getArgument("Setting");

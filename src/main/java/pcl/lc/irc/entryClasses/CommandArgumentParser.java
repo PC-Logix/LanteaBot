@@ -47,7 +47,7 @@ public class CommandArgumentParser {
 		}
 		int argumentCount = 0;
 		for (CommandArgument argType : this.arguments) {
-			if (argType.type.equals("Integer")) {
+			if (argType.type.equals(ArgumentTypes.INTEGER)) {
 				Matcher matcher = patternInteger.matcher(arguments);
 				if (matcher.find()) {
 					if (debug)
@@ -67,7 +67,7 @@ public class CommandArgumentParser {
 						System.out.println("`" + arguments + "` doesn't match Integer.");
 					return argumentCount;
 				}
-			} else if (argType.type.equals("Double")) {
+			} else if (argType.type.equals(ArgumentTypes.DOUBLE)) {
 				Matcher matcher = patternDouble.matcher(arguments);
 				if (matcher.find()) {
 					if (debug)
@@ -87,7 +87,7 @@ public class CommandArgumentParser {
 						System.out.println("`" + arguments + "` doesn't match Double.");
 					return argumentCount;
 				}
-			} else if (argType.type.equals("Boolean")) {
+			} else if (argType.type.equals(ArgumentTypes.BOOLEAN)) {
 				Matcher matcher = patternBoolean.matcher(arguments);
 				if (matcher.find()) {
 					if (debug)
@@ -104,7 +104,7 @@ public class CommandArgumentParser {
 						System.out.println(" Remainder: `" + arguments + "`");
 				} else if (argumentCount < this.requiredFirstNum)
 					return argumentCount;
-			} else if (argType.type.equals("String")) {
+			} else if (argType.type.equals(ArgumentTypes.STRING)) {
 				Matcher matcher = patternEscapedString.matcher(arguments);
 				if (matcher.find()) {
 					if (debug)
@@ -144,7 +144,7 @@ public class CommandArgumentParser {
 						return argumentCount;
 					}
 				}
-			} else if (argType.type.equals("List")) {
+			} else if (argType.type.equals(ArgumentTypes.LIST)) {
 				while (!arguments.replaceAll(" ", "").isEmpty()) {
 					Matcher matcher = patternEscapedString.matcher(arguments);
 					if (matcher.find()) {

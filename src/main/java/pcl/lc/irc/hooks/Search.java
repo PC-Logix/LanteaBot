@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 import org.json.JSONException;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -39,42 +40,42 @@ public class Search extends AbstractListener {
 				Helper.sendMessage(target, this.trySubCommandsMessage(((params.size() > 0) ? params.get(0) : "")), nick);
 			}
 		}; search.setHelpText("Search various sites for term (eg search <site> <term>)");
-		google = new Command("google", new CommandArgumentParser(1, new CommandArgument("Query", "String"))) {
+		google = new Command("google", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch(null, this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; google.setHelpText("Searches google and returns the first result");
-		curseForge = new Command("curseForge", new CommandArgumentParser(1, new CommandArgument("Query", "String"))) {
+		curseForge = new Command("curseForge", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:minecraft.curseforge.com", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; curseForge.setHelpText("Searches CurseForge and returns the first result");
-		wiki = new Command("wiki", new CommandArgumentParser(1, new CommandArgument("Query", "String"))) {
+		wiki = new Command("wiki", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("wiki", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; wiki.setHelpText("Searches Wikipedia and returns the first result");
-		urban = new Command("urban", new CommandArgumentParser(1, new CommandArgument("Query", "String"))) {
+		urban = new Command("urban", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:urbandictionary.com", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; urban.setHelpText("Searches UrbanDictonary and returns the first result");
-		ann = new Command("ann", new CommandArgumentParser(1, new CommandArgument("Query", "String"))) {
+		ann = new Command("ann", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:animenewsnetwork.com", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 			}
 		}; ann.setHelpText("Searches Anime News Network and returns the first result");
-		youtube = new Command("youtube", new CommandArgumentParser(1, new CommandArgument("Query", "String"))) {
+		youtube = new Command("youtube", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:youtube.com", this.argumentParser.getArgument("Query"));

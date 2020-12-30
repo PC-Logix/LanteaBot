@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -49,7 +50,7 @@ public class Flip extends AbstractListener {
 
   @Override
   protected void initHook() {
-    local_command = new Command("flip", new CommandArgumentParser(0, new CommandArgument("String"))) {
+    local_command = new Command("flip", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
       @Override
       public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
         String flip = this.argumentParser.getArgument(0);

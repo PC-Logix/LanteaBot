@@ -5,6 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -42,7 +43,7 @@ public class IsUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("isup", new CommandArgumentParser(1, new CommandArgument("URL", "String"))) {
+		local_command = new Command("isup", new CommandArgumentParser(1, new CommandArgument("URL", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String site = this.argumentParser.getArgument("URL");

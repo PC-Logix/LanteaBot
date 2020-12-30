@@ -16,10 +16,7 @@ import com.google.common.collect.Lists;
 import io.github.firemaples.language.Language;
 import io.github.firemaples.translate.Translate;
 import pcl.lc.irc.*;
-import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.irc.entryClasses.CommandArgument;
-import pcl.lc.irc.entryClasses.CommandArgumentParser;
-import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.Helper;
 
 public class Translator extends AbstractListener {
@@ -74,7 +71,7 @@ public class Translator extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("translate", new CommandArgumentParser(1, new CommandArgument("Text", "String"), new CommandArgument("FromLanguage", "String"), new CommandArgument("ToLanguage", "String")), new CommandRateLimit(5)) {
+		local_command = new Command("translate", new CommandArgumentParser(1, new CommandArgument("Text", ArgumentTypes.STRING), new CommandArgument("FromLanguage", ArgumentTypes.STRING), new CommandArgument("ToLanguage", ArgumentTypes.STRING)), new CommandRateLimit(5)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument("Text");

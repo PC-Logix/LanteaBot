@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -23,7 +24,7 @@ public class MakeMagic extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("makemagic", new CommandArgumentParser(1, new CommandArgument("Item", "String"))) {
+		local_command = new Command("makemagic", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument("Item");

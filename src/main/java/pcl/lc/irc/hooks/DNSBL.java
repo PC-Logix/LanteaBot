@@ -20,10 +20,7 @@ import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
-import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.irc.entryClasses.CommandArgument;
-import pcl.lc.irc.entryClasses.CommandArgumentParser;
-import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -102,7 +99,7 @@ public class DNSBL extends AbstractListener {
 			e1.printStackTrace();
 		}
 
-		toggle_command = new Command("dnsbl", new CommandArgumentParser(0, new CommandArgument("State", "String")), new CommandRateLimit(10), Permissions.MOD) {
+		toggle_command = new Command("dnsbl", new CommandArgumentParser(0, new CommandArgument("State", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String state = this.argumentParser.getArgument("State");
@@ -118,7 +115,7 @@ public class DNSBL extends AbstractListener {
 		IRCBot.registerCommand(toggle_command);
 
 
-		check_command = new Command("checkdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", "String")), new CommandRateLimit(10), Permissions.EVERYONE) {
+		check_command = new Command("checkdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.EVERYONE) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String addr = this.argumentParser.getArgument("Address");
@@ -155,7 +152,7 @@ public class DNSBL extends AbstractListener {
 		IRCBot.registerCommand(check_command);
 
 
-		adddnsbl_command = new Command("adddnsbl", new CommandArgumentParser(1, new CommandArgument("Address", "String")), new CommandRateLimit(10), Permissions.MOD) {
+		adddnsbl_command = new Command("adddnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String address = this.argumentParser.getArgument("Address");
@@ -172,7 +169,7 @@ public class DNSBL extends AbstractListener {
 		toggle_command.setHelpText("Add DNSBL Service");
 		IRCBot.registerCommand(adddnsbl_command);
 
-		remdnsbl_command = new Command("remdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", "String")), new CommandRateLimit(10), Permissions.MOD) {
+		remdnsbl_command = new Command("remdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String address = this.argumentParser.getArgument("Address");

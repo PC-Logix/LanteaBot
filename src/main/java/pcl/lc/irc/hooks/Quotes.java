@@ -28,6 +28,7 @@ import java.util.Map;
 
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
@@ -69,7 +70,7 @@ public class Quotes extends AbstractListener {
 	}
 
 	private void initCommands() {
-		quote = new Command("quote", new CommandArgumentParser(0, new CommandArgument("String"))) {
+		quote = new Command("quote", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String qid = this.argumentParser.getArgument(0);
@@ -106,7 +107,7 @@ public class Quotes extends AbstractListener {
 		};
 		quote.setHelpText("Returns quotes from the quote database. Also Has sub-commands: add, del");
 
-		add = new Command("add", new CommandArgumentParser(2, new CommandArgument("Nick", "String"), new CommandArgument("Quote", "String"))) {
+		add = new Command("add", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Quote", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("Nick");
@@ -126,7 +127,7 @@ public class Quotes extends AbstractListener {
 		};
 		add.setHelpText("Adds a quote to the database");
 
-		delete = new Command("delete", new CommandArgumentParser(1, new CommandArgument("QuoteID", "String")), Permissions.ADMIN) {
+		delete = new Command("delete", new CommandArgumentParser(1, new CommandArgument("QuoteID", ArgumentTypes.STRING)), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("QuoteID").replace(idIdentificationCharacter, "");
@@ -144,7 +145,7 @@ public class Quotes extends AbstractListener {
 		delete.setHelpText("Removes a quote from the database");
 		delete.registerAlias("del");
 
-		list = new Command("list", new CommandArgumentParser(1, new CommandArgument("Nick", "String"))) {
+		list = new Command("list", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("Nick");

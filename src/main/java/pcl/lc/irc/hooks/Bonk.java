@@ -22,7 +22,7 @@ public class Bonk extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bonk", new CommandArgumentParser(0, new CommandArgument("Nick", "String"), new CommandArgument("Item", "String"))) {
+		local_command = new Command("bonk", new CommandArgumentParser(0, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String bonkTarget = this.argumentParser.getArgument("Nick");

@@ -5,11 +5,8 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.entryClasses.CommandArgument;
-import pcl.lc.irc.entryClasses.CommandArgumentParser;
-import pcl.lc.irc.entryClasses.DiceRoll;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.MathParseExpression;
 
@@ -23,7 +20,7 @@ public class Dice extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("dice", new CommandArgumentParser(1, new CommandArgument("Expression", "string"))) {
+		local_command = new Command("dice", new CommandArgumentParser(1, new CommandArgument("Expression", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String expression = this.argumentParser.getArgument("Expression");

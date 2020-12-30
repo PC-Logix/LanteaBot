@@ -25,6 +25,7 @@ import io.github.firemaples.language.Language;
 import io.github.firemaples.translate.Translate;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
@@ -44,7 +45,7 @@ public class Weather extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("weather", new CommandArgumentParser(1, new CommandArgument("Location", "String"))) {
+		local_command = new Command("weather", new CommandArgumentParser(1, new CommandArgument("Location", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
 				Helper.sendMessage(target, getWeather(this.argumentParser.getArgument("Location")));

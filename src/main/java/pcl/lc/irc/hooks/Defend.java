@@ -115,7 +115,7 @@ public class Defend extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("defend", new CommandArgumentParser(0, new CommandArgument("Action", "String"), new CommandArgument("Item", "String"))) {
+		local_command = new Command("defend", new CommandArgumentParser(0, new CommandArgument("Action", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");

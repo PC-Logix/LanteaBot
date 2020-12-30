@@ -5,6 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -33,7 +34,7 @@ public class MCInfo extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("mcinfo", new CommandArgumentParser(1, new CommandArgument("Address", "String"), new CommandArgument("Port", "Integer"))) {
+		local_command = new Command("mcinfo", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING), new CommandArgument("Port", ArgumentTypes.INTEGER))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws IOException {
 				String server = this.argumentParser.getArgument("Address");

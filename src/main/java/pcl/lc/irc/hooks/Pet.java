@@ -27,7 +27,7 @@ public class Pet extends AbstractListener {
 		actions.put("pets", new ActionType("Petting", "Petting", "Pet", "Petted"));
 		actions.put("brushes", new ActionType("Brushing", "Brushing", "Brush", "Brushed"));
 
-		local_command = new Command("pet", new CommandArgumentParser(1, new CommandArgument("Nick", "String"), new CommandArgument("Item", "String"))) {
+		local_command = new Command("pet", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String petTarget = this.argumentParser.getArgument("Nick");

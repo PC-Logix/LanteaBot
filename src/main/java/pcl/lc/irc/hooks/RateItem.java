@@ -42,7 +42,7 @@ public class RateItem extends AbstractListener {
 		};
 		local_command.setHelpText("Rates items attack, defense or healing bonuses");
 
-		sub_command_attack = new Command("attack", new CommandArgumentParser(0, new CommandArgument("Item", "String"))) {
+		sub_command_attack = new Command("attack", new CommandArgumentParser(0, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String itemName = this.argumentParser.getArgument("Item");
@@ -66,7 +66,7 @@ public class RateItem extends AbstractListener {
 		};
 		sub_command_attack.registerAlias("att");
 
-		sub_command_defense = new Command("defense", new CommandArgumentParser(1, new CommandArgument("Item", "String"))) {
+		sub_command_defense = new Command("defense", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String itemName = this.argumentParser.getArgument("Item");
@@ -90,7 +90,7 @@ public class RateItem extends AbstractListener {
 		};
 		sub_command_defense.registerAlias("def");
 
-		sub_command_healing = new Command("healing", new CommandArgumentParser(1, new CommandArgument("Item", "String"))) {
+		sub_command_healing = new Command("healing", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String itemName = this.argumentParser.getArgument("Item");

@@ -21,7 +21,7 @@ public class Zap extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("zap", new CommandArgumentParser(0, new CommandArgument("Nick", "String"), new CommandArgument("Item", "String"))) {
+		local_command = new Command("zap", new CommandArgumentParser(0, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String zapTarget = this.argumentParser.getArgument("Nick");

@@ -23,6 +23,7 @@ import com.maxmind.geoip2.record.Country;
 import com.maxmind.geoip2.record.Subdivision;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -76,7 +77,7 @@ public class IP2Geo extends AbstractListener {
 			}
 		}
 
-		local_command = new Command("geoip", new CommandArgumentParser(0, new CommandArgument("Location", "String"))) {
+		local_command = new Command("geoip", new CommandArgumentParser(0, new CommandArgument("Location", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String location = this.argumentParser.getArgument("Location");

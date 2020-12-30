@@ -529,7 +529,7 @@ public class DrinkPotion extends AbstractListener {
 
 	private void initCommands() {
 		CommandRateLimit rateLimit = new CommandRateLimit(0, 10, 0, "Having another potion seems like a really bad idea right now...");
-		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument("Potion", "String")), rateLimit) {
+		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument("Potion", ArgumentTypes.STRING)), rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String pot = this.argumentParser.getArgument("Potion");

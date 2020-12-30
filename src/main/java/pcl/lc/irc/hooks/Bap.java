@@ -2,13 +2,10 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.entryClasses.CommandArgument;
-import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
-import pcl.lc.irc.entryClasses.Item;
 
 /**
  * @author Forecaster
@@ -25,7 +22,7 @@ public class Bap extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bap", new CommandArgumentParser(0, new CommandArgument("Target", "String"), new CommandArgument("Item", "String"))) {
+		local_command = new Command("bap", new CommandArgumentParser(0, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String bapTarget = this.argumentParser.getArgument("Target");

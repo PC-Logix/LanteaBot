@@ -5,10 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
-import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.irc.entryClasses.CommandArgument;
-import pcl.lc.irc.entryClasses.CommandArgumentParser;
-import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ public class Blame extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("blame", new CommandArgumentParser(1, new CommandArgument("Nick", "String")), new CommandRateLimit(5)) {
+		local_command = new Command("blame", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), new CommandRateLimit(5)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String user = this.argumentParser.getArgument("Nick");

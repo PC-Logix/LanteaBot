@@ -13,6 +13,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
@@ -31,7 +32,7 @@ public class Tell extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("tell", new CommandArgumentParser(2, new CommandArgument("Nick", "String"), new CommandArgument("Message", "String"))) {
+		local_command = new Command("tell", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				PreparedStatement addTell = Database.getPreparedStatement("addTell");

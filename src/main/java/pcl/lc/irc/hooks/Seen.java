@@ -14,6 +14,7 @@ import org.pircbotx.hooks.events.QuitEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -52,7 +53,7 @@ public class Seen extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("seen", new CommandArgumentParser(1, new CommandArgument("Nick", "String"))) {
+		local_command = new Command("seen", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String dest;

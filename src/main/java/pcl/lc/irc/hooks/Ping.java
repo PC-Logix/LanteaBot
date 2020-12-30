@@ -6,6 +6,7 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.events.NoticeEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -37,7 +38,7 @@ public class Ping extends AbstractListener {
 	private static TimedHashMap<String, List<Object>> usersMSP = new TimedHashMap<String, List<Object>>(60000, null);
 
 	private void initCommands() {
-		ping = new Command("ping", new CommandArgumentParser(0, new CommandArgument("Nick", "List"))) {
+		ping = new Command("ping", new CommandArgumentParser(0, new CommandArgument("Nick", ArgumentTypes.LIST))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				ArrayList<String> targetUsers = this.argumentParser.getList("Nick");
@@ -49,7 +50,7 @@ public class Ping extends AbstractListener {
 			}
 		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
 		ping.registerAlias("p");
-		msp = new Command("msp", new CommandArgumentParser(0, new CommandArgument("Nick", "List"))) {
+		msp = new Command("msp", new CommandArgumentParser(0, new CommandArgument("Nick", ArgumentTypes.LIST))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				ArrayList<String> targetUsers = this.argumentParser.getList("Nick");

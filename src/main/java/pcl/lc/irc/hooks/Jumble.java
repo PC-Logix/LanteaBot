@@ -3,6 +3,7 @@ package pcl.lc.irc.hooks;
 import com.google.common.collect.Lists;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -26,7 +27,7 @@ public class Jumble extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("jumble", new CommandArgumentParser(1, new CommandArgument("String"))) {
+		local_command = new Command("jumble", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);

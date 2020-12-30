@@ -17,6 +17,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
@@ -60,7 +61,7 @@ public class xkcd extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("xkcd", new CommandArgumentParser(0, new CommandArgument("Comic", "String"))) {
+		local_command = new Command("xkcd", new CommandArgumentParser(0, new CommandArgument("Comic", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String id_or_terms = this.argumentParser.getArgument("Comic");

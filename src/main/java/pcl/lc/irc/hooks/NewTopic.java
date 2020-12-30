@@ -7,6 +7,7 @@ import java.util.Random;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
@@ -55,7 +56,7 @@ public class NewTopic extends AbstractListener {
 		};
 		command_newTopic.setHelpText("Generates a new topic");
 
-		command_addTopic = new Command("addtopic", new CommandArgumentParser(1, new CommandArgument("Topic", "String")), Permissions.TRUSTED) {
+		command_addTopic = new Command("addtopic", new CommandArgumentParser(1, new CommandArgument("Topic", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommand = Database.getPreparedStatement("addTopic");
@@ -65,7 +66,7 @@ public class NewTopic extends AbstractListener {
 			}
 		};
 
-		command_delTopic = new Command("deltopic", new CommandArgumentParser(1, new CommandArgument("TopicID", "Integer")), Permissions.TRUSTED) {
+		command_delTopic = new Command("deltopic", new CommandArgumentParser(1, new CommandArgument("TopicID", ArgumentTypes.INTEGER)), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement delCommand = Database.getPreparedStatement("delTopic");

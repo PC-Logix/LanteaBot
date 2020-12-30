@@ -53,7 +53,7 @@ public class Attack extends AbstractListener {
 				acts.add(act.command);
 		actionList = String.join(", ", acts);
 
-		local_command = new Command("attack", new CommandArgumentParser(2, new CommandArgument("Action", "String"), new CommandArgument("Target", "String"), new CommandArgument("Item", "String")), new CommandRateLimit(300, true)) {
+		local_command = new Command("attack", new CommandArgumentParser(2, new CommandArgument("Action", ArgumentTypes.STRING), new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING)), new CommandRateLimit(300, true)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");

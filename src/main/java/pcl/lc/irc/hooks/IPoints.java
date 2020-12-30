@@ -13,6 +13,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
@@ -32,7 +33,7 @@ public class IPoints extends AbstractListener {
 		Database.addPreparedStatement("getPoints", "SELECT Points FROM InternetPoints WHERE nick = ?;");
 		Database.addPreparedStatement("addPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
 		Database.addPreparedStatement("setPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
-		command_points = new Command("points", new CommandArgumentParser(1, new CommandArgument("Nick", "String"))) {
+		command_points = new Command("points", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String user = this.argumentParser.getArgument("User");
@@ -73,7 +74,7 @@ public class IPoints extends AbstractListener {
 				}
 			}
 		}; command_points.setHelpText("Checks the points for yourself, or another user");
-		command_reset_points = new Command("resetpoints", new CommandArgumentParser(1, new CommandArgument("Nick", "String")), Permissions.ADMIN) {
+		command_reset_points = new Command("resetpoints", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), Permissions.ADMIN) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 					PreparedStatement setPoints = Database.getPreparedStatement("setPoints");

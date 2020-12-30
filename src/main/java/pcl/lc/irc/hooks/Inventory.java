@@ -140,7 +140,7 @@ public class Inventory extends AbstractListener {
 				}
 			}
 		};
-		sub_command_create = new Command("create", new CommandArgumentParser(1, new CommandArgument("Item", "String")), new CommandRateLimit(60)) {
+		sub_command_create = new Command("create", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument("Item");
@@ -158,7 +158,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_create.registerAlias("add");
-		sub_command_remove = new Command("remove", new CommandArgumentParser(1, new CommandArgument("Item", "String")), new CommandRateLimit(60)) {
+		sub_command_remove = new Command("remove", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument("Item");
@@ -178,7 +178,7 @@ public class Inventory extends AbstractListener {
 		};
 		sub_command_remove.registerAlias("rem");
 		sub_command_remove.registerAlias("del");
-		sub_command_preserve = new Command("preserve", new CommandArgumentParser(1, new CommandArgument("Item", "String")), Permissions.TRUSTED) {
+		sub_command_preserve = new Command("preserve", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
@@ -188,7 +188,7 @@ public class Inventory extends AbstractListener {
 			}
 		};
 		sub_command_preserve.registerAlias("pre");
-		sub_command_unpreserve = new Command("unpreserve", new CommandArgumentParser(1, new CommandArgument("Item", "String")), Permissions.TRUSTED) {
+		sub_command_unpreserve = new Command("unpreserve", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");

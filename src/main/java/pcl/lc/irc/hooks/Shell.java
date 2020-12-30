@@ -29,7 +29,7 @@ public class Shell extends AbstractListener {
 	}
 
 	private void initCommands() {
-		shell = new Command("shell", new CommandArgumentParser(1, new CommandArgument("Target1", "String"), new CommandArgument("Target2", "String"), new CommandArgument("Target3", "String"), new CommandArgument("Item", "String"))) {
+		shell = new Command("shell", new CommandArgumentParser(1, new CommandArgument("Target1", ArgumentTypes.STRING), new CommandArgument("Target2", ArgumentTypes.STRING), new CommandArgument("Target3", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();

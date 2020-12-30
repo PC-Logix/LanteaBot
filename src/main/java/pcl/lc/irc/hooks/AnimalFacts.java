@@ -5,6 +5,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -72,7 +73,7 @@ public class AnimalFacts extends AbstractListener {
             }
         };
 
-        local_command2 = new Command("fact", new CommandArgumentParser(0, new CommandArgument("Animal", "String"))) {
+        local_command2 = new Command("fact", new CommandArgumentParser(0, new CommandArgument("Animal", ArgumentTypes.STRING))) {
             @Override
             public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
                 String aminal = this.argumentParser.getArgument("Animal");

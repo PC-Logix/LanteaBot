@@ -28,7 +28,7 @@ public class Fling extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("fling", new CommandArgumentParser(1, new CommandArgument("Target", "String"), new CommandArgument("Item", "String"))) {
+		local_command = new Command("fling", new CommandArgumentParser(1, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String flingTarget = this.argumentParser.getArgument("Target");

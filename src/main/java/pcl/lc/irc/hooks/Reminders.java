@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
@@ -31,7 +32,7 @@ public class Reminders extends AbstractListener {
 	private ScheduledFuture<?> executor;
 	@Override
 	protected void initHook() {
-		remind = new Command("remind", new CommandArgumentParser(2, new CommandArgument("Time", "String"), new CommandArgument("Message", "String"))) {
+		remind = new Command("remind", new CommandArgumentParser(2, new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String timeString = this.argumentParser.getArgument("Time");
@@ -61,7 +62,7 @@ public class Reminders extends AbstractListener {
 		remind.registerAlias("remindme");
 		remind.setHelpText("'remindme 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot)");
 
-		remindSomeone = new Command("remindthem", new CommandArgumentParser(3, new CommandArgument("Nick", "String"), new CommandArgument("Time", "String"), new CommandArgument("Message", "String"))) {
+		remindSomeone = new Command("remindthem", new CommandArgumentParser(3, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String user = this.argumentParser.getArgument("Nick");

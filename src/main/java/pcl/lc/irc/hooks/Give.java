@@ -6,12 +6,9 @@ package pcl.lc.irc.hooks;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
-import pcl.lc.irc.entryClasses.Command;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
-import pcl.lc.irc.entryClasses.CommandArgument;
-import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.Helper;
-import pcl.lc.irc.entryClasses.Item;
 
 import java.util.ArrayList;
 
@@ -25,7 +22,7 @@ public class Give extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("give", new CommandArgumentParser(1, new CommandArgument("Nick", "String"), new CommandArgument("Item", "String"))) {
+		local_command = new Command("give", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String target_argument = this.argumentParser.getArgument("Nick");

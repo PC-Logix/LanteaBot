@@ -17,6 +17,7 @@ import org.pircbotx.User;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.*;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
@@ -37,7 +38,7 @@ public class TimedBans extends AbstractListener {
 				Helper.sendMessage(target, trySubCommandsMessage(params), nick);
 			}
 		};
-		command_ban = new Command("ban", new CommandArgumentParser(2, new CommandArgument("Nick", "String"), new CommandArgument("Time", "String"), new CommandArgument("Reason", "String"))) {
+		command_ban = new Command("ban", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String reason = this.argumentParser.getArgument("Reason");
@@ -47,7 +48,7 @@ public class TimedBans extends AbstractListener {
 			}
 		};
 		command_ban.setHelpText("Issue a timed ban.");
-		command_quiet = new Command("quiet", new CommandArgumentParser(2, new CommandArgument("Nick", "String"), new CommandArgument("Time", "String"), new CommandArgument("Reason", "String"))) {
+		command_quiet = new Command("quiet", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String reason = this.argumentParser.getArgument("Reason");

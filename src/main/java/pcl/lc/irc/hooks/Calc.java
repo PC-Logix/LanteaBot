@@ -10,6 +10,7 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
@@ -25,7 +26,7 @@ public class Calc extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		local_command = new Command("calc", new CommandArgumentParser(1, new CommandArgument("Expression", "String"))) {
+		local_command = new Command("calc", new CommandArgumentParser(1, new CommandArgument("Expression", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String expression = this.argumentParser.getArgument("Expression");
