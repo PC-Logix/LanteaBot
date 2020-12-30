@@ -368,6 +368,7 @@ public class Admin extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String cmd = this.argumentParser.getArgument("Command");
+				System.out.println("Find '" + cmd + "'");
 				if (Config.httpdEnable.equals("true") && params.size() == 0) {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, "Command list: " + httpd.getBaseDomain() + "/help", nick);
@@ -395,6 +396,8 @@ public class Admin extends AbstractListener {
 								Helper.sendNotice(nick, "This is a dynamic command", this.callingRelay);
 							if (aliases.size() > 0)
 								Helper.sendNotice(nick, "Aliases:  " + String.join(", ", aliases), this.callingRelay);
+							if (com.argumentParser != null)
+								Helper.sendNotice(nick, "Syntax: " + Config.commandprefix + com.getCommand() + " " + com.argumentParser.getArgumentSyntax());
 						}
 					}
 				}
