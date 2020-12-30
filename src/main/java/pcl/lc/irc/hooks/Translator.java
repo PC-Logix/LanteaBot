@@ -81,17 +81,15 @@ public class Translator extends AbstractListener {
 					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 						if (entry.getValue().get(0).equals(target)) {
-							Helper.sendMessage(target, doTranslate("auto", "auto", entry.getValue().get(2).toString()));
-							return;
+							str = entry.getValue().get(2);
 						}
 					}
-				} else if (to != null) {
-					Helper.sendMessage(target, doTranslate(from, to, str));
-				} else if (from == null) {
-					Helper.sendMessage(target, doTranslate(from, "auto", str));
-				} else {
-					Helper.sendMessage(target, doTranslate("auto", "auto", str));
 				}
+				if (to == null || to.equals(""))
+					to = "auto";
+				if (from == null || from.equals(""))
+					from = "auto";
+				Helper.sendMessage(target, doTranslate(from, to, str));
 			}
 		};
 		local_command.registerAlias("t");
