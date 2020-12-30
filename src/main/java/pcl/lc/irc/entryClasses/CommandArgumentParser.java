@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandArgumentParser {
+	public final boolean debug = false;
 	public final int requiredFirstNum;
 	public final ArrayList<CommandArgument> arguments;
 
@@ -49,79 +50,97 @@ public class CommandArgumentParser {
 			if (argType.type.equals("Integer")) {
 				Matcher matcher = patternInteger.matcher(arguments);
 				if (matcher.find()) {
-//					System.out.print("`" + arguments + "` matches Integer!");
+					if (debug)
+						System.out.print("`" + arguments + "` matches Integer!");
 					String arg = matcher.group(1);
-//					System.out.print(" => `" + arg + "`");
+					if (debug)
+						System.out.print(" => `" + arg + "`");
 					if (!arg.equals("")) {
 						argType.arg = arg;
 						argumentCount++;
 					}
 					arguments = arguments.replaceFirst(arg + " ?", "");
-//					System.out.println(" Remainder: `" + arguments + "`");
+					if (debug)
+						System.out.println(" Remainder: `" + arguments + "`");
 				} else if (argumentCount < this.requiredFirstNum) {
-//					System.out.println("`" + arguments + "` doesn't match Integer.");
+					if (debug)
+						System.out.println("`" + arguments + "` doesn't match Integer.");
 					return argumentCount;
 				}
 			} else if (argType.type.equals("Double")) {
 				Matcher matcher = patternDouble.matcher(arguments);
 				if (matcher.find()) {
-//					System.out.print("`" + arguments + "` matches Double!");
+					if (debug)
+						System.out.print("`" + arguments + "` matches Double!");
 					String arg = matcher.group(1);
-//					System.out.print(" => `" + arg + "`");
+					if (debug)
+						System.out.print(" => `" + arg + "`");
 					if (!arg.equals("")) {
 						argType.arg = arg;
 						argumentCount++;
 					}
 					arguments = arguments.replaceFirst(arg + " ?", "");
-//					System.out.println(" Remainder: `" + arguments + "`");
+					if (debug)
+						System.out.println(" Remainder: `" + arguments + "`");
 				} else if (argumentCount < this.requiredFirstNum) {
-//					System.out.println("`" + arguments + "` doesn't match Double.");
+					if (debug)
+						System.out.println("`" + arguments + "` doesn't match Double.");
 					return argumentCount;
 				}
 			} else if (argType.type.equals("Boolean")) {
 				Matcher matcher = patternBoolean.matcher(arguments);
 				if (matcher.find()) {
-//					System.out.print("`" + arguments + "` matches Boolean!");
+					if (debug)
+						System.out.print("`" + arguments + "` matches Boolean!");
 					String arg = matcher.group(1);
-//					System.out.print(" => `" + arg + "`");
+					if (debug)
+						System.out.print(" => `" + arg + "`");
 					if (!arg.equals("")) {
 						argType.arg = arg;
 						argumentCount++;
 					}
 					arguments = arguments.replaceFirst(arg + " ?", "");
-					System.out.println(" Remainder: `" + arguments + "`");
+					if (debug)
+						System.out.println(" Remainder: `" + arguments + "`");
 				} else if (argumentCount < this.requiredFirstNum)
 					return argumentCount;
 			} else if (argType.type.equals("String")) {
 				Matcher matcher = patternEscapedString.matcher(arguments);
 				if (matcher.find()) {
-//					System.out.print("`" + arguments + "` matches EscapedString!");
+					if (debug)
+						System.out.print("`" + arguments + "` matches EscapedString!");
 					String arg = matcher.group(1);
-//					System.out.print(" => `" + arg + "`");
+					if (debug)
+						System.out.print(" => `" + arg + "`");
 					if (!arg.equals("")) {
 						argType.arg = arg;
 						argumentCount++;
 					}
 					arguments = arguments.replaceFirst("\"" + arg + "\" ?", "");
-					System.out.println(" Remainder: `" + arguments + "`");
+					if (debug)
+						System.out.println(" Remainder: `" + arguments + "`");
 				} else {
 					matcher = patternString.matcher(arguments);
 					if (matcher.find()) {
-//						System.out.print("`" + arguments + "` matches String!");
+						if (debug)
+							System.out.print("`" + arguments + "` matches String!");
 						String arg = matcher.group(1);
-//						System.out.print(" => `" + arg + "`");
+						if (debug)
+							System.out.print(" => `" + arg + "`");
 						if (!arg.equals("")) {
 							argType.arg = arg;
 							argumentCount++;
 						}
 						arguments = arguments.replaceFirst(arg + " ?", "");
-//						System.out.println(" Remainder: `" + arguments + "`");
-						if (argumentCount == this.arguments.size()) {
+						if (debug)
+							System.out.println(" Remainder: `" + arguments + "`");
+						if (argumentCount == this.arguments.size() && !arguments.equals("")) {
 							argType.arg += " " + arguments;
 							return argumentCount;
 						}
 					} else {
-//						System.out.println("`" + arguments + "` doesn't match String.");
+						if (debug)
+							System.out.println("`" + arguments + "` doesn't match String.");
 						return argumentCount;
 					}
 				}
@@ -129,23 +148,29 @@ public class CommandArgumentParser {
 				while (!arguments.replaceAll(" ", "").isEmpty()) {
 					Matcher matcher = patternEscapedString.matcher(arguments);
 					if (matcher.find()) {
-//						System.out.print("`" + arguments + "` matches EscapedString!");
+						if (debug)
+							System.out.print("`" + arguments + "` matches EscapedString!");
 						String arg = matcher.group(1);
-//						System.out.print(" => `" + arg + "`");
+						if (debug)
+							System.out.print(" => `" + arg + "`");
 						argType.argList.add(arg);
 						argumentCount++;
 						arguments = arguments.replaceFirst("\"" + arg + "\" ?", "");
-//						System.out.println(" Remainder: `" + arguments + "`");
+						if (debug)
+							System.out.println(" Remainder: `" + arguments + "`");
 					} else {
 						matcher = patternString.matcher(arguments);
 						if (matcher.find()) {
-//							System.out.print("`" + arguments + "` matches String!");
+							if (debug)
+								System.out.print("`" + arguments + "` matches String!");
 							String arg = matcher.group(1);
-//							System.out.print(" => `" + arg + "`");
+							if (debug)
+								System.out.print(" => `" + arg + "`");
 							argType.argList.add(arg);
 							argumentCount++;
 							arguments = arguments.replaceFirst(arg + " ?", "");
-//							System.out.println(" Remainder: `" + arguments + "`");
+							if (debug)
+								System.out.println(" Remainder: `" + arguments + "`");
 						}
 					}
 				}
