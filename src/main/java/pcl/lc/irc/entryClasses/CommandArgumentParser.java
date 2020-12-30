@@ -6,13 +6,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandArgumentParser {
-	public final boolean debug = false;
+	public final boolean debug = true;
 	public final int requiredFirstNum;
 	public final ArrayList<CommandArgument> arguments;
 
 	Pattern patternEscapedString = Pattern.compile("^\"(.*?)\"");
 	Pattern patternString = Pattern.compile("^([\\w-.:;\\\\/^@]*)");
-	Pattern patternInteger = Pattern.compile("^(\\d+) ");
+	Pattern patternInteger = Pattern.compile("^(\\d+)(?: |$)");
 	Pattern patternDouble = Pattern.compile("^(\\d+\\.?\\d*)");
 	Pattern patternBoolean = Pattern.compile("^(true|false|1|0)");
 
