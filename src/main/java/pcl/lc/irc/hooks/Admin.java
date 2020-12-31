@@ -367,39 +367,41 @@ public class Admin extends AbstractListener {
 		command_listadmins.setHelpText("List current admins.");
 		command_help = new Command("help", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING))) {
 			@Override
+			public String onInvalidArguments(ArrayList<String> params) {
+				if (params.size() == 0)
+					return "Command list: " + httpd.getBaseDomain() + "/help";
+				return super.onInvalidArguments(params);
+			}
+
+			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String cmd = this.argumentParser.getArgument("Command");
 				System.out.println("Find '" + cmd + "'");
-				if (Config.httpdEnable.equals("true") && params.size() == 0) {
-					Helper.AntiPings = Helper.getNamesFromTarget(target);
-					Helper.sendMessage(target, "Command list: " + httpd.getBaseDomain() + "/help", nick);
+				if (params.size() == 0) {
+					String listString = "";
+					for (Object o : IRCBot.commands.entrySet()) {
+						Map.Entry pair = (Map.Entry) o;
+						listString += pair.getKey() + ", ";
+					}
+					event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
 				} else {
-					if (params.size() == 0) {
-						String listString = "";
-						for (Object o : IRCBot.commands.entrySet()) {
-							Map.Entry pair = (Map.Entry) o;
-							listString += pair.getKey() + ", ";
-						}
-						event.getUser().send().notice("Current commands: " + listString.replaceAll(", $", ""));
-					} else {
-						String nickClean = nick.replaceAll("\\p{C}", "");
+					String nickClean = nick.replaceAll("\\p{C}", "");
 
-						Command com = Command.findCommand(cmd);
-						if (com == null) {
-							Helper.sendNotice(nick, "Unable to find the command '" + cmd + "'", this.callingRelay);
-						} else {
-							ArrayList<String> aliases = com.getAliases();
-							String helpText = com.getHelpText();
-							Helper.sendNotice(nick, "help for command '" + cmd + "': " + helpText, this.callingRelay);
-							if (com.getPermissionLevel() != null)
-								Helper.sendNotice(nick, "Required permission level: " + com.getPermissionLevel(), this.callingRelay);
-							else
-								Helper.sendNotice(nick, "This is a dynamic command", this.callingRelay);
-							if (aliases.size() > 0)
-								Helper.sendNotice(nick, "Aliases:  " + String.join(", ", aliases), this.callingRelay);
-							if (com.argumentParser != null)
-								Helper.sendNotice(nick, "Syntax: " + Config.commandprefix + com.getCommand() + " " + com.argumentParser.getArgumentSyntax());
-						}
+					Command com = Command.findCommand(cmd);
+					if (com == null) {
+						Helper.sendNotice(nick, "Unable to find the command '" + cmd + "'", this.callingRelay);
+					} else {
+						ArrayList<String> aliases = com.getAliases();
+						String helpText = com.getHelpText();
+						Helper.sendNotice(nick, "help for command '" + cmd + "': " + helpText, this.callingRelay);
+						if (com.getPermissionLevel() != null)
+							Helper.sendNotice(nick, "Required permission level: " + com.getPermissionLevel(), this.callingRelay);
+						else
+							Helper.sendNotice(nick, "This is a dynamic command", this.callingRelay);
+						if (aliases.size() > 0)
+							Helper.sendNotice(nick, "Aliases:  " + String.join(", ", aliases), this.callingRelay);
+						if (com.argumentParser != null)
+							Helper.sendNotice(nick, "Syntax: " + Config.commandprefix + com.getCommand() + " " + com.argumentParser.getArgumentSyntax());
 					}
 				}
 			}
@@ -416,7 +418,7 @@ public class Admin extends AbstractListener {
 					if (cmd.argumentParser != null)
 						Helper.sendMessage(target, Config.commandprefix + cmd.getCommand() + " " + cmd.argumentParser.getArgumentSyntax(), nick);
 					else
-						Helper.sendMessage(target, "Syntax: " + cmd.printSyntax(), nick);
+						Helper.sendMessage(target, "This command has no argument syntax defined.", nick);
 				}
 			}
 		};

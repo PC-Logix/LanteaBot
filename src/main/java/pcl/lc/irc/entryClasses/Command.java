@@ -367,19 +367,10 @@ public class Command {
 						return true;
 				}
 			}
-			if (this.argumentParser != null) {
-				if (params.size() > 0 && params.get(0).equals("syntax")) {
-					Helper.sendMessage(target, Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax(), nick);
-					return true;
-				}
-				int arguments = this.argumentParser.parseArguments(params);
-				if (!this.argumentParser.validateArguments(arguments)) {
-					Helper.sendMessage(target, "Invalid arguments. " + Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax(), nick);
-					return false;
-				}
-			} else if (params.size() > 0 && params.get(0).equals("syntax")) {
-				Helper.sendMessage(target, "This command has no argument syntax defined.", nick);
-				return true;
+			String paramError = this.onInvalidArguments(params);
+			if (paramError != null) {
+				Helper.sendMessage(target, paramError, nick);
+				return false;
 			}
 			this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
 //			System.out.println("Called onExecuteSuccess with String[]");
@@ -447,35 +438,22 @@ public class Command {
 		return ret.get();
 	}
 
-	public void addSyntax(String argument) {
-		addSyntax(argument, "");
-	}
-
-	public void addSyntax(String argument, String description) {
-		addSyntax(argument, description, true, false);
-	}
-
-	public void addSyntax(String argument, String description, boolean required, boolean staticWord) {
-		if (this.syntax == null)
-			this.syntax = new SyntaxGroup();
-		this.syntax.addSubArgument(argument, description, required, staticWord);
-	}
-
-	public void setSyntax(SyntaxGroup syntax) {
-		this.syntax = syntax;
-	}
-
-	public void setSyntax(String argument, String description, boolean required, boolean staticWord) {
-		this.syntax = new SyntaxGroup(argument, description, required, staticWord);
-	}
-
-	public SyntaxGroup getSyntax() {
-		return this.syntax;
-	}
-
-	public String printSyntax() {
-		if (this.syntax == null)
-			return "No syntax registered for command '" + this.command + "'";
-		return Config.commandprefix + this.command + " " + this.syntax.print();
+	/**
+	 * Override to provide a custom message when invalid or no parameters are provided (call parent at the end to avoid having to re-implement the parameter checking)
+	 * @param params An ArrayList of the parameters provided to the command
+	 * @return An error message that is printed to the channel of origin, prefixed with the executing user's name and interrupts the command, or null on no error, continuing the command.
+	 */
+	public String onInvalidArguments(ArrayList<String> params) {
+		if (this.argumentParser != null) {
+			if (params.size() > 0 && params.get(0).equals("syntax"))
+				return Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax();
+			int arguments = this.argumentParser.parseArguments(params);
+			if (!this.argumentParser.validateArguments(arguments)) {
+				return "Invalid arguments. " + Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax();
+			}
+		} else if (params.size() > 0 && params.get(0).equals("syntax")) {
+			return "This command has no argument syntax defined.";
+		}
+		return null;
 	}
 }
