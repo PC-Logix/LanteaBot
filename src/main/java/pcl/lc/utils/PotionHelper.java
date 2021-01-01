@@ -1,5 +1,6 @@
 package pcl.lc.utils;
 
+import gcardone.junidecode.App;
 import org.joda.time.DateTime;
 import org.jvnet.inflector.Noun;
 import pcl.lc.irc.entryClasses.*;
@@ -18,10 +19,9 @@ public class PotionHelper {
 	 * @return String[] Returns three values: consistency, appearance and "" or "new" (whether potion has been generated already today)
 	 */
 	public static PotionEntry getRandomPotion() {
-		int coli = getRandomAppearanceIndex();
-		int coni = getRandomConsistencyIndex();
-		AppearanceEntry app = getAppearance(coli);
-		AppearanceEntry con = getConsistency(coni);
+		AppearanceEntry app = getRandomAppearance();
+		AppearanceEntry con = getRandomConsistency();
+		System.out.println("Appearance: " + app.Name + ", Consistency: " + con.Name);
 		return new PotionEntry(con, app, !PotionHelper.combinationHasEffect(con, app));
 	}
 
@@ -38,18 +38,10 @@ public class PotionHelper {
 	}
 
 	public static String getCombinationKey(AppearanceEntry consistency, AppearanceEntry appearance) {
-		return getCombinationKey(getConsistencyIndexByName(consistency.getName()), getAppearanceIndexByName(appearance.getName()));
-	}
-
-	public static String getCombinationKey(int consistency, int appearance) {
-		return consistency + "," + appearance;
+		return consistency.Name.toLowerCase() + "," + appearance.Name.toLowerCase();
 	}
 
 	public static boolean combinationHasEffect(AppearanceEntry consistency, AppearanceEntry appearance) {
-		return combinationHasEffect(getConsistencyIndexByName(consistency.getName()), getAppearanceIndexByName(appearance.getName()));
-	}
-
-	public static boolean combinationHasEffect(int consistency, int appearance) {
 		return combinationHasEffect(getCombinationKey(consistency, appearance));
 	}
 
@@ -59,7 +51,7 @@ public class PotionHelper {
 	}
 
 	public static void setCombinationEffect(AppearanceEntry consistency, AppearanceEntry appearance, EffectEntry effect) {
-		String key = getConsistencyIndexByName(consistency.getName()) + "," + getAppearanceIndexByName(appearance.getName());
+		String key = getCombinationKey(consistency, appearance);
 		System.out.println("Registering effect for combination '" + key + "'");
 		DrinkPotion.potions.put(key, effect);
 	}
@@ -86,7 +78,7 @@ public class PotionHelper {
 	public static AppearanceEntry findAppearanceInString(String string) {
 		string = Helper.reverseString(string).toLowerCase();
 		System.out.println(string);
-		ArrayList<AppearanceEntry> appearanceEntries = DrinkPotion.appearanceEntries;
+		ArrayList<AppearanceEntry> appearanceEntries = new ArrayList<>(DrinkPotion.appearanceEntries.values());
 		Collections.sort(appearanceEntries);
 		for (AppearanceEntry c : appearanceEntries) {
 			if (string.contains(c.getName(false, true)))
@@ -101,7 +93,7 @@ public class PotionHelper {
 
 	public static AppearanceEntry findConsistencyInString(String string) {
 		string = Helper.reverseString(string).toLowerCase();
-		ArrayList<AppearanceEntry> consistencies = DrinkPotion.consistencies;
+		ArrayList<AppearanceEntry> consistencies = new ArrayList<>(DrinkPotion.consistencyEntries.values());
 		Collections.sort(consistencies);
 		for (AppearanceEntry c : consistencies) {
 			if (string.contains(c.getName(false, true)))
@@ -110,48 +102,22 @@ public class PotionHelper {
 		return null;
 	}
 
+	public static AppearanceEntry getRandomConsistency() {
+		ArrayList<String> keys = new ArrayList<>(DrinkPotion.consistencyEntries.keySet());
+		return DrinkPotion.consistencyEntries.get(keys.get(Helper.getRandomInt(0, keys.size() - 1)));
+	}
+
+	public static AppearanceEntry getRandomAppearance() {
+		ArrayList<String> keys = new ArrayList<>(DrinkPotion.appearanceEntries.keySet());
+		return DrinkPotion.appearanceEntries.get(keys.get(Helper.getRandomInt(0, keys.size() - 1)));
+	}
+
 	public static int getAppearanceCount() {
 		return DrinkPotion.appearanceEntries.size();
 	}
 
-	public static int getRandomAppearanceIndex() {
-		return Helper.getRandomInt(0, DrinkPotion.appearanceEntries.size() - 1);
-	}
-
-	public static AppearanceEntry getAppearance() {
-		return getAppearance(getRandomAppearanceIndex());
-	}
-
-	public static AppearanceEntry getAppearance(int index) {
-		if (DrinkPotion.appearanceEntries.size() == 0) {
-			System.out.println("No appearance entries in array.");
-			return null;
-		}
-		if (index < 0) {
-			System.out.println("Appearance index '" + 0 + "' is less than 0.");
-			return null;
-		}
-		if (index >= DrinkPotion.appearanceEntries.size()) {
-			System.out.println("Appearance index '" + index + "' exceeds array size.");
-			return null;
-		}
-		return DrinkPotion.appearanceEntries.get(index);
-	}
-
 	public static int getConsistencyCount() {
-		return DrinkPotion.consistencies.size();
-	}
-
-	public static int getRandomConsistencyIndex() {
-		return Helper.getRandomInt(0, DrinkPotion.consistencies.size() - 1);
-	}
-
-	public static AppearanceEntry getConsistency() {
-		return getConsistency(getRandomConsistencyIndex());
-	}
-
-	public static AppearanceEntry getConsistency(int index) {
-		return DrinkPotion.consistencies.get(index);
+		return DrinkPotion.consistencyEntries.size();
 	}
 
 	public static int getLimitCount() {
@@ -168,24 +134,6 @@ public class PotionHelper {
 
 	public static String getLimit(int index) {
 		return DrinkPotion.limits.get(index);
-	}
-
-	public static int getAppearanceIndexByName(String name) {
-		for (int i = 0; i < DrinkPotion.appearanceEntries.size(); i++) {
-			AppearanceEntry e = DrinkPotion.appearanceEntries.get(i);
-			if (e.getName().toLowerCase().equals(name.toLowerCase()))
-				return i;
-		}
-		return -1;
-	}
-
-	public static int getConsistencyIndexByName(String name) {
-		for (int i = 0; i < DrinkPotion.consistencies.size(); i++) {
-			AppearanceEntry e = DrinkPotion.consistencies.get(i);
-			if (e.getName().toLowerCase().equals(name.toLowerCase()))
-				return i;
-		}
-		return -1;
 	}
 
 	public static String replaceParamsInEffectString(String effect) {
@@ -261,34 +209,34 @@ public class PotionHelper {
 			return input;
 		}),
 		APPEARANCE("appearance", "{appearance}", "Returns a random appearance, capitalized, without prefix.", (input) -> {
-			return input.replace("{appearance}", PotionHelper.getAppearance().getName(false, false));
+			return input.replace("{appearance}", PotionHelper.getRandomAppearance().getName(false, false));
 		}),
 		APPEARANCE_LOWER("appearance_lc", "{appearance_lc}", "Returns a random appearance in lowercase, without prefix.", (input) -> {
-			return input.replace("{appearance_lc}", PotionHelper.getAppearance().getName(false, true));
+			return input.replace("{appearance_lc}", PotionHelper.getRandomAppearance().getName(false, true));
 		}),
 		APPEARANCE_PREFIX("appearance_p", "{appearance_p}", "Returns a random appearance, capitalized, with prefix.", (input) -> {
-			return input.replace("{appearance_p}", PotionHelper.getAppearance().getName(true, false));
+			return input.replace("{appearance_p}", PotionHelper.getRandomAppearance().getName(true, false));
 		}),
 		APPEARANCE_PREFIX_LOWER("appearance_p_lc", "{appearance_p_lc}", "Returns a random appearance in lowercase, with prefix.", (input) -> {
-			return input.replace("{appearance_p_lc}", PotionHelper.getAppearance().getName(true, true));
+			return input.replace("{appearance_p_lc}", PotionHelper.getRandomAppearance().getName(true, true));
 		}),
 		TURN_APPEARANCE("turn_appearance", "{turn_appearance}", "Returns the turnsTo form of a random appearance.", (input) -> {
-			return input.replace("{turn_appearance}", PotionHelper.getAppearance().turnsTo());
+			return input.replace("{turn_appearance}", PotionHelper.getRandomAppearance().turnsTo());
 		}),
 		TURN_APPEARANCE_LOWER("turn_appearance_lc", "{turn_appearance_lc}", "Returns the turnsTo form of a random appearance, in lowercase.", (input) -> {
-			return input.replace("{turn_appearance_lc}", PotionHelper.getAppearance().turnsTo(true));
+			return input.replace("{turn_appearance_lc}", PotionHelper.getRandomAppearance().turnsTo(true));
 		}),
 		CONSISTENCY("consistency", "{consistency}", "Returns a random consistency, capitalized, without prefix.", (input) -> {
-			return input.replace("{consistency}", PotionHelper.getConsistency().getName(false, false));
+			return input.replace("{consistency}", PotionHelper.getRandomConsistency().getName(false, false));
 		}),
 		CONSISTENCY_LOWER("consistency_lc", "{consistency_lc}", "Returns a random consistency, in lowercase, without prefix.", (input) -> {
-			return input.replace("{consistency_lc}", PotionHelper.getConsistency().getName(false, true));
+			return input.replace("{consistency_lc}", PotionHelper.getRandomConsistency().getName(false, true));
 		}),
 		CONSISTENCY_PREFIX("consistency_p", "{consistency_p}", "Returns a random consistency, capitalized, with prefix.", (input) -> {
-			return input.replace("{consistency_p}", PotionHelper.getConsistency().getName(true, false));
+			return input.replace("{consistency_p}", PotionHelper.getRandomConsistency().getName(true, false));
 		}),
 		CONSISTENCY_PREFIX_LOWER("consistency_p_lc", "{consistency_p_lc}", "Returns a random consistency, in lowercase, with prefix.", (input) -> {
-			return input.replace("{consistency_p_lc}", PotionHelper.getConsistency().getName(true, true));
+			return input.replace("{consistency_p_lc}", PotionHelper.getRandomConsistency().getName(true, true));
 		}),
 		TRANSFORMATION("transformation", "{transformation}", "Returns a random transformation, in lowercase, without prefix.", (input) -> {
 			return input.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true));
@@ -434,5 +382,13 @@ public class PotionHelper {
 		if (effect.contains("{codeword2}"))
 			count += Helper.getCodeWordCount();
 		return count;
+	}
+
+	public static void addConsistencyEntry(AppearanceEntry entry) {
+		DrinkPotion.consistencyEntries.put(entry.Name.toLowerCase(), entry);
+	}
+
+	public static void addAppearanceEntry(AppearanceEntry entry) {
+		DrinkPotion.appearanceEntries.put(entry.Name.toLowerCase(), entry);
 	}
 }

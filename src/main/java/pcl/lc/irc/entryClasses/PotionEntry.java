@@ -94,7 +94,7 @@ public class PotionEntry {
 						boolean use_prefix = false;
 						if (matcher.group(2).equals("p"))
 							use_prefix = true;
-						effect_drink = effect_drink.replace(matcher.group(0), PotionHelper.getAppearance().appearanceItem(appearance_item, use_prefix));
+						effect_drink = effect_drink.replace(matcher.group(0), PotionHelper.getRandomAppearance().appearanceItem(appearance_item, use_prefix));
 					}
 					matcher = pattern.matcher(effect_splash);
 					while (matcher.find()) {
@@ -102,7 +102,7 @@ public class PotionEntry {
 						boolean use_prefix = false;
 						if (matcher.group(2).equals("p"))
 							use_prefix = true;
-						effect_splash = effect_splash.replace(matcher.group(0), PotionHelper.getAppearance().appearanceItem(appearance_item, use_prefix));
+						effect_splash = effect_splash.replace(matcher.group(0), PotionHelper.getRandomAppearance().appearanceItem(appearance_item, use_prefix));
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -127,11 +127,11 @@ public class PotionEntry {
 		if (!str.toLowerCase().contains("potion"))
 			return null;
 		if (consistency == null) {
-			consistency = PotionHelper.getConsistency();
+			consistency = PotionHelper.getRandomConsistency();
 			System.out.println("No consistency found in '" + str + "'. Using '" + consistency.Name + "'");
 		}
 		if (appearance == null) {
-			appearance = PotionHelper.getAppearance();
+			appearance = PotionHelper.getRandomAppearance();
 			System.out.println("No appearance found in '" + str + "'. Using '" + appearance.Name + "'");
 		}
 		return new PotionEntry(consistency, appearance, !PotionHelper.combinationHasEffect(consistency, appearance));
