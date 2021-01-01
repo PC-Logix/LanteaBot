@@ -738,8 +738,8 @@ public class DrinkPotion extends AbstractListener {
 					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>");
 			for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
 				String[] potion = stringEffectEntryEntry.getKey().split(",");
-				String consistency = consistencyEntries.get(Integer.parseInt(potion[0])).getName();
-				String appearance = appearanceEntries.get(Integer.parseInt(potion[1])).getName();
+				String consistency = consistencyEntries.get(potion[0]).getName();
+				String appearance = appearanceEntries.get(potion[1]).getName();
 				EffectEntry entry = stringEffectEntryEntry.getValue();
 				potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(entry.effectDrinkDiscovered.replace("{user}", "User")).append("</td><td>").append(entry.discoverer).append("</td></tr>");
 			}
