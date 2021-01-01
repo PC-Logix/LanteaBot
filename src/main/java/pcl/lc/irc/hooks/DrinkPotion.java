@@ -96,9 +96,9 @@ public class DrinkPotion extends AbstractListener {
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Octiron", "An", "{appearance} colored {item}", "the color of {appearance}")); // Discworld
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Redstone", "A", "{appearance} colored {item}", "the color of {appearance}")); // Minecraft
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Ruby", "A", "{appearance} colored {item}", "the color of {appearance}"));
-		PotionHelper.addAppearanceEntry(new AppearanceEntry("Emerald", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		PotionHelper.addAppearanceEntry(new AppearanceEntry("Emerald", "An", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Sapphire", "A", "{appearance} colored {item}", "the color of {appearance}"));
-		PotionHelper.addAppearanceEntry(new AppearanceEntry("Amethyst", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		PotionHelper.addAppearanceEntry(new AppearanceEntry("Amethyst", "An", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Diamond", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Spice", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Radiation", "A", "{appearance} colored {item}", "the color of {appearance}"));
