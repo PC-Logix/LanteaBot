@@ -30,7 +30,9 @@ import pcl.lc.utils.Helper;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
@@ -589,7 +591,15 @@ public class Admin extends AbstractListener {
 			argumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(command.argumentParser.getArgumentSyntax());
 		}
 		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + argumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
+		Integer i = 0;
 		for (Command subCommand : command.getSubCommands()) {
+			System.out.println(i);
+			System.out.println(command.getSubCommands().size());
+			String character = "├";
+			if (i == (command.getSubCommands().size() - 1)) {
+				character = "└";
+			}
+			
 			String subHelp = subCommand.getHelpText();
 			if (Permissions.getPermLevel(subCommand.getPermissionLevel()) > 0)
 				subHelp = "[" + subCommand.getPermissionLevel() + "] " + subHelp;
@@ -598,7 +608,8 @@ public class Admin extends AbstractListener {
 			String subArgumentSyntax = "";
 			if (subCommand.argumentParser != null)
 				subArgumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(subCommand.argumentParser.getArgumentSyntax());
-			item += "<tr><td style='white-space: nowrap;'> * " + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + subArgumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
+			item += "<tr><td style='white-space: nowrap;'> " + character + " " + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + subArgumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
+			i++;
 		}
 		return item;
 	}
@@ -651,11 +662,19 @@ public class Admin extends AbstractListener {
 					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items).replace("#NAVIGATION#", navData) + "\n";
 				}
 			}
-			System.out.println(response);
-			t.sendResponseHeaders(200, response.getBytes().length);
-			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
-			os.close();
+			//System.out.println(response);
+			//t.sendResponseHeaders(200, response.getBytes().length);
+			//OutputStream os = t.getResponseBody();
+			//os.write(response.getBytes());
+			//os.close();
+			
+			  t.getResponseHeaders().set("Content-type", "text/html; charset=utf-8");
+			  ByteBuffer buffer = Charset.forName("UTF-8").encode(response);
+			  byte[] bytes = new byte[buffer.remaining()];
+			  buffer.get(bytes);
+			  t.sendResponseHeaders(200, bytes.length);
+			  t.getResponseBody().write(bytes);
+			  t.close();
 		}
 	}
 }
