@@ -74,44 +74,25 @@ public class PotionEntry {
 
 				EffectEntry eff = DrinkPotion.effects.get(effect);
 				String effect_drink = eff.effectDrink;
-				String effect_splash = eff.effectSplash != null ? eff.effectSplash : eff.effectDrink;
+				String effect_splash = eff.effectSplash;
 
 				if (eff.action != null) {
 					EffectActionParameters parameters_drink = new EffectActionParameters(targetName, triggererName, false);
-					EffectActionParameters parameters_splash = new EffectActionParameters(targetName, triggererName, true);
 					effect_drink = eff.action.apply(parameters_drink);
-					effect_splash = eff.action.apply(parameters_splash);
-				}
-
-				effect_drink = PotionHelper.replaceParamsInEffectString(effect_drink, null, null);
-				effect_splash = PotionHelper.replaceParamsInEffectString(effect_splash, null, null);
-
-				try {
-					Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
-					Matcher matcher = pattern.matcher(effect_drink);
-					while (matcher.find()) {
-						String appearance_item = matcher.group(1);
-						boolean use_prefix = false;
-						if (matcher.group(2).equals("p"))
-							use_prefix = true;
-						effect_drink = effect_drink.replace(matcher.group(0), PotionHelper.getRandomAppearance().appearanceItem(appearance_item, use_prefix));
+					if (effect_splash != null) {
+						EffectActionParameters parameters_splash = new EffectActionParameters(targetName, triggererName, true);
+						effect_splash = eff.action.apply(parameters_splash);
 					}
-					matcher = pattern.matcher(effect_splash);
-					while (matcher.find()) {
-						String appearance_item = matcher.group(1);
-						boolean use_prefix = false;
-						if (matcher.group(2).equals("p"))
-							use_prefix = true;
-						effect_splash = effect_splash.replace(matcher.group(0), PotionHelper.getRandomAppearance().appearanceItem(appearance_item, use_prefix));
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
 				}
+				String[] effects = new String[] { effect_drink, effect_splash };
+
+				effects = PotionHelper.replaceParamsInEffectString(effects, null, null, true);
+				eff.effectDrinkDiscovered = effects[0];
+				eff.effectSplashDiscovered = effects[1];
 
 				this.isNew = true;
 				this.effect = eff;
-				String discoverer = splash ? triggererName + " (" + targetName + ")" : targetName;
-				this.effect.setDiscovered(discoverer, effect_drink, effect_splash);
+				this.effect.discoverer = splash ? triggererName + " (" + targetName + ")" : targetName;
 				PotionHelper.setCombinationEffect(consistency, appearance, this.effect);
 			}
 		}

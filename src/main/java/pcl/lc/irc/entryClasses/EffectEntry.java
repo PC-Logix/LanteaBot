@@ -50,4 +50,13 @@ public class EffectEntry {
 	public String getEffectStringDiscovered() {
 		return getEffectStringDiscovered(false);
 	}
+
+	public EffectEntry copy() {
+		EffectEntry copy = new EffectEntry(this.effectDrink, this.effectSplash);
+		copy.effectDrinkDiscovered = this.effectDrinkDiscovered;
+		copy.effectSplashDiscovered = this.effectSplashDiscovered;
+		copy.discoverer = this.discoverer;
+		copy.action = this.action;
+		return copy;
+	}
 }

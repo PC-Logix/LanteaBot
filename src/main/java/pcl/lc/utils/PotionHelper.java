@@ -53,7 +53,13 @@ public class PotionHelper {
 	public static void setCombinationEffect(AppearanceEntry consistency, AppearanceEntry appearance, EffectEntry effect) {
 		String key = getCombinationKey(consistency, appearance);
 		System.out.println("Registering effect for combination '" + key + "'");
-		DrinkPotion.potions.put(key, effect);
+		EffectEntry copy = effect.copy();
+		System.out.println("Store effect:");
+		System.out.println(copy.effectDrink);
+		System.out.println(copy.effectSplash);
+		System.out.println(copy.effectDrinkDiscovered);
+		System.out.println(copy.effectSplashDiscovered);
+		DrinkPotion.potions.put(key, copy);
 	}
 
 	/**
@@ -137,202 +143,415 @@ public class PotionHelper {
 	}
 
 	public static String replaceParamsInEffectString(String effect) {
-		return replaceParamsInEffectString(effect, null);
+		return replaceParamsInEffectString(effect, null, null);
 	}
 
 	public static String replaceParamsInEffectString(String effect, String nick) {
 		return replaceParamsInEffectString(effect, nick, null);
 	}
 
+	public static String replaceParamsInEffectString(String effect, String nick, String triggererName) {
+		String[] e = new String[] { effect };
+		e = replaceParamsInEffectString(e, nick, triggererName);
+		return e[0];
+	}
+
 	public enum DynaParam {
-		ITEM("item", "{item}", "Replaced with a random item from the inventory, or a random junk item if nothing is found.", (input) -> {
+		ITEM("item", "{item}", "Replaced with a random item from the inventory, or a random junk item if nothing is found.", true, (input) -> {
 			String tag = "{item}";
 			Item item = Inventory.getRandomItem();
+			String replItem;
 			if (item == null)
-				return input.replace(tag, Helper.getRandomGarbageItem());
-			return input.replace(tag, item.getNameRaw());
+				replItem = TablesOfRandomThings.getRandomGarbageItem();
+			else
+				replItem = item.getNameRaw();
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace(tag, replItem);
+			return input;
 		}),
-		ITEM_JUNK("item_junk", "{junk_or_item}", "Returns either a random item from the inventory or a junk item, without prefix, all lower case.", (input) -> {
+		ITEM_JUNK("item_junk", "{junk_or_item}", "Returns either a random item from the inventory or a junk item, without prefix, all lower case.", true, (input) -> {
 			String junkoritem = "nothing";
 			try {
 				junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
 				if (Helper.getRandomInt(0, 1) == 1)
-					junkoritem = Helper.getRandomGarbageItem(false, true);
+					junkoritem = TablesOfRandomThings.getRandomGarbageItem(false, true);
 			} catch (Exception ex) {
 				//Ignore no item found
 			}
-			return input.replace("{junk_or_item}", junkoritem);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{junk_or_item}", junkoritem);
+			return input;
 		}),
-		ITEM_JUNK_PREFIX("item_junk_prefix", "{junk_or_item_p}", "Returns either a random item from the inventory or a junk item, with prefix, all lower case.", (input) -> {
+		ITEM_JUNK_PREFIX("item_junk_prefix", "{junk_or_item_p}", "Returns either a random item from the inventory or a junk item, with prefix, all lower case.", true, (input) -> {
 			String junkoritem = "nothing";
 			try {
 				junkoritem = Inventory.getRandomItem().getNameWithoutPrefix();
 				if (Helper.getRandomInt(0, 1) == 1)
-					junkoritem = Helper.getRandomGarbageItem(true, true);
+					junkoritem = TablesOfRandomThings.getRandomGarbageItem(true, true);
 			} catch (Exception ex) {
 				//Ignore no item found
 			}
-			return input.replace("{junk_or_item_p}", junkoritem);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{junk_or_item_p}", junkoritem);
+			return input;
 		}),
-		JUNK("junk", "{junk}", "Returns a random junk item, capitalized, without prefix", (input) -> {
-			return input.replace("{junk}", Helper.getRandomGarbageItem(false, false));
+		JUNK("junk", "{junk}", "Returns a random junk item, capitalized, without prefix", true, (input) -> {
+			String item = TablesOfRandomThings.getRandomGarbageItem(false, false);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{junk}", item);
+			return input;
 		}),
-		JUNK_PREFIX("junk_p", "{junk_p}", "Returns a random junk item, capitalized, with prefix", (input) -> {
-			return input.replace("{junk_p}", Helper.getRandomGarbageItem(true, false));
+		JUNK_PREFIX("junk_p", "{junk_p}", "Returns a random junk item, capitalized, with prefix", true, (input) -> {
+			String item = TablesOfRandomThings.getRandomGarbageItem(true, false);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{junk_p}", item);
+			return input;
 		}),
-		JUNK_PREFIX_LOWER("junk_p_lc", "{junk_p_lc}", "Returns a random junk item, in lowercase, with prefix", (input) -> {
-			return input.replace("{junk_p_lc}", Helper.getRandomGarbageItem(true, true));
+		JUNK_PREFIX_LOWER("junk_p_lc", "{junk_p_lc}", "Returns a random junk item, in lowercase, with prefix", true, (input) -> {
+			String item = TablesOfRandomThings.getRandomGarbageItem(true, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{junk_p_lc}", item);
+			return input;
 		}),
-		EVADE_DAMAGE("evade", "{evade:DC:damage}", "Allows triggering an evade event, resulting in damage on failure. A d20 roll is made and compared against the DC.", (input) -> {
+		EVADE_DAMAGE("evade", "{evade:DC:damage}", "Allows triggering an evade event, resulting in damage on failure. A d20 roll is made and compared against the DC.", false, (input) -> {
 			Pattern evadePattern = Pattern.compile("\\{evade:(\\d+):(.*)}");
-			Matcher evadeMatcher = evadePattern.matcher(input);
-			if (evadeMatcher.find()) {
-				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC}{damage}.");
-				String damage = evadeMatcher.group(2);
-				test.doCheck();
-				if (!damage.equals("0"))
-					damage = " and takes " + damage + " damage";
-				else
-					damage = "";
-				input = Helper.replaceSubstring(input, test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
+			for (int i = 0; i < input.length; i++) {
+				if (input[i] != null) {
+					Matcher evadeMatcher = evadePattern.matcher(input[i]);
+					if (evadeMatcher.find()) {
+						DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), "They successfully evaded it with a {result} vs DC {DC}!", "They fail to evade it with a {result} vs DC {DC}{damage}.");
+						String damage = evadeMatcher.group(2);
+						test.doCheck();
+						if (!damage.equals("0"))
+							damage = " and takes " + damage + " damage";
+						else
+							damage = "";
+						input[i] = Helper.replaceSubstring(input[i], test.getLine().replace("{damage}", damage), evadeMatcher.start(), evadeMatcher.end());
+					}
+				}
 			}
 			return input;
 		}),
-		EVADE_CONSEQUENCE("evade_qc", "{evade_qc:DC:success:fail}", "Allows triggering an evade event, resulting in a consequence on failure. A d20 roll is made and compared against the DC.", (input) -> {
+		EVADE_CONSEQUENCE("evade_qc", "{evade_qc:DC:success:fail}", "Allows triggering an evade event, resulting in a consequence on failure. A d20 roll is made and compared against the DC.", false, (input) -> {
 			Pattern evadePattern = Pattern.compile("\\{evade_qc:(\\d+):(.*):(.*)}");
-			Matcher evadeMatcher = evadePattern.matcher(input);
-			if (evadeMatcher.find()) {
-				DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), evadeMatcher.group(2) + " ({result} vs DC {DC})", evadeMatcher.group(3) + " ({result} vs DC {DC})");
-				test.doCheck();
-				input = Helper.replaceSubstring(input, test.getLine(), evadeMatcher.start(), evadeMatcher.end());
+			for (int i = 0; i < input.length; i++) {
+				if (input[i] != null) {
+					Matcher evadeMatcher = evadePattern.matcher(input[i]);
+					if (evadeMatcher.find()) {
+						DiceTest test = new DiceTest(Integer.parseInt(evadeMatcher.group(1)), evadeMatcher.group(2) + " ({result} vs DC {DC})", evadeMatcher.group(3) + " ({result} vs DC {DC})");
+						test.doCheck();
+						input[i] = Helper.replaceSubstring(input[i], test.getLine(), evadeMatcher.start(), evadeMatcher.end());
+					}
+				}
 			}
 			return input;
 		}),
-		APPEARANCE("appearance", "{appearance}", "Returns a random appearance, capitalized, without prefix.", (input) -> {
-			return input.replace("{appearance}", PotionHelper.getRandomAppearance().getName(false, false));
+		APPEARANCE("appearance", "{appearance}", "Returns a random appearance, capitalized, without prefix.", true, (input) -> {
+			String appearance = PotionHelper.getRandomAppearance().getName(false, false);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{appearance}", appearance);
+			return input;
 		}),
-		APPEARANCE_LOWER("appearance_lc", "{appearance_lc}", "Returns a random appearance in lowercase, without prefix.", (input) -> {
-			return input.replace("{appearance_lc}", PotionHelper.getRandomAppearance().getName(false, true));
+		APPEARANCE_LOWER("appearance_lc", "{appearance_lc}", "Returns a random appearance in lowercase, without prefix.", true, (input) -> {
+			String appearance = PotionHelper.getRandomAppearance().getName(false, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{appearance_lc}", appearance);
+			return input;
 		}),
-		APPEARANCE_PREFIX("appearance_p", "{appearance_p}", "Returns a random appearance, capitalized, with prefix.", (input) -> {
-			return input.replace("{appearance_p}", PotionHelper.getRandomAppearance().getName(true, false));
+		APPEARANCE_PREFIX("appearance_p", "{appearance_p}", "Returns a random appearance, capitalized, with prefix.", true, (input) -> {
+			String appearance = PotionHelper.getRandomAppearance().getName(true, false);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{appearance_p}", appearance);
+			return input;
 		}),
-		APPEARANCE_PREFIX_LOWER("appearance_p_lc", "{appearance_p_lc}", "Returns a random appearance in lowercase, with prefix.", (input) -> {
-			return input.replace("{appearance_p_lc}", PotionHelper.getRandomAppearance().getName(true, true));
+		APPEARANCE_PREFIX_LOWER("appearance_p_lc", "{appearance_p_lc}", "Returns a random appearance in lowercase, with prefix.", true, (input) -> {
+			String appearance = PotionHelper.getRandomAppearance().getName(true, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{appearance_p_lc}", appearance);
+			return input;
 		}),
-		TURN_APPEARANCE("turn_appearance", "{turn_appearance}", "Returns the turnsTo form of a random appearance.", (input) -> {
-			return input.replace("{turn_appearance}", PotionHelper.getRandomAppearance().turnsTo());
+		TURN_APPEARANCE("turn_appearance", "{turn_appearance}", "Returns the turnsTo form of a random appearance.", true, (input) -> {
+			String appearance = PotionHelper.getRandomAppearance().turnsTo();
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{turn_appearance}", appearance);
+			return input;
 		}),
-		TURN_APPEARANCE_LOWER("turn_appearance_lc", "{turn_appearance_lc}", "Returns the turnsTo form of a random appearance, in lowercase.", (input) -> {
-			return input.replace("{turn_appearance_lc}", PotionHelper.getRandomAppearance().turnsTo(true));
+		TURN_APPEARANCE_LOWER("turn_appearance_lc", "{turn_appearance_lc}", "Returns the turnsTo form of a random appearance, in lowercase.", true, (input) -> {
+			String appearance = PotionHelper.getRandomAppearance().turnsTo(true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{turn_appearance_lc}", appearance);
+			return input;
 		}),
-		CONSISTENCY("consistency", "{consistency}", "Returns a random consistency, capitalized, without prefix.", (input) -> {
-			return input.replace("{consistency}", PotionHelper.getRandomConsistency().getName(false, false));
+		CONSISTENCY("consistency", "{consistency}", "Returns a random consistency, capitalized, without prefix.", true, (input) -> {
+			String consistency = PotionHelper.getRandomConsistency().getName(false, false);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{consistency}", consistency);
+			return input;
 		}),
-		CONSISTENCY_LOWER("consistency_lc", "{consistency_lc}", "Returns a random consistency, in lowercase, without prefix.", (input) -> {
-			return input.replace("{consistency_lc}", PotionHelper.getRandomConsistency().getName(false, true));
+		CONSISTENCY_LOWER("consistency_lc", "{consistency_lc}", "Returns a random consistency, in lowercase, without prefix.", true, (input) -> {
+			String consistency = PotionHelper.getRandomConsistency().getName(false, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{consistency_lc}", consistency);
+			return input;
 		}),
-		CONSISTENCY_PREFIX("consistency_p", "{consistency_p}", "Returns a random consistency, capitalized, with prefix.", (input) -> {
-			return input.replace("{consistency_p}", PotionHelper.getRandomConsistency().getName(true, false));
+		CONSISTENCY_PREFIX("consistency_p", "{consistency_p}", "Returns a random consistency, capitalized, with prefix.", true, (input) -> {
+			String consistency = PotionHelper.getRandomConsistency().getName(true, false);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{consistency_p}", consistency);
+			return input;
 		}),
-		CONSISTENCY_PREFIX_LOWER("consistency_p_lc", "{consistency_p_lc}", "Returns a random consistency, in lowercase, with prefix.", (input) -> {
-			return input.replace("{consistency_p_lc}", PotionHelper.getRandomConsistency().getName(true, true));
+		CONSISTENCY_PREFIX_LOWER("consistency_p_lc", "{consistency_p_lc}", "Returns a random consistency, in lowercase, with prefix.", true, (input) -> {
+			String consistency = PotionHelper.getRandomConsistency().getName(true, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{consistency_p_lc}", consistency);
+			return input;
 		}),
-		TRANSFORMATION("transformation", "{transformation}", "Returns a random transformation, in lowercase, without prefix.", (input) -> {
-			return input.replace("{transformation}", Helper.getRandomTransformation(true, false, false, true));
+		TRANSFORMATION("transformation", "{transformation}", "Returns a random transformation, in lowercase, without prefix.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, false, false, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformation}", transformation);
+			return input;
 		}),
-		TRANSFORMATION_PREFIX("transformation_p", "{transformation_p}", "Returns a random transformation, in lowercase, with prefix.", (input) -> {
-			return input.replace("{transformation_p}", Helper.getRandomTransformation(true, true, false, true));
+		TRANSFORMATION_PREFIX("transformation_p", "{transformation_p}", "Returns a random transformation, in lowercase, with prefix.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, false, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformation_p}", transformation);
+			return input;
 		}),
-		TRANSFORMATION_CONDITIONAL_PREFIX("transformation_pc", "{transformation_pc}", "Returns a random transformation, in lowercase. This respects conditional prefixes, Such as \"turns into a lava cat\" vs \"turns into a lava\"", (input) -> {
-			return input.replace("{transformation_pc}", Helper.getRandomTransformation(true, true, false, false));
+		TRANSFORMATION_CONDITIONAL_PREFIX("transformation_pc", "{transformation_pc}", "Returns a random transformation, in lowercase. This respects conditional prefixes, Such as \"turns into a lava cat\" vs \"turns into a lava\"", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, false, false);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformation_pc}", transformation);
+			return input;
 		}),
-		TRANSFORMATION_2("transformation2", "{transformation2}", "Returns a random transformation, in lowercase, without prefix. Used to have two different transformations in one string.", (input) -> {
-			return input.replace("{transformation2}", Helper.getRandomTransformation(true, false, false, true));
+		TRANSFORMATION_2("transformation2", "{transformation2}", "Returns a random transformation, in lowercase, without prefix. Used to have two different transformations in one string.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, false, false, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformation2}", transformation);
+			return input;
 		}),
-		TRANSFORMATION_2_PREFIX("transformation2_p", "{transformation2_p}", "Returns a random transformation, in lowercase, with prefix. Used to have two different transformations in one string.", (input) -> {
-			return input.replace("{transformation2_p}", Helper.getRandomTransformation(true, true, false, true));
+		TRANSFORMATION_2_PREFIX("transformation2_p", "{transformation2_p}", "Returns a random transformation, in lowercase, with prefix. Used to have two different transformations in one string.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, false, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformation2_p}", transformation);
+			return input;
 		}),
-		TRANSFORMATIONS("transformations", "{transformations}", "A transformation in plural, such as \"cats\", in lowercase, without prefix.", (input) -> {
-			return input.replace("{transformations}", Helper.getRandomTransformation(false, false, true, true));
+		TRANSFORMATIONS("transformations", "{transformations}", "A transformation in plural, such as \"cats\", in lowercase, without prefix.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(false, false, true, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformations}", transformation);
+			return input;
 		}),
-		TRANSFORMATIONS_PREFIX("transformations_p", "{transformations_p}", "A transformation in plural, such as \"cats\", in lowercase, with prefix.", (input) -> {
-			return input.replace("{transformations_p}", Helper.getRandomTransformation(true, true, true, true));
+		TRANSFORMATIONS_PREFIX("transformations_p", "{transformations_p}", "A transformation in plural, such as \"cats\", in lowercase, with prefix.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, true, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformations_p}", transformation);
+			return input;
 		}),
-		TRANSFORMATIONS_2("transformations2", "{transformations2}", "A transformation in plural, such as \"cats\", in lowercase, without prefix. Used to have two different transformations in one string.", (input) -> {
-			return input.replace("{transformations2}", Helper.getRandomTransformation(true, false, true, true));
+		TRANSFORMATIONS_2("transformations2", "{transformations2}", "A transformation in plural, such as \"cats\", in lowercase, without prefix. Used to have two different transformations in one string.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, false, true, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformations2}", transformation);
+			return input;
 		}),
-		TRANSFORMATIONS_2_PREFIX("transformations2_p", "{transformations2_p}", "A transformation in plural, such as \"cats\", in lowercase, with prefix. Used to have two different transformations in one string.", (input) -> {
-			return input.replace("{transformations2_p}", Helper.getRandomTransformation(true, true, true, true));
+		TRANSFORMATIONS_2_PREFIX("transformations2_p", "{transformations2_p}", "A transformation in plural, such as \"cats\", in lowercase, with prefix. Used to have two different transformations in one string.", true, (input) -> {
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, true, true);
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{transformations2_p}", transformation);
+			return input;
 		}),
-		LIMIT("limit", "{limit}", "Returns a random time limit string.", (input) -> {
-			return input.replace("{limit}", PotionHelper.getLimit());
+		LIMIT("limit", "{limit}", "Returns a random time limit string.", true, (input) -> {
+			String limit = PotionHelper.getLimit();
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{limit}", limit);
+			return input;
 		}),
-		CODEWORD("codeword", "{codeword}", "", (input) -> {
-			return input.replace("{codeword}", Helper.getRandomCodeWord());
+		CODEWORD("codeword", "{codeword}", "", true, (input) -> {
+			String word = TablesOfRandomThings.getRandomCodeWord();
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{codeword}", word);
+			return input;
 		}),
-		CODEWORD_2("codeword2", "{codeword2}", "", (input) -> {
-			return input.replace("{codeword2}", Helper.getRandomCodeWord());
+		CODEWORD_2("codeword2", "{codeword2}", "", true, (input) -> {
+			String word = TablesOfRandomThings.getRandomCodeWord();
+			for (int i = 0; i < input.length; i++)
+				if (input[i] != null)
+					input[i] = input[i].replace("{codeword2}", word);
+			return input;
+		}),
+		RANDOM_INT("random_int", "{r:n-n:p}", "Inserts a random integer within the chosen range, optionally a word can be inserted at p which will be pluralized if necessary and suffixed.", true, (input) -> {
+			try {
+				Pattern pattern = Pattern.compile("\\{r:(\\d\\d?\\d?)-(\\d\\d?\\d?)(?::(.*?))?}");
+				for (int i = 0; i < input.length; i++) {
+					if (input[i] != null) {
+						Matcher matcher = pattern.matcher(input[i]);
+						while (matcher.find()) {
+							int num_min = Integer.parseInt(matcher.group(1));
+							int num_max = Integer.parseInt(matcher.group(2));
+							int value = Helper.getRandomInt(num_min, num_max);
+							String repl = matcher.group(0).replace("{", "\\{").replace("}", "\\}");
+							input[i] = input[i].replaceFirst(repl, value + (matcher.group(3) != null && !matcher.group(3).equals("") ? " " + Noun.pluralOf(matcher.group(3), value) : ""));
+						}
+					}
+				}
+			} catch (Exception ignored) { }
+			return input;
+		}),
+		APPEARANCE_OBJECT("appearance_object", "{appearance:object:p}", "Inserts an appearance followed by the object, if p is present appearance will be prefixed, otherwise no prefix is included.", true, (input) -> {
+			try {
+				Pattern pattern = Pattern.compile("\\{appearance:(.*):(p?)}");
+				for (int i = 0; i < input.length; i++) {
+					if (input[i] != null) {
+						Matcher matcher = pattern.matcher(input[i]);
+						while (matcher.find()) {
+							String appearance_item = matcher.group(1);
+							boolean use_prefix = false;
+							if (matcher.group(2).equals("p"))
+								use_prefix = true;
+							input[i] = input[i].replace(matcher.group(0), PotionHelper.getRandomAppearance().appearanceItem(appearance_item, use_prefix));
+						}
+					}
+				}
+			} catch (Exception ignored) { }
+			return input;
 		});
 
 		public String name;
 		public String tag;
 		public String desc;
-		public Function<String, String> replace;
+		public boolean store;
+		public Function<String[], String[]> replace;
 
-		DynaParam(String name, String tag, String desc, Function<String, String> replace) {
+		DynaParam(String name, String tag, String desc, boolean store, Function<String[], String[]> replace) {
 			this.name = name;
 			this.tag = tag;
 			this.desc = desc;
+			this.store = store;
 			this.replace = replace;
 		}
 
-		public static String ReplaceParameters(String input) {
+		public static String[] ReplaceParameters(String[] input) {
+			return ReplaceParameters(input, false);
+		}
+
+		public static String[] ReplaceParameters(String[] input, boolean prepareForStorage) {
 			for (DynaParam p : DynaParam.values()) {
-				input = p.replace.apply(input);
+				if (!prepareForStorage || p.store)
+					input = p.replace.apply(input);
 			}
 			return input;
 		}
 	}
 
-	public static String replaceParamsInEffectString(String effect, String targetName, String triggererName) {
-		String tempEffect = "";
+	public static void replaceParamsInEffectString(EffectEntry effect) {
+		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
+		effects = replaceParamsInEffectString(effects);
+		effect.effectDrinkDiscovered = effects[0];
+		effect.effectSplashDiscovered = effects[1];
+	}
+
+	public static void replaceParamsInEffectString(EffectEntry effect, String targetName) {
+		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
+		effects = replaceParamsInEffectString(effects, targetName);
+		effect.effectDrinkDiscovered = effects[0];
+		effect.effectSplashDiscovered = effects[1];
+	}
+
+	public static void replaceParamsInEffectString(EffectEntry effect, String targetName, String triggerName) {
+		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
+		effects = replaceParamsInEffectString(effects, targetName, triggerName);
+		effect.effectDrinkDiscovered = effects[0];
+		effect.effectSplashDiscovered = effects[1];
+	}
+
+	public static void replaceParamsInEffectString(EffectEntry effect, String targetName, String triggerName, boolean prepareForStorage) {
+		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
+		effects = replaceParamsInEffectString(effects, targetName, triggerName, prepareForStorage);
+		effect.effectDrinkDiscovered = effects[0];
+		effect.effectSplashDiscovered = effects[1];
+	}
+
+	public static String[] replaceParamsInEffectString(String[] effects) {
+		return replaceParamsInEffectString(effects, null, null, false);
+	}
+
+	public static String[] replaceParamsInEffectString(String[] effects, String targetName) {
+		return replaceParamsInEffectString(effects, targetName, null, false);
+	}
+
+	public static String[] replaceParamsInEffectString(String[] effects, String targetName, String triggererName) {
+		return replaceParamsInEffectString(effects, targetName, triggererName, false);
+	}
+
+	public static String[] replaceParamsInEffectString(String[] effects, String targetName, String triggererName, boolean prepareForStorage) {
 		int timeout = 10;
 		while (timeout > 0) {
-			timeout++;
+			String[] lastEffects = effects.clone();
+			timeout--;
 
-			effect = DynaParam.ITEM.replace.apply(effect);
+			effects = DynaParam.ITEM.replace.apply(effects);
 
-			effect = DiceRoll.rollDiceInString(effect, true);
-
-			if (targetName != null)
-				effect = effect.replaceAll("\\{user}", targetName);
-
-			if (triggererName != null)
-				effect = effect.replaceAll("\\{trigger}", triggererName);
-
-			try {
-				Pattern pattern = Pattern.compile("\\{r:(\\d\\d?\\d?)-(\\d\\d?\\d?)(?::(.*?))?}");
-				Matcher matcher = pattern.matcher(effect);
-				while (matcher.find()) {
-					int num_min = Integer.parseInt(matcher.group(1));
-					int num_max = Integer.parseInt(matcher.group(2));
-					int value = Helper.getRandomInt(num_min, num_max);
-					String repl = matcher.group(0).replace("{", "\\{").replace("}", "\\}");
-					effect = effect.replaceFirst(repl, value + (matcher.group(3) != null && !matcher.group(3).equals("") ? " " + Noun.pluralOf(matcher.group(3), value) : ""));
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
+			if (targetName != null && !prepareForStorage) {
+				for (int i = 0; i < effects.length; i++)
+					if (effects[i] != null)
+						effects[i] = effects[i].replaceAll("\\{user}", targetName);
 			}
 
-			effect = DynaParam.ReplaceParameters(effect);
+			if (triggererName != null && !prepareForStorage) {
+				for (int i = 0; i < effects.length; i++)
+					if (effects[i] != null)
+						effects[i] = effects[i].replaceAll("\\{trigger}", triggererName);
+			}
 
-			if (tempEffect.equals(effect))
+			effects = DynaParam.ReplaceParameters(effects, prepareForStorage);
+
+			if (!prepareForStorage) {
+				for (int i = 0; i < effects.length; i++) {
+					if (effects[i] != null) {
+						effects[i] = DiceRoll.rollDiceInString(effects[i], true);
+					}
+				}
+			}
+
+			boolean stop = false;
+			for (int i = 0; i < effects.length; i++) {
+				if (effects[i] != null) {
+					if (effects[i].equals(lastEffects[i]))
+						stop = true;
+				}
+			}
+			if (stop)
 				break;
-			tempEffect = effect;
 		}
 
-		return effect;
+		return effects;
 	}
 
 	public static int countEffectVariations(String effect) {
@@ -358,29 +577,29 @@ public class PotionHelper {
 		if (effect.contains("{consistency_p_lc}"))
 			count += getConsistencyCount();
 		if (effect.contains("{transformation}"))
-			count += Helper.getAnimalCount();
+			count += TablesOfRandomThings.getAnimalCount();
 		if (effect.contains("{transformation_p}"))
-			count += Helper.getAnimalCount();
+			count += TablesOfRandomThings.getAnimalCount();
 		if (effect.contains("{transformation_pc}"))
-			count += Helper.getAnimalCount();
+			count += TablesOfRandomThings.getAnimalCount();
 		if (effect.contains("{transformation2}"))
-			count += Helper.getAnimalCount();
+			count += TablesOfRandomThings.getAnimalCount();
 		if (effect.contains("{transformations}"))
-			count += Helper.getAnimalCount();
+			count += TablesOfRandomThings.getAnimalCount();
 		if (effect.contains("{transformations_p}"))
-			count += Helper.getAnimalCount();
+			count += TablesOfRandomThings.getAnimalCount();
 		if (effect.contains("{transformations2}"))
-			count += Helper.getAnimalCount();
+			count += TablesOfRandomThings.getAnimalCount();
 		if (effect.contains("{junk}"))
-			count += Helper.getGarbageItemCount();
+			count += TablesOfRandomThings.getGarbageItemCount();
 		if (effect.contains("{junk_p}"))
-			count += Helper.getGarbageItemCount();
+			count += TablesOfRandomThings.getGarbageItemCount();
 		if (effect.contains("{limit}"))
 			count += getLimitCount();
 		if (effect.contains("{codeword}"))
-			count += Helper.getCodeWordCount();
+			count += TablesOfRandomThings.getCodeWordCount();
 		if (effect.contains("{codeword2}"))
-			count += Helper.getCodeWordCount();
+			count += TablesOfRandomThings.getCodeWordCount();
 		return count;
 	}
 
