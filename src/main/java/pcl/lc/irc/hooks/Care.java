@@ -9,6 +9,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.TablesOfRandomThings;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ public class Care extends AbstractListener {
 		local_command = new Command("care", new CommandRateLimit(60)) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				Helper.sendMessage(target, Helper.getCareDetectorResponse(), nick);
+				Helper.sendMessage(target, TablesOfRandomThings.getCareDetectorResponse(), nick);
 			}
 		};
 		local_command.registerAlias("care-o-meter");

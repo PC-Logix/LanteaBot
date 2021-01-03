@@ -5,6 +5,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.TablesOfRandomThings;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -112,13 +113,13 @@ public class Responses extends AbstractListener {
         Helper.sendMessage(target,"You're welcome!", nick);
         break;
       case "surprise":
-        Helper.sendMessage(target, Helper.getSurpriseResponse(), nick);
+        Helper.sendMessage(target, TablesOfRandomThings.getSurpriseResponse(), nick);
         break;
       case "smile":
         Helper.sendAction(target, "smiles ^.^");
         break;
       case "thanks":
-        Helper.sendMessage(target, Helper.getThanksResponse(), nick);
+        Helper.sendMessage(target, TablesOfRandomThings.getThanksResponse(), nick);
         break;
       case "angry":
         Helper.sendMessage(target,"Don't you poor me! I'll poor you in the face! D:<", nick);
@@ -139,7 +140,7 @@ public class Responses extends AbstractListener {
     	  Helper.sendMessage(target, "That tickles!");
     	  break;
       case "whocares":
-        Helper.sendMessage(target, Helper.getCareDetectorResponse(), nick);
+        Helper.sendMessage(target, TablesOfRandomThings.getCareDetectorResponse(), nick);
         break;
       case "face":
         Helper.sendMessage(target, "Your face wont work!");
@@ -148,13 +149,13 @@ public class Responses extends AbstractListener {
         Helper.sendAction(target, "does the flop");
         break;
       case "hurt":
-        Helper.sendMessage(target, Helper.getHurtResponse(), nick);
+        Helper.sendMessage(target, TablesOfRandomThings.getHurtResponse(), nick);
         break;
       case "hello":
         Helper.sendMessage(target, "Hello " + nick);
         break;
       case "right":
-        Helper.sendMessage(target, Helper.getAffirmativeResponse());
+        Helper.sendMessage(target, TablesOfRandomThings.getAffirmativeResponse());
         break;
       case "pet":
         Helper.sendAction(target, "purrs");

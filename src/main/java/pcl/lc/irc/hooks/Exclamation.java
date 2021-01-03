@@ -6,6 +6,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.TablesOfRandomThings;
 
 import java.util.ArrayList;
 
@@ -112,9 +113,9 @@ public class Exclamation extends AbstractListener {
 			words.addAll(curses);
 			words.addAll(positive);
 			words.addAll(surprised);
-			words.add("Holy " + Helper.getRandomGarbageItem(false, true) + " Batman");
-			words.add("Holy " + Helper.getRandomGarbageItem(false, true) + " Batman");
-			words.add("Holy " + Helper.getRandomGarbageItem(false, true) + " Batman");
+			words.add("Holy " + TablesOfRandomThings.getRandomGarbageItem(false, true) + " Batman");
+			words.add("Holy " + TablesOfRandomThings.getRandomGarbageItem(false, true) + " Batman");
+			words.add("Holy " + TablesOfRandomThings.getRandomGarbageItem(false, true) + " Batman");
 			words.addAll(negative);
 		} else if (filter.equals(TypeFilter.CURSE_WORD))
 			words.addAll(curses);
@@ -122,9 +123,9 @@ public class Exclamation extends AbstractListener {
 			words.addAll(positive);
 		else if (filter.equals(TypeFilter.SURPRISED)) {
 			words.addAll(surprised);
-			words.add("Holy " + Helper.getRandomGarbageItem(false, true) + " Batman");
-			words.add("Holy " + Helper.getRandomGarbageItem(false, true) + " Batman");
-			words.add("Holy " + Helper.getRandomGarbageItem(false, true) + " Batman");
+			words.add("Holy " + TablesOfRandomThings.getRandomGarbageItem(false, true) + " Batman");
+			words.add("Holy " + TablesOfRandomThings.getRandomGarbageItem(false, true) + " Batman");
+			words.add("Holy " + TablesOfRandomThings.getRandomGarbageItem(false, true) + " Batman");
 		} else if (filter.equals(TypeFilter.NEGATIVE))
 			words.addAll(negative);
 		if (words.size() == 0)
@@ -139,7 +140,7 @@ public class Exclamation extends AbstractListener {
 		command_curse_word = new Command("curseword", limit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendMessage(target, getRandomExpression(TypeFilter.CURSE_WORD) + Helper.getRandomExclamations(true, false), nick);
+				Helper.sendMessage(target, getRandomExpression(TypeFilter.CURSE_WORD) + TablesOfRandomThings.getRandomExclamations(true, false), nick);
 			}
 		};
 		command_curse_word.registerAlias("curses");
@@ -152,7 +153,7 @@ public class Exclamation extends AbstractListener {
 		command_exclamation = new Command("exclamation", limit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Helper.sendMessage(target, getRandomExpression(TypeFilter.ALL) + Helper.getRandomExclamations(true, false), nick);
+				Helper.sendMessage(target, getRandomExpression(TypeFilter.ALL) + TablesOfRandomThings.getRandomExclamations(true, false), nick);
 			}
 		};
 		command_exclamation.registerAlias("excl");

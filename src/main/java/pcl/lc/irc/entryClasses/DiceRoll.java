@@ -45,7 +45,7 @@ public class DiceRoll {
     }
 
     public DiceRoll(int diceCount, int diceSize, ExplodeMode explodeMode) {
-        System.out.println("Roll between " + diceCount + " and " + diceSize);
+//        System.out.println("Roll between " + diceCount + " and " + diceSize);
         this.diceCount = diceCount;
         this.diceSize = diceSize;
         this.explodeMode = explodeMode;

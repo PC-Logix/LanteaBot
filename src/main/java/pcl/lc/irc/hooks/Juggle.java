@@ -9,6 +9,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
+import pcl.lc.utils.TablesOfRandomThings;
 
 import java.util.ArrayList;
 
@@ -52,10 +53,10 @@ public class Juggle extends AbstractListener {
 					}
 				}
 				if (dropped > 0)
-					Helper.sendMessage(target, Helper.getFailResponse());
+					Helper.sendMessage(target, TablesOfRandomThings.getFailResponse());
 				else {
 					Helper.sendAction(target, "doesn't drop anything");
-					Helper.sendMessage(target, Helper.getSuccessResponse());
+					Helper.sendMessage(target, TablesOfRandomThings.getSuccessResponse());
 				}
 			}
 		};

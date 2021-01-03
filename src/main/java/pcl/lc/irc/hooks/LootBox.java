@@ -6,6 +6,7 @@ import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PotionHelper;
+import pcl.lc.utils.TablesOfRandomThings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,11 +51,11 @@ public class LootBox extends AbstractListener {
 					}
 				}
 				if (rarity == "Normal") {
-					item_name = Helper.getRandomGarbageItem(true, true) + ".";
+					item_name = TablesOfRandomThings.getRandomGarbageItem(true, true) + ".";
 				} else {
 					Item item = Inventory.getRandomItem(true);
 					if (item == null) {
-						item_name = Helper.getRandomGarbageItem(true, true) + ".";
+						item_name = TablesOfRandomThings.getRandomGarbageItem(true, true) + ".";
 					} else {
 						boolean curse = (rarity == "Cursed");
 						String[] strings = Helper.solvePrefixes(item.getNameRaw());

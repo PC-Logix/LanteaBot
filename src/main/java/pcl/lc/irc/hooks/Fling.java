@@ -69,7 +69,7 @@ public class Fling extends AbstractListener {
 							dmgString = "no damage";
 						else
 							dmgString += " damage";
-						String result = nick + action + item.getName() + " in a random direction. It hits " + flingTarget + " " + Helper.getHitPlace() + ". They take " + dmgString + "!";
+						String result = nick + action + item.getName() + " in a random direction. It hits " + flingTarget + " " + TablesOfRandomThings.getHitPlace() + ". They take " + dmgString + "!";
 						Defend.addEvent(nick, flingTarget, target, dmg.getTotal(), item.getName(), Defend.EventTypes.FLING, result);
 						Helper.sendMessage(target, nick + " is flinging something at " + flingTarget + "! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
 						itemDamage = 1;

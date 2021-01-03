@@ -166,7 +166,7 @@ public class Defend extends AbstractListener {
 						}
 					} else if (defendEvent.type == EventTypes.POTION) {
 						if (result >= dc) {
-							String altTarget = Helper.getRandomTransformation(true, true, false, true);
+							String altTarget = TablesOfRandomThings.getRandomTransformation(true, true, false, true);
 							AppearanceEntry con = PotionHelper.findConsistencyInString(implement);
 							AppearanceEntry app = PotionHelper.findAppearanceInString(implement);
 							String potionString = "";
