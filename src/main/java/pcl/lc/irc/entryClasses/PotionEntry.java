@@ -75,15 +75,6 @@ public class PotionEntry {
 				EffectEntry eff = DrinkPotion.effects.get(effect);
 				String effect_drink = eff.effectDrink;
 				String effect_splash = eff.effectSplash;
-
-				if (eff.action != null) {
-					EffectActionParameters parameters_drink = new EffectActionParameters(targetName, triggererName, false);
-					effect_drink = eff.action.apply(parameters_drink);
-					if (effect_splash != null) {
-						EffectActionParameters parameters_splash = new EffectActionParameters(targetName, triggererName, true);
-						effect_splash = eff.action.apply(parameters_splash);
-					}
-				}
 				String[] effects = new String[] { effect_drink, effect_splash };
 
 				effects = PotionHelper.replaceParamsInEffectString(effects, null, null, true);
@@ -91,9 +82,8 @@ public class PotionEntry {
 				eff.effectSplashDiscovered = effects[1];
 
 				this.isNew = true;
-				this.effect = eff;
+				this.effect = PotionHelper.setCombinationEffect(consistency, appearance, eff);
 				this.effect.discoverer = splash ? triggererName + " (" + targetName + ")" : targetName;
-				PotionHelper.setCombinationEffect(consistency, appearance, this.effect);
 			}
 		}
 		return this.effect;
@@ -116,17 +106,5 @@ public class PotionEntry {
 			System.out.println("No appearance found in '" + str + "'. Using '" + appearance.Name + "'");
 		}
 		return new PotionEntry(consistency, appearance, !PotionHelper.combinationHasEffect(consistency, appearance));
-	}
-
-	public String getEffectString() {
-		return getEffectString(false);
-	}
-
-	public String getEffectString(boolean splash) {
-		if (effect == null)
-			return "No effect.";
-		if (!isNew && this.effect.action != null)
-			return effect.getEffectString(splash);
-		return effect.getEffectStringDiscovered(splash);
 	}
 }

@@ -29,14 +29,14 @@ public class Shell extends AbstractListener {
 	}
 
 	private void initCommands() {
-		shell = new Command("shell", new CommandArgumentParser(1, new CommandArgument("Target1", ArgumentTypes.STRING), new CommandArgument("Target2", ArgumentTypes.STRING), new CommandArgument("Target3", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
+		shell = new Command("shell", new CommandArgumentParser(1, new CommandArgument("Target1", ArgumentTypes.STRING), new CommandArgument("Target2", ArgumentTypes.STRING), new CommandArgument("Target3", ArgumentTypes.STRING), new CommandArgument("ItemOrPotion", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();
 				String shellTarget = this.argumentParser.getArgument("Target1");
 				String shellTargetSecondary = this.argumentParser.getArgument("Target2");
 				String shellTargetTertriary = this.argumentParser.getArgument("Target3");
-				String with = this.argumentParser.getArgument("Item");
+				String with = this.argumentParser.getArgument("ItemOrPotion");
 
 				PotionEntry potion = PotionEntry.setFromString(with);
 				if (potion == null && with != null && with.contains("random potion"))
@@ -58,21 +58,32 @@ public class Shell extends AbstractListener {
 					if (shellTarget == null || shellTarget.equals(""))
 						shellTarget = Helper.getRandomUser(event, blacklist);
 					blacklist.add(shellTarget);
-					if (shellTargetSecondary == null)
+					if (shellTargetSecondary == null || shellTargetSecondary.equals(""))
 						shellTargetSecondary = Helper.getRandomUser(event, blacklist);
 					blacklist.add(shellTargetSecondary);
-					if (shellTargetTertriary == null)
+					if (shellTargetTertriary == null || shellTargetTertriary.equals(""))
 						shellTargetTertriary = Helper.getRandomUser(event, blacklist);
 					if (!Helper.doInteractWith(shellTarget) || !Helper.doInteractWith(shellTargetSecondary) || !Helper.doInteractWith(shellTargetTertriary)) {
 						Helper.sendAction(target, "kicks " + nick + " into space.");
 						return;
 					}
 					if (potion != null) {
+						potion.getEffect(nick, true, shellTarget);
 						Helper.AntiPings = Helper.getNamesFromTarget(target);
-						EffectEntry effect = potion.getEffectSplash(shellTarget, nick);
-						effect.action.apply(new EffectActionParameters(shellTargetSecondary, nick, true));
-						effect.action.apply(new EffectActionParameters(shellTargetTertriary, nick, true));
-						Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.effectDrink, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
+						String effectStringPrimary = potion.effect.doAction(new EffectActionParameters(shellTarget, nick, true, potion.isNew));
+						String effectStringSecondary = potion.effect.doAction(new EffectActionParameters(shellTargetSecondary, nick, true, potion.isNew));
+						String effectStringTertriary = potion.effect.doAction(new EffectActionParameters(shellTargetTertriary, nick, true, potion.isNew));
+						if (effectStringPrimary == null)
+							effectStringPrimary = potion.effect.getEffectStringDiscovered(shellTarget, nick, true);
+						if (effectStringSecondary == null)
+							effectStringSecondary = potion.effect.getEffectStringDiscovered(shellTargetSecondary, nick, true);
+						if (effectStringTertriary == null)
+							effectStringTertriary = potion.effect.getEffectStringDiscovered(shellTargetTertriary, nick, true);
+//						Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour. " + PotionHelper.replaceParamsInEffectString(effect.effectDrink, shellTarget + ", " + shellTargetSecondary + " & " + shellTargetTertriary, nick));
+						Helper.sendMessage(target, nick + " loads " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + (potion.isNew ? " (New!)" : "") + " potion into a shell and fires it. It lands and explodes into a cloud of vapour which engulfs " + shellTarget + ", " + shellTargetSecondary + ", and " + shellTargetTertriary);
+						Helper.sendMessage(target, effectStringPrimary);
+						Helper.sendMessage(target, effectStringSecondary);
+						Helper.sendMessage(target, effectStringTertriary);
 					} else {
 						int itemDamage = 0;
 						String dust;

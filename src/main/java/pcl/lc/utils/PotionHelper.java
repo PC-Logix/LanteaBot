@@ -50,7 +50,7 @@ public class PotionHelper {
 		return DrinkPotion.potions.containsKey(key);
 	}
 
-	public static void setCombinationEffect(AppearanceEntry consistency, AppearanceEntry appearance, EffectEntry effect) {
+	public static EffectEntry setCombinationEffect(AppearanceEntry consistency, AppearanceEntry appearance, EffectEntry effect) {
 		String key = getCombinationKey(consistency, appearance);
 		System.out.println("Registering effect for combination '" + key + "'");
 		EffectEntry copy = effect.copy();
@@ -60,6 +60,7 @@ public class PotionHelper {
 		System.out.println(copy.effectDrinkDiscovered);
 		System.out.println(copy.effectSplashDiscovered);
 		DrinkPotion.potions.put(key, copy);
+		return copy;
 	}
 
 	/**
@@ -471,31 +472,39 @@ public class PotionHelper {
 	}
 
 	public static void replaceParamsInEffectString(EffectEntry effect) {
-		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
-		effects = replaceParamsInEffectString(effects);
-		effect.effectDrinkDiscovered = effects[0];
-		effect.effectSplashDiscovered = effects[1];
+		if (effect.effectDrinkDiscovered == null && effect.effectSplashDiscovered == null) {
+			String[] effects = new String[]{effect.effectDrink, effect.effectSplash};
+			effects = replaceParamsInEffectString(effects);
+			effect.effectDrinkDiscovered = effects[0];
+			effect.effectSplashDiscovered = effects[1];
+		}
 	}
 
 	public static void replaceParamsInEffectString(EffectEntry effect, String targetName) {
-		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
-		effects = replaceParamsInEffectString(effects, targetName);
-		effect.effectDrinkDiscovered = effects[0];
-		effect.effectSplashDiscovered = effects[1];
+		if (effect.effectDrinkDiscovered == null && effect.effectSplashDiscovered == null) {
+			String[] effects = new String[]{effect.effectDrink, effect.effectSplash};
+			effects = replaceParamsInEffectString(effects, targetName);
+			effect.effectDrinkDiscovered = effects[0];
+			effect.effectSplashDiscovered = effects[1];
+		}
 	}
 
 	public static void replaceParamsInEffectString(EffectEntry effect, String targetName, String triggerName) {
-		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
-		effects = replaceParamsInEffectString(effects, targetName, triggerName);
-		effect.effectDrinkDiscovered = effects[0];
-		effect.effectSplashDiscovered = effects[1];
+		if (effect.effectDrinkDiscovered == null && effect.effectSplashDiscovered == null) {
+			String[] effects = new String[]{effect.effectDrink, effect.effectSplash};
+			effects = replaceParamsInEffectString(effects, targetName, triggerName);
+			effect.effectDrinkDiscovered = effects[0];
+			effect.effectSplashDiscovered = effects[1];
+		}
 	}
 
 	public static void replaceParamsInEffectString(EffectEntry effect, String targetName, String triggerName, boolean prepareForStorage) {
-		String[] effects = new String[] { effect.effectDrink, effect.effectSplash };
-		effects = replaceParamsInEffectString(effects, targetName, triggerName, prepareForStorage);
-		effect.effectDrinkDiscovered = effects[0];
-		effect.effectSplashDiscovered = effects[1];
+		if (effect.effectDrinkDiscovered == null && effect.effectSplashDiscovered == null) {
+			String[] effects = new String[]{effect.effectDrink, effect.effectSplash};
+			effects = replaceParamsInEffectString(effects, targetName, triggerName, prepareForStorage);
+			effect.effectDrinkDiscovered = effects[0];
+			effect.effectSplashDiscovered = effects[1];
+		}
 	}
 
 	public static String[] replaceParamsInEffectString(String[] effects) {

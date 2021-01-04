@@ -362,14 +362,17 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("The fluid smells faintly of bacon...", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
-				if (!baconMap.containsKey(parameters.targetName))
-					baconMap.put(parameters.targetName, 0);
-				int bacon = baconMap.get(parameters.targetName) + 1;
-				baconMap.put(parameters.targetName, bacon);
-				String prem = "The bottle turns into a piece of bacon. " + parameters.targetName + " has found ";
-				if (parameters.isSplash)
-					prem = "A piece of bacon appears in front of {user}. " + parameters.targetName + " has found ";
-				return prem + bacon + " piece" + (bacon == 1 ? "" : "s") + " of bacon so far.";
+				if (parameters.isNew) {
+					if (!baconMap.containsKey(parameters.targetName))
+						baconMap.put(parameters.targetName, 0);
+					int bacon = baconMap.get(parameters.targetName) + 1;
+					baconMap.put(parameters.targetName, bacon);
+					String prem = "The bottle turns into a piece of bacon. " + parameters.targetName + " has found ";
+					if (parameters.isSplash)
+						prem = "A piece of bacon appears in front of {user}. " + parameters.targetName + " has found ";
+					return prem + bacon + " piece" + (bacon == 1 ? "" : "s") + " of bacon so far.";
+				}
+				return null;
 			}
 		}));
 		effects.add(new EffectEntry("The bottle turns into an apple.",
@@ -389,7 +392,7 @@ public class DrinkPotion extends AbstractListener {
 				radiationMap.put(parameters.targetName, rabs);
 				return parameters.targetName + "'s radiation level goes up by " + rads + ". " + parameters.targetName + "'s radiation level is " + rabs + ".";
 			}
-		}));
+		}, 2));
 		effects.add(new EffectEntry("{user} smells something burning."));
 		effects.add(new EffectEntry("The sun turns into a giant baby face for a second. It's horrific."));
 		effects.add(new EffectEntry("Everything {user} says is now in Comic Sans{limit}."));
@@ -416,7 +419,7 @@ public class DrinkPotion extends AbstractListener {
 				Tonk.tonkTimeAdd(hours + "h");
 				return "Tonk moved forward " + hours + " hour" + (hours == 1 ? "" : "s") + ".";
 			}
-		}));
+		}, 1));
 		effects.add(new EffectEntry("{user} feels as if time tried to go in reverse for a bit, but couldn't...", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
@@ -424,15 +427,15 @@ public class DrinkPotion extends AbstractListener {
 				Tonk.tonkTimeRemove(hours + "h");
 				return "Tonk moved back " + hours + " hour" + (hours == 1 ? "" : "s") + ".";
 			}
-		}));
+		}, 1));
 		effects.add(new EffectEntry("Some tonk points fly by. {user} fails to catch them.", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
 				int points = Helper.getRandomInt(1, 100);
 				Tonk.tonkPointsAdd(parameters.targetName, points);
-				return parameters.targetName + " gained " + Tonk.displayTonkPoints(points) + " tonk points.";
+				return "Some tonk points fly by. " + parameters.targetName + " caught " + Tonk.displayTonkPoints(points) + " tonk points.";
 			}
-		}));
+		}, 2));
 		effects.add(new EffectEntry("Someone just had some of {user}'s favourite food and they didn't get any!"));
 		effects.add(new EffectEntry("A bunch of people in white coats approach {user}. {evade_qc:12:{user} successfully evade the people!:{user} is caught and is given a nice jacket with long arms and put in a nice padded room{limit}.}"));
 		effects.add(new EffectEntry("For a second it felt like {user} was going to have a huge epiphany. It was just a fart...", new Function<EffectActionParameters, String>() {
@@ -444,7 +447,7 @@ public class DrinkPotion extends AbstractListener {
 				researchPointsMap.put(parameters.targetName, points);
 				return parameters.targetName + " gains one research point. {user} now has " + points + " point" + (points == 1 ? "" : "s") + ".";
 			}
-		}));
+		}, 2));
 		effects.add(new EffectEntry("{user} hears a scream from nearby."));
 		effects.add(new EffectEntry("{user} feels as if they managed to avoid a terrible curse...", new Function<EffectActionParameters, String>() {
 			@Override
@@ -454,7 +457,7 @@ public class DrinkPotion extends AbstractListener {
 				int curse = curseMap.get(parameters.targetName) + 1;
 				return parameters.targetName + " gains some curse. " + parameters.targetName + " has " + String.valueOf(curse) + " curse.";
 			}
-		}));
+		}, 1));
 		effects.add(new EffectEntry("{user}'s left sock is now cursed."));
 		effects.add(new EffectEntry("{user}'s feet tingle briefly."));
 		effects.add(new EffectEntry("{user} spots a shiny thing!"));
@@ -464,24 +467,38 @@ public class DrinkPotion extends AbstractListener {
 				TonkSnipe.refill(parameters.targetName, Tonk.TonkSnipeType.GREEN);
 				return parameters.targetName + " barely manages to catch a green shell that appears in front of them!";
 			}
-		}));
+		}, 3));
 		effects.add(new EffectEntry("A red shell flies by! If only {user} could have reached it.", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
 				TonkSnipe.refill(parameters.targetName, Tonk.TonkSnipeType.RED);
 				return parameters.targetName + " barely manages to catch a red shell that appears in front of them!";
 			}
-		}));
+		}, 2));
 		effects.add(new EffectEntry("{user} feels like they need to drink {appearance_p_lc} potion."));
 		effects.add(new EffectEntry("{user} feels like they need to drink {consistency_p_lc} potion."));
 		effects.add(new EffectEntry("{user} falls into a shaft and drop {r:1-5:floor}!"));
-		effects.add(new EffectEntry("{user} comes face to face with a basilisk! {evade_qc:14:{user} avoids being turned to stone!:{user} is turned to stone{limit}}"));
-		effects.add(new EffectEntry("A genie tries to turn {user} into {transformation_p}, {evade_qc:12:but {user} successfully dodge the beam!:{user} tries to evade but is caught in the beam and transformed{limit}.}"));
+		effects.add(new EffectEntry("{user} comes face to face with a basilisk! {evade_qc:14:{user} avoids it's gaze and gets away!:{user} is turned to stone{limit}}"));
+		effects.add(new EffectEntry("A genie tries to turn {user} into {transformation_p}, {evade_qc:12:but {user} successfully dodge the beam!:{user} tries to evade but is caught in the beam and transformed{limit}.}", 3));
 		System.out.println("Registered " + effects.size() + " effects!");
 
 		if (IRCBot.getDebug()) {
 			effects = new ArrayList<>();
-			effects.add(new EffectEntry("A genie tries to turn {user} into {transformation_p}, {evade_qc:12:but {user} successfully dodge the beam!:{user} tries to evade but is caught in the beam and transformed{limit}.}"));
+//			effects.add(new EffectEntry("A genie tries to turn {user} into {transformation_p}, {evade_qc:12:but {user} successfully dodge the beam!:{user} tries to evade but is caught in the beam and transformed{limit}.}", 3));
+			/*effects.add(new EffectEntry("I done got drunk!", new Function<EffectActionParameters, String>() {
+				@Override
+				public String apply(EffectActionParameters effectActionParameters) {
+					Helper.sendMessage(effectActionParameters.targetName, "Sup?");
+					return null;
+				}
+			}, -1));*/
+			effects.add(new EffectEntry("A green shell flies by! Just out of reach.", new Function<EffectActionParameters, String>() {
+				@Override
+				public String apply(EffectActionParameters parameters) {
+					TonkSnipe.refill(parameters.targetName, Tonk.TonkSnipeType.GREEN);
+					return parameters.targetName + " barely manages to catch a green shell that appears in front of them!";
+				}
+			}, 3));
 		}
 
 		//Never end with punctuation and always start with a space
@@ -548,7 +565,7 @@ public class DrinkPotion extends AbstractListener {
 					}
 				} else {
 					if (specialFluids.containsKey(pot)) {
-						Helper.sendMessage(target, PotionHelper.replaceParamsInEffectString(specialFluids.get(pot).getEffectString(), nick));
+						Helper.sendMessage(target, specialFluids.get(pot).getEffectString(nick), nick);
 						return;
 					} else {
 						try {
@@ -560,7 +577,11 @@ public class DrinkPotion extends AbstractListener {
 					}
 				}
 				potion.getEffect(nick);
-				Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(), nick));
+				String actionString = potion.effect.doAction(new EffectActionParameters(nick, null, false, potion.isNew));
+				if (actionString == null)
+					Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + potion.effect.getEffectString(nick));
+				else
+					Helper.sendMessage(target, actionString);
 			}
 		};
 		local_command.setHelpText("Drink a potion with a certain consistency and appearance and something might happen. Syntax: " + Config.commandprefix + local_command.getCommand() + " [potion] Potion needs to contain a valid consistency, appearance and the word 'potion', See " + Config.commandprefix + "potionstats command for a list.");
@@ -623,9 +644,13 @@ public class DrinkPotion extends AbstractListener {
 					return;
 				}
 
-				if (potion != null)
-					Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + PotionHelper.replaceParamsInEffectString(potion.getEffectString(true), splashTarget, nick));
-				else
+				if (potion != null) {
+					String actionString = potion.effect.doAction(new EffectActionParameters(splashTarget, nick, true, potion.isNew));
+					if (actionString == null)
+						Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + potion.effect.getEffectString(splashTarget, nick, true));
+					else
+						Helper.sendMessage(target, actionString);
+				} else
 					Helper.sendMessage(target, "Potion wasn't set...");
 			}
 		};
@@ -671,7 +696,7 @@ public class DrinkPotion extends AbstractListener {
 							EffectEntry potion = entry.getValue();
 							AppearanceEntry consistency = DrinkPotion.consistencyEntries.get(keys[0]);
 							AppearanceEntry appearance = DrinkPotion.appearanceEntries.get(keys[1]);
-							Helper.sendMessage(nick, key + ": Potion: " + consistency.Name + " " + appearance.Name + " EffectDrink: '" + potion.effectDrink + ", DiscoveredDrink: " + potion.effectDrinkDiscovered + ", EffectSplash: " + potion.effectSplash + ", DiscoveredSplash: " + potion.effectSplashDiscovered + ", ´Discovered by: " + potion.discoverer);
+							Helper.sendMessage(nick, key + ": Potion: " + consistency.Name + " " + appearance.Name + " EffectDrink: '" + potion.effectDrink + ", DiscoveredDrink: " + potion.effectDrinkDiscovered + ", EffectSplash: " + potion.effectSplash + ", DiscoveredSplash: " + potion.effectSplashDiscovered + ", ´Discovered by: " + potion.discoverer + ", UsesRemaining: " + potion.usesRemaining, null, true);
 						}
 					} else {
 						int potions_count = potions.size();
