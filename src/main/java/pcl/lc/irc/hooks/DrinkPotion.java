@@ -197,6 +197,14 @@ public class DrinkPotion extends AbstractListener {
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Simulated", "A"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Forked", "A"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Spooned", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Wild", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Still", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Silent", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Woolly", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Rather", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Hairy", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Eroded", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Tiny", "A"));
 		System.out.println("Registered " + consistencyEntries.size() + "consistencies!");
 
 		//See `PotionHelper.DynaParam` for tag list and descriptions.
@@ -438,14 +446,14 @@ public class DrinkPotion extends AbstractListener {
 		}, 2));
 		effects.add(new EffectEntry("Someone just had some of {user}'s favourite food and they didn't get any!"));
 		effects.add(new EffectEntry("A bunch of people in white coats approach {user}. {evade_qc:12:{user} successfully evade the people!:{user} is caught and is given a nice jacket with long arms and put in a nice padded room{limit}.}"));
-		effects.add(new EffectEntry("For a second it felt like {user} was going to have a huge epiphany. It was just a fart...", new Function<EffectActionParameters, String>() {
+		effects.add(new EffectEntry("For a second it felt like {user} was going to have a huge epiphany...", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
 				if (!researchPointsMap.containsKey(parameters.targetName))
 					researchPointsMap.put(parameters.targetName, 0);
 				int points = researchPointsMap.get(parameters.targetName) + 1;
 				researchPointsMap.put(parameters.targetName, points);
-				return parameters.targetName + " gains one research point. {user} now has " + points + " point" + (points == 1 ? "" : "s") + ".";
+				return parameters.targetName + " gains one research point. " + parameters.targetName + " now has " + points + " point" + (points == 1 ? "" : "s") + ".";
 			}
 		}, 2));
 		effects.add(new EffectEntry("{user} hears a scream from nearby."));
@@ -480,6 +488,21 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} falls into a shaft and drop {r:1-5:floor}!"));
 		effects.add(new EffectEntry("{user} comes face to face with a basilisk! {evade_qc:14:{user} avoids it's gaze and gets away!:{user} is turned to stone{limit}}"));
 		effects.add(new EffectEntry("A genie tries to turn {user} into {transformation_p}, {evade_qc:12:but {user} successfully dodge the beam!:{user} tries to evade but is caught in the beam and transformed{limit}.}", 3));
+		effects.add(new EffectEntry("{user} hears a ringing in the distance....", new Function<EffectActionParameters, String>() {
+			@Override
+			public String apply(EffectActionParameters effectActionParameters) {
+				if (researchPointsMap.containsKey(effectActionParameters.targetName)) {
+					int points = researchPointsMap.get(effectActionParameters.targetName);
+					if (points > 0) {
+						int tonkPoints = points * 45;
+						Tonk.tonkPointsAdd(effectActionParameters.targetName, tonkPoints);
+						researchPointsMap.replace(effectActionParameters.targetName, 0);
+						return effectActionParameters.targetName + " has " + points + " research points. They figure out how to hack " + Tonk.displayTonkPoints(tonkPoints) + " tonk points for themselves!";
+					}
+				}
+				return effectActionParameters.targetName + " doesn't seem to have any research points.";
+			}
+		}));
 		System.out.println("Registered " + effects.size() + " effects!");
 
 		if (IRCBot.getDebug()) {
@@ -492,13 +515,39 @@ public class DrinkPotion extends AbstractListener {
 					return null;
 				}
 			}, -1));*/
-			effects.add(new EffectEntry("A green shell flies by! Just out of reach.", new Function<EffectActionParameters, String>() {
+			/*effects.add(new EffectEntry("A green shell flies by! Just out of reach.", new Function<EffectActionParameters, String>() {
 				@Override
 				public String apply(EffectActionParameters parameters) {
 					TonkSnipe.refill(parameters.targetName, Tonk.TonkSnipeType.GREEN);
 					return parameters.targetName + " barely manages to catch a green shell that appears in front of them!";
 				}
-			}, 3));
+			}, 3));*/
+			effects.add(new EffectEntry("For a second it felt like {user} was going to have a huge epiphany. It was just a fart...", new Function<EffectActionParameters, String>() {
+				@Override
+				public String apply(EffectActionParameters parameters) {
+					if (!researchPointsMap.containsKey(parameters.targetName))
+						researchPointsMap.put(parameters.targetName, 0);
+					int points = researchPointsMap.get(parameters.targetName) + 1;
+					researchPointsMap.put(parameters.targetName, points);
+					return parameters.targetName + " gains one research point. " + parameters.targetName + " now has " + points + " point" + (points == 1 ? "" : "s") + ".";
+				}
+			}, 2));
+			effects.add(new EffectEntry("{user} hears a ringing in the distance....", new Function<EffectActionParameters, String>() {
+				@Override
+				public String apply(EffectActionParameters effectActionParameters) {
+					if (researchPointsMap.containsKey(effectActionParameters.targetName)) {
+						int points = researchPointsMap.get(effectActionParameters.targetName);
+						if (points > 0) {
+							int tonkPoints = points * 45;
+							Tonk.tonkPointsAdd(effectActionParameters.targetName, tonkPoints);
+							int newPoints = 0;
+							researchPointsMap.replace(effectActionParameters.targetName, newPoints);
+							return effectActionParameters.targetName + " has " + points + " research points. They figure out how to hack " + Tonk.displayTonkPoints(tonkPoints) + " tonk points for themselves! They now have " + newPoints + " research points.";
+						}
+					}
+					return effectActionParameters.targetName + " doesn't seem to have any research points.";
+				}
+			}, 1));
 		}
 
 		//Never end with punctuation and always start with a space
