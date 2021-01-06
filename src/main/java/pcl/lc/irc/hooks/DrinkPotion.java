@@ -247,7 +247,13 @@ public class DrinkPotion extends AbstractListener {
 				"{user} feels like they should clean up the broken bottle."));
 		effects.add(new EffectEntry("{user}'s bed is suddenly slightly less comfortable{limit}."));
 		effects.add(new EffectEntry("{user} gains a negligible amount of luck."));
-		effects.add(new EffectEntry("{user} realizes this was actually a {consistency} {appearance} potion."));
+		effects.add(new EffectEntry("{user} realizes this was actually {consistency_p} {appearance} potion.", new Function<EffectActionParameters, String>() {
+			@Override
+			public String apply(EffectActionParameters parameters) {
+				rateLimit.reset();
+				return null;
+			}
+		}));
 		effects.add(new EffectEntry("{user} remembers an important appointment."));
 		effects.add(new EffectEntry("An incredibly fake looking mustache is stuck to {user}'s face{limit}."));
 		effects.add(new EffectEntry("{user} has a sudden desire to run around in a circle{limit}."));
