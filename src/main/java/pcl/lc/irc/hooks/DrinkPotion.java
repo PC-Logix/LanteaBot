@@ -44,6 +44,8 @@ public class DrinkPotion extends AbstractListener {
 	public static HashMap<String, Integer> baconMap = new HashMap<>();
 	public static HashMap<String, Integer> radiationMap = new HashMap<>();
 
+	public CommandRateLimit rateLimit;
+
 	public static int daysPotionsLast = 4;
 	public static String day_of_potioning = DateTime.now().plusDays(DrinkPotion.daysPotionsLast).toString("yyyy-MM-dd");
 
@@ -281,7 +283,13 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} thinks the empty bottle is a snake{limit}.",
 				"{user} thinks they're being chased by an imaginary snake{limit}"));
 		effects.add(new EffectEntry("{user} gets an urge to have another potion.",
-				"{user} gets the urge to drink a potion."));
+				"{user} gets the urge to drink a potion.", new Function<EffectActionParameters, String>() {
+			@Override
+			public String apply(EffectActionParameters parameters) {
+				rateLimit.reset();
+				return null;
+			}
+		}));
 		effects.add(new EffectEntry("It tastes sweet.",
 				"It smells like sugar as it sticks to {user}."));
 		effects.add(new EffectEntry("It tastes sour.",
@@ -595,7 +603,7 @@ public class DrinkPotion extends AbstractListener {
 	}
 
 	private void initCommands() {
-		CommandRateLimit rateLimit = new CommandRateLimit(0, 10, 0, true, false, "Having another potion seems like a really bad idea right now...");
+		rateLimit = new CommandRateLimit(0, 10, 0, true, false, "Having another potion seems like a really bad idea right now...");
 		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument("Potion", ArgumentTypes.STRING)), rateLimit) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {

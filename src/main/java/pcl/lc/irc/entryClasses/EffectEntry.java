@@ -21,8 +21,16 @@ public class EffectEntry {
 		this(effectDrink, effectSplash, null, null, null);
 	}
 
+	public EffectEntry(String effectDrink, String effectSplash, Function<EffectActionParameters, String> action, int usesRemaining) {
+		this(effectDrink, effectSplash, null, null, action, usesRemaining);
+	}
+
 	public EffectEntry(String effectDrink, Function<EffectActionParameters, String> action, int usesRemaining) {
 		this(effectDrink, null, null, null, action, usesRemaining);
+	}
+
+	public EffectEntry(String effectDrink, String effectSplash, Function<EffectActionParameters, String> action) {
+		this(effectDrink, effectSplash, null, null, action);
 	}
 
 	public EffectEntry(String effectDrink, Function<EffectActionParameters, String> action) {
