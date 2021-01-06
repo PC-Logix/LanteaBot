@@ -592,6 +592,9 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they stop thinking about it");
 		limits.add(" until they recite the litany against fear");
 		limits.add(" until they find a lamp");
+		limits.add(" until they have {consistency_p} {appearance} potion");
+		limits.add(" until they have {consistency_p} potion");
+		limits.add(" until they have {appearance_p} potion");
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		specialFluids.put("water", new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!", "You splash {user} with some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"));
