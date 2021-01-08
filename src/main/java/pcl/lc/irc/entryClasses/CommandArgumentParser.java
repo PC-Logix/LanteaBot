@@ -10,7 +10,7 @@ public class CommandArgumentParser {
 	public final int requiredFirstNum;
 	public final ArrayList<CommandArgument> arguments;
 
-	Pattern patternEscapedString = Pattern.compile("^\"(.*?)\"");
+	Pattern patternEscapedString = Pattern.compile("^\"(.*?)(?<!\\\\)\"");
 	Pattern patternString = Pattern.compile("^([\\w-.:;\\\\/^@]*)");
 	Pattern patternInteger = Pattern.compile("^(\\d+)(?: |$)");
 	Pattern patternDouble = Pattern.compile("^(\\d+\\.?\\d*)");
@@ -113,10 +113,10 @@ public class CommandArgumentParser {
 					if (debug)
 						System.out.print(" => `" + arg + "`");
 					if (!arg.equals("")) {
-						argType.arg = arg;
+						argType.arg = arg.replaceAll("\\\\\"", "\"");
 						argumentCount++;
 					}
-					arguments = arguments.replaceFirst("\"" + arg + "\" ?", "");
+					arguments = arguments.replaceFirst("\"" + arg.replaceAll("\\\"", "\\\\\"") + "\" ?", "");
 					if (debug)
 						System.out.println(" Remainder: `" + arguments + "`");
 				} else {
