@@ -830,7 +830,7 @@ public class DrinkPotion extends AbstractListener {
 				String consistency = consistencyEntries.get(potion[0]).getName();
 				String appearance = appearanceEntries.get(potion[1]).getName();
 				EffectEntry entry = stringEffectEntryEntry.getValue();
-				potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(entry.effectDrinkDiscovered.replace("{user}", "User")).append("</td><td>").append(entry.discoverer).append("</td></tr>");
+				potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(PotionHelper.concealPlaceholdersForDisplay(entry.effectDrinkDiscovered)).append("</td><td>").append(entry.discoverer).append("</td></tr>");
 			}
 			potionShelf.append("</table>");
 			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(), "utf-8");

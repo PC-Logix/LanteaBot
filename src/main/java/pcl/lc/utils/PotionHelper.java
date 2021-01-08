@@ -619,4 +619,10 @@ public class PotionHelper {
 	public static void addAppearanceEntry(AppearanceEntry entry) {
 		DrinkPotion.appearanceEntries.put(entry.Name.toLowerCase(), entry);
 	}
+
+	public static String concealPlaceholdersForDisplay(String input) {
+		input = input.replaceAll("\\{user}", "User");
+		input = input.replaceAll("\\{evade:DC:damage}", "{Evade Challenge}");
+		return input.replaceAll("\\{evade_qc:DC:success:fail}", "{Evade Challenge}");
+	}
 }
