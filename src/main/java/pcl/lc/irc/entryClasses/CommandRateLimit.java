@@ -142,4 +142,11 @@ public class CommandRateLimit {
 	public void reset() {
 		this.lastExecution = 0;
 	}
+
+	public void reset(String user) {
+		if (!this.perUserLimit)
+			reset();
+		else
+			this.lastExecutionPerUser.remove(user);
+	}
 }

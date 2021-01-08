@@ -250,7 +250,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} realizes this was actually {consistency_p} {appearance} potion.", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
-				rateLimit.reset();
+				rateLimit.reset(parameters.triggererName);
 				return null;
 			}
 		}));
@@ -292,7 +292,7 @@ public class DrinkPotion extends AbstractListener {
 				"{user} gets the urge to drink a potion.", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
-				rateLimit.reset();
+				rateLimit.reset(parameters.triggererName);
 				return null;
 			}
 		}));
@@ -497,8 +497,20 @@ public class DrinkPotion extends AbstractListener {
 				return parameters.targetName + " barely manages to catch a red shell that appears in front of them!";
 			}
 		}, 2));
-		effects.add(new EffectEntry("{user} feels like they need to drink {appearance_p_lc} potion."));
-		effects.add(new EffectEntry("{user} feels like they need to drink {consistency_p_lc} potion."));
+		effects.add(new EffectEntry("{user} feels like they need to drink {appearance_p_lc} potion.", new Function<EffectActionParameters, String>() {
+			@Override
+			public String apply(EffectActionParameters parameters) {
+				rateLimit.reset(parameters.triggererName);
+				return null;
+			}
+		}));
+		effects.add(new EffectEntry("{user} feels like they need to drink {consistency_p_lc} potion.", new Function<EffectActionParameters, String>() {
+			@Override
+			public String apply(EffectActionParameters parameters) {
+				rateLimit.reset(parameters.triggererName);
+				return null;
+			}
+		}));
 		effects.add(new EffectEntry("{user} falls into a shaft and drop {r:1-5:floor}!"));
 		effects.add(new EffectEntry("{user} comes face to face with a basilisk! {evade_qc:14:{user} avoids it's gaze and gets away!:{user} is turned to stone{limit}}"));
 		effects.add(new EffectEntry("A genie tries to turn {user} into {transformation_p}, {evade_qc:12:but {user} successfully dodge the beam!:{user} tries to evade but is caught in the beam and transformed{limit}.}", 3));
@@ -516,7 +528,7 @@ public class DrinkPotion extends AbstractListener {
 				}
 				return effectActionParameters.targetName + " doesn't seem to have any research points.";
 			}
-		}));
+		}, 1));
 		System.out.println("Registered " + effects.size() + " effects!");
 
 		if (IRCBot.getDebug()) {
