@@ -141,11 +141,15 @@ public class RandomChoice extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String splitOn = ", or | or |,(?! )";
+				String stripPunctuationFromEnd = "[?.!:]*$";
 				ArrayList<String> parts = new ArrayList<>();
 				Collections.addAll(parts, this.argumentParser.getArgument(0).split("; ?"));
 				if (parts.size() == 2) {
 					ArrayList<String> subParts = new ArrayList<>();
 					Collections.addAll(subParts, parts.get(1).split(splitOn));
+					for (int i = 0; i < subParts.size(); i++) {
+						subParts.set(i, subParts.get(i).replaceAll(stripPunctuationFromEnd, ""));
+					}
 					String choice = subParts.get(Helper.getRandomInt(0, subParts.size() - 1));
 //					if (parts[0].matches())
 					Pattern pattern = Pattern.compile("\\$\\d\\d?");
@@ -171,7 +175,7 @@ public class RandomChoice extends AbstractListener {
 				parts = new ArrayList<>();
 				for (String part : params.split(splitOn)) {
 					if (!part.replace(" ", "").equals(""))
-						parts.add(part);
+						parts.add(part.replaceAll(stripPunctuationFromEnd, ""));
 				}
 				System.out.println("Parts has " + parts.size() + " elements: " + parts);
 //				String msg = output.get(Helper.getRandomInt(0, output.size() - 1));
