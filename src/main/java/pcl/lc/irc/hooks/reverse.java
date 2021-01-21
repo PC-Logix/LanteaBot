@@ -35,17 +35,7 @@ public class reverse extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
-				if (str.equals("^")) {
-					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (entry.getValue().get(0).equals(target)) {
-							Helper.sendMessage(target, new StringBuffer(Colors.removeFormattingAndColors(entry.getValue().get(2))).reverse().toString(), nick);
-							return;
-						}
-					}
-				} else {
-					Helper.sendMessage(target, new StringBuffer(Colors.removeFormattingAndColors(str)).reverse().toString(), nick);
-				}
+				Helper.sendMessage(target, new StringBuffer(Colors.removeFormattingAndColors(str)).reverse().toString(), nick);
 			}
 		};
 		reverse.setHelpText("Reverses the supplied text");

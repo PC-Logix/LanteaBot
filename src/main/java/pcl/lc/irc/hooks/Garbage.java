@@ -37,14 +37,6 @@ public class Garbage extends AbstractListener {
 				String item = this.argumentParser.getArgument(0);
 				if (item == null || item.equals("")) {
 					Helper.sendAction(target, "kicks a can " + TablesOfRandomThings.getGarbageDisposal());
-				} else if (item.equals("^")) {
-					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (entry.getValue().get(0).equals(target)) {
-							Helper.sendAction(target, "throws '" + entry.getValue().get(2) + "' " + TablesOfRandomThings.getGarbageDisposal() + ", it was never seen again.");
-							return;
-						}
-					}
 				} else {
 					Helper.sendAction(target, "throws '" + item + "' " + TablesOfRandomThings.getGarbageDisposal() + ", it was never seen again.");
 				}

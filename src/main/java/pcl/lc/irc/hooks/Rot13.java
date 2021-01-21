@@ -35,17 +35,7 @@ public class Rot13 extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
-				if (str.equals("^")) {
-					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (entry.getValue().get(0).equals(target)) {
-							Helper.sendMessage(target, rot13(Colors.removeFormattingAndColors(entry.getValue().get(2))), nick);
-							return;
-						}
-					}
-				} else {
-					Helper.sendMessage(target, rot13(Colors.removeFormattingAndColors(str)), nick);
-				}
+				Helper.sendMessage(target, rot13(Colors.removeFormattingAndColors(str)), nick);
 			}
 		};
 		rot.setHelpText("Applies the ROT13 cipher to the supplied text");

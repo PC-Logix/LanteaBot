@@ -513,6 +513,7 @@ public class Admin extends AbstractListener {
 		IRCBot.registerCommand(command_test);
 		IRCBot.registerCommand(command_listadmins);
 		IRCBot.registerCommand(command_help);
+		IRCBot.registerCommand(command_syntax);
 		IRCBot.registerCommand(command_authed);
 		IRCBot.registerCommand(command_addadmin);
 		IRCBot.registerCommand(command_time_test);

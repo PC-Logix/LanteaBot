@@ -31,35 +31,6 @@ public class Jumble extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
-				if (str == null) {
-					ArrayList<String> messages = new ArrayList<>();
-					int limit = 10; // Max number of messages to look back for
-					int counter = 0;
-					List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (counter == limit)
-							break;
-						if (entry.getValue().get(0).equals(target) && !entry.getValue().get(1).equals(IRCBot.getOurNick())) { //Look for correct channel and ignore messages from self
-							if (entry.getValue().get(2).split(" ").length > 2) { //Select messages with more than two words
-								messages.add(entry.getValue().get(2));
-								counter++;
-							}
-						}
-					}
-					str = messages.get(Helper.getRandomInt(0, messages.size() - 1));
-				} else {
-					if (str.equals("^")) {
-						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-							if (entry.getValue().get(0).equals(target) && !entry.getValue().get(1).equals(IRCBot.getOurNick())) { //Look for correct channel and ignore messages from self
-								if (entry.getValue().get(2).split(" ").length > 2) { //Select messages with more than two words
-									str = entry.getValue().get(2);
-									break;
-								}
-							}
-						}
-					}
-				}
 				ArrayList<String> words = new ArrayList<>(Arrays.asList(str.split(" ")));
 				Collections.shuffle(words);
 

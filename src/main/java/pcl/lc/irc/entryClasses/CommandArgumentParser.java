@@ -1,7 +1,10 @@
 package pcl.lc.irc.entryClasses;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.google.common.collect.Lists;
+import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.Helper;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +12,9 @@ public class CommandArgumentParser {
 	public final boolean debug = true;
 	public final int requiredFirstNum;
 	public final ArrayList<CommandArgument> arguments;
+	public String target;
 
+	Pattern patternPreviousMessage = Pattern.compile("^\\^(\\d*) ?");
 	Pattern patternEscapedString = Pattern.compile("^\"(.*?)(?<!\\\\)\"");
 	Pattern patternString = Pattern.compile("^([\\w-.:;\\\\/^@]*)");
 	Pattern patternInteger = Pattern.compile("^(\\d+)(?: |$)");
@@ -105,43 +110,57 @@ public class CommandArgumentParser {
 				} else if (argumentCount < this.requiredFirstNum)
 					return argumentCount;
 			} else if (argType.type.equals(ArgumentTypes.STRING)) {
-				Matcher matcher = patternEscapedString.matcher(arguments);
-				if (matcher.find()) {
-					if (debug)
-						System.out.print("`" + arguments + "` matches EscapedString!");
-					String arg = matcher.group(1);
-					if (debug)
-						System.out.print(" => `" + arg + "`");
-					if (!arg.equals("")) {
-						argType.arg = arg.replaceAll("\\\\\"", "\"");
-						argumentCount++;
-					}
-					arguments = arguments.replaceFirst("\"" + arg.replaceAll("\\\"", "\\\\\"") + "\" ?", "");
-					if (debug)
-						System.out.println(" Remainder: `" + arguments + "`");
+				Matcher previousMessageMatcher = patternPreviousMessage.matcher(arguments);
+				if (previousMessageMatcher.find()) {
+					int index = 1;
+					try {
+						index = Integer.parseInt(previousMessageMatcher.group(1));
+					} catch (Exception ignored) {}
+					index = Math.max(1, index);
+					System.out.println("Message index: " + index);
+					System.out.println("Target: " + this.target);
+					argType.arg = getPreviousMessage(index);
+					System.out.println("Arg: " + argType.arg);
+					argumentCount++;
 				} else {
-					matcher = patternString.matcher(arguments);
+					Matcher matcher = patternEscapedString.matcher(arguments);
 					if (matcher.find()) {
 						if (debug)
-							System.out.print("`" + arguments + "` matches String!");
+							System.out.print("`" + arguments + "` matches EscapedString!");
 						String arg = matcher.group(1);
 						if (debug)
 							System.out.print(" => `" + arg + "`");
 						if (!arg.equals("")) {
-							argType.arg = arg;
+							argType.arg = arg.replaceAll("\\\\\"", "\"");
 							argumentCount++;
 						}
-						arguments = arguments.replaceFirst(arg + " ?", "");
+						arguments = arguments.replaceFirst("\"" + arg.replaceAll("\\\"", "\\\\\"") + "\" ?", "");
 						if (debug)
 							System.out.println(" Remainder: `" + arguments + "`");
-						if (argumentCount == this.arguments.size() && !arguments.equals("")) {
-							argType.arg += " " + arguments;
+					} else {
+						matcher = patternString.matcher(arguments);
+						if (matcher.find()) {
+							if (debug)
+								System.out.print("`" + arguments + "` matches String!");
+							String arg = matcher.group(1);
+							if (debug)
+								System.out.print(" => `" + arg + "`");
+							if (!arg.equals("")) {
+								argType.arg = arg;
+								argumentCount++;
+							}
+							arguments = arguments.replaceFirst(arg + " ?", "");
+							if (debug)
+								System.out.println(" Remainder: `" + arguments + "`");
+							if (argumentCount == this.arguments.size() && !arguments.equals("")) {
+								argType.arg += " " + arguments;
+								return argumentCount;
+							}
+						} else {
+							if (debug)
+								System.out.println("`" + arguments + "` doesn't match String.");
 							return argumentCount;
 						}
-					} else {
-						if (debug)
-							System.out.println("`" + arguments + "` doesn't match String.");
-						return argumentCount;
 					}
 				}
 			} else if (argType.type.equals(ArgumentTypes.LIST)) {
@@ -297,5 +316,26 @@ public class CommandArgumentParser {
 				return arg.argList;
 		}
 		return null;
+	}
+
+	public String getPreviousMessage() {
+		return getPreviousMessage(0);
+	}
+
+	public String getPreviousMessage(int index) {
+		if (target == null)
+			return null;
+		String message = null;
+		int counter = 0;
+		List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
+		for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
+			if (entry.getValue().get(0).equals(target)) {
+				message = entry.getValue().get(2);
+				if (counter == index)
+					break;
+				counter++;
+			}
+		}
+		return message;
 	}
 }

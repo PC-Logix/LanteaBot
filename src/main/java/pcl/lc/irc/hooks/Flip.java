@@ -54,20 +54,10 @@ public class Flip extends AbstractListener {
       @Override
       public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
         String flip = this.argumentParser.getArgument(0);
-        if (flip == null) {
+        if (flip == null || flip.equals("")) {
           Helper.sendMessage(target, "(╯°□°）╯┻━┻", nick);
         } else {
-          if (flip.equals("^")) {
-            List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-            for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-              if (entry.getValue().get(0).equals(target)) {
-                Helper.sendMessage(target, Helper.antiPing(nick) + ": " + "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(entry.getValue().get(2)))).reverse().toString());
-                return;
-              }
-            }
-          } else {
-            Helper.sendMessage(target, "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(flip))).reverse().toString(), nick);
-          }
+          Helper.sendMessage(target, "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(flip))).reverse().toString(), nick);
         }
       }
     }; local_command.setHelpText("Flips the text sent.");

@@ -13,24 +13,24 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Command {
-	private static final long INVALID_COMMAND = -1;
-	private static final long IGNORED = -2;
+	public static final long INVALID_COMMAND = -1;
+	public static final long IGNORED = -2;
 	public static final long NO_PERMISSION = -3;
-	private static final long DISABLED = -4;
+	public static final long DISABLED = -4;
 
-	private String command;
-	private String className;
-	private CommandRateLimit rateLimit;
+	String command;
+	String className;
+	CommandRateLimit rateLimit;
 	public CommandArgumentParser argumentParser;
-	private ArrayList<String> aliases;
-	private ArrayList<String> aliasesFixedArguments;
-	private ArrayList<Command> subCommands;
+	ArrayList<String> aliases;
+	ArrayList<String> aliasesFixedArguments;
+	ArrayList<Command> subCommands;
 	public ArrayList<Command> parentCommands;
-	private boolean isEnabled;
-	private String minRank;
-	private String helpText;
-	private SyntaxGroup syntax;
-	private String actualCommand;
+	boolean isEnabled;
+	String minRank;
+	String helpText;
+	SyntaxGroup syntax;
+	String actualCommand;
 
 	public String callingRelay = null;
 
@@ -339,6 +339,8 @@ public class Command {
 	}
 
 	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
+		if (this.argumentParser != null)
+			this.argumentParser.target = target;
 //		System.out.println("tryExecute: " + command);
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore

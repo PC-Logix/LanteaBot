@@ -77,14 +77,6 @@ public class Translator extends AbstractListener {
 				String str = this.argumentParser.getArgument("Text");
 				String from = this.argumentParser.getArgument("FromLanguage");
 				String to = this.argumentParser.getArgument("ToLanguage");
-				if (str.equals("^")) {
-					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (entry.getValue().get(0).equals(target)) {
-							str = entry.getValue().get(2);
-						}
-					}
-				}
 				if (to == null || to.equals(""))
 					to = "auto";
 				if (from == null || from.equals(""))

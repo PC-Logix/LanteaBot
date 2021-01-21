@@ -78,17 +78,7 @@ public class l33t extends AbstractListener {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
-				if (str.equals("^")) {
-		            List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-		            for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-		              if (entry.getValue().get(0).equals(target)) {
-		                Helper.sendMessage(target, toLeet(entry.getValue().get(2)), nick);
-		                return;
-		              }
-		            }
-				} else {
-					Helper.sendMessage(target ,  toLeet(str), nick);
-				}
+				Helper.sendMessage(target ,  toLeet(str), nick);
 			}
 		}; local_command.setHelpText("Returns 1337-speak of input text");
 		local_command.registerAlias("leet");

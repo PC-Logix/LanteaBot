@@ -60,21 +60,14 @@ public class Rainbow extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("rainbow", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
+		local_command = new Command("rainbow", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
-				if (str.equals("^")) {
-					List<Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (entry.getValue().get(0).equals(target)) {
-							Helper.sendMessage(target, makeRainbow(entry.getValue().get(2)), nick);
-							return;
-						}
-					}
-				} else {
-					Helper.sendMessage(target, makeRainbow(str), nick);
-				}
+				if (str == null || str.equals(""))
+					str = "Rainbows!";
+				System.out.println("Rainbow: '" + str + "'");
+				Helper.sendMessage(target, makeRainbow(str), nick, true);
 			}
 		};
 		local_command.setHelpText("Replies with a rainbow version of the supplied text");

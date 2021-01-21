@@ -40,17 +40,6 @@ public class Hiss extends AbstractListener {
 				if (str == null || str.equals("")) {
 					Helper.sendMessage(target, "Snek?", nick);
 				} else {
-					if (str.equals("^")) {
-						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-							if (entry.getValue().get(0).equals(target)) {
-								if (entry.getValue().get(2).toLowerCase().contains("s")) {
-									str = entry.getValue().get(2);
-									break;
-								}
-							}
-						}
-					}
 					Helper.sendMessage(target, str.replaceAll("s", "ss").replaceAll("S", "SS"));
 				}
 			}

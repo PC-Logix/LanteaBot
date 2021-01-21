@@ -632,15 +632,6 @@ public class DrinkPotion extends AbstractListener {
 				PotionEntry potion = new PotionEntry();
 				if (pot == null || pot.equals("random") || pot.equals("")) {
 					potion = PotionHelper.getRandomPotion();
-				} else if (pot.equals("^")) {
-					List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (entry.getValue().get(0).equals(target)) {
-							if (entry.getValue().get(2).toLowerCase().contains("potion")) {
-								pot = entry.getValue().get(2);
-							}
-						}
-					}
 				} else {
 					if (specialFluids.containsKey(pot)) {
 						Helper.sendMessage(target, specialFluids.get(pot).getEffectString(nick), nick);
@@ -691,17 +682,6 @@ public class DrinkPotion extends AbstractListener {
 //							Defend.addEvent(nick, splashTarget, target, potion.consistency.getName(false, true) + " " + potion.appearance.getName(false, true) + " potion", Defend.EventTypes.POTION, result);
 //							Helper.sendMessage(target, nick + " is trying to splash " + splashTarget + " with a " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
 //					return;
-				} else if (potionString.equals("^")) {
-					List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-					for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-						if (entry.getValue().get(0).equals(target)) {
-							System.out.println(entry.getValue().get(2));
-							if (entry.getValue().get(2).toLowerCase().contains("potion")) {
-								potionString = entry.getValue().get(2);
-								break;
-							}
-						}
-					}
 				} else {
 					potion = new PotionEntry();
 

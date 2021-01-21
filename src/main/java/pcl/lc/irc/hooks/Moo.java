@@ -40,17 +40,6 @@ public class Moo extends AbstractListener {
 				if (str == null) {
 					Helper.sendMessage(target, "Moo?", nick);
 				} else {
-					if (str.equals("^")) {
-						List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
-						for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
-							if (entry.getValue().get(0).equals(target)) {
-								if (entry.getValue().get(2).toLowerCase().contains("o")) {
-									str = entry.getValue().get(2);
-									break;
-								}
-							}
-						}
-					}
 					str = str.replaceAll("u", "o").replaceAll("U", "O");
 					Helper.sendMessage(target, str.replaceAll("o", "oo").replaceAll("O", "OO"));
 				}
