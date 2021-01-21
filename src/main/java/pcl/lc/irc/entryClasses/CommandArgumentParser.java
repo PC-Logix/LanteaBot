@@ -212,11 +212,11 @@ public class CommandArgumentParser {
 		for (CommandArgument arg : this.arguments) {
 			if (currentArgument == this.requiredFirstNum)
 				syntax.append("[");
-			syntax.append(getTypeShortName(arg.type));
 			if (arg.name != null) {
-				syntax.append(" ");
 				syntax.append(arg.name);
+				syntax.append(":");
 			}
+			syntax.append(getTypeShortName(arg.type));
 			if (currentArgument < this.arguments.size() -1)
 				syntax.append(", ");
 			currentArgument++;
