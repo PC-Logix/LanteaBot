@@ -136,6 +136,8 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "Wait, what was the question again? Uhh... \"{choice}\"?"));
 		templates.add(new Template(2, "I want a divorce. I'm taking half the \"{choice}\"."));
 		templates.add(new Template(2, "Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
+		templates.add(new Template(2, "Huh, what? \"{choice}\" I guess, now leave me alone I'm playing Tetris."));
+		templates.add(new Template(2, "Oh no, not \"{choice}\" again! I'll have \"{other_choice}\" instead."));
 
 		local_command = new Command("choose", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
