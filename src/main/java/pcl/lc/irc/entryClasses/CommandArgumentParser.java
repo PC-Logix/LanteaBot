@@ -326,7 +326,7 @@ public class CommandArgumentParser {
 		if (target == null)
 			return null;
 		String message = null;
-		int counter = 0;
+		int counter = 1;
 		List<Map.Entry<UUID, List<String>>> list = new ArrayList<>(IRCBot.messages.entrySet());
 		for (Map.Entry<UUID, List<String>> entry : Lists.reverse(list)) {
 			if (entry.getValue().get(0).equals(target)) {
