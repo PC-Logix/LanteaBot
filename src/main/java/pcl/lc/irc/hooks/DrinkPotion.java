@@ -650,7 +650,7 @@ public class DrinkPotion extends AbstractListener {
 				if (actionString == null)
 					Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + potion.effect.getEffectString(nick));
 				else
-					Helper.sendMessage(target, actionString);
+					Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + actionString);
 			}
 		};
 		local_command.setHelpText("Drink a potion with a certain consistency and appearance and something might happen. Syntax: " + Config.commandprefix + local_command.getCommand() + " [potion] Potion needs to contain a valid consistency, appearance and the word 'potion', See " + Config.commandprefix + "potionstats command for a list.");
@@ -707,7 +707,7 @@ public class DrinkPotion extends AbstractListener {
 					if (actionString == null)
 						Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + potion.effect.getEffectString(splashTarget, nick, true));
 					else
-						Helper.sendMessage(target, actionString);
+						Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + actionString);
 				} else
 					Helper.sendMessage(target, "Potion wasn't set...");
 			}
