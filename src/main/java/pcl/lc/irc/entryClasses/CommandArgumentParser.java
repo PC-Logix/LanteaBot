@@ -16,7 +16,7 @@ public class CommandArgumentParser {
 
 	Pattern patternPreviousMessage = Pattern.compile("^\\^(\\d*) ?");
 	Pattern patternEscapedString = Pattern.compile("^\"(.*?)(?<!\\\\)\"");
-	Pattern patternString = Pattern.compile("^([^\s]*)");
+	Pattern patternString = Pattern.compile("^([^\\s]*)");
 	Pattern patternInteger = Pattern.compile("^(\\d+)(?: |$)");
 	Pattern patternDouble = Pattern.compile("^(\\d+\\.?\\d*)");
 	Pattern patternBoolean = Pattern.compile("^(true|false|1|0)");
