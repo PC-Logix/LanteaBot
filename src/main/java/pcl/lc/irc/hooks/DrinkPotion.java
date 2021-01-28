@@ -277,6 +277,8 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user}'s favourite skin is suddenly fire."));
 		effects.add(new EffectEntry("{user}'s favourite pants are suddenly on fire."));
 		effects.add(new EffectEntry("{user}'s favourite pants are suddenly fire."));
+		effects.add(new EffectEntry("{user}'s favourite hair is suddenly on fire."));
+		effects.add(new EffectEntry("{user}'s favourite hair is suddenly fire."));
 		effects.add(new EffectEntry("{user} has a single tear roll down their cheek for some reason."));
 		effects.add(new EffectEntry("{user}'s nose vanish{limit}."));
 		effects.add(new EffectEntry("{user} feels like a champion!"));
