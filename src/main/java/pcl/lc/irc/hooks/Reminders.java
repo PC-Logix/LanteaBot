@@ -37,26 +37,27 @@ public class Reminders extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
-				long time = Helper.getFutureTime(timeString);
+				try {
+					long time = Helper.getFutureTime(timeString);
+				} catch (IllegalArgumentException e) {
+					Helper.sendMessage(target, "Unable to parse \"" + timeString + "\" as a time string.", nick);
+					return;
+				}
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 				String newTime = sdf.format(new Date(time));
-				try {
-					PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
-					addReminder.setString(1, target);
-					if (event.getUser().getNick().equals("Corded")) {
-						nick = "@" + nick;
-					}
-					addReminder.setString(2, nick.replaceAll("​", ""));
-					addReminder.setLong(3, time);
-					addReminder.setString(4, message.trim());
-					if (addReminder.executeUpdate() > 0) {
-						Helper.sendMessage(target, "I'll remind you about \"" + message.trim() + "\" at " + newTime);
-						return;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
+				addReminder.setString(1, target);
+				if (event.getUser().getNick().equals("Corded")) {
+					nick = "@" + nick;
 				}
-				Helper.sendMessage(target, "Something went wrong", nick);
+				addReminder.setString(2, nick.replaceAll("​", ""));
+				addReminder.setLong(3, time);
+				addReminder.setString(4, message.trim());
+				if (addReminder.executeUpdate() > 0) {
+					Helper.sendMessage(target, "I'll remind you about \"" + message.trim() + "\" at " + newTime);
+					return;
+				}
+				Helper.sendMessage(target, "No reminder was added...", nick);
 			}
 		};
 		remind.registerAlias("remindme");
