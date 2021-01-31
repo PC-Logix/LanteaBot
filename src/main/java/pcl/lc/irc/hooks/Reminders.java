@@ -34,11 +34,12 @@ public class Reminders extends AbstractListener {
 	protected void initHook() {
 		remind = new Command("remind", new CommandArgumentParser(2, new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
+				long time;
 				try {
-					long time = Helper.getFutureTime(timeString);
+					time = Helper.getFutureTime(timeString);
 				} catch (IllegalArgumentException e) {
 					Helper.sendMessage(target, "Unable to parse \"" + timeString + "\" as a time string.", nick);
 					return;
