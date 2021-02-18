@@ -37,6 +37,10 @@ public class Reminders extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
+				if (timeString.equals("later"))
+					timeString = Helper.getRandomInt(3, 6).toString() + "h";
+				else if (timeString.equals("laterish") || timeString.equals("soon") || timeString.equals("soonish"))
+					timeString = Helper.getRandomInt(2,4).toString() + "h";
 				long time;
 				try {
 					time = Helper.getFutureTime(timeString);
@@ -55,7 +59,7 @@ public class Reminders extends AbstractListener {
 				addReminder.setLong(3, time);
 				addReminder.setString(4, message.trim());
 				if (addReminder.executeUpdate() > 0) {
-					Helper.sendMessage(target, "I'll remind you about \"" + message.trim() + "\" at " + newTime);
+					Helper.sendMessage(target, "I'll remind you about \"" + message.trim() + "\" in " + timeString + " at " + newTime);
 					return;
 				}
 				Helper.sendMessage(target, "No reminder was added...", nick);
