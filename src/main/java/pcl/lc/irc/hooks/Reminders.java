@@ -37,6 +37,8 @@ public class Reminders extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
+				if (message.startsWith("about"))
+					message = message.replaceFirst("about ?", "");
 				if (timeString.equals("later"))
 					timeString = Helper.getRandomInt(3, 6).toString() + "h";
 				else if (timeString.equals("laterish") || timeString.equals("soon") || timeString.equals("soonish"))
