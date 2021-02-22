@@ -58,7 +58,7 @@ public class Reminders extends AbstractListener {
 				timeString = Helper.getRandomInt(6, 100).toString() + "h";
 			} else if (timeString.toLowerCase().startsWith("tomorrow")) {
 				timeString = "24h";
-			} else if (timeString.toLowerCase().startsWith("next year")) {
+			} else if (timeString.toLowerCase().startsWith("next year") || timeString.toLowerCase().startsWith("one year")) {
 				prefix = "";
 				time = DateTime.now().plusYears(1).toDate().getTime();
 			} else if (timeString.toLowerCase().startsWith("someday")) {
@@ -69,7 +69,7 @@ public class Reminders extends AbstractListener {
 			} else if (timeString.toLowerCase().startsWith("a week") || timeString.toLowerCase().startsWith("one week")) {
 				timeString = "1w";
 			} else if (timeString.toLowerCase().startsWith("a month") || timeString.toLowerCase().startsWith("one month")) {
-				timeString = "30d";
+				time = DateTime.now().plusMonths(1).toDate().getTime();
 			}
 
 			System.out.println(time);
