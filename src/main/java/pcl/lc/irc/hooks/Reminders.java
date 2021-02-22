@@ -1,5 +1,6 @@
 package pcl.lc.irc.hooks;
 
+import org.joda.time.DateTime;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.ArgumentTypes;
@@ -30,6 +31,68 @@ public class Reminders extends AbstractListener {
 	private Command list;
 	private Command reminders;
 	private ScheduledFuture<?> executor;
+
+	private class ReminderObject {
+		public String timeString;
+		public String fail;
+		public String message;
+		public String prefix;
+		public long time;
+
+		public ReminderObject(String inputTimeString, String inputMessage) {
+			timeString = inputTimeString;
+			message = inputMessage;
+			prefix = "in ";
+			fail = null;
+			time = 0;
+			if (timeString.startsWith("in"))
+				timeString = timeString.replaceFirst("in ?", "");
+			if (message.startsWith("about"))
+				message = message.replaceFirst("about ?", "");
+
+			if (timeString.toLowerCase().startsWith("later")) {
+				timeString = Helper.getRandomInt(3, 6).toString() + "h";
+			} else if (timeString.toLowerCase().startsWith("laterish") || timeString.equals("soon") || timeString.equals("soonish")) {
+				timeString = Helper.getRandomInt(2, 4).toString() + "h";
+			} else if (timeString.toLowerCase().startsWith("eventually")) {
+				timeString = Helper.getRandomInt(6, 100).toString() + "h";
+			} else if (timeString.toLowerCase().startsWith("tomorrow")) {
+				timeString = "24h";
+			} else if (timeString.toLowerCase().startsWith("next year")) {
+				prefix = "";
+				time = DateTime.now().plusYears(1).toDate().getTime();
+			} else if (timeString.toLowerCase().startsWith("someday")) {
+				prefix = "";
+				time = DateTime.parse("2038-01-18T00:00:00").toDate().getTime(); // dequbed: Forecaster: Just use Timewarrior "Someday" of 2038-01-18T0:00:00
+			} else if (timeString.toLowerCase().startsWith("whenever")) {
+				timeString = Helper.getRandomInt(100, 200) + "h";
+			} else if (timeString.toLowerCase().startsWith("a week") || timeString.toLowerCase().startsWith("one week")) {
+				timeString = "1w";
+			} else if (timeString.toLowerCase().startsWith("a month") || timeString.toLowerCase().startsWith("one month")) {
+				timeString = "30d";
+			}
+
+			System.out.println(time);
+			String[] split = timeString.split("\\+");
+			if (split.length > 0 && time != 0) {
+				for (String spl : split) {
+					try {
+						time += Helper.getFutureTime(spl) - DateTime.now().toDate().getTime();
+					} catch (Exception ignored) {}
+				}
+			} else {
+				try {
+					time = Helper.getFutureTime(timeString);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					fail ="Unable to parse \"" + timeString + "\" as a time string.";
+				}
+			}
+
+			message = message.trim();
+		}
+	}
+
 	@Override
 	protected void initHook() {
 		remind = new Command("remind", new CommandArgumentParser(2, new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
@@ -37,31 +100,25 @@ public class Reminders extends AbstractListener {
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
-				if (message.startsWith("about"))
-					message = message.replaceFirst("about ?", "");
-				if (timeString.equals("later"))
-					timeString = Helper.getRandomInt(3, 6).toString() + "h";
-				else if (timeString.equals("laterish") || timeString.equals("soon") || timeString.equals("soonish"))
-					timeString = Helper.getRandomInt(2,4).toString() + "h";
-				long time;
-				try {
-					time = Helper.getFutureTime(timeString);
-				} catch (IllegalArgumentException e) {
-					Helper.sendMessage(target, "Unable to parse \"" + timeString + "\" as a time string.", nick);
+
+				ReminderObject obj = new ReminderObject(timeString, message);
+				if (obj.fail != null) {
+					Helper.sendMessage(target, obj.fail, nick);
 					return;
 				}
+
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-				String newTime = sdf.format(new Date(time));
+				String newTime = sdf.format(new Date(obj.time));
 				PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
 				addReminder.setString(1, target);
 				if (event.getUser().getNick().equals("Corded")) {
 					nick = "@" + nick;
 				}
 				addReminder.setString(2, nick.replaceAll("​", ""));
-				addReminder.setLong(3, time);
-				addReminder.setString(4, message.trim());
+				addReminder.setLong(3, obj.time);
+				addReminder.setString(4, obj.message);
 				if (addReminder.executeUpdate() > 0) {
-					Helper.sendMessage(target, "I'll remind you about \"" + message.trim() + "\" in " + timeString + " at " + newTime);
+					Helper.sendMessage(target, "I'll tell you \"" + obj.message + "\" " + obj.prefix + obj.timeString + " at " + newTime);
 					return;
 				}
 				Helper.sendMessage(target, "No reminder was added...", nick);
@@ -77,20 +134,24 @@ public class Reminders extends AbstractListener {
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
 
-				long time = Helper.getFutureTime(timeString);
+				ReminderObject obj = new ReminderObject(timeString, message);
+				if (obj.fail != null) {
+					Helper.sendMessage(target, obj.fail, nick);
+					return;
+				}
+
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-				String newTime = sdf.format(new Date(time));
+				String newTime = sdf.format(new Date(obj.time));
 				PreparedStatement addReminder = Database.getPreparedStatement("addReminder");
 				addReminder.setString(1, target);
 				if (event.getUser().getNick().equals("Corded")) {
 					nick = "@" + nick;
 				}
 				addReminder.setString(2, user);
-				addReminder.setLong(3, time);
-				addReminder.setString(4, message.trim());
+				addReminder.setLong(3, obj.time);
+				addReminder.setString(4, obj.message);
 				if (addReminder.executeUpdate() > 0) {
-					Helper.sendMessage(target, "I'll remind " + user + " about \"" + message.trim() + "\" at " + newTime);
-					return;
+					Helper.sendMessage(target, "I'll tell " + user + " \"" + obj.message + "\" " + obj.prefix + obj.timeString + " at " + newTime);
 				}
 			}
 		};
