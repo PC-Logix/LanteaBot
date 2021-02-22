@@ -64,7 +64,7 @@ public class CommandArgumentParser {
 						argType.arg = arg;
 						argumentCount++;
 					}
-					arguments = arguments.replaceFirst(arg + " ?", "");
+					arguments = arguments.replaceFirst(Pattern.quote(arg) + " ?", "");
 					if (debug)
 						System.out.println(" Remainder: `" + arguments + "`");
 				} else if (argumentCount < this.requiredFirstNum) {
@@ -84,7 +84,7 @@ public class CommandArgumentParser {
 						argType.arg = arg;
 						argumentCount++;
 					}
-					arguments = arguments.replaceFirst(arg + " ?", "");
+					arguments = arguments.replaceFirst(Pattern.quote(arg) + " ?", "");
 					if (debug)
 						System.out.println(" Remainder: `" + arguments + "`");
 				} else if (argumentCount < this.requiredFirstNum) {
@@ -104,7 +104,7 @@ public class CommandArgumentParser {
 						argType.arg = arg;
 						argumentCount++;
 					}
-					arguments = arguments.replaceFirst(arg + " ?", "");
+					arguments = arguments.replaceFirst(Pattern.quote(arg) + " ?", "");
 					if (debug)
 						System.out.println(" Remainder: `" + arguments + "`");
 				} else if (argumentCount < this.requiredFirstNum)
@@ -134,7 +134,7 @@ public class CommandArgumentParser {
 							argType.arg = arg.replaceAll("\\\\\"", "\"");
 							argumentCount++;
 						}
-						arguments = arguments.replaceFirst("\"" + arg.replaceAll("\\\"", "\\\\\"") + "\" ?", "");
+						arguments = arguments.replaceFirst(Pattern.quote("\"" + arg + "\"") + " ?", "");
 						if (debug)
 							System.out.println(" Remainder: `" + arguments + "`");
 					} else {
@@ -174,7 +174,7 @@ public class CommandArgumentParser {
 							System.out.print(" => `" + arg + "`");
 						argType.argList.add(arg);
 						argumentCount++;
-						arguments = arguments.replaceFirst("\"" + arg + "\" ?", "");
+						arguments = arguments.replaceFirst(Pattern.quote(arg) + " ?", "");
 						if (debug)
 							System.out.println(" Remainder: `" + arguments + "`");
 					} else {
