@@ -64,7 +64,7 @@ public class Attack extends AbstractListener {
 				Actions action = Actions.valueOf(method.toUpperCase());
 				String attackTarget = this.argumentParser.getArgument("Target");
 				String with = this.argumentParser.getArgument("Item");
-				if (with.startsWith("with"))
+				if (with != null && with.startsWith("with"))
 					with = with.replaceFirst("with ?", "");
 				Item item = null;
 
