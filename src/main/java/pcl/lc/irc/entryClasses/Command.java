@@ -4,6 +4,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class Command {
 	String helpText;
 	SyntaxGroup syntax;
 	String actualCommand;
+	String commandChain;
 
 	public String callingRelay = null;
 
@@ -82,6 +84,7 @@ public class Command {
 		this.isEnabled = isEnabled;
 		this.minRank = minRank;
 		this.helpText = "";
+		this.commandChain = "";
 	}
 
 	public void setHelpText(String helpText) {
@@ -327,25 +330,25 @@ public class Command {
 		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) throws Exception {
+	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) throws Exception {
 		return tryExecute(command, nick, target, event, new ArrayList<>(Arrays.asList(params)), false);
 	}
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 		return tryExecute(command, nick, target, event, params, false);
 	}
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) throws Exception {
+	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) throws Exception {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
 	}
 
-	public boolean tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
+	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
 		if (this.argumentParser != null)
 			this.argumentParser.target = target;
 //		System.out.println("tryExecute: " + command);
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
 //			System.out.println("Error when attempting to execute '" + this.command + "'. Doesn't match '" + command + "'");
-			return false;
+			return CommandChainState.ERROR;
 		} else if (shouldExecute == 0 || (this.rateLimit != null && !this.rateLimit.getIgnorePermissions() && Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN))) {
 			this.actualCommand = command.replace(Config.commandprefix, "");
 			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
@@ -365,14 +368,16 @@ public class Command {
 						subParams = new ArrayList<>(params.subList(1, params.size()));
 					else
 						subParams = new ArrayList<>();
-					if (sub.tryExecute(firstParam, nick, target, event, subParams, false))
-						return true;
+					sub.commandChain = this.commandChain + this.command + " ";
+					CommandChainState state = sub.tryExecute(firstParam, nick, target, event, subParams, false);
+					if (state == CommandChainState.ABORT || state == CommandChainState.ERROR)
+						return state;
 				}
 			}
 			String paramError = this.onInvalidArguments(params);
 			if (paramError != null) {
 				Helper.sendMessage(target, paramError, nick);
-				return false;
+				return CommandChainState.ERROR;
 			}
 			this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
 //			System.out.println("Called onExecuteSuccess with String[]");
@@ -384,9 +389,9 @@ public class Command {
 //			System.out.println("Called onExecuteSuccess with String");
 		} else {
 			this.onExecuteFail(this, nick, target, shouldExecute);
-			return false;
+			return CommandChainState.ERROR;
 		}
-		return true;
+		return CommandChainState.FINISHED;
 	}
 
 	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params) throws Exception { forceExecute(nick, target, event, params, false); }
@@ -448,10 +453,10 @@ public class Command {
 	public String onInvalidArguments(ArrayList<String> params) {
 		if (this.argumentParser != null) {
 			if (params.size() > 0 && params.get(0).equals("syntax"))
-				return Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax();
+				return Config.commandprefix + this.commandChain + this.command + " " + this.argumentParser.getArgumentSyntax();
 			int arguments = this.argumentParser.parseArguments(params);
 			if (!this.argumentParser.validateArguments(arguments)) {
-				return "Invalid arguments. " + Config.commandprefix + this.command + " " + this.argumentParser.getArgumentSyntax();
+				return "Invalid arguments. " + Config.commandprefix + this.commandChain + this.command + " " + this.argumentParser.getArgumentSyntax();
 			}
 		} else if (params.size() > 0 && params.get(0).equals("syntax")) {
 			return "This command has no argument syntax defined.";
