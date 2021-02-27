@@ -38,23 +38,34 @@ public class TimedBans extends AbstractListener {
 				Helper.sendMessage(target, trySubCommandsMessage(params), nick);
 			}
 		};
-		command_ban = new Command("ban", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
+		command_ban = new Command("ban", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+				String subject = this.argumentParser.getArgument("Nick");
+				String time = this.argumentParser.getArgument("Time");
+				if (time == null)
+					time = "1h";
 				String reason = this.argumentParser.getArgument("Reason");
 				if (reason == null)
 					reason = "";
-				setTimedEvent("ban", nick, target, this.argumentParser.getArgument("Nick"), this.argumentParser.getArgument("Time"), reason, null);
+				String result = setTimedEvent("ban", nick, target, subject, time, reason, null);
+				if (result != null)
+					Helper.sendMessage(target, result, nick);
 			}
 		};
 		command_ban.setHelpText("Issue a timed ban.");
-		command_quiet = new Command("quiet", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
+		command_quiet = new Command("quiet", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
 			@Override
 			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+				String time = this.argumentParser.getArgument("Time");
+				if (time == null)
+					time = "1h";
 				String reason = this.argumentParser.getArgument("Reason");
 				if (reason == null)
 					reason = "";
-				setTimedEvent("quiet", nick, target, this.argumentParser.getArgument("Nick"), this.argumentParser.getArgument("Time"), reason, null);
+				String result = setTimedEvent("quiet", nick, target, this.argumentParser.getArgument("Nick"), time, reason, null);
+				if (result != null)
+					Helper.sendMessage(target, result, nick);
 			}
 		};
 		command_quiet.setHelpText("Issue a timed quiet.");
@@ -90,6 +101,8 @@ public class TimedBans extends AbstractListener {
 		command_timed.registerSubCommand(command_ban);
 		command_timed.registerSubCommand(command_quiet);
 		command_timed.registerSubCommand(command_list);
+		command_quiet.registerSubCommand(command_list);
+		command_ban.registerSubCommand(command_list);
 		command_timed.registerAlias("tquiet", "quiet");
 		command_timed.registerAlias("tban", "ban");
 		command_timed.registerAlias("tlist", "list");
@@ -138,9 +151,15 @@ public class TimedBans extends AbstractListener {
 		}, 0, 1, TimeUnit.SECONDS);
 	}
 
-	private void setTimedEvent(String type, String senderNick, String targetChannel, String targetNick, String timeStr, String reason, User[] users) throws Exception {
+	private String setTimedEvent(String type, String senderNick, String targetChannel, String targetNick, String timeStr, String reason, User[] users) throws Exception {
 		String hostname = null;
-		long time = Helper.getFutureTime(timeStr);
+		long time = 0;
+		try {
+			time = Helper.getFutureTime(timeStr);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return "Unable to parse '" + timeStr + "'. " + e.getMessage();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 		String expiresTime = sdf.format(new Date(time));
 		PreparedStatement addTimedBan = Database.getPreparedStatement("addTimedBan");
@@ -169,6 +188,7 @@ public class TimedBans extends AbstractListener {
 		} else {
 			Helper.sendMessage("chanserv", "quiet " + targetChannel + " " + targetNick);
 		}
+		return null;
 	}
 
 	public static void setTimedBan(Channel channel, String nick, String hostname, String length, String reason, String module) {
