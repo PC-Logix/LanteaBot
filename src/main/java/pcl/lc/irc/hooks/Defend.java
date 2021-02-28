@@ -2,6 +2,7 @@ package pcl.lc.irc.hooks;
 
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.*;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,10 +23,9 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("rawtypes")
 public class Defend extends AbstractListener {
 	public static ArrayList<DefendEvent> defendEventLog;
-	private ScheduledFuture<?> executor;
 
 	private static final String damageFormat = "#";
-	public static final int reactionTimeMinutes = 5;
+	public static final int reactionTimeMinutes = 1;
 
 	public static String getReactionTimeString() {
 		return reactionTimeMinutes + " minute" + (reactionTimeMinutes == 1 ? "" : "s");
@@ -65,6 +64,7 @@ public class Defend extends AbstractListener {
 	}
 
 	private Command local_command;
+	private Command debug_command;
 
 	private static String actionList = "";
 
@@ -80,30 +80,15 @@ public class Defend extends AbstractListener {
 
 		initCommands();
 		IRCBot.registerCommand(local_command);
+		IRCBot.registerCommand(debug_command);
 
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-		executor = ses.scheduleAtFixedRate(new Runnable() {
+		ses.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				Date expiredIfAfter = new Date(new Date().getTime() - (reactionTimeMinutes * 60 * 1000));
-				for (DefendEvent event : defendEventLog) {
-					try {
-						if (expiredIfAfter.after(event.time)) {
-							Helper.sendMessage(event.target, event.result);
-							defendEventLog.remove(event);
-						}
-					} catch (Exception e) {
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						e.printStackTrace(pw);
-						String pasteURL = PasteUtils.paste(sw.toString(), PasteUtils.Formats.NONE);
-						Helper.sendMessage("#MichiBot", "An exception occurred parsing a scheduled defend entry: " + pasteURL);
-						System.out.println("An exception occurred parsing a scheduled defend entry:");
-						e.printStackTrace();
-					}
-				}
+				parseEventQueue();
 			}
-		}, 0, 15, TimeUnit.SECONDS);
+		}, 0, 60, TimeUnit.SECONDS);
 	}
 
 	private Actions getActionByType(String type) {
@@ -121,7 +106,7 @@ public class Defend extends AbstractListener {
 				String method = this.argumentParser.getArgument("Action");
 				if (method == null || !actionList.contains(method.toLowerCase())) {
 					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
-					return;
+					return CommandChainState.ERROR;
 				}
 				ArrayList<DefendEvent> defendEvents = getEventsFor(nick);
 				if (defendEvents.size() > 0) {
@@ -205,6 +190,20 @@ public class Defend extends AbstractListener {
 			if (action.command != null)
 				local_command.registerAlias(action.command, action.command);
 		}
+
+		debug_command = new Command("defenddebug", new CommandArgumentParser(0, new CommandArgument("Action", ArgumentTypes.STRING)), Permissions.ADMIN) {
+			@Override
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
+				String action = this.argumentParser.getArgument("Action");
+				if (action != null) {
+					if ("force".equals(action.toLowerCase()))
+						parseEventQueue();
+					return null;
+				}
+				Helper.sendMessage(target, "Events in queue: " + defendEventLog.size(), nick);
+				return CommandChainState.FINISHED;
+			}
+		};
 	}
 
 	/**
@@ -237,5 +236,37 @@ public class Defend extends AbstractListener {
 				events.add(event);
 		}
 		return events;
+	}
+
+	public static void parseEventQueue() {
+		try {
+			Date expiredIfAfter = new Date(new Date().getTime() - (reactionTimeMinutes * 60 * 1000));
+			Helper.sendMessage("#MichiBot", "Debug: Process " + defendEventLog.size() + " events. expiredAfter: " + expiredIfAfter);
+			ArrayList<DefendEvent> removeEvents = new ArrayList<>();
+			for (DefendEvent event : defendEventLog) {
+				Helper.sendMessage("#MichiBot", "Debug: Event for '" + event.targetUser + "' expires " + event.time + ".");
+				try {
+					if (expiredIfAfter.after(event.time)) {
+						Helper.sendMessage("#MichiBot", "Debug: Defend event triggered for '" + event.targetUser + "'");
+						Helper.sendMessage(event.target, event.result);
+//						defendEventLog.remove(event);
+						removeEvents.add(event);
+					}
+				} catch (Exception e) {
+					StringWriter sw = new StringWriter();
+					PrintWriter pw = new PrintWriter(sw);
+					e.printStackTrace(pw);
+					String pasteURL = PasteUtils.paste(sw.toString(), PasteUtils.Formats.NONE);
+					Helper.sendMessage("#MichiBot", "An exception occurred parsing a scheduled defend entry: " + pasteURL);
+					System.out.println("An exception occurred parsing a scheduled defend entry:");
+					e.printStackTrace();
+				}
+			}
+			for (DefendEvent event : removeEvents)
+				defendEventLog.remove(event);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Helper.sendMessage("#MichiBot", "Debug: Failed to run timed event handler.");
+		}
 	}
 }
