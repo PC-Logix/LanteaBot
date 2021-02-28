@@ -370,7 +370,7 @@ public class Command {
 						subParams = new ArrayList<>();
 					sub.commandChain = this.commandChain + this.command + " ";
 					CommandChainState state = sub.tryExecute(firstParam, nick, target, event, subParams, false);
-					if (state == CommandChainState.ABORT || state == CommandChainState.ERROR)
+					if (state != CommandChainState.CONTINUE)
 						return state;
 				}
 			}
