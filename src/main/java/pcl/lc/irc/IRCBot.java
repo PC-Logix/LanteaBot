@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.DynamicCommand;
 import pcl.lc.irc.job.TaskScheduler;
 import pcl.lc.irc.job.WikiChangeWatcher;
 import pcl.lc.utils.Database;
@@ -96,8 +97,11 @@ public class IRCBot {
 	}
 
 	public static HashMap<String, Command> commands = new LinkedHashMap<>();
-
-	public static void registerCommand(Command command) {
+	public static boolean registerCommand(Command command) {
+		if (command == null) {
+			log.error("Unable to register null!");
+			return false;
+		}
 		if (!commands.containsKey(command.getCommand())) {
 			log.info("Registering Command: " + command.getCommand());
 			commands.put(command.getCommand(), command);
@@ -110,8 +114,35 @@ public class IRCBot {
 					}
 				}
 			}
+			return true;
 		} else {
 			log.error("Attempted to register duplicate command! Command: " + command.getCommand() + " Duplicating class: " + command.getClassName() + " Owning class " + commands.get(command.getCommand()).getClassName());
+			return false;
+		}
+	}
+
+	public static HashMap<String, DynamicCommand> dynamicCommands = new LinkedHashMap<>();
+	public static boolean registerCommand(DynamicCommand command) {
+		if (command == null) {
+			log.error("Unable to register null!");
+			return false;
+		}
+		if (!dynamicCommands.containsKey(command.getCommand())) {
+			log.info("Registering Command: " + command.getCommand());
+			dynamicCommands.put(command.getCommand(), command);
+			ArrayList<String> aliases = command.getAliases();
+			if (aliases.size() > 0) {
+				log.info("Registering aliases: '" + aliases.toString() + "' for command '" + command.getCommand() + "'");
+				for (String alias : command.getAliases()) {
+					if (!alias.equals("")) {
+						dynamicCommands.put(alias, command);
+					}
+				}
+			}
+			return true;
+		} else {
+			log.error("Attempted to register duplicate command! Command: " + command.getCommand() + " Duplicating class: " + command.getClassName() + " Owning class " + dynamicCommands.get(command.getCommand()).getClassName());
+			return false;
 		}
 	}
 
