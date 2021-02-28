@@ -12,6 +12,7 @@ import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -64,12 +65,13 @@ public class Tonk extends AbstractListener {
 
 	enum TonkSnipeType {
 		BLUE("blue", new String[]{"Blue Shell", "s"}, "Shell", 0.2, 0, 1, "#1"),
-		RED("red", new String[]{"Red Shell", "s"}, "Shell", 0.50, 14, 3, "+5"),
-		GREEN("green", new String[]{"Green Shell", "s"}, "Shell", 0.30, 10, 5, "+3");
+		RED("red", new String[]{"Red Shell", "s"}, "Shell", 0.5, 14, 3, "+5"),
+		GREEN("green", new String[]{"Green Shell", "s"}, "Shell", 0.3, 10, 5, "+3"),
+		BRICK("brick", new String[]{"Brick", "s"}, "Brick", 0.2, 10, 2, "-5");
 
 		String keyword; //Keyword is used as the command but also as a collection key
 		String[] displayName;
-		String typeClass; //Eg. "Shell" or "Bullet" etc.
+		String typeClass; //Eg. "Shell", "Brick" or "Bullet" etc.
 		double pointTransferPercentage;
 		int hitDC;
 		int maxUses;
@@ -209,19 +211,19 @@ public class Tonk extends AbstractListener {
 		rateLimit = new CommandRateLimit(0, 15, 0, false, true);
 		local_command = new Command("tonk", rateLimit) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (getScoreboardPosition(nick) == -1) {
 					if (!params.equals(getVerificationCode())) {
 						Helper.sendMessage(target, "You should probably read this: https://michibot.pc-logix.com/tonk", nick);
 						rateLimit.reset();
-						return;
+						return CommandChainState.FINISHED;
 					}
 				}
 				int attempts = getTonkFails(nick);
 				if (attempts >= maxTonkFails) {
 					Helper.sendMessage(target, "A sad trumpet plays for an uncomfortably long time...");
 					rateLimit.reset();
-					return;
+					return CommandChainState.FINISHED;
 				}
 
 				String tonkin = Database.getJsonData(last_tonk_key);
@@ -301,18 +303,20 @@ public class Tonk extends AbstractListener {
 //							}
 					}
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("What is tonk? Tonk is life. For a description of the rules see " + Config.commandprefix + "tonkleaders");
 
 		reset_command = new Command("resettonk", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				long now = new Date().getTime();
 				Helper.sendMessage(target, "Tonk reset " + nick + ", you are the record holder!");
 				Database.storeJsonData(tonk_record_key, "0;" + nick);
 				Database.storeJsonData(last_tonk_key, String.valueOf(now));
 				Database.getPreparedStatement(PreparedStatementKeys.CLEAR_TONK_FAILS).executeUpdate();
+				return CommandChainState.FINISHED;
 			}
 		};
 		reset_command.setHelpText("Reset current tonk.");
@@ -320,27 +324,28 @@ public class Tonk extends AbstractListener {
 
 		wind_back_command = new Command("tonkback", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				tonkTimeRemove(params);
+				return CommandChainState.FINISHED;
 			}
 		};
 		reset_command.setHelpText("Used for testing.");
 
 		tonkout_command = new Command("tonkout", rateLimit) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (getScoreboardPosition(nick) == -1) {
 					if (!params.equals(getVerificationCode())) {
 						Helper.sendMessage(target, "You should probably read this: https://michibot.pc-logix.com/tonk", nick);
 						rateLimit.reset();
-						return;
+						return CommandChainState.FINISHED;
 					}
 				}
 				int attempts = getTonkFails(nick);
 				if (attempts >= maxTonkFails) {
 					Helper.sendMessage(target, "A sad flute plays for an uncomfortably long time...");
 					rateLimit.reset();
-					return;
+					return CommandChainState.FINISHED;
 				}
 
 				String tonkin = Database.getJsonData(last_tonk_key);
@@ -426,6 +431,7 @@ public class Tonk extends AbstractListener {
 						Database.storeJsonData(tonk_attempts_key + "_" + nick, String.valueOf(attempts + 1));
 					}
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonkout_command.setHelpText("What is tonk? Tonk is life. For a description of the rules see " + Config.commandprefix + "tonkleaders");
@@ -433,7 +439,7 @@ public class Tonk extends AbstractListener {
 
 		tonkpoints_command = new Command("tonkpoints") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String data = Database.getJsonData(tonk_record_key + "_" + nick);
 				if (data != null && !data.isEmpty()) {
 					double score = Double.parseDouble(data);
@@ -445,13 +451,14 @@ public class Tonk extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, "I can't find a record, so you have 0 points.", nick);
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonkpoints_command.registerAlias("tonkscore");
 
 		tonkreseteverything_command = new Command("tonkreseteverything", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement top = Database.getPreparedStatement(PreparedStatementKeys.GET_THREE_TOP_TONKS);
 				ResultSet result = top.executeQuery();
 				String prefix = "Top scores: ";
@@ -466,24 +473,26 @@ public class Tonk extends AbstractListener {
 
 				PreparedStatement reset = Database.getPreparedStatement(PreparedStatementKeys.CLEAR_EVERYTHING_TONK);
 				reset.executeUpdate();
+				return CommandChainState.FINISHED;
 			}
 		};
 
 		tonk_attempts_remaining = new Command("tonkattempts") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int attempts = maxTonkFails - getTonkFails(nick);
 
 				if (attempts <= 0)
 					Helper.sendMessage(target, "You have no attempts left. When a successful tonk or tonkout happens everyone gets " + maxTonkFails + " new attempts.");
 				else
 					Helper.sendMessage(target, "You have " + Math.max(0, attempts) + " attempt" + (attempts == 1 ? "" : "s") + " left.");
+				return CommandChainState.FINISHED;
 			}
 		};
 
 		tonk_merge_scores = new Command("tonkmerge", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) throws Exception {
 				String from_key = tonk_record_key + "_" + param.get(1);
 				String to_key = tonk_record_key + "_" + param.get(0);
 				double from = Double.parseDouble(Database.getJsonData(from_key));
@@ -492,13 +501,14 @@ public class Tonk extends AbstractListener {
 				Database.storeJsonData(to_key, String.valueOf(to + from));
 				Database.destroyJsonData(from_key);
 				Helper.sendMessage(target, "Merge successful! " + param.get(1) + ": " + displayTonkPoints(from) + " + " + param.get(0) + ": " + displayTonkPoints(to) + " => " + param.get(0) + ": " + displayTonkPoints(to + from));
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonk_merge_scores.setHelpText("Merges the score of the second name into the first name and wipes the second name from the scoreboard. Syntax: " + Config.commandprefix + tonk_merge_scores.getCommand() + " <first_name> <second_name>");
 
 		tonk_destroy_scores = new Command("tonkdestroy", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
 				ArrayList<String> successes = new ArrayList<>();
 				ArrayList<String> failures = new ArrayList<>();
 				for (String name : param) {
@@ -518,6 +528,7 @@ public class Tonk extends AbstractListener {
 				if (failures.size() > 0)
 					fail = "Failed to clear " + String.join(",", failures);
 				Helper.sendMessage(target, succ + (!succ.equals("") && !fail.equals("") ? ", " : "") + fail);
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonk_destroy_scores.setHelpText("Wipes entries from the tonk scoreboard. Accepts as many names as arguments as will fit in a message.");
@@ -535,7 +546,7 @@ public class Tonk extends AbstractListener {
 
 		tonk_snipe_blue = new Command(TonkSnipeType.BLUE.keyword) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (getMaxScoreboardPosition() <= 1) {
 					Helper.sendMessage(target, "There are not enough people on the scoreboard.", nick);
 				}
@@ -549,65 +560,70 @@ public class Tonk extends AbstractListener {
 						Helper.sendMessage(target, "You probably don't want to target yourself.", nick);
 				} else
 					Helper.sendMessage(target, "You are out of " + TonkSnipeType.BLUE.getDisplayName(true), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_blue);
 
 		tonk_snipe_red = new Command(TonkSnipeType.RED.keyword) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() == 0) {
 					Helper.sendMessage(target, "Provide a target that is within range of you.", nick);
-					return;
+					return CommandChainState.ERROR;
 				}
 				String targetUser = params.get(0);
 				try {
 					TonkSnipeType.RED.isValidTarget(nick, targetUser);
 				} catch (Exception ex) {
 					Helper.sendMessage(target, ex.getMessage(), nick);
-					return;
+					return CommandChainState.ERROR;
 				}
 				Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.RED), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_red);
 
 		tonk_snipe_green = new Command(TonkSnipeType.GREEN.keyword) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() == 0) {
 					Helper.sendMessage(target, "Provide a target that is within range of you.", nick);
-					return;
+					return CommandChainState.ERROR;
 				}
 				String targetUser = params.get(0);
 				try {
 					TonkSnipeType.GREEN.isValidTarget(nick, targetUser);
 				} catch (Exception ex) {
 					Helper.sendMessage(target, ex.getMessage(), nick);
-					return;
+					return CommandChainState.ERROR;
 				}
 				Helper.sendMessage(target, TonkSnipe.doSnipe(nick, targetUser, TonkSnipeType.GREEN), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_green);
 
 		tonk_snipe_count = new Command("count") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				ArrayList<String> shells = new ArrayList<>();
 				for (TonkSnipeType type : TonkSnipeType.values()) {
 					int shellCount = TonkSnipe.shellCount(nick, type);
 					shells.add(shellCount + " " + type.getDisplayName(shellCount != 1));
 				}
 				Helper.sendMessage(target, "You have " + Helper.oxfordJoin(shells, ", ", ", and "), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_count);
 
 		tonk_code = new Command("tonkcode", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				Helper.sendMessage(target, getVerificationCode(), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 	}

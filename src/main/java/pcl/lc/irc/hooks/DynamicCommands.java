@@ -13,8 +13,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
-import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
 import pcl.lc.utils.db_items.CommandItem;
 
@@ -38,15 +37,11 @@ import java.util.regex.Pattern;
 public class DynamicCommands extends AbstractListener {
 	static ArrayList<String> dynamicCommands;
 	private static NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();
-	;
 	private static final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
 	private static final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
 
-	private Command local_command_add;
-	private Command local_command_del;
-	private Command local_command_addhelp;
-	private Command local_command_print;
-	private Command local_command_edit;
+	public static final String defaultHelpText = "Dynamic commands with no help text set.";
+
 	private Command toggle_command;
 
 	private Command base_command;
@@ -99,7 +94,7 @@ public class DynamicCommands extends AbstractListener {
 				"COMMIT;");
 		Database.addPreparedStatement("addCommand", "INSERT OR REPLACE INTO Commands(command, return_value) VALUES (?, ?);");
 		Database.addPreparedStatement("addCommandHelp", "UPDATE Commands SET help = ? WHERE command = ?");
-		Database.addPreparedStatement("searchCommands", "SELECT command, help FROM Commands");
+		Database.addPreparedStatement("searchCommands", "SELECT command, help, return_value FROM Commands");
 		Database.addPreparedStatement("getCommand", "SELECT return_value, help FROM Commands WHERE command = ?");
 		Database.addPreparedStatement("delCommand", "DELETE FROM Commands WHERE command = ?;");
 		Database.addPreparedStatement("getCommands", "SELECT * FROM Commands");
@@ -111,118 +106,17 @@ public class DynamicCommands extends AbstractListener {
 		}
 
 		initLua();
-		local_command_add = new Command("addcommand", Permissions.TRUSTED) {
-			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				System.out.println("Received params '" + String.join(" ", params) + "'");
-				String cmd = params.remove(0).toLowerCase();
-				String content = String.join(" ", params);
-				if (!IRCBot.commands.containsKey(cmd)) {
-					CommandItem item = new CommandItem(cmd, content, null);
-					item.Save();
-					event.respond("Command Added! Don't forget to set help text with " + local_command_addhelp.getCommand() + "!");
-//						IRCBot.registerCommand(cmd, "Dynamic commands module, who knows what it does?!");
-					dynamicCommands.add(cmd);
-				} else {
-					event.respond("Can't override existing commands.");
-				}
-			}
-		};
-		local_command_add.setHelpText("Adds a dynamic command to the bot, requires BotAdmin, or Channel Op.");
-		IRCBot.registerCommand(local_command_add);
-		local_command_del = new Command("delcommand", Permissions.TRUSTED) {
-			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				if (params.size() == 0) {
-					Helper.sendMessage(target, "Specify command to delete", nick);
-					return;
-				}
-					String cmd = params.remove(0).toLowerCase();
-					CommandItem item = CommandItem.GetByCommand(cmd);
-					if (item != null)
-						item.Delete();
-					event.respond("Command deleted");
-//					IRCBot.unregisterCommand(cmd);
-					dynamicCommands.remove(cmd);
-			}
-		};
-		local_command_del.setHelpText("Removes a dynamic command to the bot, requires BotAdmin, or Channel Op.");
-		local_command_print = new Command("printcommand") {
-			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				PreparedStatement getCommand;
-				try {
-					getCommand = Database.getPreparedStatement("getCommand");
-					getCommand.setString(1, params.toLowerCase());
-					ResultSet command1 = getCommand.executeQuery();
-					if (command1.next()) {
-						String message = command1.getString(1);
-						Helper.sendMessage(target, message);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-		};
-		local_command_edit = new Command("editcommand", Permissions.TRUSTED) {
-			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-					PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
-					PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
-					String[] message = params.split(" ", 2);
-					getCommand.setString(1, message[0].toLowerCase());
-					ResultSet command1 = getCommand.executeQuery();
-					if (command1.next()) {
-						IRCBot.unregisterCommand(message[0].toLowerCase());
-						addCommand.setString(1, message[0].toLowerCase());
-						addCommand.setString(2, message[1]);
-						addCommand.executeUpdate();
-						event.respond("Command Edited");
-						IRCBot.registerCommand(message[0].toLowerCase(), command1.getString(2));
-					} else {
-						event.respond("Can't add new commands with edit!");
-					}
-			}
-		};
-		local_command_addhelp = new Command("addcommandhelp", Permissions.TRUSTED) {
-			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				PreparedStatement addCommandHelp;
-					addCommandHelp = Database.getPreparedStatement("addCommandHelp");
-					String arr[] = params.split(" ", 2);
-					String theCommand = arr[0];
-					String theHelp = arr[1];
-					if (IRCBot.commands.containsKey(theCommand)) {
-						try {
-							addCommandHelp.setString(1, theHelp);
-							addCommandHelp.setString(2, theCommand.toLowerCase());
-							addCommandHelp.executeUpdate();
-							IRCBot.commands.get(theCommand).setHelpText(theHelp);
-							event.respond("Help Set");
-						} catch (SQLException e) {
-							e.printStackTrace();
-							event.respond("fail 1");
-						}
-					} else {
-						event.respond("fail 2 ");
-					}
-			}
-		};
-		local_command_addhelp.setHelpText("Sets help on dynamic commands");
-		IRCBot.registerCommand(local_command_del);
-		IRCBot.registerCommand(local_command_addhelp);
-
 
 		toggle_command = new Command("dyncmd", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {
 					Helper.toggleCommand("dyncmd", target, params);
 				} else {
 					String isEnabled = Helper.isEnabledHere(target, "dyncmd") ? "enabled" : "disabled";
 					Helper.sendMessage(target, "dyncmd is " + isEnabled + " in this channel", nick);
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		toggle_command.setHelpText("Dynamic command module");
@@ -233,9 +127,7 @@ public class DynamicCommands extends AbstractListener {
 			ResultSet commands = searchCommands.executeQuery();
 			while (commands.next()) {
 				if (commands.getString(2) != null) {
-					IRCBot.registerCommand(commands.getString(1), commands.getString(2));
-				} else {
-					IRCBot.registerCommand(commands.getString(1), "Dynamic commands module, who knows what it does?!");
+					registerDynamicCommand(commands.getString(1), commands.getString(2));
 				}
 			}
 		} catch (Exception e) {
@@ -246,68 +138,144 @@ public class DynamicCommands extends AbstractListener {
 		//<editor-fold desc="Alias into proper command sub-command structure">
 		base_command = new Command("command", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 
-		add = new Command("add", local_command_add.getPermissionLevel()) {
+		add = new Command("add", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Content", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				System.out.println("Send '" + params + "' to add command");
-				local_command_add.forceExecute(nick, target, event, params.split(" "));
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String cmd = this.argumentParser.getArgument("Command");
+				String content = this.argumentParser.getArgument("Content");
+				if (!IRCBot.dynamicCommands.containsKey(cmd)) {
+					CommandItem item = new CommandItem(cmd, content, null);
+					item.Save();
+					event.respond("Command Added! Don't forget to set help text with " + Config.commandprefix + base_command.getCommand() + " " + addhelp.getCommand() + "!");
+					registerDynamicCommand(cmd, content);
+				} else {
+					event.respond("Can't override existing commands.");
+				}
+				return CommandChainState.FINISHED;
 			}
 		};
+		add.setHelpText("Adds a dynamic command.");
 
-		del = new Command("del", local_command_del.getPermissionLevel()) {
+		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				local_command_del.forceExecute(nick, target, event, params.split(" "));
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+				String cmd = this.argumentParser.getArgument("Command");
+				CommandItem item = CommandItem.GetByCommand(cmd);
+				if (item != null) {
+					item.Delete();
+					event.respond("Command deleted");
+					IRCBot.unregisterCommand(cmd);
+				} else {
+					event.respond("Unable to find command '" + cmd + "'");
+				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		del.registerAlias("delete");
 		del.registerAlias("rem");
 		del.registerAlias("remove");
+		del.setHelpText("Removes a dynamic command.");
 
-		addhelp = new Command("addhelp", local_command_addhelp.getPermissionLevel()) {
+		addhelp = new Command("addhelp", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Text", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				local_command_addhelp.forceExecute(nick, target, event, params.split(" "));
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				PreparedStatement addCommandHelp = Database.getPreparedStatement("addCommandHelp");
+				String theCommand = this.argumentParser.getArgument("Command");
+				String theHelp = this.argumentParser.getArgument("Text");
+				if (IRCBot.dynamicCommands.containsKey(theCommand)) {
+					try {
+						addCommandHelp.setString(1, theHelp);
+						addCommandHelp.setString(2, theCommand.toLowerCase());
+						addCommandHelp.executeUpdate();
+						IRCBot.commands.get(theCommand).setHelpText(theHelp);
+						event.respond("Help Set");
+					} catch (SQLException e) {
+						e.printStackTrace();
+						event.respond("fail 1");
+					}
+				} else {
+					event.respond("fail 2 ");
+				}
+				return CommandChainState.FINISHED;
+			}
+		};
+		addhelp.registerAlias("sethelp");
+		addhelp.registerAlias("help");
+		addhelp.setHelpText("Sets help on dynamic commands");
+
+		print = new Command("print", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING)), Permissions.TRUSTED) {
+			@Override
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				try {
+					String cmd = this.argumentParser.getArgument("Command");
+					PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
+					getCommand.setString(1, cmd);
+					ResultSet command1 = getCommand.executeQuery();
+					if (command1.next()) {
+						String message = command1.getString(1);
+						Helper.sendMessage(target, message);
+						if (!IRCBot.commands.containsKey(cmd))
+							Helper.sendMessage(target, "Command is not registered!");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return CommandChainState.FINISHED;
 			}
 		};
 
-		print = new Command("print", local_command_print.getPermissionLevel()) {
+		edit = new Command("edit", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Content", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				local_command_print.forceExecute(nick, target, event, params.split(" "));
-			}
-		};
-
-		edit = new Command("edit", local_command_edit.getPermissionLevel()) {
-			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				local_command_edit.forceExecute(nick, target, event, params.split(" "));
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
+				PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
+				String cmd = this.argumentParser.getArgument("Command").toLowerCase();
+				String content = this.argumentParser.getArgument("Content");
+				String[] message = params.split(" ", 2);
+				getCommand.setString(1, cmd);
+				ResultSet command1 = getCommand.executeQuery();
+				if (command1.next()) {
+					IRCBot.unregisterCommand(cmd);
+					addCommand.setString(1, cmd);
+					addCommand.setString(2, content);
+					addCommand.executeUpdate();
+					unregisterDynamicCommand(cmd);
+					registerDynamicCommand(cmd, content);
+					event.respond("Command Edited");
+				} else {
+					event.respond("Can't add new commands with edit!");
+				}
+				return CommandChainState.FINISHED;
 			}
 		};
 
 		alias = new Command("alias", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "To add an alias create a dynamic command with one or more commands to execute between two % like %command%.");
+				return CommandChainState.FINISHED;
 			}
 		};
 
 		placeholders = new Command("placeholders", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "Valid placeholders: %command% - Where 'command' is a different dyn-command. [randomitem] - Inserts a random item from the inventory. [drama] - ??. [argument] - The entire argument string. [nick] - The name of the caller. {n} - Where n is the number of an argument word starting at 0.");
+				return CommandChainState.FINISHED;
 			}
 		};
 
 		prefixes = new Command("prefixes", Permissions.TRUSTED) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "Valid prefixes: [js] - Attempts to parse the dyn-command contents as javascript. [lua] - Attempts to parse the dyn-command contents as Lua. [action] - Sends an ACTION instead of a normal message.");
+				return CommandChainState.FINISHED;
 			}
 		};
 
@@ -328,32 +296,31 @@ public class DynamicCommands extends AbstractListener {
 			int count = 0;
 			while (resultSet.next()) {
 				count++;
-				String command = resultSet.getString("command");
-				System.out.println("Register dyncommand '" + command + "'");
-				Command dynCmd = new Command(command) {
-					//					final public String message = resultSet.getString("return_value");
-					@Override
-					public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-						try {
-							System.out.println("Executing dyn command (String)");
-							Helper.sendMessage(target, "This is a placeholder message");
-						} catch (Exception e) {
-							e.printStackTrace();
-							Helper.sendMessage(target, "Something went wrong.", nick);
-						}
-					}
-				};
-				String help = resultSet.getString("help");
-				if (help != null && !help.equals("")) {
-					dynCmd.setHelpText(help);
-					System.out.println("Set dyncommand help to '" + help + "'");
-				}
-				dynamicCommands.add(dynCmd.getCommand());
+				registerDynamicCommand(resultSet.getString("command"), resultSet.getString("return_value"), resultSet.getString("help"));
 			}
 			System.out.println("Registered " + count + " dyn command" + (count == 1 ? "" : "s"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void registerDynamicCommand(String command, String content) {
+		registerDynamicCommand(command, content, null);
+	}
+
+	public static void registerDynamicCommand(String command, String content, String helpText) {
+		System.out.println("Register dynamic command '" + command + "'");
+		DynamicCommand dynCmd = new DynamicCommand(command, content, new CommandArgumentParser(0, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Params", ArgumentTypes.STRING)));
+		if (helpText != null && !helpText.equals(""))
+			dynCmd.setHelpText(helpText);
+		else
+			dynCmd.setHelpText(defaultHelpText);
+//		dynamicCommands.add(dynCmd.getCommand());
+		IRCBot.registerCommand(dynCmd);
+	}
+
+	public static void unregisterDynamicCommand(String command) {
+		IRCBot.unregisterCommand(command);
 	}
 
 	public static ArrayList<String> parseDynCommandAliases(String[] input, CommandsHaveBeenRun excludeList) {
@@ -435,7 +402,7 @@ public class DynamicCommands extends AbstractListener {
 					message = message.replace("[action]", "");
 					Helper.sendAction(target, message);
 				} else {
-					Helper.sendMessage(target, message, user, true);
+					Helper.sendMessage(target, message, null, true);
 				}
 			} else {
 				System.out.println("Message empty in command '" + command + "'. Skipping sendMessage.");

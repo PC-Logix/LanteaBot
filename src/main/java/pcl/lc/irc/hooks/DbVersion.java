@@ -4,6 +4,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -26,11 +27,12 @@ public class DbVersion extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("dbversion") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				ResultSet result = Database.ExecuteQuery("PRAGMA user_version");
 				if (result.next()) {
 					Helper.sendAction(target, "Database version: " + result.getString("user_version"));
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Get current database version");

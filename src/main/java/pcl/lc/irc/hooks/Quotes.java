@@ -32,6 +32,7 @@ import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -72,7 +73,7 @@ public class Quotes extends AbstractListener {
 	private void initCommands() {
 		quote = new Command("quote", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String qid = this.argumentParser.getArgument(0);
 				if (qid == null) {
 					PreparedStatement getAnyQuote = Database.getPreparedStatement("getAnyQuote");
@@ -103,13 +104,14 @@ public class Quotes extends AbstractListener {
 						}
 					}
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		quote.setHelpText("Returns quotes from the quote database. Also Has sub-commands: add, del");
 
 		add = new Command("add", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Quote", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("Nick");
 				String quote = this.argumentParser.getArgument("Quote");
 
@@ -120,16 +122,17 @@ public class Quotes extends AbstractListener {
 				addQuote.setString(3, nick);
 				if (addQuote.executeUpdate() > 0) {
 					Helper.sendMessage(target, "Quote added at id: " + addQuote.getGeneratedKeys().getInt(1), nick);
-					return;
+					return CommandChainState.FINISHED;
 				}
 				Helper.sendMessage(target, "An error occurred while trying to save the quote.", nick);
+				return CommandChainState.ERROR;
 			}
 		};
 		add.setHelpText("Adds a quote to the database");
 
 		delete = new Command("delete", new CommandArgumentParser(1, new CommandArgument("QuoteID", ArgumentTypes.STRING)), Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("QuoteID").replace(idIdentificationCharacter, "");
 				//String data = StringUtils.join(args, " ", 1, args.length);
 				PreparedStatement removeQuote = Database.getPreparedStatement("removeQuote");
@@ -137,9 +140,10 @@ public class Quotes extends AbstractListener {
 				//removeQuote.setString(2, data);
 				if (removeQuote.executeUpdate() > 0) {
 					Helper.sendMessage(target, "Quote removed.", nick);
-					return;
+					return CommandChainState.FINISHED;
 				}
 				Helper.sendMessage(target, "An error occurred while trying to set the value.", nick);
+				return CommandChainState.ERROR;
 			}
 		};
 		delete.setHelpText("Removes a quote from the database");
@@ -147,7 +151,7 @@ public class Quotes extends AbstractListener {
 
 		list = new Command("list", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("Nick");
 				PreparedStatement getUserQuoteAll = Database.getPreparedStatement("getUserQuoteAll");
 				getUserQuoteAll.setString(1, key.toLowerCase());
@@ -168,14 +172,16 @@ public class Quotes extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, "No quotes found for user '" + key + "'", nick);
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		list.setHelpText("Returns list of ids for quotes belonging to user as well as their total quote count");
 
 		quotes = new Command("quotes") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, httpd.getBaseDomain() + "/quotes", nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 

@@ -19,6 +19,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -55,7 +56,7 @@ public class Seen extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("seen", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String dest;
 				if (event.getClass().getName().equals("org.pircbotx.hooks.events.MessageEvent")) {
 					dest = target;
@@ -79,6 +80,7 @@ public class Seen extends AbstractListener {
 						event.getBot().sendIRC().message(dest, targetNick + " has not been seen");
 					}
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Tells you the last time a user was active.  Active means they sent a message");

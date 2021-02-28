@@ -8,6 +8,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TablesOfRandomThings;
 
@@ -26,7 +27,7 @@ public class Juggle extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("juggle", new CommandArgumentParser(0, new CommandArgument("Number", ArgumentTypes.INTEGER)), new CommandRateLimit(60)) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				int item_amount = this.argumentParser.getInt("Number");
 				if (item_amount == Integer.MIN_VALUE)
 					item_amount = 3;
@@ -36,7 +37,7 @@ public class Juggle extends AbstractListener {
 				ItemCollection items = new ItemCollection();
 				if (!items.fillWithUniqueItems(item_amount)) {
 					Helper.sendMessage(target, "I can't find any items to juggle with.", nick);
-					return;
+					return CommandChainState.FINISHED;
 				}
 
 				Helper.sendAction(target, "juggles with " + items.getItemNames());
@@ -58,6 +59,7 @@ public class Juggle extends AbstractListener {
 					Helper.sendAction(target, "doesn't drop anything");
 					Helper.sendMessage(target, TablesOfRandomThings.getSuccessResponse());
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Juggle with items");

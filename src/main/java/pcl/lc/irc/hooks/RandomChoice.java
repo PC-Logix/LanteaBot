@@ -8,6 +8,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -141,7 +142,7 @@ public class RandomChoice extends AbstractListener {
 
 		local_command = new Command("choose", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String splitOn = ", or | or |,(?! )";
 				String stripPunctuationFromEnd = "[?.!:]*$";
 				ArrayList<String> parts = new ArrayList<>();
@@ -163,16 +164,16 @@ public class RandomChoice extends AbstractListener {
 					if (groups.size() > 0) {
 						Collections.shuffle(subParts);
 						Helper.sendMessage(target, Helper.replacePlaceholders(parts.get(0), subParts));
-						return;
+						return CommandChainState.FINISHED;
 					} else if (parts.get(0).contains("$")) {
 						Helper.sendMessage(target, parts.get(0).replace("$", choice), nick);
-						return;
+						return CommandChainState.FINISHED;
 					}
 					Helper.sendMessage(target, choice + " " + parts.get(0), nick);
-					return;
+					return CommandChainState.FINISHED;
 				} else if (parts.size() > 2) {
 					Helper.sendMessage(target, "What?!", nick);
-					return;
+					return CommandChainState.FINISHED;
 				}
 				parts = new ArrayList<>();
 				for (String part : params.split(splitOn)) {
@@ -185,7 +186,7 @@ public class RandomChoice extends AbstractListener {
 
 				if (parts.size() == 0) {
 					Helper.sendMessage(target, msg, nick);
-					return;
+					return CommandChainState.FINISHED;
 				}
 
 				String choice = parts.get(Helper.getRandomInt(0, parts.size() - 1)).trim();
@@ -221,6 +222,7 @@ public class RandomChoice extends AbstractListener {
 				msg = msg.replaceAll("\\{raw_count}", raw_count);
 
 				Helper.sendMessage(target, msg, nick);
+				return CommandChainState.FINISHED;
 			}
 		}; local_command.setHelpText("Randomly picks a choice for you.");
 		local_command.registerAlias("choice");

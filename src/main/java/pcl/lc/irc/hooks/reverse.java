@@ -3,15 +3,8 @@
  */
 package pcl.lc.irc.hooks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.Map.Entry;
-
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
-import com.google.common.collect.Lists;
 
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.ArgumentTypes;
@@ -19,6 +12,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -33,9 +27,10 @@ public class reverse extends AbstractListener {
 	protected void initHook() {
 		reverse = new Command("reverse", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
 				Helper.sendMessage(target, new StringBuffer(Colors.removeFormattingAndColors(str)).reverse().toString(), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		reverse.setHelpText("Reverses the supplied text");

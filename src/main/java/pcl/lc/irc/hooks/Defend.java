@@ -117,7 +117,7 @@ public class Defend extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("defend", new CommandArgumentParser(0, new CommandArgument("Action", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");
 				if (method == null || !actionList.contains(method.toLowerCase())) {
 					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
@@ -197,6 +197,7 @@ public class Defend extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, "Nothing to defend against right now.", nick);
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Defend against things! Getting stabbed? Things thrown at you? No problem! Just defend!");

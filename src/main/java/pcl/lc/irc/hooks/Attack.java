@@ -55,11 +55,11 @@ public class Attack extends AbstractListener {
 
 		local_command = new Command("attack", new CommandArgumentParser(2, new CommandArgument("Action", ArgumentTypes.STRING), new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING)), new CommandRateLimit(300, true)) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");
 				if (!actionList.contains(method.toLowerCase())) {
 					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
-					return;
+					return null;
 				}
 				Actions action = Actions.valueOf(method.toUpperCase());
 				String attackTarget = this.argumentParser.getArgument("Target");
@@ -120,6 +120,7 @@ public class Attack extends AbstractListener {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendAction(target, DiceRoll.rollDiceInString("uses " + (item != null ? item.getName() : Helper.parseSelfReferral("his") + " orbital death ray") + " to vaporize " + Helper.antiPing(nick) + " who takes 10d10 damage." + dust));
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		for (Attack.Actions action : Attack.Actions.values()) {

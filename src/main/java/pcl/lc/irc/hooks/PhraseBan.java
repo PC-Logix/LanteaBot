@@ -10,6 +10,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -58,8 +59,9 @@ public class PhraseBan extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("phraseban") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				this.trySubCommandsMessage(params);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Ban phrases, all of them");
@@ -67,31 +69,33 @@ public class PhraseBan extends AbstractListener {
 
 		add = new Command("add", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement;
 				statement = Database.getConnection().createStatement();
 				ResultSet result = statement.executeQuery("SELECT * FROM BannedPhrases WHERE phrase = '" + phrase.toLowerCase() + "'");
 				if (result.next()) {
 					Helper.sendMessage(target, "Phrase already banned.", nick);
-					return;
+					return CommandChainState.ERROR;
 				}
 				statement.executeUpdate("INSERT INTO BannedPhrases (phrase) VALUES ('" + phrase.toLowerCase() + "')");
 				Helper.sendMessage(target, "Added phrase to banlist", nick);
 				phrases.add(params.toLowerCase());
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerSubCommand(add);
 
 		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement;
 				statement = Database.getConnection().createStatement();
 				statement.executeUpdate("DELETE FROM BannedPhrases WHERE phrase = '" + phrase.toLowerCase() + "'");
 				Helper.sendMessage(target, "Removed phrase from banlist", nick);
 				phrases.remove(params.toLowerCase());
+				return CommandChainState.FINISHED;
 			}
 		};
 		del.registerAlias("rem");
@@ -99,46 +103,50 @@ public class PhraseBan extends AbstractListener {
 
 		list = new Command("list", Permissions.EVERYONE) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "The words: " + String.join(", ", phrases));
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerSubCommand(list);
 
 		clear = new Command("clear", Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				Statement statement = Database.getConnection().createStatement();
 				statement.executeUpdate("DELETE FROM BannedPhrases");
 				phrases.clear();
 				Helper.sendMessage(target, "All banned phrases cleared!", nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerSubCommand(clear);
 
 		exadd = new Command("exadd", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement = Database.getConnection().createStatement();
 				ResultSet result = statement.executeQuery("SELECT * FROM ExemptNicks WHERE nick = '" + phrase.toLowerCase() + "'");
 				if (result.next()) {
 					Helper.sendMessage(target, "Nick already exempt.", nick);
-					return;
+					return null;
 				}
 				statement.executeUpdate("INSERT INTO ExemptNicks (nick) VALUES ('" + phrase.toLowerCase() + "')");
 				Helper.sendMessage(target, "Added to exempt list!", nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerSubCommand(exadd);
 
 		exdel = new Command("exdel", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
 				Statement statement = Database.getConnection().createStatement();
 				statement.executeUpdate("DELETE FROM ExemptNicks WHERE nick = '" + phrase.toLowerCase() + "'");
 				Helper.sendMessage(target, "Removed from exempt list");
+				return CommandChainState.FINISHED;
 			}
 		};
 		exdel.registerAlias("exrem");
@@ -146,17 +154,18 @@ public class PhraseBan extends AbstractListener {
 
 		set = new Command("set", new CommandArgumentParser(2, new CommandArgument("Setting", ArgumentTypes.STRING), new CommandArgument("Value", ArgumentTypes.STRING)), Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String setting = this.argumentParser.getArgument("Setting");
 				String value = this.argumentParser.getArgument("Value");
 				switch (setting.toLowerCase()) {
 					case "duration":
 						Database.storeJsonData("phraseban_duration", value);
 						Helper.sendMessage(target, "Setting updated!");
-						return;
+						return null;
 					default:
 						Helper.sendMessage(target, "Unknown setting '" + setting + "'", nick);
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerSubCommand(set);

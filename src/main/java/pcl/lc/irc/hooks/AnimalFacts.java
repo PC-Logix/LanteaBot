@@ -10,6 +10,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 import java.io.BufferedReader;
@@ -67,15 +68,16 @@ public class AnimalFacts extends AbstractListener {
     private void initCommands() {
         local_command = new Command("catfact") {
             @Override
-            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
+            public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
                     JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/cat");
                     Helper.sendMessage(target, json.get("fact").toString());
+                return CommandChainState.FINISHED;
             }
         };
 
         local_command2 = new Command("fact", new CommandArgumentParser(0, new CommandArgument("Animal", ArgumentTypes.STRING))) {
             @Override
-            public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
+            public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
                 String aminal = this.argumentParser.getArgument("Animal");
                 if (aminal.equals("bird")) {
                     aminal = "birb"; //Cause this API is dumb. *sigh*
@@ -93,6 +95,7 @@ public class AnimalFacts extends AbstractListener {
                 } else {
                     Helper.sendMessage(target, "Not a valid option. " + String.join(", ", animalNames));
                 }
+                return CommandChainState.FINISHED;
             }
         };
         local_command.registerAlias("catfacts");

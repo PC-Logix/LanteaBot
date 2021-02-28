@@ -29,16 +29,16 @@ public class Pet extends AbstractListener {
 
 		local_command = new Command("pet", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String petTarget = this.argumentParser.getArgument("Nick");
 				String with = this.argumentParser.getArgument("Item");
 				if (petTarget == null || petTarget.equals("")) {
 					Helper.sendMessage(target, nick + " flails at nothingness...");
-					return;
+					return CommandChainState.FINISHED;
 				} else {
 					if (nick.equals(petTarget)) {
 						Helper.sendMessage(target, "Don't pet yourself in public.", nick);
-						return;
+						return CommandChainState.FINISHED;
 					}
 
 					Item item;
@@ -72,6 +72,7 @@ public class Pet extends AbstractListener {
 						healString += " hit points";
 					Helper.sendMessage(target, nick + " is " + petAction.actionNameIs.toLowerCase() + " " + petTarget + (item != null ? " with " + item.getName() : "") + ". " + petTarget + " regains " + healString + "!" + dust);
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerAlias("stroke");

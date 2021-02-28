@@ -1,6 +1,5 @@
 package pcl.lc.irc.hooks;
 
-import com.google.common.collect.Lists;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
@@ -9,12 +8,8 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 /**
  * @author Caitlyn
@@ -52,13 +47,14 @@ public class Flip extends AbstractListener {
   protected void initHook() {
     local_command = new Command("flip", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
       @Override
-      public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+      public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
         String flip = this.argumentParser.getArgument(0);
         if (flip == null || flip.equals("")) {
           Helper.sendMessage(target, "(╯°□°）╯┻━┻", nick);
         } else {
           Helper.sendMessage(target, "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(flip))).reverse().toString(), nick);
         }
+        return CommandChainState.FINISHED;
       }
     }; local_command.setHelpText("Flips the text sent.");
     IRCBot.registerCommand(local_command);

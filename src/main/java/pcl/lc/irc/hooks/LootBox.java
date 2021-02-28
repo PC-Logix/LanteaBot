@@ -4,6 +4,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PotionHelper;
 import pcl.lc.utils.TablesOfRandomThings;
@@ -37,7 +38,7 @@ public class LootBox extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("lootbox", new CommandArgumentParser(0, new CommandArgument("LootTarget", ArgumentTypes.STRING)), new CommandRateLimit(60)) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int rarity_value = Helper.rollDice("1d100").getSum();
 				String item_name;
 				String rarity = "Normal";
@@ -77,12 +78,13 @@ public class LootBox extends AbstractListener {
 				if (lootTarget != null && !lootTarget.equals("")) {
 					if (!Helper.doInteractWith(lootTarget)) {
 						Helper.sendAction(target, "Kicks " + nick + " into the tentacle pit.");
-						return;
+						return CommandChainState.FINISHED;
 					}
 					prefix = "You stab " + lootTarget + "! It dropped {item}!";
 				}
 				String item_string = item_name + " (" + rarity_str + ")";
 				Helper.sendMessage(target, prefix.replace("{item}", item_string), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Get a loot box! What could be inside!");

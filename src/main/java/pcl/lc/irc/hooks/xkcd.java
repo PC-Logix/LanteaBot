@@ -1,7 +1,6 @@
 package pcl.lc.irc.hooks;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -21,6 +20,7 @@ import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;
@@ -63,7 +63,7 @@ public class xkcd extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("xkcd", new CommandArgumentParser(0, new CommandArgument("Comic", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String id_or_terms = this.argumentParser.getArgument("Comic");
 				if (id_or_terms != null) {
 					if (isNumeric(id_or_terms)) {
@@ -77,7 +77,7 @@ public class xkcd extends AbstractListener {
 					} else {
 						if (Config.googleAPI.equals("")) {
 							Helper.sendMessage(target, "No Google API key has been set. This is required for this search feature.", nick);
-							return;
+							return CommandChainState.ERROR;
 						}
 						String filter = "site:xkcd.com";
 						String suggestedReturn = performSearch(filter, id_or_terms).get(0).getSuggestedReturn();
@@ -93,6 +93,7 @@ public class xkcd extends AbstractListener {
 					is.close();
 					Helper.sendMessage(target, "Random XKCD Comic: " + newurl);
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("XKCD stuff");

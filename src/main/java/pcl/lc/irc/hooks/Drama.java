@@ -7,6 +7,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 import java.util.HashMap;
@@ -143,9 +144,10 @@ public class Drama extends AbstractListener {
 
 		local_command = new Command("drama") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, dramaParse(), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Generates random drama using Mod Developers, Projects, and other semi random data.");

@@ -1,22 +1,17 @@
 package pcl.lc.irc.hooks;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.types.GenericMessageEvent;
-
-import com.google.common.collect.Lists;
 
 import io.github.firemaples.language.Language;
 import io.github.firemaples.translate.Translate;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 public class Translator extends AbstractListener {
@@ -73,7 +68,7 @@ public class Translator extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("translate", new CommandArgumentParser(1, new CommandArgument("Text", ArgumentTypes.STRING), new CommandArgument("FromLanguage", ArgumentTypes.STRING), new CommandArgument("ToLanguage", ArgumentTypes.STRING)), new CommandRateLimit(5)) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument("Text");
 				String from = this.argumentParser.getArgument("FromLanguage");
 				String to = this.argumentParser.getArgument("ToLanguage");
@@ -82,6 +77,7 @@ public class Translator extends AbstractListener {
 				if (from == null || from.equals(""))
 					from = "auto";
 				Helper.sendMessage(target, doTranslate(from, to, str));
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerAlias("t");

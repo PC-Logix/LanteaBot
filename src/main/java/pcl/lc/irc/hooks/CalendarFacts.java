@@ -4,6 +4,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -29,7 +30,7 @@ public class CalendarFacts extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("calendarfacts") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = "Did you know that ";
 				//<editor-fold desc="BLOCK ONE">
 				int randomInt = Helper.getRandomInt(0, 5);
@@ -373,6 +374,7 @@ public class CalendarFacts extends AbstractListener {
 				}
 				//</editor-fold>
 				Helper.sendMessage(target, str, null, true);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerAlias("calfacts");

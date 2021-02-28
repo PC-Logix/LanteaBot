@@ -7,6 +7,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.GoogleSearch;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SearchResult;
@@ -36,50 +37,57 @@ public class Search extends AbstractListener {
 	protected void initHook() {
 		search = new Command("search") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(((params.size() > 0) ? params.get(0) : "")), nick);
+				return CommandChainState.FINISHED;
 			}
 		}; search.setHelpText("Search various sites for term (eg search <site> <term>)");
 		google = new Command("google", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch(null, this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
+				return CommandChainState.FINISHED;
 			}
 		}; google.setHelpText("Searches google and returns the first result");
 		curseForge = new Command("curseForge", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:minecraft.curseforge.com", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
+				return CommandChainState.FINISHED;
 			}
 		}; curseForge.setHelpText("Searches CurseForge and returns the first result");
 		wiki = new Command("wiki", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("wiki", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
+				return CommandChainState.FINISHED;
 			}
 		}; wiki.setHelpText("Searches Wikipedia and returns the first result");
 		urban = new Command("urban", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:urbandictionary.com", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
+				return CommandChainState.FINISHED;
 			}
 		}; urban.setHelpText("Searches UrbanDictonary and returns the first result");
 		ann = new Command("ann", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:animenewsnetwork.com", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
+				return CommandChainState.FINISHED;
 			}
 		}; ann.setHelpText("Searches Anime News Network and returns the first result");
 		youtube = new Command("youtube", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:youtube.com", this.argumentParser.getArgument("Query"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
+				return CommandChainState.FINISHED;
 			}
 		}; youtube.setHelpText("Searches YouTube and returns the first result");
 		
@@ -92,38 +100,43 @@ public class Search extends AbstractListener {
 		search.registerSubCommand(youtube);
 		g = new Command("g") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				google.onExecuteSuccess(command, nick, target, event, params);
+				return CommandChainState.FINISHED;
 			}
 		};
 		g.registerAlias("google");
 		yt = new Command("yt") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				youtube.onExecuteSuccess(command, nick, target, event, params);
+				return CommandChainState.FINISHED;
 			}
 		};
 		yt.registerAlias("youtube");
 		wik = new Command("wiki") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				wiki.onExecuteSuccess(command, nick, target, event, params);
+				return CommandChainState.FINISHED;
 			}
 		};
 		wik.registerAlias("wp");
 		wik.registerAlias("wikipedia");
 		cf = new Command("cf") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				curseForge.onExecuteSuccess(command, nick, target, event, params);
+				return CommandChainState.FINISHED;
 			}
 		};
 		cf.registerAlias("curse");
 		cf.registerAlias("curseforge");
 		urb = new Command("urban") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				urban.onExecuteSuccess(command, nick, target, event, params);
+				return CommandChainState.FINISHED;
 			}
 		};
 		urb.registerAlias("u");
@@ -131,12 +144,14 @@ public class Search extends AbstractListener {
 
 		lmgtfy = new Command("lmgtfy") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
 					Helper.sendMessage(target, "https://lmgtfy.com/?q=" + URLEncoder.encode(params, "UTF-8"), nick, true);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
+					return CommandChainState.ERROR;
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		

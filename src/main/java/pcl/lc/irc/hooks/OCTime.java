@@ -12,6 +12,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -26,10 +27,11 @@ public class OCTime extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("octime") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
 				dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 				Helper.sendMessage(target, dateFormatGmt.format(new Date()), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Returns the time in GMT");

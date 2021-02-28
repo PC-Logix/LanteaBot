@@ -11,6 +11,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.DynamicCommand;
 import pcl.lc.utils.CommandHelper;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PasteUtils;
@@ -75,18 +76,18 @@ public class GenericEventListener extends AbstractListener{
 				if (thisCmd.size() > 1)
 					params = thisCmd.subList(1, thisCmd.size()).toArray(new String[]{});
 //				System.out.println("CMD: " + command + ", params: " + String.join(";", params));
-				if (DynamicCommands.dynamicCommands.contains(actualCommand)) {
-					try {
-						String target = Helper.getTarget(event);
-						DynamicCommands.parseDynCommand(actualCommand, user, target, params);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else if (IRCBot.commands.containsKey(actualCommand)) {
+				if (IRCBot.commands.containsKey(actualCommand)) {
 					Command cmd = IRCBot.commands.get(actualCommand);
 					cmd.callingRelay = callingRelay;
 					String target = Helper.getTarget(event);
 					System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
+				} else if (IRCBot.dynamicCommands.containsKey(actualCommand)) {
+					DynamicCommand cmd = IRCBot.dynamicCommands.get(actualCommand);
+					cmd.callingRelay = callingRelay;
+					String target = Helper.getTarget(event);
+					System.out.println("Executed dynamic command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
+				} else {
+					System.out.println("No command '" + actualCommand + "'");
 				}
 			} catch (Exception e) {
 				System.out.println("Command exception!");

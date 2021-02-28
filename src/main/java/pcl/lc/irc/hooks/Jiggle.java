@@ -4,6 +4,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -23,7 +24,7 @@ public class Jiggle extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("jiggle", new CommandArgumentParser(0, new CommandArgument("Thing", ArgumentTypes.STRING), new CommandArgument("Times", ArgumentTypes.INTEGER)), new CommandRateLimit(120, true, true)) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String thing = this.argumentParser.getArgument("Thing");
 				int number = this.argumentParser.getInt("Times");
 				if (thing != null) {
@@ -34,6 +35,7 @@ public class Jiggle extends AbstractListener {
 				}
 				else
 					Helper.sendAction(target, "jiggles");
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Jiggle");

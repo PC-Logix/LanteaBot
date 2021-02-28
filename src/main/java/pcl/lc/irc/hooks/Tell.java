@@ -19,6 +19,7 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -34,7 +35,7 @@ public class Tell extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("tell", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				PreparedStatement addTell = Database.getPreparedStatement("addTell");
 				String recipient = this.argumentParser.getArgument("Nick");
 				recipient = recipient.replaceAll("\\s*\\p{Punct}+\\s*$", "");
@@ -48,6 +49,7 @@ public class Tell extends AbstractListener {
 				addTell.setString(4, messageOut);
 				addTell.executeUpdate();
 				Helper.sendMessage(target, recipient + " will be notified of this message when next seen.", nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Sends a tell to the supplied user, with the supplied message " + Config.commandprefix + "tell Michiyo Hello!");

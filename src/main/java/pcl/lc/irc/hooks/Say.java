@@ -8,6 +8,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -27,13 +28,14 @@ public class Say extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("say", new CommandArgumentParser(1, new CommandArgument("Message", ArgumentTypes.STRING), new CommandArgument("Channel", ArgumentTypes.STRING)), Permissions.ADMIN) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String message = this.argumentParser.getArgument("Message");
 				String channel = this.argumentParser.getArgument("Channel");
 				if (channel == null)
 					Helper.sendMessage(target, message);
 				else
 					Helper.sendMessage(channel, message);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Makes bot say thing");

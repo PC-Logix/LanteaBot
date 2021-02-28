@@ -19,6 +19,7 @@ import java.util.regex.PatternSyntaxException;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PasteUtils;
 
@@ -35,13 +36,14 @@ public class SED extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("sed", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {
 					Helper.toggleCommand("SED", target, params);
 				} else {
 					String isEnabled = Helper.isEnabledHere(target, "SED") ? "enabled" : "disabled";
 					Helper.sendMessage(target, "SED is " + isEnabled + " in this channel", nick);
 				}
+				return CommandChainState.FINISHED;
 			}
 		}; local_command.setHelpText("SED Operations");
 		IRCBot.registerCommand(local_command);

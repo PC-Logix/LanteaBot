@@ -6,6 +6,7 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -27,11 +28,12 @@ public class Blame extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("blame", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), new CommandRateLimit(5)) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String user = this.argumentParser.getArgument("Nick");
 				if (user.toLowerCase().equals(IRCBot.getOurNick().toLowerCase()))
 					user = Helper.parseSelfReferral("himself");
 				Helper.sendAction(target, "blames " + user + " for " + getEvent());
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Project problems onto someone else!");

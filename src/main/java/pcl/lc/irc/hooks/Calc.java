@@ -14,6 +14,7 @@ import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -28,7 +29,7 @@ public class Calc extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("calc", new CommandArgumentParser(1, new CommandArgument("Expression", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String expression = this.argumentParser.getArgument("Expression");
 				if (expression.equalsIgnoreCase("the meaning of life")) {
 					Helper.sendMessage(target, "42", nick);
@@ -39,6 +40,7 @@ public class Calc extends AbstractListener {
 					formatter.setRoundingMode(RoundingMode.DOWN);
 					Helper.sendMessage(target, formatter.format(result), nick);
 				}
+				return CommandChainState.FINISHED;
 			}
 		}; local_command.setHelpText("Does basic math on the expression passed to the command Ex: 2+2");
 // 		This is handled by the dice command now.

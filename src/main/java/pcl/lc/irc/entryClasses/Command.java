@@ -379,19 +379,20 @@ public class Command {
 				Helper.sendMessage(target, paramError, nick);
 				return CommandChainState.ERROR;
 			}
-			this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
-//			System.out.println("Called onExecuteSuccess with String[]");
-			this.onExecuteSuccess(this, nick, target, event, params);
-//			System.out.println("Called onExecuteSuccess with ArrayList<String>");
+			CommandChainState state;
+			state = this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
+			if (state != CommandChainState.CONTINUE)
+				return state;
+			state = this.onExecuteSuccess(this, nick, target, event, params);
+			if (state != CommandChainState.CONTINUE)
+				return state;
 			String message = String.join(" ", params);
 			message = message.replaceAll("^\\s+", "");
-			this.onExecuteSuccess(this, nick, target, event, message);
-//			System.out.println("Called onExecuteSuccess with String");
+			state = this.onExecuteSuccess(this, nick, target, event, message);
+			return state;
 		} else {
-			this.onExecuteFail(this, nick, target, shouldExecute);
-			return CommandChainState.ERROR;
+			return this.onExecuteFail(this, nick, target, shouldExecute);
 		}
-		return CommandChainState.FINISHED;
 	}
 
 	public void forceExecute(String nick, String target, GenericMessageEvent event, String[] params) throws Exception { forceExecute(nick, target, event, params, false); }
@@ -413,17 +414,21 @@ public class Command {
 		this.onExecuteSuccess(this, nick, target, event, message);
 	}
 
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
+	public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
 		System.out.println("Called default onExecuteSuccess (String[])");
+		return CommandChainState.CONTINUE;
 	}
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+	public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 		System.out.println("Called default onExecuteSuccess (String)");
+		return CommandChainState.CONTINUE;
 	}
-	public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+	public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 		System.out.println("Called default onExecuteSuccess (ArrayList<String>)");
+		return CommandChainState.CONTINUE;
 	}
-	public void onExecuteFail(Command command, String nick, String target, long timeout) {
+	public CommandChainState onExecuteFail(Command command, String nick, String target, long timeout) {
 		Helper.sendNotice(nick, getCannotExecuteReason(timeout), this.callingRelay);
+		return CommandChainState.ERROR;
 	}
 
 	@Override

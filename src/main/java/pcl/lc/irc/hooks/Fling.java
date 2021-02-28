@@ -30,7 +30,7 @@ public class Fling extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("fling", new CommandArgumentParser(1, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String flingTarget = this.argumentParser.getArgument("Target");
 				String with = this.argumentParser.getArgument("Item");
 
@@ -91,6 +91,7 @@ public class Fling extends AbstractListener {
 
 					Helper.sendMessage(target, nick + " makes a " + action + " motion but realizes there was nothing there...");
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerAlias(ALIAS_SLING);

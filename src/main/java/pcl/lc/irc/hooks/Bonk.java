@@ -5,6 +5,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -24,7 +25,7 @@ public class Bonk extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("bonk", new CommandArgumentParser(0, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String bonkTarget = this.argumentParser.getArgument("Nick");
 				String with = this.argumentParser.getArgument("Item");
 				if (bonkTarget == null)
@@ -67,6 +68,7 @@ public class Bonk extends AbstractListener {
 						Helper.sendAction(target, "bonks " + nick + " on the head preemptively!");
 					}
 				}
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Hit someone on the head! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <item>] If [with <item>] is omitted tries to use a random item from the inventory.");

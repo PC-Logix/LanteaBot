@@ -7,6 +7,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 import java.util.HashMap;
@@ -39,9 +40,10 @@ public class SWSpoilerGen extends AbstractListener {
 		words.put("9", new String[]{"Poe","BB-8","Amilyn Holdo","Laura Dern","A Random Junk Trader","That One Droid from the Jawa Sandcrawler that says Gronk"});
 		local_command = new Command("swspoiler") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, spoilerParse(), nick, true);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.setHelpText("Generates a random spoiler for Star Wars");

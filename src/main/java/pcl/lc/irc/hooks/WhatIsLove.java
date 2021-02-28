@@ -4,6 +4,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.Helper;
 
 /**
@@ -23,9 +24,10 @@ public class WhatIsLove extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("whatislove") {
 			@Override
-			public void onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				int roll = Helper.getRandomInt(0,100);
 				Helper.sendMessage(target, "Love is... " + Inventory.getRandomItem(true).getName() + ((roll < 25) ? ", with " + Inventory.getRandomItem(false).getName() + " on top!" : "!"), nick);
+				return CommandChainState.FINISHED;
 			}
 		};
 		local_command.registerAlias("loveis");
