@@ -13,6 +13,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -27,10 +28,10 @@ public class reverse extends AbstractListener {
 	protected void initHook() {
 		reverse = new Command("reverse", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
 				Helper.sendMessage(target, new StringBuffer(Colors.removeFormattingAndColors(str)).reverse().toString(), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		reverse.setHelpText("Reverses the supplied text");

@@ -12,9 +12,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.DynamicCommand;
-import pcl.lc.utils.CommandHelper;
-import pcl.lc.utils.Helper;
-import pcl.lc.utils.PasteUtils;
+import pcl.lc.utils.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -80,12 +78,14 @@ public class GenericEventListener extends AbstractListener{
 					Command cmd = IRCBot.commands.get(actualCommand);
 					cmd.callingRelay = callingRelay;
 					String target = Helper.getTarget(event);
-					System.out.println("Executed command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
+					CommandChainStateObject stateObj = cmd.tryExecute(command, user, target, event, params);
+					System.out.println("Executed command '" + cmd.getCommand() + "': " + stateObj.state + (stateObj.msg != null ? " => '" + stateObj.msg + "'" : ""));
 				} else if (IRCBot.dynamicCommands.containsKey(actualCommand)) {
 					DynamicCommand cmd = IRCBot.dynamicCommands.get(actualCommand);
 					cmd.callingRelay = callingRelay;
 					String target = Helper.getTarget(event);
-					System.out.println("Executed dynamic command '" + cmd.getCommand() + "': " + cmd.tryExecute(command, user, target, event, params));
+					CommandChainStateObject stateObj = cmd.tryExecute(command, user, target, event, params);
+					System.out.println("Executed dynamic command '" + cmd.getCommand() + "': " + stateObj.state + (stateObj.msg != null ? " => '" + stateObj.msg + "'" : ""));
 				} else {
 					System.out.println("No command '" + actualCommand + "'");
 				}
@@ -116,7 +116,7 @@ public class GenericEventListener extends AbstractListener{
 				list.add(sender);
 				list.add(String.join(" ", args));
 				IRCBot.messages.put(UUID.randomUUID(), list);
-			}			
+			}
 		}
 		
 /*		if (!event.getUser().getNick().equals(IRCBot.ournick)) {

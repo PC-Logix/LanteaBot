@@ -12,6 +12,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -70,10 +71,10 @@ public class l33t extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("1337", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
 				Helper.sendMessage(target ,  toLeet(str), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command.setHelpText("Returns 1337-speak of input text");
 		local_command.registerAlias("leet");

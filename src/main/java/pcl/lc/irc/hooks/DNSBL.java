@@ -21,6 +21,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -101,7 +102,7 @@ public class DNSBL extends AbstractListener {
 
 		toggle_command = new Command("dnsbl", new CommandArgumentParser(0, new CommandArgument("State", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String state = this.argumentParser.getArgument("State");
 				if (state != null && (state.equals("disable") || state.equals("enable"))) {
 					Helper.toggleCommand("DNSBL", target, state);
@@ -109,7 +110,7 @@ public class DNSBL extends AbstractListener {
 					String isEnabled = Helper.isEnabledHere(target, "DNSBL") ? "enabled" : "disabled";
 					Helper.sendMessage(target, "DNSBL is " + isEnabled + " in this channel", nick);
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		toggle_command.setHelpText("DNSBL check on join");
@@ -118,7 +119,7 @@ public class DNSBL extends AbstractListener {
 
 		check_command = new Command("checkdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String addr = this.argumentParser.getArgument("Address");
 				InetAddress address = null;
 				try {
@@ -147,7 +148,7 @@ public class DNSBL extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, "Host wasn't found on any tracked DNSBLs");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		check_command.setHelpText("DNSBL check on demand");
@@ -156,7 +157,7 @@ public class DNSBL extends AbstractListener {
 
 		adddnsbl_command = new Command("adddnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String address = this.argumentParser.getArgument("Address");
 				PreparedStatement addDNSBL = Database.getPreparedStatement("addDNSBL");
 				addDNSBL.setString(1, address.trim());
@@ -166,7 +167,7 @@ public class DNSBL extends AbstractListener {
 					return null;
 				}
 				Helper.sendMessage(target, "An error occurred while trying to add the service.", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		toggle_command.setHelpText("Add DNSBL Service");
@@ -174,7 +175,7 @@ public class DNSBL extends AbstractListener {
 
 		remdnsbl_command = new Command("remdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String address = this.argumentParser.getArgument("Address");
 				PreparedStatement removeDNSBL = Database.getPreparedStatement("removeDNSBL");
 				removeDNSBL.setString(1, address.trim());
@@ -184,7 +185,7 @@ public class DNSBL extends AbstractListener {
 					return null;
 				}
 				Helper.sendMessage(target, "An error occurred while trying to remove the service.", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		toggle_command.setHelpText("Remove DNSBL Service");
@@ -192,7 +193,7 @@ public class DNSBL extends AbstractListener {
 
 		listdnsbl_command = new Command("listdnsbl", new CommandRateLimit(10), Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String dnsblServices = "";
 				Iterator<String> iter = dnsbls.iterator();
 				while (iter.hasNext()) {
@@ -203,7 +204,7 @@ public class DNSBL extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, "No DNSBLs tracked");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		toggle_command.setHelpText("List DNSBL services");

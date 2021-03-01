@@ -8,6 +8,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -98,14 +99,14 @@ public class Reminders extends AbstractListener {
 	protected void initHook() {
 		remind = new Command("remind", new CommandArgumentParser(2, new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
 
 				ReminderObject obj = new ReminderObject(timeString, message);
 				if (obj.fail != null) {
 					Helper.sendMessage(target, obj.fail, nick);
-					return CommandChainState.ERROR;
+					return new CommandChainStateObject(CommandChainState.ERROR, obj.fail);
 				}
 
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
@@ -120,10 +121,10 @@ public class Reminders extends AbstractListener {
 				addReminder.setString(4, obj.message);
 				if (addReminder.executeUpdate() > 0) {
 					Helper.sendMessage(target, "I'll tell you \"" + obj.message + "\" " + obj.prefix + obj.timeString + " at " + newTime);
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				}
 				Helper.sendMessage(target, "No reminder was added...", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		remind.registerAlias("remindme");
@@ -131,7 +132,7 @@ public class Reminders extends AbstractListener {
 
 		remindSomeone = new Command("remindthem", new CommandArgumentParser(3, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String user = this.argumentParser.getArgument("Nick");
 				String timeString = this.argumentParser.getArgument("Time");
 				String message = this.argumentParser.getArgument("Message");
@@ -139,7 +140,7 @@ public class Reminders extends AbstractListener {
 				ReminderObject obj = new ReminderObject(timeString, message);
 				if (obj.fail != null) {
 					Helper.sendMessage(target, obj.fail, nick);
-					return CommandChainState.ERROR;
+					return new CommandChainStateObject(CommandChainState.ERROR, obj.fail);
 				}
 
 				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
@@ -155,14 +156,14 @@ public class Reminders extends AbstractListener {
 				if (addReminder.executeUpdate() > 0) {
 					Helper.sendMessage(target, "I'll tell " + user + " \"" + obj.message + "\" " + obj.prefix + obj.timeString + " at " + newTime);
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		remindSomeone.setHelpText("'remindthem gamax92 1h20m check your food!' Will send a reminder in 1 hour and 20 minutes in the channel the command was sent (or PM if you PMed the bot) to gamax92");
 		
 		list = new Command("list") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
 					PreparedStatement listReminders = Database.getPreparedStatement("listReminders");
 					listReminders.setString(1, nick);
@@ -178,20 +179,20 @@ public class Reminders extends AbstractListener {
 					}
 					if (counter == 0)
 						Helper.sendMessage(target, "None. You have no reminders. But did you remember to rotate the fridge?");
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				Helper.sendMessage(target, "Something went wrong.", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		list.setHelpText("Gives you a list of your next 3 reminders");
 		reminders = new Command("reminders") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				list.onExecuteSuccess(command, nick, target, event, params);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		reminders.setHelpText(list.getHelpText());

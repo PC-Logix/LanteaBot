@@ -8,6 +8,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.MathParseExpression;
 
@@ -23,7 +24,7 @@ public class Dice extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("dice", new CommandArgumentParser(1, new CommandArgument("Expression", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String expression = this.argumentParser.getArgument("Expression");
 				expression = DiceRoll.rollDiceInString(expression);
 				if (params.contains("=>")) {
@@ -37,7 +38,7 @@ public class Dice extends AbstractListener {
 					Helper.sendMessage(target, String.valueOf(exp.result));
 				else
 					Helper.sendMessage(target, expression + " => " + exp.result);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command.setHelpText("Rolls dice and solves mathematical expressions using + - * and /, and even both at the same time.. (Dice are expressed as eg 1d20 or d20 and supports the following additional parameters which can be chained in this order: k# or kh# - keep highest # of results, kl# - keep lowest # of results, ! or !! - ! rolls exploding dice separately and !! adds the result onto the original dice, <# - count results equal to or lower than # as successes, ># - count results equal to or higher than # as successes.)");
 		local_command.registerAlias("roll");

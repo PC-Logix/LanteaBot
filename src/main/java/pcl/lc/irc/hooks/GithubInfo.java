@@ -23,6 +23,7 @@ import com.google.gson.JsonParser;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -37,7 +38,7 @@ public class GithubInfo extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("github", new CommandArgumentParser(1, new CommandArgument("State", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String state = this.argumentParser.getArgument("State").toLowerCase();
 				if (state.equals("disable") || state.equals("enable")) {
 					Helper.toggleCommand("github", target, state);
@@ -45,7 +46,7 @@ public class GithubInfo extends AbstractListener {
 					String isEnabled = Helper.isEnabledHere(target, "github") ? "enabled" : "disabled";
 					Helper.sendMessage(target, "GitHub Info is " + isEnabled + " in this channel", nick);
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command.setHelpText("Github Ticket info");
 		IRCBot.registerCommand(local_command);

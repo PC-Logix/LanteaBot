@@ -9,6 +9,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 import javax.naming.directory.Attributes;
@@ -31,7 +32,7 @@ public class LookUp extends AbstractListener {
 	protected void initHook() {
 		local_command_lookup = new Command("lookup", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING), new CommandArgument("RecordType", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String address = this.argumentParser.getArgument("Address");
 				try {
 					InetAddress inetAddress;
@@ -73,18 +74,18 @@ public class LookUp extends AbstractListener {
 				}
 
 				//Helper.sendMessage(target, output.replace(params.get(0) + "/", " ").replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2"), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command_lookup.setHelpText("Returns DNS information");
 		local_command_rdns = new Command("rdns") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws UnknownHostException {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws UnknownHostException {
 				InetAddress addr = InetAddress.getByName(params.get(0));
 				String host = addr.getCanonicalHostName();
 				String output = "Reverse DNS Info for " + params.get(0) + " " + host;
 				Helper.sendMessage(target, output, nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command_rdns.setHelpText("Returns Reverse DNS information");

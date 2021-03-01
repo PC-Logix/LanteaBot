@@ -19,10 +19,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
-import pcl.lc.utils.Account;
-import pcl.lc.utils.CommandChainState;
-import pcl.lc.utils.Database;
-import pcl.lc.utils.Helper;
+import pcl.lc.utils.*;
 
 public class IPoints extends AbstractListener {
 	private String target;
@@ -36,7 +33,7 @@ public class IPoints extends AbstractListener {
 		Database.addPreparedStatement("setPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
 		command_points = new Command("points", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String user = this.argumentParser.getArgument("User");
 
 				if (Account.getAccount(user, event) != null) {
@@ -73,12 +70,12 @@ public class IPoints extends AbstractListener {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; command_points.setHelpText("Checks the points for yourself, or another user");
 		command_reset_points = new Command("resetpoints", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 					PreparedStatement setPoints = Database.getPreparedStatement("setPoints");
 					String user = this.argumentParser.getArgument("Nick");
 					if (Account.getAccount(user, event) != null) {
@@ -90,7 +87,7 @@ public class IPoints extends AbstractListener {
 					setPoints.executeUpdate();
 
 					Helper.sendMessage(target, nick + ": points reset");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; command_reset_points.setHelpText("Resets a users points, requires Bot Admin");
 		IRCBot.registerCommand(command_points);

@@ -6,6 +6,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TablesOfRandomThings;
 
@@ -140,9 +141,9 @@ public class Exclamation extends AbstractListener {
 		CommandRateLimit limit = new CommandRateLimit(0, 5, 0, true, false);
 		command_curse_word = new Command("curseword", limit) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, getRandomExpression(TypeFilter.CURSE_WORD) + TablesOfRandomThings.getRandomExclamations(true, false), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_curse_word.registerAlias("curses");
@@ -154,9 +155,9 @@ public class Exclamation extends AbstractListener {
 
 		command_exclamation = new Command("exclamation", limit) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, getRandomExpression(TypeFilter.ALL) + TablesOfRandomThings.getRandomExclamations(true, false), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_exclamation.registerAlias("excl");

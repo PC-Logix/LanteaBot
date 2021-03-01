@@ -13,6 +13,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -56,13 +57,13 @@ public class Rainbow extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("rainbow", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
 				if (str == null || str.equals(""))
 					str = "Rainbows!";
 				System.out.println("Rainbow: '" + str + "'");
 				Helper.sendMessage(target, makeRainbow(str), nick, true);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Replies with a rainbow version of the supplied text");

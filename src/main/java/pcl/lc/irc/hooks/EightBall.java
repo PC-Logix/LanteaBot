@@ -8,6 +8,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class EightBall extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("eightball", new CommandArgumentParser(0, new CommandArgument("Question", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String question = this.argumentParser.getArgument("Question");
 				if (question != null && ((question.length() > 6 && question.matches(".*\\?$")) || question.equals("^"))) {
 					ArrayList<String> messages = new ArrayList<>();
@@ -43,7 +44,7 @@ public class EightBall extends AbstractListener {
 					return null;
 				}
 				Helper.sendMessage(target, "I don't think that's a question...", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command.setHelpText("Gives vague answers to all questions.");
 		local_command.registerAlias("8ball");

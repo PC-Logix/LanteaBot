@@ -11,6 +11,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -30,14 +31,14 @@ public class Hiss extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("hiss", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
 				if (str == null || str.equals("")) {
 					Helper.sendMessage(target, "Snek?", nick);
 				} else {
 					Helper.sendMessage(target, str.replaceAll("s", "ss").replaceAll("S", "SS"));
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.registerAlias("snake");

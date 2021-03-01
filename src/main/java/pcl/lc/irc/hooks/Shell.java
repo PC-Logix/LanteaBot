@@ -31,7 +31,7 @@ public class Shell extends AbstractListener {
 	private void initCommands() {
 		shell = new Command("shell", new CommandArgumentParser(1, new CommandArgument("Target1", ArgumentTypes.STRING), new CommandArgument("Target2", ArgumentTypes.STRING), new CommandArgument("Target3", ArgumentTypes.STRING), new CommandArgument("ItemOrPotion", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();
 				String shellTarget = this.argumentParser.getArgument("Target1");
 				String shellTargetSecondary = this.argumentParser.getArgument("Target2");
@@ -65,7 +65,7 @@ public class Shell extends AbstractListener {
 						shellTargetTertriary = Helper.getRandomUser(event, blacklist);
 					if (!Helper.doInteractWith(shellTarget) || !Helper.doInteractWith(shellTargetSecondary) || !Helper.doInteractWith(shellTargetTertriary)) {
 						Helper.sendAction(target, "kicks " + nick + " into space.");
-						return CommandChainState.FINISHED;
+						return new CommandChainStateObject();
 					}
 					if (potion != null) {
 						potion.getEffect(nick, true, shellTarget);
@@ -121,7 +121,7 @@ public class Shell extends AbstractListener {
 					Helper.AntiPings = Helper.getNamesFromTarget(target);
 					Helper.sendMessage(target, nick + " found nothing to load into the shell...");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		shell.setHelpText("Be a nuisance with your very own mortar! Syntax: " + Config.commandprefix + shell.getCommand() + " [<target>[ and <target>][ and <target>][ with <item>]]  <item> can be a valid potion string or \"random potion\". If [ with <item>] is omitted tries to use a random item from the inventory. Omitted targets are selected randomly from IRC user list.");

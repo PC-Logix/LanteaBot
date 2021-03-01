@@ -34,6 +34,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -58,7 +59,7 @@ public class WhoPinged extends AbstractListener {
 
 		command_WhoPinged = new Command("whopinged") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 
 				try {
 					PreparedStatement statement = Database.getPreparedStatement("getPings");
@@ -73,13 +74,13 @@ public class WhoPinged extends AbstractListener {
 					Helper.sendMessage(target, "Error: " + e.getClass() + " " + e.getMessage());
 					e.printStackTrace();
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_WhoPinged.setHelpText("Shows you the last ? pings you had.");
 		command_ClearPings = new Command("clearpings") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
 					PreparedStatement statement = Database.getPreparedStatement("delPings");
 					statement.setString(1, nick);
@@ -89,7 +90,7 @@ public class WhoPinged extends AbstractListener {
 					Helper.sendMessage(target, "Error: " + e.getClass() + " " + e.getMessage());
 					e.printStackTrace();
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_ClearPings.setHelpText("Clears your pings from the DB");

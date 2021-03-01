@@ -5,6 +5,7 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.Permissions;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -330,25 +331,25 @@ public class Command {
 		return "Unknown sub-command '" + param + "' (Try: " + this.getSubCommandsAsString(true) + ")";
 	}
 
-	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) throws Exception {
+	public CommandChainStateObject tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params) throws Exception {
 		return tryExecute(command, nick, target, event, new ArrayList<>(Arrays.asList(params)), false);
 	}
-	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+	public CommandChainStateObject tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 		return tryExecute(command, nick, target, event, params, false);
 	}
-	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) throws Exception {
+	public CommandChainStateObject tryExecute(String command, String nick, String target, GenericMessageEvent event, String[] params, boolean ignore_sub_commands) throws Exception {
 		ArrayList<String> arguments = new ArrayList<>(Arrays.asList(params));
 		return tryExecute(command, nick, target, event, arguments, ignore_sub_commands);
 	}
 
-	public CommandChainState tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
+	public CommandChainStateObject tryExecute(String command, String nick, String target, GenericMessageEvent event, ArrayList<String> params, boolean ignore_sub_commands) throws Exception {
 		if (this.argumentParser != null)
 			this.argumentParser.target = target;
 //		System.out.println("tryExecute: " + command);
 		long shouldExecute = this.shouldExecute(command, event, nick);
 		if (shouldExecute == INVALID_COMMAND) { //Command does not match, ignore
 //			System.out.println("Error when attempting to execute '" + this.command + "'. Doesn't match '" + command + "'");
-			return CommandChainState.ERROR;
+			return new CommandChainStateObject(CommandChainState.CONTINUE);
 		} else if (shouldExecute == 0 || (this.rateLimit != null && !this.rateLimit.getIgnorePermissions() && Permissions.hasPermission(IRCBot.bot, event, Permissions.ADMIN))) {
 			this.actualCommand = command.replace(Config.commandprefix, "");
 			int aliasIndex = aliases.indexOf(command.replaceFirst(Pattern.quote(Config.commandprefix), ""));
@@ -369,22 +370,22 @@ public class Command {
 					else
 						subParams = new ArrayList<>();
 					sub.commandChain = this.commandChain + this.command + " ";
-					CommandChainState state = sub.tryExecute(firstParam, nick, target, event, subParams, false);
-					if (state != CommandChainState.CONTINUE)
+					CommandChainStateObject state = sub.tryExecute(firstParam, nick, target, event, subParams, false);
+					if (state.state != CommandChainState.CONTINUE)
 						return state;
 				}
 			}
 			String paramError = this.onInvalidArguments(params);
 			if (paramError != null) {
 				Helper.sendMessage(target, paramError, nick);
-				return CommandChainState.ERROR;
+				return new CommandChainStateObject(CommandChainState.ERROR, paramError);
 			}
-			CommandChainState state;
+			CommandChainStateObject state;
 			state = this.onExecuteSuccess(this, nick, target, event, params.toArray(new String[]{}));
-			if (state != CommandChainState.CONTINUE)
+			if (state.state != CommandChainState.CONTINUE)
 				return state;
 			state = this.onExecuteSuccess(this, nick, target, event, params);
-			if (state != CommandChainState.CONTINUE)
+			if (state.state != CommandChainState.CONTINUE)
 				return state;
 			String message = String.join(" ", params);
 			message = message.replaceAll("^\\s+", "");
@@ -414,21 +415,21 @@ public class Command {
 		this.onExecuteSuccess(this, nick, target, event, message);
 	}
 
-	public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
+	public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
 		System.out.println("Called default onExecuteSuccess (String[])");
-		return CommandChainState.CONTINUE;
+		return new CommandChainStateObject(CommandChainState.CONTINUE);
 	}
-	public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+	public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 		System.out.println("Called default onExecuteSuccess (String)");
-		return CommandChainState.CONTINUE;
+		return new CommandChainStateObject(CommandChainState.CONTINUE);
 	}
-	public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+	public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 		System.out.println("Called default onExecuteSuccess (ArrayList<String>)");
-		return CommandChainState.CONTINUE;
+		return new CommandChainStateObject(CommandChainState.CONTINUE);
 	}
-	public CommandChainState onExecuteFail(Command command, String nick, String target, long timeout) {
+	public CommandChainStateObject onExecuteFail(Command command, String nick, String target, long timeout) {
 		Helper.sendNotice(nick, getCannotExecuteReason(timeout), this.callingRelay);
-		return CommandChainState.ERROR;
+		return new CommandChainStateObject(CommandChainState.ERROR, getCannotExecuteReason(timeout));
 	}
 
 	@Override

@@ -18,10 +18,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
-import pcl.lc.utils.CommandChainState;
-import pcl.lc.utils.Database;
-import pcl.lc.utils.Helper;
-import pcl.lc.utils.PasteUtils;
+import pcl.lc.utils.*;
 import pcl.lc.utils.db_items.InventoryItem;
 
 import java.io.*;
@@ -98,16 +95,16 @@ public class Inventory extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("inventory") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.registerAlias("inv");
 		local_command.setHelpText("Interact with the bots inventory");
 		sub_command_list = new Command("list") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 					if (Config.httpdEnable.equals("true")){
 						Helper.sendMessage(target, "Here's my inventory: " + httpd.getBaseDomain() + "/inventory", nick);
 					} else {
@@ -129,24 +126,24 @@ public class Inventory extends AbstractListener {
 							e.printStackTrace();
 						}
 					}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_count = new Command("count") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				try {
 					Helper.sendMessage(target, "The inventory contains " + getInventorySize() + " items.");
 				} catch (Exception e) {
 					e.printStackTrace();
 					Helper.sendAction(target, "shrugs");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_create = new Command("create", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), new CommandRateLimit(60)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument("Item");
 				if (item.toLowerCase().equals("myself") || item.toLowerCase().equals(IRCBot.getOurNick()))
 					Helper.sendMessage(target, "I can't add myself to the inventory.", nick);
@@ -159,13 +156,13 @@ public class Inventory extends AbstractListener {
 					else
 						Helper.sendAction(target, "adds nothing to " + Helper.parseSelfReferral("his") + " inventory.");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_create.registerAlias("add");
 		sub_command_remove = new Command("remove", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), new CommandRateLimit(60)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument("Item");
 				boolean hasPermission = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
 				int removeResult = removeItem(item, hasPermission, hasPermission);
@@ -179,36 +176,36 @@ public class Inventory extends AbstractListener {
 					Helper.sendMessage(target, "No such item", nick);
 				else
 					Helper.sendMessage(target, "Wrong things happened! (" + removeResult + ")", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_remove.registerAlias("rem");
 		sub_command_remove.registerAlias("del");
 		sub_command_preserve = new Command("preserve", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement preserveItem = Database.getPreparedStatement("preserveItem");
 						preserveItem.setString(1, this.argumentParser.getArgument("Item"));
 						preserveItem.executeUpdate();
 						Helper.sendMessage(target, "Item preserved", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_preserve.registerAlias("pre");
 		sub_command_unpreserve = new Command("unpreserve", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 						PreparedStatement unPreserveItem = Database.getPreparedStatement("unPreserveItem");
 						unPreserveItem.setString(1, this.argumentParser.getArgument("Item"));
 						unPreserveItem.executeUpdate();
 						Helper.sendMessage(target, "Item un-preserved", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_unpreserve.registerAlias("unpre");
 		sub_command_favourite = new Command("favourite", Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 					PreparedStatement getFav = Database.getPreparedStatement("getFavouriteItem");
 					ResultSet fav = getFav.executeQuery();
 					if (fav.next()) {
@@ -216,7 +213,7 @@ public class Inventory extends AbstractListener {
 					} else {
 						Helper.sendMessage(target, "I have no favourite item right now.", nick);
 					}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_favourite.registerAlias("fav");

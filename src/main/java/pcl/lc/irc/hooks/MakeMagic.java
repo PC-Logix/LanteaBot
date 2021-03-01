@@ -8,6 +8,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -27,14 +28,14 @@ public class MakeMagic extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("makemagic", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument("Item");
 				String[] prefixes = Helper.solvePrefixes(item);
 				if (prefixes != null)
 					Helper.sendMessage(target, String.join(" magic ", prefixes));
 				else
 					Helper.sendMessage(target, "Seems I'm out of mana...");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Magic?");

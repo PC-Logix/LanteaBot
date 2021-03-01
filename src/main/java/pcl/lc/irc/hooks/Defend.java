@@ -102,11 +102,11 @@ public class Defend extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("defend", new CommandArgumentParser(0, new CommandArgument("Action", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");
 				if (method == null || !actionList.contains(method.toLowerCase())) {
 					Helper.sendMessage(target, "Specify an action as the first parameter: " + actionList);
-					return CommandChainState.ERROR;
+					return new CommandChainStateObject(CommandChainState.ERROR, "Unspecified action");
 				}
 				ArrayList<DefendEvent> defendEvents = getEventsFor(nick);
 				if (defendEvents.size() > 0) {
@@ -182,7 +182,7 @@ public class Defend extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, "Nothing to defend against right now.", nick);
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Defend against things! Getting stabbed? Things thrown at you? No problem! Just defend!");
@@ -193,7 +193,7 @@ public class Defend extends AbstractListener {
 
 		debug_command = new Command("defenddebug", new CommandArgumentParser(0, new CommandArgument("Action", ArgumentTypes.STRING)), Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
 				String action = this.argumentParser.getArgument("Action");
 				if (action != null) {
 					if ("force".equals(action.toLowerCase()))
@@ -201,7 +201,7 @@ public class Defend extends AbstractListener {
 					return null;
 				}
 				Helper.sendMessage(target, "Events in queue: " + defendEventLog.size(), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 	}

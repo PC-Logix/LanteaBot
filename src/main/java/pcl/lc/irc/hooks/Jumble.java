@@ -8,6 +8,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 import java.util.*;
@@ -29,7 +30,7 @@ public class Jumble extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("jumble", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument(0);
 				ArrayList<String> words = new ArrayList<>(Arrays.asList(str.split(" ")));
 				Collections.shuffle(words);
@@ -40,7 +41,7 @@ public class Jumble extends AbstractListener {
 				}
 				str = str.trim();
 				Helper.sendMessage(target, str);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.registerAlias("yoda");

@@ -9,6 +9,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class Give extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("give", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String target_argument = this.argumentParser.getArgument("Nick");
 				String item_name = this.argumentParser.getArgument("Item");
 
@@ -43,7 +44,7 @@ public class Give extends AbstractListener {
 
 					if (item == null) {
 						Helper.sendAction(target, "searches through " + Helper.parseSelfReferral("his") + " inventory for a bit. \"I couldn't find anything...\"");
-						return CommandChainState.FINISHED;
+						return new CommandChainStateObject();
 					}
 
 					int removeResult = Inventory.removeItem(item);
@@ -64,7 +65,7 @@ public class Give extends AbstractListener {
 					else
 						Helper.sendAction(target, "accepts " + Inventory.fixItemName(item_name, true) + " and adds it to " + Helper.parseSelfReferral("his") + " inventory");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command.setHelpText("/give <target> <item>|random - Give <target> <item> if found or random");
 		IRCBot.registerCommand(local_command);

@@ -14,6 +14,7 @@ import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -32,7 +33,7 @@ public class NewTopic extends AbstractListener {
 
 		command_newTopic = new Command("newtopic") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String msg = "";
 				PreparedStatement statement;
 				statement = Database.getPreparedStatement("getRandomTopic");
@@ -53,30 +54,30 @@ public class NewTopic extends AbstractListener {
 				}
 				Helper.AntiPings = Helper.getNamesFromTarget(target);
 				Helper.sendMessage(target, msg, nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_newTopic.setHelpText("Generates a new topic");
 
 		command_addTopic = new Command("addtopic", new CommandArgumentParser(1, new CommandArgument("Topic", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommand = Database.getPreparedStatement("addTopic");
 				addCommand.setString(1, this.argumentParser.getArgument("Topic"));
 				addCommand.executeUpdate();
 				Helper.sendMessage(target, "Ok", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		command_delTopic = new Command("deltopic", new CommandArgumentParser(1, new CommandArgument("TopicID", ArgumentTypes.INTEGER)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement delCommand = Database.getPreparedStatement("delTopic");
 				delCommand.setInt(1, this.argumentParser.getInt("TopicID"));
 				delCommand.executeUpdate();
 				Helper.sendMessage(target, "Ok", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 

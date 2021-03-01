@@ -6,6 +6,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TablesOfRandomThings;
 
@@ -26,9 +27,9 @@ public class Smash extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("smash", new CommandRateLimit(30, true)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, nick  + " smashes " + TablesOfRandomThings.getRandomSmashString(true, true));
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("If you ever feel the need to let off some steam.");

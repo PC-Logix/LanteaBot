@@ -627,7 +627,7 @@ public class DrinkPotion extends AbstractListener {
 		rateLimit = new CommandRateLimit(0, 10, 0, true, false, "Having another potion seems like a really bad idea right now...");
 		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument("Potion", ArgumentTypes.STRING)), rateLimit) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String pot = this.argumentParser.getArgument("Potion");
 				PotionEntry potion = new PotionEntry();
 				if (pot == null || pot.equals("random") || pot.equals("")) {
@@ -635,13 +635,13 @@ public class DrinkPotion extends AbstractListener {
 				} else {
 					if (specialFluids.containsKey(pot)) {
 						Helper.sendMessage(target, specialFluids.get(pot).getEffectString(nick), nick);
-						return CommandChainState.FINISHED;
+						return new CommandChainStateObject();
 					} else {
 						try {
 							potion.setFromCommandParameters(pot);
 						} catch (InvalidPotionException ex) {
 							Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
-							return CommandChainState.ERROR;
+							return new CommandChainStateObject(CommandChainState.ERROR, "Unknown potion");
 						}
 					}
 				}
@@ -651,7 +651,7 @@ public class DrinkPotion extends AbstractListener {
 					Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + potion.effect.getEffectString(nick));
 				else
 					Helper.sendMessage(target, "You drink " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + ". " + actionString);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Drink a potion with a certain consistency and appearance and something might happen. Syntax: " + Config.commandprefix + local_command.getCommand() + " [potion] Potion needs to contain a valid consistency, appearance and the word 'potion', See " + Config.commandprefix + "potionstats command for a list.");
@@ -670,7 +670,7 @@ public class DrinkPotion extends AbstractListener {
 
 		splash = new Command("splash", new CommandArgumentParser(1, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Potion", ArgumentTypes.STRING)), new CommandRateLimit(10)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String splashTarget = this.argumentParser.getArgument("Target");
 				String potionString = this.argumentParser.getArgument("Potion");
 
@@ -690,7 +690,7 @@ public class DrinkPotion extends AbstractListener {
 						potion.setFromCommandParameters(potionString);
 					} catch (InvalidPotionException ex) {
 						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
-						return CommandChainState.ERROR;
+						return new CommandChainStateObject(CommandChainState.ERROR, "Unknown potion");
 					}
 
 					potion.getEffectSplash(splashTarget, nick);
@@ -700,7 +700,7 @@ public class DrinkPotion extends AbstractListener {
 					EffectEntry eff = specialFluids.get(potionString);
 					PotionHelper.replaceParamsInEffectString(eff, splashTarget, nick, false);
 					Helper.sendMessage(target, eff.effectSplashDiscovered);
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				}
 
 				if (potion != null) {
@@ -711,17 +711,17 @@ public class DrinkPotion extends AbstractListener {
 						Helper.sendMessage(target, "You fling " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion" + (potion.isNew ? " (New!)" : "") + " that splashes onto " + splashTarget + ". " + actionString);
 				} else
 					Helper.sendMessage(target, "Potion wasn't set...");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		splash.setHelpText("Splash some unfortunate bystander with a potion! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <potion>] If [with <potion>] is omitted a random potion is used.");
 
 		get_random = new Command("randompotion", new CommandRateLimit(10)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				PotionEntry potion = PotionHelper.getRandomPotion();
 				Helper.sendMessage(target, "You get " + potion.consistency.getName(true) + " " + potion.appearance.getName() + " potion" + (potion.isNew ? " (New!)" : ""), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		get_random.setHelpText("Get a random potion");
@@ -731,7 +731,7 @@ public class DrinkPotion extends AbstractListener {
 
 		potion_stats = new Command("potionstats", new CommandRateLimit(10)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Config.httpdEnable.equals("true")) {
 					Helper.sendMessage(target, "Potion shelf: " + httpd.getBaseDomain() + "/potions", nick);
 				} else {
@@ -741,13 +741,13 @@ public class DrinkPotion extends AbstractListener {
 					int combination_count = apperance_count * consistencies_count;
 					Helper.sendMessage(target, "There are " + apperance_count + " appearanceEntries, " + consistencies_count + " consistencies! That's " + combination_count + " potion combinations! There are " + effect_count + " effects!");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		discovered = new Command("discovered", new CommandArgumentParser(0, new CommandArgument("ListAll", ArgumentTypes.BOOLEAN)), new CommandRateLimit(10)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Config.httpdEnable.equals("true")) {
 					Helper.sendMessage(target, "Potion shelf: " + httpd.getBaseDomain() + "/potions", nick);
 				} else {
@@ -765,7 +765,7 @@ public class DrinkPotion extends AbstractListener {
 						Helper.sendMessage(target, potions_count + " combination" + (potions_count == 1 ? " has" : "s have") + " been found today!");
 					}
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		potion_stats.registerAlias("potionsdiscovered");
@@ -777,7 +777,7 @@ public class DrinkPotion extends AbstractListener {
 
 		potion_lookup = new Command("potion_lookup", new CommandRateLimit(10)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				AppearanceEntry app = PotionHelper.findAppearanceInString(params);
 				AppearanceEntry con = PotionHelper.findConsistencyInString(params);
 				String key = PotionHelper.getCombinationKey(con, app);
@@ -787,7 +787,7 @@ public class DrinkPotion extends AbstractListener {
 				else
 					ret += ", Potion registered: No";
 				Helper.sendMessage(target, ret);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 	}

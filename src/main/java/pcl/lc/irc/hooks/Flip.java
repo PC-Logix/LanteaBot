@@ -9,6 +9,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -47,14 +48,14 @@ public class Flip extends AbstractListener {
   protected void initHook() {
     local_command = new Command("flip", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
       @Override
-      public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+      public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
         String flip = this.argumentParser.getArgument(0);
         if (flip == null || flip.equals("")) {
           Helper.sendMessage(target, "(╯°□°）╯┻━┻", nick);
         } else {
           Helper.sendMessage(target, "(╯°□°）╯" + new StringBuffer(Colors.removeFormattingAndColors(flip(flip))).reverse().toString(), nick);
         }
-        return CommandChainState.FINISHED;
+        return new CommandChainStateObject();
       }
     }; local_command.setHelpText("Flips the text sent.");
     IRCBot.registerCommand(local_command);

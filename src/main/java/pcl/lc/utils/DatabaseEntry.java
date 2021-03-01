@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,44 +37,73 @@ public class DatabaseEntry {
 		String query = "INSERT OR REPLACE INTO %s (%s) VALUES (%s);";
 
 		ArrayList<String> fieldArray = new ArrayList<>();
-		ArrayList<String> valueArray = new ArrayList<>();
+		ArrayList<String> valuePlaceholderArray = new ArrayList<>();
 		for (Field field : this.getClass().getDeclaredFields()) {
 			if (!ignoreField(field.getName())) {
 				fieldArray.add("'" + field.getName() + "'");
 				try {
-					if (field.getType() == int.class && field.getInt(this) == Integer.MIN_VALUE)
-						valueArray.add("null");
-					else if (field.get(this) == null)
-						valueArray.add("null");
-					else if (field.getType() == boolean.class)
-						valueArray.add((field.getBoolean(this) ? "1" : "0"));
-					else if (field.getType() == int.class)
-						valueArray.add(String.valueOf(field.getInt(this)));
-					else if (field.getType() == double.class)
-						valueArray.add(String.valueOf(field.getDouble(this)));
-					else if (field.getType() == long.class)
-						valueArray.add(String.valueOf(field.getLong(this)));
-					else if (field.getType() == short.class)
-						valueArray.add(String.valueOf(field.getShort(this)));
-					else
-						valueArray.add("'" + field.get(this) + "'");
+					if (field.getType() == int.class && field.getInt(this) == Integer.MIN_VALUE) {
+						valuePlaceholderArray.add("?");
+					} else if (field.get(this) == null) {
+						valuePlaceholderArray.add("?");
+					} else if (field.getType() == boolean.class) {
+						valuePlaceholderArray.add("?");
+					} else if (field.getType() == int.class) {
+						valuePlaceholderArray.add("?");
+					} else if (field.getType() == double.class) {
+						valuePlaceholderArray.add("?");
+					} else if (field.getType() == long.class) {
+						valuePlaceholderArray.add("?");
+					} else if (field.getType() == short.class) {
+						valuePlaceholderArray.add("?");
+					} else {
+						valuePlaceholderArray.add("?");
+					}
 				} catch (Exception e) {
-					valueArray.add("null");
+					valuePlaceholderArray.add("?");
 					e.printStackTrace();
 				}
 			}
 		}
 		String fields = String.join(", ", fieldArray);
-		String values = String.join(", ", valueArray);
+		String values = String.join(", ", valuePlaceholderArray);
 		System.out.println("Found fields: " + fields);
 		System.out.println("Found values: " + values);
 
 		query = String.format(query, table, fields, values);
-
 		System.out.println("Query: " + query);
 
 		try {
-			Database.statement.executeUpdate(query);
+			PreparedStatement preparedStatement = Database.connection.prepareStatement(query);
+			int index = 1;
+			for (Field field : this.getClass().getDeclaredFields()) {
+				if (!ignoreField(field.getName())) {
+					try {
+						if (field.getType() == int.class && field.getInt(this) == Integer.MIN_VALUE) {
+							preparedStatement.setString(index, null);
+						} else if (field.get(this) == null) {
+							preparedStatement.setString(index, null);
+						} else if (field.getType() == boolean.class) {
+							preparedStatement.setBoolean(index, field.getBoolean(this));
+						} else if (field.getType() == int.class) {
+							preparedStatement.setInt(index, field.getInt(this));
+						} else if (field.getType() == double.class) {
+							preparedStatement.setDouble(index, field.getDouble(this));
+						} else if (field.getType() == long.class) {
+							preparedStatement.setLong(index, field.getLong(this));
+						} else if (field.getType() == short.class) {
+							preparedStatement.setShort(index, field.getShort(this));
+						} else {
+							preparedStatement.setString(index, String.valueOf(field.get(this)));
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						preparedStatement.setString(index, null);
+					}
+					index++;
+				}
+			}
+			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;

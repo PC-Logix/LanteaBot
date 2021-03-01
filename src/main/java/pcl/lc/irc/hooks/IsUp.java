@@ -11,6 +11,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class IsUp extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("isup", new CommandArgumentParser(1, new CommandArgument("URL", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String site = this.argumentParser.getArgument("URL");
 				if (!site.startsWith("http://") && !site.startsWith("https://")) {
 					Helper.sendMessage(target, "https is " + ((ping("https://" + site, 1000)) ? "UP" : "DOWN (Might be using untrusted certificates)"), nick);
@@ -54,7 +55,7 @@ public class IsUp extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, site + " is " + ((ping(site, 1000)) ? "UP" : "DOWN"));
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command.setHelpText("Checks if a website is up or down.");
 		IRCBot.registerCommand(local_command);

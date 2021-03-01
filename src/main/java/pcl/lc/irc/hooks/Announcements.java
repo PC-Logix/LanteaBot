@@ -16,10 +16,7 @@ import org.pircbotx.Configuration.Builder;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.utils.CommandChainState;
-import pcl.lc.utils.CommentedProperties;
-import pcl.lc.utils.Database;
-import pcl.lc.utils.Helper;
+import pcl.lc.utils.*;
 
 
 /**
@@ -84,37 +81,37 @@ public class Announcements extends AbstractListener {
 	private void initCommands() {
 		local_command_announce = new Command("announce", Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command_announce.setHelpText("Root command for announcement functions.");
 		local_command_add = new Command("add", Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command_add.setHelpText("Add announce message. This doesn't do anything.");
 		local_command_list = new Command("list", Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command_list.setHelpText("List announce messages. This doesn't do anything.");
 		local_command_remove = new Command("remove", Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command_remove.setHelpText("Remove announce message. This doesn't do anything.");
 		local_command_reload = new Command("reload", Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "This command doesn't do anything.", nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; local_command_reload.setHelpText("Reload announce messages. This doesn't do anything.");
 	}

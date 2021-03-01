@@ -3,6 +3,7 @@ package pcl.lc.irc.entryClasses;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.hooks.DynamicCommands;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 public class DynamicCommand extends Command {
@@ -59,7 +60,7 @@ public class DynamicCommand extends Command {
 	}
 
 	@Override
-	public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
+	public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
 		try {
 			System.out.println("Executing dyn command (String)");
 			DynamicCommands.parseDynCommand(this.actualCommand, nick, target, params);
@@ -67,6 +68,6 @@ public class DynamicCommand extends Command {
 			e.printStackTrace();
 			Helper.sendMessage(target, "Something went wrong.", nick);
 		}
-		return CommandChainState.FINISHED;
+		return new CommandChainStateObject();
 	}
 }

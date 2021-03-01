@@ -21,6 +21,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.Helper;
 
@@ -34,14 +35,14 @@ public class TimedBans extends AbstractListener {
 	protected void initHook() {
 		command_timed = new Command("timed", Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, trySubCommandsMessage(params), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_ban = new Command("ban", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String subject = this.argumentParser.getArgument("Nick");
 				String time = this.argumentParser.getArgument("Time");
 				if (time == null)
@@ -52,13 +53,13 @@ public class TimedBans extends AbstractListener {
 				String result = setTimedEvent("ban", nick, target, subject, time, reason, null);
 				if (result != null)
 					Helper.sendMessage(target, result, nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_ban.setHelpText("Issue a timed ban.");
 		command_quiet = new Command("quiet", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String time = this.argumentParser.getArgument("Time");
 				if (time == null)
 					time = "1h";
@@ -68,13 +69,13 @@ public class TimedBans extends AbstractListener {
 				String result = setTimedEvent("quiet", nick, target, this.argumentParser.getArgument("Nick"), time, reason, null);
 				if (result != null)
 					Helper.sendMessage(target, result, nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_quiet.setHelpText("Issue a timed quiet.");
 		command_list = new Command("list") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement getTimedBans = Database.getPreparedStatement("getTimedBansForChannel");
 				getTimedBans.setString(1, target);
 				ResultSet results = getTimedBans.executeQuery();
@@ -98,7 +99,7 @@ public class TimedBans extends AbstractListener {
 				}
 				if (count == 0)
 					Helper.sendMessage(target, "There are no bans or quiets at the moment. Why not add a few?");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		command_list.setHelpText("List timed bans and quiets.");

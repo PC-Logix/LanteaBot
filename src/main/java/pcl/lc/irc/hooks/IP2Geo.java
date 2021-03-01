@@ -29,6 +29,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.UnTarGZ;
 
@@ -80,7 +81,7 @@ public class IP2Geo extends AbstractListener {
 
 		local_command = new Command("geoip", new CommandArgumentParser(0, new CommandArgument("Location", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String location = this.argumentParser.getArgument("Location");
 				Helper.AntiPings = Helper.getNamesFromTarget(location);
 				if (location != null) {
@@ -88,7 +89,7 @@ public class IP2Geo extends AbstractListener {
 				} else {
 					Helper.sendMessage(target, getGeoIP(event.getUserHostmask().getHostname()), nick);					
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("gets GeoIP information");

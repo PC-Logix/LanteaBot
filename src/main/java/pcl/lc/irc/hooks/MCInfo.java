@@ -11,6 +11,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.mcping.MinecraftPing;
 import pcl.lc.utils.mcping.MinecraftPingReply;
@@ -37,7 +38,7 @@ public class MCInfo extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("mcinfo", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING), new CommandArgument("Port", ArgumentTypes.INTEGER))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws IOException {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws IOException {
 				String server = this.argumentParser.getArgument("Address");
 				int port = this.argumentParser.getInt("Port");
 				if (port <= 0)
@@ -52,7 +53,7 @@ public class MCInfo extends AbstractListener {
 				} catch (SocketTimeoutException e) {
 					Helper.sendMessage(target, "Connection timed out on port " + port + ". " + ((port == 25565) ? "Does the server use a custom port?" : "Did you specify the right port?"), nick);
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Returns information about a MC Server");

@@ -8,6 +8,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 import java.util.ArrayList;
@@ -38,11 +39,11 @@ public class Sell extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("sell", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String string = strings.get(Helper.getRandomInt(0, strings.size() - 1));
 				string = String.format(string, this.argumentParser.getArgument("Item"));
 				Helper.sendMessage(target, string, nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Returns a sales pitch for the given argument.");

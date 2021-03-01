@@ -5,6 +5,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 
 /**
@@ -37,25 +38,25 @@ public class RateItem extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("rateitem") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Rates items attack, defense or healing bonuses");
 
 		sub_command_attack = new Command("attack", new CommandArgumentParser(0, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String itemName = this.argumentParser.getArgument("Item");
 				if (itemName == null || itemName.equals("")) {
 					Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				}
 				Item item = makeItem(itemName);
 				if (item == null) {
 					Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
-					return CommandChainState.ERROR;
+					return new CommandChainStateObject(CommandChainState.ERROR, "Item creation error");
 				}
 				DiceRollBonusCollection bonus = DiceRollBonusCollection.getOffensiveItemBonus(itemName);
 				if (bonus.incapable)
@@ -64,23 +65,23 @@ public class RateItem extends AbstractListener {
 					Helper.sendMessage(target, "This item's damage die is a d" + item.getDiceSizeFromItemName() + "! It has no attack bonuses.");
 				else
 					Helper.sendMessage(target, "This item's damage die is a d" + item.getDiceSizeFromItemName() + "! It has an attack bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_attack.registerAlias("att");
 
 		sub_command_defense = new Command("defense", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String itemName = this.argumentParser.getArgument("Item");
 				if (itemName == null || itemName.equals("")) {
 					Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				}
 				Item item = makeItem(itemName);
 				if (item == null) {
 					Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
-					return CommandChainState.ERROR;
+					return new CommandChainStateObject(CommandChainState.ERROR, "Item creation error");
 				}
 				DiceRollBonusCollection bonus = DiceRollBonusCollection.getDefensiveItemBonus(itemName);
 				if (bonus.incapable)
@@ -89,23 +90,23 @@ public class RateItem extends AbstractListener {
 					Helper.sendMessage(target, "This item's damage reduction die is a d" + item.getDiceSizeFromItemName() + "! It has no reduction bonus");
 				else
 					Helper.sendMessage(target, "This item's damage reduction die is a d" + item.getDiceSizeFromItemName() + "! It has a reduction bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_defense.registerAlias("def");
 
 		sub_command_healing = new Command("healing", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String itemName = this.argumentParser.getArgument("Item");
 				if (itemName != null || itemName.equals("")) {
 					Helper.sendMessage(target, "That's a very nice nothing you have there... I rate it 5/7!", nick);
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				}
 				Item item = makeItem(itemName);
 				if (item == null) {
 					Helper.sendMessage(target, "I had an oopsie while trying to create this item...");
-					return CommandChainState.ERROR;
+					return new CommandChainStateObject(CommandChainState.ERROR, "Item creation error");
 				}
 				DiceRollBonusCollection bonus = DiceRollBonusCollection.getHealingItemBonus(itemName);
 				if (bonus.incapable)
@@ -114,7 +115,7 @@ public class RateItem extends AbstractListener {
 					Helper.sendMessage(target, "This item's healing die is a d" + item.getDiceSizeFromItemName() + "! It has no healing bonus");
 				else
 					Helper.sendMessage(target, "This item's healing die is a d" + item.getDiceSizeFromItemName() + "! It has a healing bonus of " + (bonus.getTotal() > 0 ? "+" : "") + bonus.getTotal() + ", (" + bonus + ").");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		sub_command_healing.registerAlias("heal");

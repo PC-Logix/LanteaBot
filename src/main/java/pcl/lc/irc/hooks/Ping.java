@@ -12,6 +12,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TimedHashMap;
 
@@ -41,27 +42,27 @@ public class Ping extends AbstractListener {
 	private void initCommands() {
 		ping = new Command("ping", new CommandArgumentParser(0, new CommandArgument("Nick", ArgumentTypes.LIST))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				ArrayList<String> targetUsers = this.argumentParser.getList("Nick");
 				if (this.callingRelay != null && targetUsers.size() == 0) {
 					Helper.sendMessage(target, "Sorry. You can't get your ping from over a bridge. You can ping irc users by passing one or more as arguments.", nick);
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				}
 				sendPing(targetUsers, nick, false, target);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; ping.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency");
 		ping.registerAlias("p");
 		msp = new Command("msp", new CommandArgumentParser(0, new CommandArgument("Nick", ArgumentTypes.LIST))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				ArrayList<String> targetUsers = this.argumentParser.getList("Nick");
 				if (this.callingRelay != null && targetUsers.size() == 0) {
 					Helper.sendMessage(target, "Sorry. You can't get your ping from over a bridge. You can ping irc users by passing one or more as arguments.", nick);
-					return CommandChainState.FINISHED;
+					return new CommandChainStateObject();
 				}
 				sendPing(targetUsers, nick, true, target);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		}; msp.setHelpText("Sends a CTCP Ping to you, or the user supplied to check latency, replies with milliseconds");
 		msp.registerAlias("msping");

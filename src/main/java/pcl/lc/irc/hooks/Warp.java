@@ -5,6 +5,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TablesOfRandomThings;
 
@@ -25,9 +26,9 @@ public class Warp extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("warp") {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, TablesOfRandomThings.getRandomWarpLocation());
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.setHelpText("Go on a vacation! Or end up is a world made out of spaghetti...");

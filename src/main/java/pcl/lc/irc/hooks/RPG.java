@@ -5,10 +5,7 @@ import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.RPGCharacter;
-import pcl.lc.utils.Account;
-import pcl.lc.utils.CommandChainState;
-import pcl.lc.utils.Database;
-import pcl.lc.utils.Helper;
+import pcl.lc.utils.*;
 
 import java.util.ArrayList;
 
@@ -69,47 +66,47 @@ public class RPG extends AbstractListener {
 
 		rpg = new Command("rpg", Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		enable = new Command("enable", Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.toggleCommand("RPG", target, "enable");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(enable);
 
 		disable = new Command("disable", Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.toggleCommand("RPG", target, "disable");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(disable);
 
 		stats = new Command("stats", Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return null;
 				String account = Account.getAccount(nick, event);
 				RPGCharacter character = new RPGCharacter(account, nick, target);
 				Helper.sendMessage(target, character.toString());
 				Helper.sendMessage(target, character.getStrength() + " strength, " + character.getDefense() + " defense, " + character.getAccuracy() + " accuracy & " + character.getDodge() + " dodge.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(stats);
 
 		givexp = new Command("givexp", Permissions.ADMIN) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return null;
 				if (params.size() != 2) {
@@ -122,7 +119,7 @@ public class RPG extends AbstractListener {
 				boolean levelup = character.levelUp();
 				if (!levelup)
 					Helper.sendMessage(target, character.getUserName() + " now has " + character.getXp() + " experience! (" + (character.experienceToNextLevel() - character.getXp()) + " until next level)");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		givexp.setHelpText("Gives xp to user by name");
@@ -130,7 +127,7 @@ public class RPG extends AbstractListener {
 
 		strength = new Command("strength", Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return null;
 				String account = Account.getAccount(nick, event);
@@ -140,14 +137,14 @@ public class RPG extends AbstractListener {
 					Helper.sendMessage(target, "You gained " + gain + " strength! You now have " + character.getStrength());
 				else
 					Helper.sendMessage(target, "You have no strength to gain at the moment.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(strength);
 
 		defense = new Command("defense", Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return null;
 				String account = Account.getAccount(nick, event);
@@ -157,14 +154,14 @@ public class RPG extends AbstractListener {
 					Helper.sendMessage(target, "You gained " + gain + " defense! You now have " + character.getDefense());
 				else
 					Helper.sendMessage(target, "You have no defense to gain at the moment.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(defense);
 
 		accuracy = new Command("accuracy", Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return null;
 				String account = Account.getAccount(nick, event);
@@ -174,14 +171,14 @@ public class RPG extends AbstractListener {
 					Helper.sendMessage(target, "You gained " + gain + " accuracy! You now have " + character.getAccuracy());
 				else
 					Helper.sendMessage(target, "You have no accuracy to gain at the moment.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(accuracy);
 
 		dodge = new Command("dodge", Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return null;
 				String account = Account.getAccount(nick, event);
@@ -191,20 +188,20 @@ public class RPG extends AbstractListener {
 					Helper.sendMessage(target, "You gained " + gain + " dodge! You now have " + character.getDodge());
 				else
 					Helper.sendMessage(target, "You have no dodge to gain at the moment.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(dodge);
 
 		status = new Command("status", Permissions.EVERYONE) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				if (!Helper.isEnabledHere(target, "RPG"))
 					return null;
 				String account = Account.getAccount(nick, event);
 				RPGCharacter character = new RPGCharacter(account, nick, target);
 				Helper.sendMessage(target, "Your status is \"" + character.getStatus(true) + "\"");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		rpg.registerSubCommand(status);

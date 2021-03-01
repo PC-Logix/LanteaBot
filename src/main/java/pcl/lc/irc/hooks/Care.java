@@ -9,6 +9,7 @@ import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandRateLimit;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TablesOfRandomThings;
 
@@ -26,9 +27,9 @@ public class Care extends AbstractListener {
 	protected void initHook() {
 		local_command = new Command("care", new CommandRateLimit(60)) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, TablesOfRandomThings.getCareDetectorResponse(), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.registerAlias("care-o-meter");

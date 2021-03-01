@@ -8,6 +8,7 @@ import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.CommandArgument;
 import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.CommandChainState;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.TablesOfRandomThings;
 
@@ -28,14 +29,14 @@ public class Garbage extends AbstractListener {
 	private void initCommands() {
 		local_command = new Command("garbage", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument(0);
 				if (item == null || item.equals("")) {
 					Helper.sendAction(target, "kicks a can " + TablesOfRandomThings.getGarbageDisposal());
 				} else {
 					Helper.sendAction(target, "throws '" + item + "' " + TablesOfRandomThings.getGarbageDisposal() + ", it was never seen again.");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		local_command.registerAlias("gb");

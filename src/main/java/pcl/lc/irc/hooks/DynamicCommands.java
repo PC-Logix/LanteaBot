@@ -109,14 +109,14 @@ public class DynamicCommands extends AbstractListener {
 
 		toggle_command = new Command("dyncmd", new CommandRateLimit(10), Permissions.MOD) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (params.equals("disable") || params.equals("enable")) {
 					Helper.toggleCommand("dyncmd", target, params);
 				} else {
 					String isEnabled = Helper.isEnabledHere(target, "dyncmd") ? "enabled" : "disabled";
 					Helper.sendMessage(target, "dyncmd is " + isEnabled + " in this channel", nick);
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		toggle_command.setHelpText("Dynamic command module");
@@ -138,15 +138,15 @@ public class DynamicCommands extends AbstractListener {
 		//<editor-fold desc="Alias into proper command sub-command structure">
 		base_command = new Command("command", Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(params), nick);
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		add = new Command("add", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Content", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String cmd = this.argumentParser.getArgument("Command");
 				String content = this.argumentParser.getArgument("Content");
 				if (!IRCBot.dynamicCommands.containsKey(cmd)) {
@@ -157,14 +157,14 @@ public class DynamicCommands extends AbstractListener {
 				} else {
 					event.respond("Can't override existing commands.");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		add.setHelpText("Adds a dynamic command.");
 
 		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String cmd = this.argumentParser.getArgument("Command");
 				CommandItem item = CommandItem.GetByCommand(cmd);
 				if (item != null) {
@@ -174,7 +174,7 @@ public class DynamicCommands extends AbstractListener {
 				} else {
 					event.respond("Unable to find command '" + cmd + "'");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		del.registerAlias("delete");
@@ -184,7 +184,7 @@ public class DynamicCommands extends AbstractListener {
 
 		addhelp = new Command("addhelp", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Text", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommandHelp = Database.getPreparedStatement("addCommandHelp");
 				String theCommand = this.argumentParser.getArgument("Command");
 				String theHelp = this.argumentParser.getArgument("Text");
@@ -202,7 +202,7 @@ public class DynamicCommands extends AbstractListener {
 				} else {
 					event.respond("fail 2 ");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 		addhelp.registerAlias("sethelp");
@@ -211,7 +211,7 @@ public class DynamicCommands extends AbstractListener {
 
 		print = new Command("print", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				try {
 					String cmd = this.argumentParser.getArgument("Command");
 					PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
@@ -226,13 +226,13 @@ public class DynamicCommands extends AbstractListener {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		edit = new Command("edit", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Content", ArgumentTypes.STRING)), Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
 				PreparedStatement getCommand = Database.getPreparedStatement("getCommand");
 				String cmd = this.argumentParser.getArgument("Command").toLowerCase();
@@ -251,31 +251,31 @@ public class DynamicCommands extends AbstractListener {
 				} else {
 					event.respond("Can't add new commands with edit!");
 				}
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		alias = new Command("alias", Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "To add an alias create a dynamic command with one or more commands to execute between two % like %command%.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		placeholders = new Command("placeholders", Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "Valid placeholders: %command% - Where 'command' is a different dyn-command. [randomitem] - Inserts a random item from the inventory. [drama] - ??. [argument] - The entire argument string. [nick] - The name of the caller. {n} - Where n is the number of an argument word starting at 0.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
 		prefixes = new Command("prefixes", Permissions.TRUSTED) {
 			@Override
-			public CommandChainState onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Helper.sendMessage(target, "Valid prefixes: [js] - Attempts to parse the dyn-command contents as javascript. [lua] - Attempts to parse the dyn-command contents as Lua. [action] - Sends an ACTION instead of a normal message.");
-				return CommandChainState.FINISHED;
+				return new CommandChainStateObject();
 			}
 		};
 
