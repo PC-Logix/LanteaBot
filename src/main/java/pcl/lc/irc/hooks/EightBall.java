@@ -41,10 +41,10 @@ public class EightBall extends AbstractListener {
 						Helper.sendAction(target, msg.replaceFirst("\\*", ""));
 					else
 						Helper.sendMessage(target, msg, nick);
-					return null;
+					return new CommandChainStateObject();
 				}
 				Helper.sendMessage(target, "I don't think that's a question...", nick);
-				return new CommandChainStateObject();
+				return new CommandChainStateObject(CommandChainState.ERROR, "I don't think that's a question...");
 			}
 		}; local_command.setHelpText("Gives vague answers to all questions.");
 		local_command.registerAlias("8ball");
