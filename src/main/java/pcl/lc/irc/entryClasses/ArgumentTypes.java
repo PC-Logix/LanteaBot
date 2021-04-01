@@ -15,7 +15,7 @@ public class ArgumentTypes {
 		items.put(INTEGER, "Integers are numbers without decimal points.");
 		items.put(DOUBLE, "Doubles are numbers that may include decimal points.");
 		items.put(BOOLEAN, "A boolean can be the words \"true\" or \"false\", or a bit (1 or 0).");
-		items.put(LIST, "A list is one or more strings. These can be either single words, or quoted strings as per the String type.");
+		items.put(LIST, "A list is one or more strings. These can be either single words, or quoted strings, as per the String type.");
 		return items;
 	}
 }

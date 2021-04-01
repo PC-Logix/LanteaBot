@@ -678,17 +678,17 @@ public class Admin extends AbstractListener {
 			String target = t.getRequestURI().toString();
 			String response = "";
 
-			StringBuilder items = new StringBuilder("<p>Command syntax works as follows:</p>" +
+			String items = "<p>Command syntax works as follows:</p>" +
 				"<ul><li>Arguments encased within [] are optional and may be omitted. Specifying an optional argument requires specifying the preceding ones.</li>" +
 				"<li>Certain commands accept certain keywords for some arguments, such as the word \"random\", which can change how the command behaves.</li>" +
 				"<li>Certain commands will substitute missing arguments. For example missing targets or items may use random ones.</li>" +
-				"<li>The following argument types can appear:<ul>");
+				"<li>The following argument types can appear:<ul>";
 			HashMap<String, String> args = ArgumentTypes.getList();
 			for (Map.Entry<String, String> entry : args.entrySet()) {
-				items.append("<li>").append(entry.getKey()).append(" - ").append(entry.getValue()).append("</li>");
+				items += "<li>" + entry.getKey() + " - " + entry.getValue() + "</li>";
 			}
-			items.append("</ul></li></ul>");
-			items.append(getHelpTable());
+			items += "</ul></li></ul>";
+			items += getHelpTable();
 
 			String navData = "";
 			Iterator it = httpd.pages.entrySet().iterator();
@@ -703,7 +703,7 @@ public class Admin extends AbstractListener {
 				String line = null;
 
 				while ((line = br.readLine()) != null) {
-					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items.toString()).replace("#NAVIGATION#", navData) + "\n";
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items).replace("#NAVIGATION#", navData) + "\n";
 				}
 			}
 			//System.out.println(response);
