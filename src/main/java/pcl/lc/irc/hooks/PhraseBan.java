@@ -68,7 +68,7 @@ public class PhraseBan extends AbstractListener {
 		local_command.setHelpText("Ban phrases, all of them");
 		local_command.registerAlias("pb");
 
-		add = new Command("add", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
+		add = new Command("add", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Phrase")), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -87,7 +87,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(add);
 
-		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
+		del = new Command("del", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Phrase")), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -123,7 +123,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(clear);
 
-		exadd = new Command("exadd", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
+		exadd = new Command("exadd", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Phrase")), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -140,7 +140,7 @@ public class PhraseBan extends AbstractListener {
 		};
 		local_command.registerSubCommand(exadd);
 
-		exdel = new Command("exdel", new CommandArgumentParser(1, new CommandArgument("Phrase", ArgumentTypes.STRING)), Permissions.MOD) {
+		exdel = new Command("exdel", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Phrase")), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws SQLException {
 				String phrase = this.argumentParser.getArgument("Phrase");
@@ -153,7 +153,7 @@ public class PhraseBan extends AbstractListener {
 		exdel.registerAlias("exrem");
 		local_command.registerSubCommand(exdel);
 
-		set = new Command("set", new CommandArgumentParser(2, new CommandArgument("Setting", ArgumentTypes.STRING), new CommandArgument("Value", ArgumentTypes.STRING)), Permissions.MOD) {
+		set = new Command("set", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Setting"), new CommandArgument(ArgumentTypes.STRING, "Value")), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String setting = this.argumentParser.getArgument("Setting");

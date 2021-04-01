@@ -27,7 +27,7 @@ public class Pet extends AbstractListener {
 		actions.put("pets", new ActionType("Petting", "Petting", "Pet", "Petted"));
 		actions.put("brushes", new ActionType("Brushing", "Brushing", "Brush", "Brushed"));
 
-		local_command = new Command("pet", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
+		local_command = new Command("pet", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String petTarget = this.argumentParser.getArgument("Nick");
@@ -76,7 +76,7 @@ public class Pet extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("stroke");
-		local_command.setHelpText("Give pets! Give hit points! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <item>] If [with <item>] is omitted tries to use a random item from the inventory.");
+		local_command.setHelpText("Give pets! Give hit points!");
 		IRCBot.registerCommand(local_command);
 	}
 }

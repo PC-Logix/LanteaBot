@@ -100,7 +100,7 @@ public class Defend extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("defend", new CommandArgumentParser(0, new CommandArgument("Action", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
+		local_command = new Command("defend", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Action"), new CommandArgument(ArgumentTypes.STRING, "Item"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");
@@ -185,13 +185,13 @@ public class Defend extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
-		local_command.setHelpText("Defend against things! Getting stabbed? Things thrown at you? No problem! Just defend!");
+		local_command.setHelpText("Defend against things! Getting stabbed? Things thrown at you? No problem! Just defend! Each action can also be used as an alias which only needs the target (and optionally an item) as arguments.");
 		for (Actions action : Actions.values()) {
 			if (action.command != null)
 				local_command.registerAlias(action.command, action.command);
 		}
 
-		debug_command = new Command("defenddebug", new CommandArgumentParser(0, new CommandArgument("Action", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		debug_command = new Command("defenddebug", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Action")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String[] params) {
 				String action = this.argumentParser.getArgument("Action");

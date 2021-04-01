@@ -76,7 +76,7 @@ public class AnimalFacts extends AbstractListener {
             }
         };
 
-        local_command2 = new Command("fact", new CommandArgumentParser(0, new CommandArgument("Animal", ArgumentTypes.STRING))) {
+        local_command2 = new Command("fact", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Animal"))) {
             @Override
             public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
                 String aminal = this.argumentParser.getArgument("Animal");

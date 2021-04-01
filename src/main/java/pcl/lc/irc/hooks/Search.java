@@ -39,7 +39,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; search.setHelpText("Search various sites for term (eg search <site> <term>)");
-		google = new Command("google", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
+		google = new Command("google", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch(null, this.argumentParser.getArgument("Query"));
@@ -47,7 +47,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; google.setHelpText("Searches google and returns the first result");
-		curseForge = new Command("curseForge", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
+		curseForge = new Command("curseForge", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:minecraft.curseforge.com", this.argumentParser.getArgument("Query"));
@@ -55,7 +55,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; curseForge.setHelpText("Searches CurseForge and returns the first result");
-		wiki = new Command("wiki", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
+		wiki = new Command("wiki", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("wiki", this.argumentParser.getArgument("Query"));
@@ -63,7 +63,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; wiki.setHelpText("Searches Wikipedia and returns the first result");
-		urban = new Command("urban", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
+		urban = new Command("urban", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:urbandictionary.com", this.argumentParser.getArgument("Query"));
@@ -71,7 +71,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; urban.setHelpText("Searches UrbanDictonary and returns the first result");
-		ann = new Command("ann", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
+		ann = new Command("ann", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:animenewsnetwork.com", this.argumentParser.getArgument("Query"));
@@ -79,7 +79,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; ann.setHelpText("Searches Anime News Network and returns the first result");
-		youtube = new Command("youtube", new CommandArgumentParser(1, new CommandArgument("Query", ArgumentTypes.STRING))) {
+		youtube = new Command("youtube", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:youtube.com", this.argumentParser.getArgument("Query"));

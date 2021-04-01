@@ -31,7 +31,7 @@ public class IPoints extends AbstractListener {
 		Database.addPreparedStatement("getPoints", "SELECT Points FROM InternetPoints WHERE nick = ?;");
 		Database.addPreparedStatement("addPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
 		Database.addPreparedStatement("setPoints", "INSERT OR REPLACE INTO InternetPoints VALUES (?, ?)");
-		command_points = new Command("points", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
+		command_points = new Command("points", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String user = this.argumentParser.getArgument("User");
@@ -73,7 +73,7 @@ public class IPoints extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; command_points.setHelpText("Checks the points for yourself, or another user");
-		command_reset_points = new Command("resetpoints", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_reset_points = new Command("resetpoints", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 					PreparedStatement setPoints = Database.getPreparedStatement("setPoints");

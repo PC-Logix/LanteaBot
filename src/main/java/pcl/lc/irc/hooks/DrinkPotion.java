@@ -625,7 +625,7 @@ public class DrinkPotion extends AbstractListener {
 
 	private void initCommands() {
 		rateLimit = new CommandRateLimit(0, 10, 0, true, false, "Having another potion seems like a really bad idea right now...");
-		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument("Potion", ArgumentTypes.STRING)), rateLimit) {
+		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Potion", "If potion is not specified uses a random potion. If it only contains either consistency or appearance the other is randomly chosen.")), rateLimit) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String pot = this.argumentParser.getArgument("Potion");
@@ -668,7 +668,7 @@ public class DrinkPotion extends AbstractListener {
 		local_command.registerAlias("down");
 		local_command.registerAlias("slurp");
 
-		splash = new Command("splash", new CommandArgumentParser(1, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Potion", ArgumentTypes.STRING)), new CommandRateLimit(10)) {
+		splash = new Command("splash", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Potion", "If potion is not specified uses a random potion. If it only contains either consistency or appearance the other is randomly chosen.")), new CommandRateLimit(10)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String splashTarget = this.argumentParser.getArgument("Target");
@@ -714,7 +714,7 @@ public class DrinkPotion extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
-		splash.setHelpText("Splash some unfortunate bystander with a potion! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <potion>] If [with <potion>] is omitted a random potion is used.");
+		splash.setHelpText("Splash some unfortunate bystander with a potion!");
 
 		get_random = new Command("randompotion", new CommandRateLimit(10)) {
 			@Override
@@ -745,7 +745,7 @@ public class DrinkPotion extends AbstractListener {
 			}
 		};
 
-		discovered = new Command("discovered", new CommandArgumentParser(0, new CommandArgument("ListAll", ArgumentTypes.BOOLEAN)), new CommandRateLimit(10)) {
+		discovered = new Command("discovered", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.BOOLEAN, "ListAll")), new CommandRateLimit(10)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (Config.httpdEnable.equals("true")) {

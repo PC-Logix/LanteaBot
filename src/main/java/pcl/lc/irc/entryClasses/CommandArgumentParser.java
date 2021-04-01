@@ -226,13 +226,24 @@ public class CommandArgumentParser {
 	}
 
 	public String getArgumentSyntax() {
+		return getArgumentSyntax(false);
+	}
+
+	public String getArgumentSyntax(boolean htmlMode) {
 		StringBuilder syntax = new StringBuilder();
 		int currentArgument = 0;
 		for (CommandArgument arg : this.arguments) {
 			if (currentArgument == this.requiredFirstNum)
 				syntax.append("[");
 			if (arg.name != null) {
+				if (htmlMode && !arg.description.isEmpty()) {
+					syntax.append("<span style='text-decoration: underline; text-decoration-style: dotted;' title='");
+					syntax.append(arg.description);
+					syntax.append("'>");
+				}
 				syntax.append(arg.name);
+				if (htmlMode)
+					syntax.append("</span>");
 				syntax.append(":");
 			}
 			syntax.append(getTypeShortName(arg.type));

@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.org.apache.xml.internal.security.keys.content.KeyValue;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -94,7 +95,7 @@ public class Admin extends AbstractListener {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		command_prefix = new Command("prefix", new CommandArgumentParser(1, new CommandArgument("Prefix", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_prefix = new Command("prefix", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Prefix")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String prefix = this.argumentParser.getArgument("Prefix");
@@ -107,7 +108,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_prefix.setHelpText("Changes the prefix that the bot responds to, requires Bot Admin");
-		command_join = new Command("join", new CommandArgumentParser(1, new CommandArgument("Channel", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_join = new Command("join", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Channel")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String channel = this.argumentParser.getArgument("Channel");
@@ -121,7 +122,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_join.setHelpText("Joins the channel supplied in the first arg, requires Bot Admin");
-		command_part = new Command("part", new CommandArgumentParser(1, new CommandArgument("Channel", ArgumentTypes.STRING)), Permissions.MOD) {
+		command_part = new Command("part", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Channel")), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String channel = this.argumentParser.getArgument("Channel");
@@ -150,7 +151,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_shutdown.setHelpText("Stops the bot, requires Bot Admin");
-		command_cycle = new Command("cycle", new CommandArgumentParser(0, new CommandArgument("Channel", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_cycle = new Command("cycle", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Channel")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String channel = this.argumentParser.getArgument("Channel");
@@ -163,7 +164,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_cycle.setHelpText("Quickly parts and rejoins the current or specified channel.");
-		command_raw = new Command("raw", new CommandArgumentParser(1, new CommandArgument("Message", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_raw = new Command("raw", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Message")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				event.getBot().sendRaw().rawLine(this.argumentParser.getArgument("Message"));
@@ -171,7 +172,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_raw.setHelpText("Sends RAW IRC commands to the server, this can break stuff, requires Bot Admin");
-		command_chnick = new Command("chnick", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_chnick = new Command("chnick", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				event.getBot().sendRaw().rawLineNow("NICK " + this.argumentParser.getArgument("Nick"));
@@ -230,7 +231,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_flushauth.setHelpText("Prints the current authed user list.");
-		command_ignore = new Command("ignore", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_ignore = new Command("ignore", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String name = this.argumentParser.getArgument("Nick");
@@ -259,7 +260,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_ignore.setHelpText("Makes the bot ignore a user. *THIS IS A GLOBAL IGNORE!*");
-		command_unignore = new Command("unignore", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_unignore = new Command("unignore", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String name = this.argumentParser.getArgument("Nick");
@@ -298,7 +299,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_ignorelist.setHelpText("Prints the list of ignored users.");
-		command_load = new Command("load", new CommandArgumentParser(1, new CommandArgument("Module", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_load = new Command("load", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Module")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IllegalAccessException, InstantiationException {
 				String module = this.argumentParser.getArgument("Module");
@@ -387,7 +388,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_listadmins.setHelpText("List current admins.");
-		command_help = new Command("help", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING))) {
+		command_help = new Command("help", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Command"))) {
 			@Override
 			public String onInvalidArguments(ArrayList<String> params) {
 				if (params.size() == 0)
@@ -430,7 +431,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_help.setHelpText("If you can read this you don't need help with help.");
-		command_syntax = new Command("syntax", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING)), Permissions.EVERYONE) {
+		command_syntax = new Command("syntax", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Command")), Permissions.EVERYONE) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String com = this.argumentParser.getArgument("Command");
@@ -461,7 +462,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_authed.setHelpText("Check if executing user is authed.");
-		command_addadmin = new Command("addadmin", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		command_addadmin = new Command("addadmin", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String newOpNick = this.argumentParser.getArgument("Nick");
@@ -481,7 +482,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_addadmin.setHelpText("Add a new admin.");
-		command_time_test = new Command("timetest", new CommandArgumentParser(1, new CommandArgument("Amount", ArgumentTypes.INTEGER), new CommandArgument("Unit", ArgumentTypes.STRING))) {
+		command_time_test = new Command("timetest", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.INTEGER, "Amount"), new CommandArgument(ArgumentTypes.STRING, "Unit"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String amount = this.argumentParser.getArgument("Amount");
@@ -507,7 +508,7 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_whatami.setHelpText("Returns the rank of the executing users rank if any.");
-		command_ami = new Command("ami", new CommandArgumentParser(1, new CommandArgument("Something", ArgumentTypes.STRING))) {
+		command_ami = new Command("ami", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Something"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (nick.equals(this.argumentParser.getArgument("Something")))
@@ -616,7 +617,7 @@ public class Admin extends AbstractListener {
 			help = "[" + command.getPermissionLevel() + "] " + help;
 		String argumentSyntax = "";
 		if (command.argumentParser != null) {
-			argumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(command.argumentParser.getArgumentSyntax());
+			argumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(command.argumentParser.getArgumentSyntax(true));
 		}
 		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + argumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
 		Integer i = 0;
@@ -635,7 +636,7 @@ public class Admin extends AbstractListener {
 				subHelp = "[" + command.getPermissionLevel() + "] " + subHelp;
 			String subArgumentSyntax = "";
 			if (subCommand.argumentParser != null)
-				subArgumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(subCommand.argumentParser.getArgumentSyntax());
+				subArgumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(subCommand.argumentParser.getArgumentSyntax(true));
 			item += "<tr><td style='white-space: nowrap;'> " + character + " " + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + subArgumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
 			i++;
 		}
@@ -672,7 +673,17 @@ public class Admin extends AbstractListener {
 			String target = t.getRequestURI().toString();
 			String response = "";
 
-			String items = getHelpTable();
+			StringBuilder items = new StringBuilder("<p>Command syntax works as follows:</p>" +
+				"<ul><li>Arguments encased within [] are optional and may be omitted. Specifying an optional argument requires specifying the preceding ones.</li>" +
+				"<li>Certain commands accept certain keywords for some arguments, such as the word \"random\", which can change how the command behaves.</li>" +
+				"<li>Certain commands will substitute missing arguments. For example missing targets or items may use random ones.</li>" +
+				"<li>The following argument types can appear:<ul>");
+			HashMap<String, String> args = ArgumentTypes.getList();
+			for (Map.Entry<String, String> entry : args.entrySet()) {
+				items.append("<li>").append(entry.getKey()).append(" - ").append(entry.getValue()).append("</li>");
+			}
+			items.append("</ul></li></ul>");
+			items.append(getHelpTable());
 
 			String navData = "";
 			Iterator it = httpd.pages.entrySet().iterator();
@@ -687,7 +698,7 @@ public class Admin extends AbstractListener {
 				String line = null;
 
 				while ((line = br.readLine()) != null) {
-					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items).replace("#NAVIGATION#", navData) + "\n";
+					response = response + line.replace("#BODY#", target).replace("#BOTNICK#", IRCBot.getOurNick()).replace("#HELPDATA#", items.toString()).replace("#NAVIGATION#", navData) + "\n";
 				}
 			}
 			//System.out.println(response);

@@ -110,7 +110,7 @@ public class Quotes extends AbstractListener {
 		};
 		quote.setHelpText("Returns quotes from the quote database. Also Has sub-commands: add, del");
 
-		add = new Command("add", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Quote", ArgumentTypes.STRING))) {
+		add = new Command("add", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Nick"), new CommandArgument(ArgumentTypes.STRING, "Quote"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("Nick");
@@ -131,7 +131,7 @@ public class Quotes extends AbstractListener {
 		};
 		add.setHelpText("Adds a quote to the database");
 
-		delete = new Command("delete", new CommandArgumentParser(1, new CommandArgument("QuoteID", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		delete = new Command("delete", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "QuoteID")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("QuoteID").replace(idIdentificationCharacter, "");
@@ -150,7 +150,7 @@ public class Quotes extends AbstractListener {
 		delete.setHelpText("Removes a quote from the database");
 		delete.registerAlias("del");
 
-		list = new Command("list", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING))) {
+		list = new Command("list", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String key = this.argumentParser.getArgument("Nick");

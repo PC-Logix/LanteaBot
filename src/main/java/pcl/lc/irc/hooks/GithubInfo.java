@@ -36,7 +36,7 @@ public class GithubInfo extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("github", new CommandArgumentParser(1, new CommandArgument("State", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
+		local_command = new Command("github", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "State")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String state = this.argumentParser.getArgument("State").toLowerCase();

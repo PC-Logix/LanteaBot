@@ -36,7 +36,7 @@ public class MCInfo extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("mcinfo", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING), new CommandArgument("Port", ArgumentTypes.INTEGER))) {
+		local_command = new Command("mcinfo", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Address"), new CommandArgument(ArgumentTypes.INTEGER, "Port"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws IOException {
 				String server = this.argumentParser.getArgument("Address");

@@ -47,7 +47,7 @@ public class Weather extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("weather", new CommandArgumentParser(1, new CommandArgument("Location", ArgumentTypes.STRING))) {
+		local_command = new Command("weather", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Location"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
 				Helper.sendMessage(target, getWeather(this.argumentParser.getArgument("Location")));

@@ -27,7 +27,7 @@ public class Say extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("say", new CommandArgumentParser(1, new CommandArgument("Message", ArgumentTypes.STRING), new CommandArgument("Channel", ArgumentTypes.STRING)), Permissions.ADMIN) {
+		local_command = new Command("say", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Message"), new CommandArgument(ArgumentTypes.STRING, "Channel")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String message = this.argumentParser.getArgument("Message");

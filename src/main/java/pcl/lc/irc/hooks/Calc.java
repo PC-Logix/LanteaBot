@@ -28,7 +28,7 @@ public class Calc extends AbstractListener {
 	
 	@Override
 	protected void initHook() {
-		local_command = new Command("calc", new CommandArgumentParser(1, new CommandArgument("Expression", ArgumentTypes.STRING))) {
+		local_command = new Command("calc", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Expression"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String expression = this.argumentParser.getArgument("Expression");

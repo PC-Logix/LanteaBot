@@ -30,7 +30,7 @@ public class LookUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command_lookup = new Command("lookup", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING), new CommandArgument("RecordType", ArgumentTypes.STRING))) {
+		local_command_lookup = new Command("lookup", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Address"), new CommandArgument(ArgumentTypes.STRING, "RecordType"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String address = this.argumentParser.getArgument("Address");

@@ -10,8 +10,7 @@ import org.joda.time.DateTime;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
-import pcl.lc.irc.entryClasses.Command;
-import pcl.lc.irc.entryClasses.CommandRateLimit;
+import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.CommandChainState;
 import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Database;
@@ -491,11 +490,11 @@ public class Tonk extends AbstractListener {
 			}
 		};
 
-		tonk_merge_scores = new Command("tonkmerge", Permissions.ADMIN) {
+		tonk_merge_scores = new Command("tonkmerge", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING), new CommandArgument(ArgumentTypes.STRING)), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) throws Exception {
-				String from_key = tonk_record_key + "_" + param.get(1);
-				String to_key = tonk_record_key + "_" + param.get(0);
+				String from_key = tonk_record_key + "_" + this.argumentParser.getArgument(1);
+				String to_key = tonk_record_key + "_" + this.argumentParser.getArgument(0);
 				double from = Double.parseDouble(Database.getJsonData(from_key));
 				double to = Double.parseDouble(Database.getJsonData(to_key));
 
@@ -507,7 +506,7 @@ public class Tonk extends AbstractListener {
 		};
 		tonk_merge_scores.setHelpText("Merges the score of the second name into the first name and wipes the second name from the scoreboard. Syntax: " + Config.commandprefix + tonk_merge_scores.getCommand() + " <first_name> <second_name>");
 
-		tonk_destroy_scores = new Command("tonkdestroy", Permissions.ADMIN) {
+		tonk_destroy_scores = new Command("tonkdestroy", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.LIST, "Users")), Permissions.ADMIN) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> param) {
 				ArrayList<String> successes = new ArrayList<>();
@@ -545,7 +544,7 @@ public class Tonk extends AbstractListener {
 		tonk_snipe.registerAlias("ammocount", "count");
 		tonk_snipe.setHelpText("If you are in last place on the tonk scoreboard you can attempt to snipe someone with a green, red, or blue shell. A successful snipe will remove a percentage (depending on the shell type) of the difference between your and their points, and give it to you. You can only succeed once. If it fails you can try again after " + TonkSnipe.daysBetweenTonkSnipes + " days.");
 
-		tonk_snipe_blue = new Command(TonkSnipeType.BLUE.keyword) {
+		tonk_snipe_blue = new Command(TonkSnipeType.BLUE.keyword, new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (getMaxScoreboardPosition() <= 1) {
@@ -566,7 +565,7 @@ public class Tonk extends AbstractListener {
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_blue);
 
-		tonk_snipe_red = new Command(TonkSnipeType.RED.keyword) {
+		tonk_snipe_red = new Command(TonkSnipeType.RED.keyword, new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() == 0) {
@@ -586,7 +585,7 @@ public class Tonk extends AbstractListener {
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_red);
 
-		tonk_snipe_green = new Command(TonkSnipeType.GREEN.keyword) {
+		tonk_snipe_green = new Command(TonkSnipeType.GREEN.keyword, new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				if (params.size() == 0) {

@@ -24,7 +24,7 @@ public class Bap extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("bap", new CommandArgumentParser(0, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
+		local_command = new Command("bap", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String bapTarget = this.argumentParser.getArgument("Target");
@@ -61,6 +61,6 @@ public class Bap extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
-		local_command.setHelpText("Baps someone harmlessly without doing damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <target> [with <item>] If [with <item>] is omitted tries to use a random item from the inventory.");
+		local_command.setHelpText("Baps someone harmlessly without doing damage!");
 	}
 }

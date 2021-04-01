@@ -29,7 +29,7 @@ public class Shell extends AbstractListener {
 	}
 
 	private void initCommands() {
-		shell = new Command("shell", new CommandArgumentParser(1, new CommandArgument("Target1", ArgumentTypes.STRING), new CommandArgument("Target2", ArgumentTypes.STRING), new CommandArgument("Target3", ArgumentTypes.STRING), new CommandArgument("ItemOrPotion", ArgumentTypes.STRING))) {
+		shell = new Command("shell", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Target1", "If empty targets random IRC user."), new CommandArgument(ArgumentTypes.STRING, "Target2", "If empty targets random IRC user."), new CommandArgument(ArgumentTypes.STRING, "Target3", "If empty targets random IRC user."), new CommandArgument(ArgumentTypes.STRING, "ItemOrPotion", "If item is not specified tries to use random inventory item."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				DiceRoll roll = Helper.rollDice("1d100").getFirstGroupOrNull();
@@ -124,6 +124,6 @@ public class Shell extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
-		shell.setHelpText("Be a nuisance with your very own mortar! Syntax: " + Config.commandprefix + shell.getCommand() + " [<target>[ and <target>][ and <target>][ with <item>]]  <item> can be a valid potion string or \"random potion\". If [ with <item>] is omitted tries to use a random item from the inventory. Omitted targets are selected randomly from IRC user list.");
+		shell.setHelpText("Be a nuisance with your very own mortar!");
 	}
 }

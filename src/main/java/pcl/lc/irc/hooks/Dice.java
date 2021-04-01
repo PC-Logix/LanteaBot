@@ -22,7 +22,7 @@ public class Dice extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("dice", new CommandArgumentParser(1, new CommandArgument("Expression", ArgumentTypes.STRING))) {
+		local_command = new Command("dice", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Expression"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String expression = this.argumentParser.getArgument("Expression");

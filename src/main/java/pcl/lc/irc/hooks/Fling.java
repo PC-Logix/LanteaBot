@@ -28,7 +28,7 @@ public class Fling extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("fling", new CommandArgumentParser(1, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
+		local_command = new Command("fling", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target", "If empty targets random IRC user."), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String flingTarget = this.argumentParser.getArgument("Target");
@@ -97,6 +97,6 @@ public class Fling extends AbstractListener {
 		local_command.registerAlias(ALIAS_SLING);
 		local_command.registerAlias(ALIAS_SHOOT);
 		local_command.registerAlias(ALIAS_LAUNCH);
-		local_command.setHelpText("Fling something at someone! Syntax: " + Config.commandprefix + local_command.getCommand() + " [<item> [at <target>]] If [at <target>] is omitted picks a random target from IRC user list. If <item> is omitted tries to use a random item from the inventory.");
+		local_command.setHelpText("Fling something at someone!");
 	}
 }

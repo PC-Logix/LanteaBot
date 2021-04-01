@@ -79,7 +79,7 @@ public class IP2Geo extends AbstractListener {
 			}
 		}
 
-		local_command = new Command("geoip", new CommandArgumentParser(0, new CommandArgument("Location", ArgumentTypes.STRING))) {
+		local_command = new Command("geoip", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Location"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String location = this.argumentParser.getArgument("Location");

@@ -24,7 +24,7 @@ public class Give extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("give", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING))) {
+		local_command = new Command("give", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If this parameter is literally \"random\" a random item will be used."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String target_argument = this.argumentParser.getArgument("Nick");
@@ -67,7 +67,7 @@ public class Give extends AbstractListener {
 				}
 				return new CommandChainStateObject();
 			}
-		}; local_command.setHelpText("/give <target> <item>|random - Give <target> <item> if found or random");
+		}; local_command.setHelpText("If the items is found in the inventory it is \"given\" to the target.");
 		IRCBot.registerCommand(local_command);
 	}
 }

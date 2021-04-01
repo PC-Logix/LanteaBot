@@ -45,7 +45,7 @@ public class IsUp extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("isup", new CommandArgumentParser(1, new CommandArgument("URL", ArgumentTypes.STRING))) {
+		local_command = new Command("isup", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "URL"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String site = this.argumentParser.getArgument("URL");

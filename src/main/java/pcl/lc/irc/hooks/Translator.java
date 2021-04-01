@@ -67,7 +67,7 @@ public class Translator extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("translate", new CommandArgumentParser(1, new CommandArgument("Text", ArgumentTypes.STRING), new CommandArgument("FromLanguage", ArgumentTypes.STRING), new CommandArgument("ToLanguage", ArgumentTypes.STRING)), new CommandRateLimit(5)) {
+		local_command = new Command("translate", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Text"), new CommandArgument(ArgumentTypes.STRING, "FromLanguage"), new CommandArgument(ArgumentTypes.STRING, "ToLanguage")), new CommandRateLimit(5)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String str = this.argumentParser.getArgument("Text");

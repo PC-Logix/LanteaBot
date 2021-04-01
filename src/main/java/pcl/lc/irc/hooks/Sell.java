@@ -37,7 +37,7 @@ public class Sell extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("sell", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
+		local_command = new Command("sell", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Item"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String string = strings.get(Helper.getRandomInt(0, strings.size() - 1));

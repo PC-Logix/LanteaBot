@@ -26,7 +26,7 @@ public class Juggle extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("juggle", new CommandArgumentParser(0, new CommandArgument("Number", ArgumentTypes.INTEGER)), new CommandRateLimit(60)) {
+		local_command = new Command("juggle", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.INTEGER, "Number")), new CommandRateLimit(60)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				int item_amount = this.argumentParser.getInt("Number");

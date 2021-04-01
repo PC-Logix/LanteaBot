@@ -53,7 +53,7 @@ public class Attack extends AbstractListener {
 				acts.add(act.command);
 		actionList = String.join(", ", acts);
 
-		local_command = new Command("attack", new CommandArgumentParser(2, new CommandArgument("Action", ArgumentTypes.STRING), new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Item", ArgumentTypes.STRING)), new CommandRateLimit(300, true)) {
+		local_command = new Command("attack", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Action", "One of " + Helper.oxfordJoin(acts, ", ", ", or ")), new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item.")), new CommandRateLimit(300, true)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");
@@ -127,7 +127,7 @@ public class Attack extends AbstractListener {
 			if (action.command != null)
 				local_command.registerAlias(action.command, action.command);
 		}
-		local_command.setHelpText("Attack someone and deal damage! Syntax: " + Config.commandprefix + local_command.getCommand() + " <attack_type> <target> [with <item>] Valid attack types: " + actionList + " or random if invalid. If [with <item>] is omitted tries to use a random item from the inventory. Note that 'bite' always ignores any item. Each attack type can also be used as an individual command.");
+		local_command.setHelpText("Attack someone and deal damage! Each action can also be used as an alias which only needs the target (and optionally an item) as arguments.");
 		IRCBot.registerCommand(local_command);
 	}
 }

@@ -40,7 +40,7 @@ public class TimedBans extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
-		command_ban = new Command("ban", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
+		command_ban = new Command("ban", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick"), new CommandArgument(ArgumentTypes.STRING, "Time"), new CommandArgument(ArgumentTypes.STRING, "Reason"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String subject = this.argumentParser.getArgument("Nick");
@@ -57,7 +57,7 @@ public class TimedBans extends AbstractListener {
 			}
 		};
 		command_ban.setHelpText("Issue a timed ban.");
-		command_quiet = new Command("quiet", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Time", ArgumentTypes.STRING), new CommandArgument("Reason", ArgumentTypes.STRING))) {
+		command_quiet = new Command("quiet", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick"), new CommandArgument(ArgumentTypes.STRING, "Time"), new CommandArgument(ArgumentTypes.STRING, "Reason"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String time = this.argumentParser.getArgument("Time");

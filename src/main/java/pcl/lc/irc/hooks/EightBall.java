@@ -23,7 +23,7 @@ public class EightBall extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("eightball", new CommandArgumentParser(0, new CommandArgument("Question", ArgumentTypes.STRING))) {
+		local_command = new Command("eightball", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Question"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String question = this.argumentParser.getArgument("Question");

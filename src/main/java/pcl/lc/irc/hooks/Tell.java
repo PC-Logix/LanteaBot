@@ -34,7 +34,7 @@ public class Tell extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("tell", new CommandArgumentParser(2, new CommandArgument("Nick", ArgumentTypes.STRING), new CommandArgument("Message", ArgumentTypes.STRING))) {
+		local_command = new Command("tell", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Nick"), new CommandArgument(ArgumentTypes.STRING, "Message"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				PreparedStatement addTell = Database.getPreparedStatement("addTell");

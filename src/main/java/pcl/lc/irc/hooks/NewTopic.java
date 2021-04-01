@@ -59,7 +59,7 @@ public class NewTopic extends AbstractListener {
 		};
 		command_newTopic.setHelpText("Generates a new topic");
 
-		command_addTopic = new Command("addtopic", new CommandArgumentParser(1, new CommandArgument("Topic", ArgumentTypes.STRING)), Permissions.TRUSTED) {
+		command_addTopic = new Command("addtopic", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Topic")), Permissions.TRUSTED) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommand = Database.getPreparedStatement("addTopic");
@@ -70,7 +70,7 @@ public class NewTopic extends AbstractListener {
 			}
 		};
 
-		command_delTopic = new Command("deltopic", new CommandArgumentParser(1, new CommandArgument("TopicID", ArgumentTypes.INTEGER)), Permissions.TRUSTED) {
+		command_delTopic = new Command("deltopic", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.INTEGER, "TopicID")), Permissions.TRUSTED) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement delCommand = Database.getPreparedStatement("delTopic");

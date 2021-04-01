@@ -15,13 +15,13 @@ public class CommandArgument {
 		this.type = type;
 	}
 
-	public CommandArgument(String name, String type) {
+	public CommandArgument(String type, String name) {
 		this.name = name;
 		this.description = null;
 		this.type = type;
 	}
 
-	public CommandArgument(String name, String description, String type) {
+	public CommandArgument(String type, String name, String description) {
 		this.name = name;
 		this.description = description;
 		this.type = type;

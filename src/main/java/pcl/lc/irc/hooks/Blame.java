@@ -27,7 +27,7 @@ public class Blame extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("blame", new CommandArgumentParser(1, new CommandArgument("Nick", ArgumentTypes.STRING)), new CommandRateLimit(5)) {
+		local_command = new Command("blame", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Nick")), new CommandRateLimit(5)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String user = this.argumentParser.getArgument("Nick");

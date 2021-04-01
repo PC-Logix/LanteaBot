@@ -144,7 +144,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		};
 
-		add = new Command("add", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Content", ArgumentTypes.STRING)), Permissions.TRUSTED) {
+		add = new Command("add", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Command"), new CommandArgument(ArgumentTypes.STRING, "Content")), Permissions.TRUSTED) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String cmd = this.argumentParser.getArgument("Command");
@@ -162,7 +162,7 @@ public class DynamicCommands extends AbstractListener {
 		};
 		add.setHelpText("Adds a dynamic command.");
 
-		del = new Command("del", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING)), Permissions.TRUSTED) {
+		del = new Command("del", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Command")), Permissions.TRUSTED) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String cmd = this.argumentParser.getArgument("Command");
@@ -182,7 +182,7 @@ public class DynamicCommands extends AbstractListener {
 		del.registerAlias("remove");
 		del.setHelpText("Removes a dynamic command.");
 
-		addhelp = new Command("addhelp", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Text", ArgumentTypes.STRING)), Permissions.TRUSTED) {
+		addhelp = new Command("addhelp", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Command"), new CommandArgument(ArgumentTypes.STRING, "Text")), Permissions.TRUSTED) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommandHelp = Database.getPreparedStatement("addCommandHelp");
@@ -209,7 +209,7 @@ public class DynamicCommands extends AbstractListener {
 		addhelp.registerAlias("help");
 		addhelp.setHelpText("Sets help on dynamic commands");
 
-		print = new Command("print", new CommandArgumentParser(1, new CommandArgument("Command", ArgumentTypes.STRING)), Permissions.TRUSTED) {
+		print = new Command("print", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Command")), Permissions.TRUSTED) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				try {
@@ -230,7 +230,7 @@ public class DynamicCommands extends AbstractListener {
 			}
 		};
 
-		edit = new Command("edit", new CommandArgumentParser(2, new CommandArgument("Command", ArgumentTypes.STRING), new CommandArgument("Content", ArgumentTypes.STRING)), Permissions.TRUSTED) {
+		edit = new Command("edit", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Command"), new CommandArgument(ArgumentTypes.STRING, "Content")), Permissions.TRUSTED) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				PreparedStatement addCommand = Database.getPreparedStatement("addCommand");
@@ -310,7 +310,7 @@ public class DynamicCommands extends AbstractListener {
 
 	public static void registerDynamicCommand(String command, String content, String helpText) {
 		System.out.println("Register dynamic command '" + command + "'");
-		DynamicCommand dynCmd = new DynamicCommand(command, content, new CommandArgumentParser(0, new CommandArgument("Target", ArgumentTypes.STRING), new CommandArgument("Params", ArgumentTypes.STRING)));
+		DynamicCommand dynCmd = new DynamicCommand(command, content, new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Params")));
 		if (helpText != null && !helpText.equals(""))
 			dynCmd.setHelpText(helpText);
 		else

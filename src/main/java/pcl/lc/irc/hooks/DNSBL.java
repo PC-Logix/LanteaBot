@@ -100,7 +100,7 @@ public class DNSBL extends AbstractListener {
 			e1.printStackTrace();
 		}
 
-		toggle_command = new Command("dnsbl", new CommandArgumentParser(0, new CommandArgument("State", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
+		toggle_command = new Command("dnsbl", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "State")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String state = this.argumentParser.getArgument("State");
@@ -117,7 +117,7 @@ public class DNSBL extends AbstractListener {
 		IRCBot.registerCommand(toggle_command);
 
 
-		check_command = new Command("checkdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.EVERYONE) {
+		check_command = new Command("checkdnsbl", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Address")), new CommandRateLimit(10), Permissions.EVERYONE) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String addr = this.argumentParser.getArgument("Address");
@@ -155,7 +155,7 @@ public class DNSBL extends AbstractListener {
 		IRCBot.registerCommand(check_command);
 
 
-		adddnsbl_command = new Command("adddnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
+		adddnsbl_command = new Command("adddnsbl", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Address")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String address = this.argumentParser.getArgument("Address");
@@ -173,7 +173,7 @@ public class DNSBL extends AbstractListener {
 		toggle_command.setHelpText("Add DNSBL Service");
 		IRCBot.registerCommand(adddnsbl_command);
 
-		remdnsbl_command = new Command("remdnsbl", new CommandArgumentParser(1, new CommandArgument("Address", ArgumentTypes.STRING)), new CommandRateLimit(10), Permissions.MOD) {
+		remdnsbl_command = new Command("remdnsbl", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Address")), new CommandRateLimit(10), Permissions.MOD) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				String address = this.argumentParser.getArgument("Address");

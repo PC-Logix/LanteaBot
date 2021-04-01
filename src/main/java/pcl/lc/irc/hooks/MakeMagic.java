@@ -26,7 +26,7 @@ public class MakeMagic extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("makemagic", new CommandArgumentParser(1, new CommandArgument("Item", ArgumentTypes.STRING))) {
+		local_command = new Command("makemagic", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Item"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String item = this.argumentParser.getArgument("Item");

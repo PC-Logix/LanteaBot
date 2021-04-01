@@ -23,7 +23,7 @@ public class Jiggle extends AbstractListener {
 	}
 
 	private void initCommands() {
-		local_command = new Command("jiggle", new CommandArgumentParser(0, new CommandArgument("Thing", ArgumentTypes.STRING), new CommandArgument("Times", ArgumentTypes.INTEGER)), new CommandRateLimit(120, true, true)) {
+		local_command = new Command("jiggle", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Thing"), new CommandArgument(ArgumentTypes.INTEGER, "Times")), new CommandRateLimit(120, true, true)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String thing = this.argumentParser.getArgument("Thing");
