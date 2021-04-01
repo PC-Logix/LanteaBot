@@ -237,7 +237,7 @@ public class CommandArgumentParser {
 			}
 			syntax.append(getTypeShortName(arg.type));
 			if (currentArgument < this.arguments.size() -1)
-				syntax.append(", ");
+				syntax.append(" ");
 			currentArgument++;
 		}
 		if (currentArgument > this.requiredFirstNum)
