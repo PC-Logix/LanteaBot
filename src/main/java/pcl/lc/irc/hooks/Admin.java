@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.org.apache.xml.internal.security.keys.content.KeyValue;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +18,10 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.ServerResponseEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.httpd.httpd;
-import pcl.lc.irc.*;
+import pcl.lc.irc.AbstractListener;
+import pcl.lc.irc.Config;
+import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.ArgumentTypes;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.entryClasses.CommandArgument;
@@ -32,7 +34,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author Caitlyn
