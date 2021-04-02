@@ -683,6 +683,11 @@ public class DrinkPotion extends AbstractListener {
 //							Defend.addEvent(nick, splashTarget, target, potion.consistency.getName(false, true) + " " + potion.appearance.getName(false, true) + " potion", Defend.EventTypes.POTION, result);
 //							Helper.sendMessage(target, nick + " is trying to splash " + splashTarget + " with a " + potion.consistency.getName(true, true) + " " + potion.appearance.getName(false, true) + " potion! They have " + Defend.getReactionTimeString() + " if they want to attempt to " + Config.commandprefix + "defend against it!");
 //					return;
+				} else if (specialFluids.containsKey(potionString)) {
+					EffectEntry eff = specialFluids.get(potionString);
+					PotionHelper.replaceParamsInEffectString(eff, splashTarget, nick, false);
+					Helper.sendMessage(target, eff.effectSplashDiscovered);
+					return new CommandChainStateObject();
 				} else {
 					potion = new PotionEntry();
 
@@ -694,13 +699,6 @@ public class DrinkPotion extends AbstractListener {
 					}
 
 					potion.getEffectSplash(splashTarget, nick);
-				}
-
-				if (specialFluids.containsKey(potionString)) {
-					EffectEntry eff = specialFluids.get(potionString);
-					PotionHelper.replaceParamsInEffectString(eff, splashTarget, nick, false);
-					Helper.sendMessage(target, eff.effectSplashDiscovered);
-					return new CommandChainStateObject();
 				}
 
 				if (potion != null) {
