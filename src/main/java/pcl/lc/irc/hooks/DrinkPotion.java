@@ -654,7 +654,7 @@ public class DrinkPotion extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
-		local_command.setHelpText("Drink a potion with a certain consistency and appearance and something might happen. Syntax: " + Config.commandprefix + local_command.getCommand() + " [potion] Potion needs to contain a valid consistency, appearance and the word 'potion', See " + Config.commandprefix + "potionstats command for a list.");
+		local_command.setHelpText("Drink a potion with a certain consistency and appearance and something might happen.");
 		local_command.registerAlias("chug");
 		local_command.registerAlias("toast");
 		local_command.registerAlias("sip");

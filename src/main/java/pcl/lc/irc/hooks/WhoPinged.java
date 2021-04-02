@@ -77,7 +77,7 @@ public class WhoPinged extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
-		command_WhoPinged.setHelpText("Shows you the last ? pings you had.");
+		command_WhoPinged.setHelpText("Shows you the last pings you had.");
 		command_ClearPings = new Command("clearpings") {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {

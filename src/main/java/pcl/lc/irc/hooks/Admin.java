@@ -613,49 +613,70 @@ public class Admin extends AbstractListener {
 
 	static ArrayList<String> includedCommands = new ArrayList<>();
 
-	public static String getHelpRow(Command command) {
+	public static String getHelpRow(Command command, String permFilter) {
 		if (includedCommands.contains(command.getCommand()))
 			return "";
+		int permLevelFilter = Permissions.getPermLevel(permFilter);
+		int permLevelCommand = Permissions.getPermLevel(command.getPermissionLevel());
+		if (permLevelFilter < permLevelCommand)
+			return "";
 		String item = "";
-		String help = command.getHelpText();
+		String help = StringEscapeUtils.escapeHtml4(command.getHelpText());
+		if (help.isEmpty())
+			help = "<span class='fad'>No help text set for this command.</span>";
+		String permissions = "<div class='fad'>Permission: ";
 		if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
-			help = "[" + command.getPermissionLevel() + "] " + help;
+			permissions += command.getPermissionLevel();
+		else
+			permissions += "Anyone";
+		permissions += "</div>";
 		String argumentSyntax = "";
 		if (command.argumentParser != null) {
-			argumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(command.argumentParser.getArgumentSyntax(true));
+			argumentSyntax = "<div class='fad'>Argument" + (command.argumentParser.argumentCount == 1 ? "" : "s") + ": " + command.argumentParser.getArgumentSyntax(true) + "</div>";
 		}
-		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(help) + argumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
-		Integer i = 0;
+		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + help + argumentSyntax + permissions + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
+		int i = 0;
+		ArrayList<Command> printableSubCommands = new ArrayList<>();
 		for (Command subCommand : command.getSubCommands()) {
-			System.out.println(i);
-			System.out.println(command.getSubCommands().size());
+			int permLevelSubCommand = Permissions.getPermLevel(subCommand.getPermissionLevel());
+			if (permLevelFilter >= permLevelSubCommand)
+				printableSubCommands.add(subCommand);
+		}
+
+		for (Command subCommand : printableSubCommands) {
 			String character = "├";
-			if (i == (command.getSubCommands().size() - 1)) {
+			if (i == (printableSubCommands.size() - 1)) {
 				character = "└";
 			}
-			
-			String subHelp = subCommand.getHelpText();
+
+			String subHelp = StringEscapeUtils.escapeHtml4(subCommand.getHelpText());
+			if (subHelp.isEmpty())
+				subHelp = "<span class='fad'>No help text set for this sub-command.</span>";
+			permissions = "<div class='fad'>Permission: ";
 			if (Permissions.getPermLevel(subCommand.getPermissionLevel()) > 0)
-				subHelp = "[" + subCommand.getPermissionLevel() + "] " + subHelp;
+				permissions += subCommand.getPermissionLevel();
 			else if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
-				subHelp = "[" + command.getPermissionLevel() + "] " + subHelp;
+				permissions += command.getPermissionLevel();
+			else
+				permissions += "Anyone";
+			permissions += "</div>";
 			String subArgumentSyntax = "";
 			if (subCommand.argumentParser != null)
-				subArgumentSyntax = "<br/>Arguments: " + StringEscapeUtils.escapeHtml4(subCommand.argumentParser.getArgumentSyntax(true));
-			item += "<tr><td style='white-space: nowrap;'> " + character + " " + subCommand.getCommand() + "</td><td>" + StringEscapeUtils.escapeHtml4(subHelp) + subArgumentSyntax + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
+				subArgumentSyntax = "<div class='fad'>Argument" + (subCommand.argumentParser.argumentCount == 1 ? "" : "s") + ": " + StringEscapeUtils.escapeHtml4(subCommand.argumentParser.getArgumentSyntax(true)) + "</div>";
+			item += "<tr><td style='white-space: nowrap;'> " + character + " " + subCommand.getCommand() + "</td><td>" + subHelp + subArgumentSyntax + permissions + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
 			i++;
 		}
 		return item;
 	}
 
-	public static String getHelpRows() {
+	public static String getHelpRows(String permFilter) {
 		String items = "";
 		try {
 			items = "";
 			includedCommands.clear();
 			for (Map.Entry<String, Command> entry : IRCBot.commands.entrySet()) {
 				Command command = entry.getValue();
-				String item = getHelpRow(command);
+				String item = getHelpRow(command, permFilter);
 				if (!item.equals(""))
 					includedCommands.add(command.getCommand());
 				items += item;
@@ -667,8 +688,8 @@ public class Admin extends AbstractListener {
 		return items;
 	}
 
-	public static String getHelpTable() {
-		return "<table><tr><th>Command</th><th>Help</th><th>Aliases</th></tr>" + getHelpRows() + "</table>";
+	public static String getHelpTable(String permFilter) {
+		return "<table><tr><th>Command</th><th>Help</th><th>Aliases</th></tr>" + getHelpRows(permFilter) + "</table>";
 	}
 
 	static class HelpHandler implements HttpHandler {
@@ -676,6 +697,17 @@ public class Admin extends AbstractListener {
 		public void handle(HttpExchange t) throws IOException {
 			TimeAgo time = new TimeAgo();
 			String target = t.getRequestURI().toString();
+			String permFilter = "";
+			if (t.getRequestURI().getQuery() != null) {
+				String[] queries = t.getRequestURI().getQuery().split("&");
+				for (String q : queries) {
+					String[] query = q.split("=");
+					if (query[0].equals("permFilter"))
+						permFilter = query[1];
+				}
+			}
+			if (permFilter.isEmpty())
+				permFilter = Permissions.EVERYONE;
 			String response = "";
 
 			String items = "<p>Command syntax works as follows:</p>" +
@@ -687,8 +719,12 @@ public class Admin extends AbstractListener {
 			for (Map.Entry<String, String> entry : args.entrySet()) {
 				items += "<li>" + entry.getKey() + " - " + entry.getValue() + "</li>";
 			}
-			items += "</ul></li></ul>";
-			items += getHelpTable();
+			items += "</ul></li>";
+			items += "<li>If an argument names looks like <span class='arg-tooltip' title='This is the argument description.'>This</span> it has a description you can see by hovering the cursor over it.</li>";
+			items += "</ul>";
+			items += "<p></p>";
+			items += "<p>Filter: <a href='?permFilter=" + Permissions.EVERYONE + "'>Anyone</a> | <a href='?permFilter=" + Permissions.TRUSTED + "'>Trusted</a> | <a href='?permFilter=" + Permissions.MOD + "'>Moderator</a> | <a href='?permFilter=" + Permissions.ADMIN + "'>Admin</a></p>";
+			items += getHelpTable(permFilter);
 
 			String navData = "";
 			Iterator it = httpd.pages.entrySet().iterator();

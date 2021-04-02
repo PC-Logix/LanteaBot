@@ -32,14 +32,14 @@ public class Search extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		search = new Command("search") {
+		search = new Command("search", new CommandArgumentParser(2, new CommandArgument(ArgumentTypes.STRING, "Site", "One of google, curseForge, wiki, urban, ann, or youtube"), new CommandArgument(ArgumentTypes.STRING, "Terms"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				Helper.sendMessage(target, this.trySubCommandsMessage(((params.size() > 0) ? params.get(0) : "")), nick);
 				return new CommandChainStateObject();
 			}
-		}; search.setHelpText("Search various sites for term (eg search <site> <term>)");
-		google = new Command("google", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
+		}; search.setHelpText("Search various sites for terms.");
+		google = new Command("google", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Terms"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch(null, this.argumentParser.getArgument("Query"));
@@ -47,7 +47,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; google.setHelpText("Searches google and returns the first result");
-		curseForge = new Command("curseForge", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
+		curseForge = new Command("curseForge", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Terms"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:minecraft.curseforge.com", this.argumentParser.getArgument("Query"));
@@ -55,7 +55,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; curseForge.setHelpText("Searches CurseForge and returns the first result");
-		wiki = new Command("wiki", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
+		wiki = new Command("wiki", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Terms"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("wiki", this.argumentParser.getArgument("Query"));
@@ -63,7 +63,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; wiki.setHelpText("Searches Wikipedia and returns the first result");
-		urban = new Command("urban", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
+		urban = new Command("urban", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Terms"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:urbandictionary.com", this.argumentParser.getArgument("Query"));
@@ -71,7 +71,7 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; urban.setHelpText("Searches UrbanDictonary and returns the first result");
-		ann = new Command("ann", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
+		ann = new Command("ann", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Terms"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				List<SearchResult> result = performSearch("site:animenewsnetwork.com", this.argumentParser.getArgument("Query"));
@@ -79,10 +79,10 @@ public class Search extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		}; ann.setHelpText("Searches Anime News Network and returns the first result");
-		youtube = new Command("youtube", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Query"))) {
+		youtube = new Command("youtube", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Terms"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				List<SearchResult> result = performSearch("site:youtube.com", this.argumentParser.getArgument("Query"));
+				List<SearchResult> result = performSearch("site:youtube.com", this.argumentParser.getArgument("Terms"));
 				Helper.sendMessage(target, ((result != null ) ? result.get(0).getSuggestedReturn() : "Search failed"), nick, true);
 				return new CommandChainStateObject();
 			}

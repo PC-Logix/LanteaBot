@@ -78,7 +78,7 @@ public class Defend extends AbstractListener {
 				acts.add(act.command);
 		actionList = String.join(", ", acts);
 
-		initCommands();
+		initCommands(acts);
 		IRCBot.registerCommand(local_command);
 		IRCBot.registerCommand(debug_command);
 
@@ -99,8 +99,8 @@ public class Defend extends AbstractListener {
 		return Actions.FLAIL;
 	}
 
-	private void initCommands() {
-		local_command = new Command("defend", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Action"), new CommandArgument(ArgumentTypes.STRING, "Item"))) {
+	private void initCommands(ArrayList<String> actions) {
+		local_command = new Command("defend", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Action", "One of " + Helper.oxfordJoin(actions, ", ", ", or ")), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is omitted no item will be used."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String method = this.argumentParser.getArgument("Action");

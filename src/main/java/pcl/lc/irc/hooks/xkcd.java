@@ -58,7 +58,7 @@ public class xkcd extends AbstractListener {
 
 	@Override
 	protected void initHook() {
-		local_command = new Command("xkcd", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Comic"))) {
+		local_command = new Command("xkcd", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Comic", "The name of id of a comic. If a name is provided " + IRCBot.getOurNick() + " will try to find a matching strip."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
 				String id_or_terms = this.argumentParser.getArgument("Comic");

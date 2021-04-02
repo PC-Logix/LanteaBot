@@ -1,6 +1,7 @@
 package pcl.lc.irc.entryClasses;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringEscapeUtils;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.utils.Helper;
 
@@ -12,6 +13,7 @@ public class CommandArgumentParser {
 	public final boolean debug = true;
 	public final int requiredFirstNum;
 	public final ArrayList<CommandArgument> arguments;
+	public final int argumentCount;
 	public String target;
 
 	Pattern patternPreviousMessage = Pattern.compile("^\\^(\\d*) ?");
@@ -35,6 +37,7 @@ public class CommandArgumentParser {
 		this.requiredFirstNum = required;
 		this.arguments = new ArrayList<>();
 		this.arguments.addAll(Arrays.asList(arguments));
+		this.argumentCount = this.arguments.size();
 	}
 
 	public int parseArguments(ArrayList<String> arguments) {
@@ -236,13 +239,19 @@ public class CommandArgumentParser {
 			if (currentArgument == this.requiredFirstNum)
 				syntax.append("[");
 			if (arg.name != null) {
-				if (htmlMode && !arg.description.isEmpty()) {
-					syntax.append("<span style='text-decoration: underline; text-decoration-style: dotted;' title='");
-					syntax.append(arg.description);
+				if (htmlMode && arg.description != null && !arg.description.isEmpty()) {
+					syntax.append("<span class='arg-tooltip' title='");
+					if (htmlMode)
+						syntax.append(StringEscapeUtils.escapeHtml4(arg.description));
+					else
+						syntax.append(arg.description);
 					syntax.append("'>");
 				}
-				syntax.append(arg.name);
 				if (htmlMode)
+					syntax.append(StringEscapeUtils.escapeHtml4(arg.name));
+				else
+					syntax.append(arg.name);
+				if (htmlMode && arg.description != null && !arg.description.isEmpty())
 					syntax.append("</span>");
 				syntax.append(":");
 			}
