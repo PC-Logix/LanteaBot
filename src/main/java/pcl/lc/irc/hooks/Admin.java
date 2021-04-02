@@ -720,7 +720,7 @@ public class Admin extends AbstractListener {
 				items += "<li>" + entry.getKey() + " - " + entry.getValue() + "</li>";
 			}
 			items += "</ul></li>";
-			items += "<li>If an argument names looks like <span class='arg-tooltip' title='This is the argument description.'>This</span> it has a description you can see by hovering the cursor over it.</li>";
+			items += "<li>If an argument name looks like <span class='arg-tooltip' title='This is the argument description.'>This</span> it has a description you can see by hovering the cursor over it.</li>";
 			items += "</ul>";
 			items += "<p></p>";
 			items += "<p>Filter: <a href='?permFilter=" + Permissions.EVERYONE + "'>Anyone</a> | <a href='?permFilter=" + Permissions.TRUSTED + "'>Trusted</a> | <a href='?permFilter=" + Permissions.MOD + "'>Moderator</a> | <a href='?permFilter=" + Permissions.ADMIN + "'>Admin</a></p>";
