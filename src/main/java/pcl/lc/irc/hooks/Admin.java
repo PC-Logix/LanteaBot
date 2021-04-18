@@ -624,14 +624,14 @@ public class Admin extends AbstractListener {
 		String help = StringEscapeUtils.escapeHtml4(command.getHelpText());
 		if (help.isEmpty())
 			help = "<span class='fad'>No help text set for this command.</span>";
-		String extraInfo = "<div class='fad'>Permission: ";
+		ArrayList<String> extraInfoEntries = new ArrayList<>();
 		if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
-			extraInfo += command.getPermissionLevel();
+			extraInfoEntries.add("Permission: " + command.getPermissionLevel());
 		else
-			extraInfo += "Anyone";
+			extraInfoEntries.add("Permission: Anyone");
 		if (command.getRateLimit() != null)
-			extraInfo += " Cooldown: " + Helper.timeString(Helper.parseSeconds(command.getRateLimit().getLimit()));
-		extraInfo += "</div>";
+			extraInfoEntries.add("Cooldown: " + Helper.timeString(Helper.parseSeconds(command.getRateLimit().getLimit())));
+		String extraInfo = "<div class='fad'>" + String.join(" | ", extraInfoEntries) + "</div>";
 		String argumentSyntax = "";
 		if (command.argumentParser != null) {
 			argumentSyntax = "<div class='fad'>Argument" + (command.argumentParser.argumentCount == 1 ? "" : "s") + ": " + command.argumentParser.getArgumentSyntax(true) + "</div>";
@@ -654,16 +654,16 @@ public class Admin extends AbstractListener {
 			String subHelp = StringEscapeUtils.escapeHtml4(subCommand.getHelpText());
 			if (subHelp.isEmpty())
 				subHelp = "<span class='fad'>No help text set for this sub-command.</span>";
-			extraInfo = "<div class='fad'>Permission: ";
+			extraInfoEntries = new ArrayList<>();
 			if (Permissions.getPermLevel(subCommand.getPermissionLevel()) > 0)
-				extraInfo += subCommand.getPermissionLevel();
+				extraInfoEntries.add("Permission: " + subCommand.getPermissionLevel());
 			else if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
-				extraInfo += command.getPermissionLevel();
+				extraInfoEntries.add("Permission: " + command.getPermissionLevel());
 			else
-				extraInfo += "Anyone";
+				extraInfoEntries.add("Permission: Anyone");
 			if (command.getRateLimit() != null)
-				extraInfo += " Cooldown: " + Helper.timeString(Helper.parseSeconds(command.getRateLimit().getLimit()));
-			extraInfo += "</div>";
+				extraInfoEntries.add("Cooldown: " + Helper.timeString(Helper.parseSeconds(command.getRateLimit().getLimit())));
+			extraInfo = "<div class='fad'>" + String.join(" | ", extraInfoEntries) + "</div>";
 			String subArgumentSyntax = "";
 			if (subCommand.argumentParser != null)
 				subArgumentSyntax = "<div class='fad'>Argument" + (subCommand.argumentParser.argumentCount == 1 ? "" : "s") + ": " + StringEscapeUtils.escapeHtml4(subCommand.argumentParser.getArgumentSyntax(true)) + "</div>";
