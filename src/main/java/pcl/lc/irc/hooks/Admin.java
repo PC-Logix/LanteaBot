@@ -624,17 +624,19 @@ public class Admin extends AbstractListener {
 		String help = StringEscapeUtils.escapeHtml4(command.getHelpText());
 		if (help.isEmpty())
 			help = "<span class='fad'>No help text set for this command.</span>";
-		String permissions = "<div class='fad'>Permission: ";
+		String extraInfo = "<div class='fad'>Permission: ";
 		if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
-			permissions += command.getPermissionLevel();
+			extraInfo += command.getPermissionLevel();
 		else
-			permissions += "Anyone";
-		permissions += "</div>";
+			extraInfo += "Anyone";
+		if (command.getRateLimit() != null)
+			extraInfo += " Cooldown: " + Helper.timeString(Helper.parseSeconds(command.getRateLimit().getLimit()));
+		extraInfo += "</div>";
 		String argumentSyntax = "";
 		if (command.argumentParser != null) {
 			argumentSyntax = "<div class='fad'>Argument" + (command.argumentParser.argumentCount == 1 ? "" : "s") + ": " + command.argumentParser.getArgumentSyntax(true) + "</div>";
 		}
-		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + help + argumentSyntax + permissions + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
+		item += "<tr><td style='white-space: nowrap;'>" + Config.commandprefix + command.getCommand() + "</td><td>" + help + argumentSyntax + extraInfo + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", command.getAliasesDisplay()) + "</td></tr>";
 		int i = 0;
 		ArrayList<Command> printableSubCommands = new ArrayList<>();
 		for (Command subCommand : command.getSubCommands()) {
@@ -652,18 +654,20 @@ public class Admin extends AbstractListener {
 			String subHelp = StringEscapeUtils.escapeHtml4(subCommand.getHelpText());
 			if (subHelp.isEmpty())
 				subHelp = "<span class='fad'>No help text set for this sub-command.</span>";
-			permissions = "<div class='fad'>Permission: ";
+			extraInfo = "<div class='fad'>Permission: ";
 			if (Permissions.getPermLevel(subCommand.getPermissionLevel()) > 0)
-				permissions += subCommand.getPermissionLevel();
+				extraInfo += subCommand.getPermissionLevel();
 			else if (Permissions.getPermLevel(command.getPermissionLevel()) > 0)
-				permissions += command.getPermissionLevel();
+				extraInfo += command.getPermissionLevel();
 			else
-				permissions += "Anyone";
-			permissions += "</div>";
+				extraInfo += "Anyone";
+			if (command.getRateLimit() != null)
+				extraInfo += " Cooldown: " + Helper.timeString(Helper.parseSeconds(command.getRateLimit().getLimit()));
+			extraInfo += "</div>";
 			String subArgumentSyntax = "";
 			if (subCommand.argumentParser != null)
 				subArgumentSyntax = "<div class='fad'>Argument" + (subCommand.argumentParser.argumentCount == 1 ? "" : "s") + ": " + StringEscapeUtils.escapeHtml4(subCommand.argumentParser.getArgumentSyntax(true)) + "</div>";
-			item += "<tr><td style='white-space: nowrap;'> " + character + " " + subCommand.getCommand() + "</td><td>" + subHelp + subArgumentSyntax + permissions + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
+			item += "<tr><td style='white-space: nowrap;'> " + character + " " + subCommand.getCommand() + "</td><td>" + subHelp + subArgumentSyntax + extraInfo + "</td><td style='white-space: nowrap;'>" + String.join("<br/>", subCommand.getAliasesDisplay()) + "</td></tr>";
 			i++;
 		}
 		return item;
