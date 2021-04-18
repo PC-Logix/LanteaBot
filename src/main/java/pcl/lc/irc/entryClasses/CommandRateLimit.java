@@ -149,4 +149,16 @@ public class CommandRateLimit {
 		else
 			this.lastExecutionPerUser.remove(user);
 	}
+
+	public int getLimit() {
+		return this.limit;
+	}
+
+	public void setLimit(int limitSeconds) {
+		this.limit = limitSeconds;
+	}
+
+	public void setLimit(int limitHours, int limitMinutes, int limitSeconds) {
+		this.limit = limitSeconds + (limitMinutes * 60) + (limitHours * 60 * 60);
+	}
 }
