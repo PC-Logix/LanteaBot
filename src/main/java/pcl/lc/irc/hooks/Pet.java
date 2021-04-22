@@ -30,7 +30,7 @@ public class Pet extends AbstractListener {
 		local_command = new Command("pet", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
-				String petTarget = this.argumentParser.getArgument("Nick");
+				String petTarget = this.argumentParser.getArgument("Target");
 				String with = this.argumentParser.getArgument("Item");
 				if (petTarget == null || petTarget.equals("")) {
 					Helper.sendMessage(target, nick + " flails at nothingness...");

@@ -27,7 +27,7 @@ public class Give extends AbstractListener {
 		local_command = new Command("give", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If this parameter is literally \"random\" a random item will be used."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
-				String target_argument = this.argumentParser.getArgument("Nick");
+				String target_argument = this.argumentParser.getArgument("Target");
 				String item_name = this.argumentParser.getArgument("Item");
 
 				if (!target_argument.equals(IRCBot.getOurNick())) {

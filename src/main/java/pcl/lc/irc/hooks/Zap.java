@@ -26,7 +26,7 @@ public class Zap extends AbstractListener {
 		local_command = new Command("zap", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String zapTarget = this.argumentParser.getArgument("Nick");
+				String zapTarget = this.argumentParser.getArgument("Target");
 				if (zapTarget == null)
 					Helper.sendAction(target, nick + " makes some sparks");
 				else {

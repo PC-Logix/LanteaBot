@@ -27,7 +27,7 @@ public class Bonk extends AbstractListener {
 		local_command = new Command("bonk", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item."))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				String bonkTarget = this.argumentParser.getArgument("Nick");
+				String bonkTarget = this.argumentParser.getArgument("Target");
 				String with = this.argumentParser.getArgument("Item");
 				if (bonkTarget == null)
 					Helper.sendWorldAction(target, nick + " swings at the void");
