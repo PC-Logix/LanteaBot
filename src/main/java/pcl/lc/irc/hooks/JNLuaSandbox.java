@@ -3,7 +3,13 @@ package pcl.lc.irc.hooks;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
@@ -135,8 +141,36 @@ public class JNLuaSandbox extends AbstractListener {
 				message = message + " " + aCopyOfRange;
 			}
 
-			output = new StringBuilder();
-			output.append(runScriptInSandbox(message));
+			if (message.startsWith("http://") || message.startsWith("https://")) {
+
+				URL url = null;
+				try {
+					Pattern REGEX = Pattern.compile("^(http|https):\\/\\/(www).([a-z\\.]*)?(\\/[a-z1-9\\/]*)*\\??([\\&a-z1-9=]*)?");
+					Matcher matcher = REGEX.matcher(message);
+					if (matcher.find()) {
+						System.out.println(matcher.group());
+					}
+					url = new URL(matcher.group());
+
+				URLConnection con = url.openConnection();
+				InputStream in = con.getInputStream();
+				String encoding = con.getContentEncoding();  // ** WRONG: should use "con.getContentType()" instead but it returns something like "text/html; charset=UTF-8" so this value must be parsed to extract the actual encoding
+				encoding = encoding == null ? "UTF-8" : encoding;
+				String body = IOUtils.toString(in, encoding);
+				System.out.println(body);
+					output = new StringBuilder();
+					output.append(runScriptInSandbox(message));
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				output = new StringBuilder();
+				output.append(runScriptInSandbox(message));
+			}
+
+
 			// Trim last newline
 			if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
 				output.setLength(output.length()-1);
