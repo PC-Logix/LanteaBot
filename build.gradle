@@ -109,6 +109,7 @@ sourceSets {
 
 // copy the main sources and filter any '@buildVersion@' occurences. 
 task processVersion (type: Copy) {
+    filteringCharset = 'UTF-8'
     from sourceSets.main.java
     into filteredSourceDir
     filter(ReplaceTokens, tokens: [
