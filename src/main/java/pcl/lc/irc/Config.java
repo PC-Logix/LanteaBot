@@ -79,8 +79,7 @@ public class Config {
 
 			File file = new File("config.properties");
 			if (!file.exists()) {
-				System.out.println("Config file missing, edit config.default, and rename to config.properties");
-				System.exit(1);
+				file.createNewFile();
 			}
 		    final Version VERSION = new Version(
 		            "@versionMajor@",
