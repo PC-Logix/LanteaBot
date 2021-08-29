@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 public class Config {
 
@@ -56,7 +57,7 @@ public class Config {
 	public static String botGender = null;
 	@SuppressWarnings("rawtypes")
 	public static Builder config = new Configuration.Builder();
-	public static CommentedProperties prop = new CommentedProperties();
+	public static Properties prop = new Properties();
 
 	public static void saveProps() {
 		FileOutputStream output = null;
@@ -79,7 +80,56 @@ public class Config {
 
 			File file = new File("config.properties");
 			if (!file.exists()) {
-				file.createNewFile();
+				//file.createNewFile();
+				prop.setProperty("server", "irc.esper.net");
+				prop.setProperty("serverport", "6667");
+				prop.setProperty("serverpass", "");
+				prop.setProperty("WeatherAPI", "");
+				prop.setProperty("GoogleAPI", "");
+				prop.setProperty("AzureTextAPI", "");
+				prop.setProperty("WolframAPI", "");
+				prop.setProperty("nick","LanteaBot");
+				prop.setProperty("nspass", "");
+				prop.setProperty("nsaccount", "");
+				prop.setProperty("ignoredUsers", "");
+				prop.setProperty("commandprefix", "@");
+				prop.setProperty("enablehttpd", "true");
+				prop.setProperty("httpdport", "8081");
+				prop.setProperty("httpdEnable", "false");
+				prop.setProperty("httpdBaseDomain", "http://localhost");
+				prop.setProperty("httpDocRoot", "");
+				prop.setProperty("wikiWatcherURL", "");
+				prop.setProperty("proxyhost", "");
+				prop.setProperty("proxyport", "");
+				prop.setProperty("admins", "");
+				prop.setProperty("enableTLS", "false");
+				prop.setProperty("enableSSL", "false");
+				prop.setProperty("TwitCKey", "");
+				prop.setProperty("TwitCSecret", "");
+				prop.setProperty("TwitToken", "");
+				prop.setProperty("TwitTSecret", "");
+				prop.setProperty("GoogleAPI", "");
+				prop.setProperty("AzureTextAPI", "");
+				prop.setProperty("WeatherAPI", "");
+				prop.setProperty("yuriWebAPI", "");
+				prop.setProperty("parseBridgeCommandsFromUsers", "");
+				prop.setProperty("overBridgeUsernameBrackets", "<>,()");
+				prop.setProperty("ignoreMessagesEndingWith", "%*%");
+				prop.setProperty("maxNumberOfCommandsPerMessage", "2");
+				prop.setProperty("mysqlDbHost", "");
+				prop.setProperty("mysqlDbPort", "");
+				prop.setProperty("mysqlDbUser", "");
+				prop.setProperty("mysqlDbPass", "");
+				prop.setProperty("mysqlDbName", "");
+
+
+				try{
+					FileOutputStream fos = new FileOutputStream("config.properties");
+					prop.store(fos, "AHHHHHHHH");
+					fos.close();
+				}catch(Exception e){
+					System.out.println(e);
+				}
 			}
 		    final Version VERSION = new Version(
 		            "@versionMajor@",
@@ -90,9 +140,11 @@ public class Config {
 		    if (VERSION.getMajor() == -1) {
 		    	IRCBot.setDebug(true);
 		    }
-			Config.config.setVersion("MichiBot Build# " + VERSION);
+			Config.config.setVersion("LanteaBot Build# " + VERSION);
 			input = new FileInputStream(file);
 			// load a properties file
+
+
 			prop.load(input);
 			botConfig.put("server", prop.getProperty("server", "irc.esper.net"));
 			botConfig.put("serverport", prop.getProperty("serverport", "6667"));
