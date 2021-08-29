@@ -66,7 +66,7 @@ public class IRCBot {
 	public static String getDiscordID(String nick) {
 		URL url;
 		String tehURL = "";
-		if (Config.yuriWebAPI != "") {
+		if (Config.yuriWebAPI != null && !Config.yuriWebAPI.trim().isEmpty()) {
 			tehURL = Config.yuriWebAPI;
 			try {
 				url = new URL(tehURL + nick);
