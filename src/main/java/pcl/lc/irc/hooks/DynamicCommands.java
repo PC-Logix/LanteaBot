@@ -40,7 +40,7 @@ public class DynamicCommands extends AbstractListener {
 	private static final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
 	private static final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
 
-	public static final String defaultHelpText = "Dynamic commands with no help text set.";
+	public static final String defaultHelpText = "Dynamic command with no help text set.";
 
 	private Command toggle_command;
 
