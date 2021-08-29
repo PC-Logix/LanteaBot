@@ -193,7 +193,7 @@ public class DynamicCommands extends AbstractListener {
 						addCommandHelp.setString(1, theHelp);
 						addCommandHelp.setString(2, theCommand.toLowerCase());
 						addCommandHelp.executeUpdate();
-						IRCBot.commands.get(theCommand).setHelpText(theHelp);
+						IRCBot.dynamicCommands.get(theCommand).setHelpText(theHelp);
 						event.respond("Help Set");
 					} catch (SQLException e) {
 						e.printStackTrace();
