@@ -1,7 +1,8 @@
 import pcl.lc.irc.entryClasses.AppearanceEntry;
+import pcl.lc.irc.entryClasses.CommandArgument;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.irc.entryClasses.EffectEntry;
 import pcl.lc.irc.hooks.DrinkPotion;
-import pcl.lc.irc.hooks.Inventory;
 import pcl.lc.utils.Database;
 import pcl.lc.utils.PotionHelper;
 import pcl.lc.utils.TablesOfRandomThings;
@@ -11,57 +12,124 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+enum TestType {
+	DYNA_PARAM,
+	ARGPARSE,
+}
+
+class TestUnitGroup {
+	public String name;
+	public TestUnit[] tests;
+	public int successes = 0;
+	public int failures = 0;
+
+	public TestUnitGroup(String name, TestUnit[] tests) {
+		this.name = name;
+		this.tests = tests;
+	}
+}
+
+class TestUnit {
+	public String input;
+	public String[] output;
+	public TestType type;
+	public boolean mode = true;
+	public boolean succeeded = false;
+	public String result_string =  "";
+
+	public TestUnit(String input, String output, TestType type) {
+		this(input, new String[] {output}, type, false);
+	}
+
+	public TestUnit(String input, String output, TestType type, boolean mode) {
+		this(input, new String[] {output}, type, mode);
+	}
+
+	public TestUnit(String input, String[] output, TestType type) {
+		this(input, output, type, false);
+	}
+
+	public TestUnit(String input, String[] output, TestType type, boolean mode) {
+		this.input = input;
+		this.output = output;
+		this.type = type;
+		this.mode = mode;
+	}
+
+	public boolean runTest() {
+		if (this.type == TestType.DYNA_PARAM) {
+			EffectEntry effect = new EffectEntry(input, input);
+			if (input.equals("{user}"))
+				PotionHelper.replaceParamsInEffectString(effect, "UserTest", null, this.mode);
+			else if (input.equals("{trigger}"))
+				PotionHelper.replaceParamsInEffectString(effect, null, "TriggerTest", this.mode);
+			else
+				PotionHelper.replaceParamsInEffectString(effect, null, null, this.mode);
+
+			String actual_output = "";
+			for (String outp : this.output) {
+				Pattern pattern = Pattern.compile(outp);
+				Matcher matcherDrink = pattern.matcher(effect.effectDrinkDiscovered);
+				Matcher matcherSplash = pattern.matcher(effect.effectSplashDiscovered);
+				if (!matcherDrink.find()) {
+					succeeded = false;
+					actual_output = effect.effectDrinkDiscovered;
+				} else if (!matcherSplash.find()) {
+					succeeded = false;
+					actual_output = effect.effectSplashDiscovered;
+				}
+				succeeded = true;
+				actual_output = effect.effectDrinkDiscovered;
+			}
+			String output_str = " one of '" + String.join("', '", output) + "'";
+			if (output.length == 1)
+				output_str = "'" + output[0] + "'";
+			result_string = ((succeeded) ? "PASSED!" : "*FAILED!* ") + " Input: '" + input + "', expected output: " + output_str + ", output: '" + actual_output + "'";
+		} else if (this.type == TestType.ARGPARSE) {
+			CommandArgumentParser parser = new CommandArgumentParser(1, new CommandArgument("String", "Input"));
+			parser.debug = false;
+			parser.parseArguments(this.input);
+			String output = parser.getArgument("Input");
+
+			if (output.equals(this.output[0])) {
+				succeeded = true;
+				result_string = "PASSED! Input: '" + input + "', expected output: '" + this.output[0] + "', output: '" + output + "'";
+			} else {
+				result_string = "*FAILED*! Input: '" + input + "', expected output: '" + this.output[0] + "', output: '" + output + "'";
+			}
+		}
+		return succeeded;
+	}
+}
+
 public class UnitTests {
 	static int totalSuccesses = 0;
 	static int totalFailures = 0;
-	static int successes = 0;
-	static int failures = 0;
-
-	public static void testPlaceholder(String placeholder, String expectedOutput, boolean prepareForStorage) throws Exception {
-		EffectEntry effect = new EffectEntry(placeholder, placeholder);
-		if (placeholder.equals("{user}"))
-			PotionHelper.replaceParamsInEffectString(effect, "UserTest", null, prepareForStorage);
-		else if (placeholder.equals("{trigger}"))
-			PotionHelper.replaceParamsInEffectString(effect, null, "TriggerTest", prepareForStorage);
-		else
-			PotionHelper.replaceParamsInEffectString(effect, null, null, prepareForStorage);
-
-		Pattern pattern = Pattern.compile(expectedOutput);
-		Matcher matcherDrink = pattern.matcher(effect.effectDrinkDiscovered);
-		Matcher matcherSplash = pattern.matcher(effect.effectSplashDiscovered);
-		if (!matcherDrink.find()) {
-			failures++;
-			totalFailures++;
-			throw new Exception("*FAILED!* Drink effect discrepancy for input '" + placeholder + "' expected output '" + expectedOutput + "' output '" + effect.effectDrinkDiscovered + "'");
-		} else if (!matcherSplash.find()) {
-			failures++;
-			totalFailures++;
-			throw new Exception("*FAILED!* Splash effect discrepancy for input '" + placeholder + "' expected output '" + expectedOutput + "' output '" + effect.effectDrinkDiscovered + "'");
-		}
-		successes++;
-		totalSuccesses++;
-		throw new Exception("PASSED! input '" + placeholder + "' expected output '" + expectedOutput + "' output '" + effect.effectDrinkDiscovered + "'");
-	}
+	static int total = 0;
 
 	public static void main(String[] args) {
 		try {
 			Database.init();
-		} catch (SQLException throwables) {
-			throwables.printStackTrace();
+		} catch (SQLException e) {
+			System.out.println("Database init failed");
+			e.printStackTrace();
 			return;
 		}
+
+		String static_item_query = "SELECT 1 as `id`, 'InventoryItem' as `item_name`, 1 as `uses_left`, 0 as `is_favourite`, 'Forecaster' as `added_by`, '1609796191457' as `added`, NULL as `owner`, 0 as `cursed`";
+
 		//<editor-fold desc="Database init">
 		Database.addPreparedStatement("getCompressedSentences", "SELECT id, item_name, uses_left FROM Inventory WHERE item_name LIKE '%Compressed Sentence%'");
 		Database.addPreparedStatement("setCompressedSentences", "UPDATE Inventory SET item_name = ?, uses_left = ? WHERE id = ?");
 		Database.addPreparedStatement("newCompressedSentence", "INSERT INTO Inventory (item_name, uses_left, is_favourite, added_by, added) VALUES (?,?,?,?,?)");
-		Database.addPreparedStatement("getItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory;");
-		Database.addPreparedStatement("getItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE id = ?;");
-		Database.addPreparedStatement("getFavouriteItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE is_favourite = 1 LIMIT 1");
-		Database.addPreparedStatement("getItemByName", "SELECT id, item_name, uses_left, is_favourite, added_by, added FROM Inventory WHERE item_name = ?;");
-		Database.addPreparedStatement("getRandomItem", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory ORDER BY Random() LIMIT 1");
-		Database.addPreparedStatement("getRandomItems", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory ORDER BY Random() LIMIT ?");
-		Database.addPreparedStatement("getRandomItemNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT 1");
-		Database.addPreparedStatement("getRandomItemsNonFavourite", "SELECT id, item_name, uses_left, is_favourite, added_by, added, owner, cursed FROM Inventory WHERE is_favourite IS 0 ORDER BY Random() LIMIT ?");
+		Database.addPreparedStatement("getItems", static_item_query);
+		Database.addPreparedStatement("getItem", static_item_query);
+		Database.addPreparedStatement("getFavouriteItem", static_item_query);
+		Database.addPreparedStatement("getItemByName", static_item_query);
+		Database.addPreparedStatement("getRandomItem", static_item_query);
+		Database.addPreparedStatement("getRandomItems", static_item_query);
+		Database.addPreparedStatement("getRandomItemNonFavourite", static_item_query);
+		Database.addPreparedStatement("getRandomItemsNonFavourite", static_item_query);
 		Database.addPreparedStatement("addItem", "INSERT INTO Inventory (id, item_name, uses_left, is_favourite, added_by, added) VALUES (NULL, ?, ?, ?, ?, ?)");
 		Database.addPreparedStatement("removeItemId", "DELETE FROM Inventory WHERE id = ?");
 		Database.addPreparedStatement("removeItemName", "DELETE FROM Inventory WHERE item_name = ?");
@@ -97,115 +165,83 @@ public class UnitTests {
 		TablesOfRandomThings.smashTargets.add(new String[][] { new String[]{ "A", "SmashTargetTest" }, new String[] { "SmashTargetResultTest" } });
 		//</editor-fold>
 
-		String[][] testPlaceholders = new String[][] {
-			new String[] {"{item}","A GarbageItemTest"},
-			new String[] {"{junk_or_item}", "nothing"},
-			new String[] {"{junk_or_item_p}", "nothing"},
-			new String[] {"{junk}", "GarbageItemTest"},
-			new String[] {"{junk_p}", "A GarbageItemTest"},
-			new String[] {"{junk_p_lc}", "a garbageitemtest"},
-			new String[] {"{evade:1:10}", "They successfully evaded it with a \\d\\d? vs DC 1!"},
-			new String[] {"{evade_qc:1:success:fail}", "success \\(\\d\\d? vs DC 1\\)"},
-			new String[] {"{appearance}", "TestAppearance"},
-			new String[] {"{appearance_lc}", "testappearance"},
-			new String[] {"{appearance_p}", "A TestAppearance"},
-			new String[] {"{appearance_p_lc}", "a testappearance"},
-			new String[] {"{turn_appearance}", "TestAppearance"},
-			new String[] {"{turn_appearance_lc}", "testappearance"},
-			new String[] {"{consistency}", "TestConsistency"},
-			new String[] {"{consistency_lc}", "testconsistency"},
-			new String[] {"{consistency_p}", "A TestConsistency"},
-			new String[] {"{consistency_p_lc}", "a testconsistency"},
-			new String[] {"{transformation}", "animaltest"},
-			new String[] {"{transformation_p}", "an animaltest"},
-			new String[] {"{transformation_pc}", "an animaltest"},
-			new String[] {"{transformation2}", "animaltest"},
-			new String[] {"{transformation2_p}", "an animaltest"},
-			new String[] {"{transformations}", "AnimalTests"},
-			new String[] {"{transformations_p}", "animaltests"},
-			new String[] {"{transformations2}", "animaltests"},
-			new String[] {"{transformations2_p}", "animaltests"},
-			new String[] {"{limit}", "TestLimit"},
-			new String[] {"{codeword}", "CodeWordTest"},
-			new String[] {"{codeword2}", "CodeWordTest"},
-			new String[] {"{user}", "UserTest"},
-			new String[] {"{trigger}", "TriggerTest"},
-			new String[] {"{r:1-1}", "1"},
-			new String[] {"{r:1-1:soups}", "1 soups" }
+		TestUnitGroup[] tests = new TestUnitGroup[] {
+			new TestUnitGroup("Single placeholders", new TestUnit[] {
+				new TestUnit("{item}", 										"InventoryItem", TestType.DYNA_PARAM),
+				new TestUnit("{junk_or_item}", 						new String[] { "InventoryItem", "GarbageItemTest" }, TestType.DYNA_PARAM),
+				new TestUnit("{junk_or_item_p}", 					new String[] { "An InventoryItem", "A GarbageItemTest" }, TestType.DYNA_PARAM),
+				new TestUnit("{junk}", 										"GarbageItemTest", TestType.DYNA_PARAM),
+				new TestUnit("{junk_p}", 									"A GarbageItemTest", TestType.DYNA_PARAM),
+				new TestUnit("{junk_p_lc}", 							"a garbageitemtest", TestType.DYNA_PARAM),
+				new TestUnit("{evade:1:10}", 							"They successfully evaded it with a \\d\\d? vs DC 1!", TestType.DYNA_PARAM),
+				new TestUnit("{evade_qc:1:success:fail}", "success \\(\\d\\d? vs DC 1\\)", TestType.DYNA_PARAM),
+				new TestUnit("{evade:1:10}", 							"\\{evade:1:10\\}", TestType.DYNA_PARAM, true),
+				new TestUnit("{evade_qc:1:success:fail}", "\\{evade_qc:1:success:fail\\}", TestType.DYNA_PARAM, true),
+				new TestUnit("{appearance}", 							"TestAppearance", TestType.DYNA_PARAM),
+				new TestUnit("{appearance_lc}", 					"testappearance", TestType.DYNA_PARAM),
+				new TestUnit("{appearance_p}", 						"A TestAppearance", TestType.DYNA_PARAM),
+				new TestUnit("{appearance_p_lc}", 				"a testappearance", TestType.DYNA_PARAM),
+				new TestUnit("{turn_appearance}", 				"TestAppearance", TestType.DYNA_PARAM),
+				new TestUnit("{turn_appearance_lc}", 			"testappearance", TestType.DYNA_PARAM),
+				new TestUnit("{consistency}", 						"TestConsistency", TestType.DYNA_PARAM),
+				new TestUnit("{consistency_lc}", 					"testconsistency", TestType.DYNA_PARAM),
+				new TestUnit("{consistency_p}", 					"A TestConsistency", TestType.DYNA_PARAM),
+				new TestUnit("{consistency_p_lc}", 				"a testconsistency", TestType.DYNA_PARAM),
+				new TestUnit("{transformation}", 					"animaltest", TestType.DYNA_PARAM),
+				new TestUnit("{transformation_p}", 				"an animaltest", TestType.DYNA_PARAM),
+				new TestUnit("{transformation_pc}", 			"an animaltest", TestType.DYNA_PARAM),
+				new TestUnit("{transformation2}", 				"animaltest", TestType.DYNA_PARAM),
+				new TestUnit("{transformation2_p}", 			"an animaltest", TestType.DYNA_PARAM),
+				new TestUnit("{transformations}", 				"AnimalTests", TestType.DYNA_PARAM),
+				new TestUnit("{transformations_p}", 			"animaltests", TestType.DYNA_PARAM),
+				new TestUnit("{transformations2}", 				"animaltests", TestType.DYNA_PARAM),
+				new TestUnit("{transformations2_p}", 			"animaltests", TestType.DYNA_PARAM),
+				new TestUnit("{limit}", 									"TestLimit", TestType.DYNA_PARAM),
+				new TestUnit("{codeword}", 								"CodeWordTest", TestType.DYNA_PARAM),
+				new TestUnit("{codeword2}", 							"CodeWordTest", TestType.DYNA_PARAM),
+				new TestUnit("{user}", 										"UserTest", TestType.DYNA_PARAM),
+				new TestUnit("{trigger}", 								"TriggerTest", TestType.DYNA_PARAM),
+				new TestUnit("{r:1-1}", 									"1", TestType.DYNA_PARAM),
+				new TestUnit("{r:1-1:soup}", 							"1 soup", TestType.DYNA_PARAM),
+			}),
+			new TestUnitGroup("Combined placeholders", new TestUnit[] {
+				new TestUnit("I once saw {transformation_p} with {junk_p}", "I once saw an animaltest with A GarbageTest", TestType.DYNA_PARAM),
+			}),
+			new TestUnitGroup("Argparse", new TestUnit[] {
+				new TestUnit("Stuff and things for sure", "Stuff and things for sure", TestType.ARGPARSE),
+			}),
 		};
 
-		for (int i = 0; i < testPlaceholders.length; i++) {
-			String[] entry = testPlaceholders[i];
-			String num = String.valueOf(i);
-			if (num.length() == 1)
-				num = "0" + num;
-			System.out.print("Entry " + num + ": ");
-			try {
-				testPlaceholder(entry[0], entry[1], false);
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
+		for (TestUnitGroup group : tests) {
+			System.out.println("");
+			System.out.println("Run test group '" + group.name + "'");
+
+			for (TestUnit test : group.tests) {
+				total++;
+				test.runTest();
+
+				if (test.succeeded) {
+					group.successes++;
+					totalSuccesses++;
+				} else {
+					group.failures++;
+					totalFailures++;
+				}
+				System.out.println(test.result_string);
 			}
+			System.out.println("~~~~~~~~~~~~~~~~");
+			if (group.failures > 0)
+				System.out.print("Total group failures: " + group.failures + " ");
+			if (group.successes > 0)
+				System.out.println("Total group successes: " + group.successes + "/" + group.tests.length);
 		}
-		System.out.println("Test 1 completed. " + failures + " failure" + (failures == 1 ? "" : "s") + ", and " + successes + " success" + (successes == 1 ? "" : "es") + ".\n");
-		failures = 0;
-		successes = 0;
 
-		testPlaceholders = new String[][] {
-			new String[] {"{item}","A GarbageItemTest"},
-			new String[] {"{junk_or_item}", "nothing"},
-			new String[] {"{junk_or_item_p}", "nothing"},
-			new String[] {"{junk}", "GarbageItemTest"},
-			new String[] {"{junk_p}", "A GarbageItemTest"},
-			new String[] {"{junk_p_lc}", "a garbageitemtest"},
-			new String[] {"{evade:1:10}", "\\{evade:1:10\\}"},
-			new String[] {"{evade_qc:1:success:fail}", "\\{evade_qc:1:success:fail\\}"},
-			new String[] {"{appearance}", "TestAppearance"},
-			new String[] {"{appearance_lc}", "testappearance"},
-			new String[] {"{appearance_p}", "A TestAppearance"},
-			new String[] {"{appearance_p_lc}", "a testappearance"},
-			new String[] {"{turn_appearance}", "TestAppearance"},
-			new String[] {"{turn_appearance_lc}", "testappearance"},
-			new String[] {"{consistency}", "TestConsistency"},
-			new String[] {"{consistency_lc}", "testconsistency"},
-			new String[] {"{consistency_p}", "A TestConsistency"},
-			new String[] {"{consistency_p_lc}", "a testconsistency"},
-			new String[] {"{transformation}", "animaltest"},
-			new String[] {"{transformation_p}", "an animaltest"},
-			new String[] {"{transformation_pc}", "an animaltest"},
-			new String[] {"{transformation2}", "animaltest"},
-			new String[] {"{transformation2_p}", "an animaltest"},
-			new String[] {"{transformations}", "AnimalTests"},
-			new String[] {"{transformations_p}", "animaltests"},
-			new String[] {"{transformations2}", "animaltests"},
-			new String[] {"{transformations2_p}", "animaltests"},
-			new String[] {"{limit}", "TestLimit"},
-			new String[] {"{codeword}", "CodeWordTest"},
-			new String[] {"{codeword2}", "CodeWordTest"},
-			new String[] {"{user}", "\\{user\\}"},
-			new String[] {"{trigger}", "\\{trigger\\}"},
-			new String[] {"{r:1-1}", "1"},
-			new String[] {"{r:1-1:soups}", "1 soups" },
-			new String[] {"{appearance:marble:}", "TestAppearance marble" }
-		};
-
-		for (int i = 0; i < testPlaceholders.length; i++) {
-			String[] entry = testPlaceholders[i];
-			String num = String.valueOf(i);
-			if (num.length() == 1)
-				num = "0" + num;
-			System.out.print("Entry " + num + ": ");
-			try {
-				testPlaceholder(entry[0], entry[1], true);
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		System.out.println("Test 2 completed. " + failures + " failure" + (failures == 1 ? "" : "s") + ", and " + successes + " success" + (successes == 1 ? "" : "es") + ".");
-
+		System.out.println("");
+		System.out.println("==================");
 		if (totalFailures > 0)
-			System.out.print("Total failed: " + totalFailures + " ");
+			System.out.print("Total failures: " + totalFailures + " ");
 		if (totalSuccesses > 0)
-			System.out.print("Total succeeded: " + totalSuccesses);
+			System.out.println("Total successes: " + totalSuccesses + "/" + total);
 		System.out.println();
 	}
 }
