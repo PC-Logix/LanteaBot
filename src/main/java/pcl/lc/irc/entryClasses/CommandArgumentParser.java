@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandArgumentParser {
-	public final boolean debug = true;
+	public boolean debug = true;
 	public final int requiredFirstNum;
 	public final ArrayList<CommandArgument> arguments;
 	public final int argumentCount;
