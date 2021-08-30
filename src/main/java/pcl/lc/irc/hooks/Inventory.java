@@ -588,7 +588,7 @@ public class Inventory extends AbstractListener {
 
 			for (String exp : prefixes) {
 				String new_item = item.replaceAll("(?i)" + exp, "");
-				System.out.println("'" + item + "' != '" + new_item + "' (" + exp + ")");
+//				System.out.println("'" + item + "' != '" + new_item + "' (" + exp + ")");
 				if (item != new_item)
 					found_prefix = true;
 				item = new_item;
