@@ -103,14 +103,17 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(1, "Oh, I've heard about that. You'll want to wait until tomorrow.", 1));
 		templates.add(new Template(1, "Boo! No!", 1));
 		templates.add(new Template(1, "I'd advice against \"{choice}\" right now.", 1));
-		templates.add(new Template(1, "After all, why shouln't you {choice}?"));
+		templates.add(new Template(1, "After all, why shouldn't you \"{choice}\"?"));
+		templates.add(new Template(1, "I flipped a coin. It said \"Aaaaaaaaah!\". It might have been a sapient coin...", 1));
+		templates.add(new Template(1, "I talked to the Swedish Chef, he said \"Bork bork!\" I think that means yes?", 1));
+		templates.add(new Template(1, "Is the moon full? That means you should definitely go for it!", 1));
+		templates.add(new Template(1, "Once the moon cycle restarts you should definitely do it!", 1));
 		templates.add(new Template(2, "Some \"{choice}\" sounds nice"));
 		templates.add(new Template(2, "I'm 40% \"{choice}\"!"));
 		templates.add(new Template(2, "You *could* do \"{choice}\", I guess."));
 		templates.add(new Template(2, "Why not {count}? Okay fine. \"{choice}\"."));
 		templates.add(new Template(2, "I sense some \"{choice}\" in your future!"));
 		templates.add(new Template(2, "\"{choice}\" is for cool kids!"));
-		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
 		templates.add(new Template(2, "If I had a gold nugget for every time someone asked me about \"{choice}\""));
 		templates.add(new Template(2, "The proof is in the pudding. Definitely \"{choice}\". Now please get it out of my pudding."));
 		templates.add(new Template(2, "I received a message from future you, said to go with \"{choice}\"."));
@@ -120,7 +123,6 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "My grandfather always told me that \"{choice}\" is the way to go!"));
 		templates.add(new Template(2, "If I've learned anything in life it's that you always pick \"{choice}\""));
 		templates.add(new Template(2, "Once you get a taste of \"{choice}\" you can't stop."));
-		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
 		templates.add(new Template(2, "Somebody once told me to roll with \"{choice}\""));
 		templates.add(new Template(2, "Out of these {raw_count} choices? I'd say \"{choice}\"."));
 		templates.add(new Template(2, "I've heard \"{choice}\" is in these days"));
@@ -137,10 +139,11 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "A wizard is never late, and sometimes engages in some \"{choice}\"."));
 		templates.add(new Template(2, "I received a telegram from a long lost relative that only read \"{choice}\". Weird."));
 		templates.add(new Template(2, "Wait, what was the question again? Uhh... \"{choice}\"?"));
-		templates.add(new Template(2, "I want a divorce. I'm taking half the \"{choice}\"."));
 		templates.add(new Template(2, "Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
 		templates.add(new Template(2, "Huh, what? \"{choice}\" I guess, now leave me alone I'm playing Tetris."));
 		templates.add(new Template(2, "Oh no, not \"{choice}\" again! I'll have \"{other_choice}\" instead."));
+		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
+		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
 
 		local_command = new Command("choose", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
