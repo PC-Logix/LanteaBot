@@ -56,7 +56,7 @@ public class getVideoInfo {
 
 			return (data ?Colors.NORMAL + Colors.BOLD+vTitle+Colors.NORMAL+" | length: "+Colors.BOLD + vDuration +Colors.NORMAL
 					+" | Likes: " + Colors.GREEN + NumberFormat.getIntegerInstance().format(vLikes) + Colors.NORMAL
-					+" View" + Colors.NORMAL + (vViewCount.intValue() != 1 ? "s: " : ": ") + Colors.BOLD + NumberFormat.getIntegerInstance().format(vViewCount) + Colors.NORMAL + " | by " + Colors.BOLD + vUploader + Colors.NORMAL + " | Published On " + dateTime.getDayOfMonth() + "/" + dateTime.getMonthValue() + "/" + dateTime.getYear() : "");
+					+" | View" + Colors.NORMAL + (vViewCount.intValue() != 1 ? "s: " : ": ") + Colors.BOLD + NumberFormat.getIntegerInstance().format(vViewCount) + Colors.NORMAL + " | by " + Colors.BOLD + vUploader + Colors.NORMAL + " | Published On " + dateTime.getDayOfMonth() + "/" + dateTime.getMonthValue() + "/" + dateTime.getYear() : "");
 
 		} catch (Exception e) {e.printStackTrace();}
 		return null;
