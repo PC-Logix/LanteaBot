@@ -1,5 +1,6 @@
 package pcl.lc.irc.entryClasses;
 
+import pcl.lc.utils.Helper;
 import pcl.lc.utils.PotionHelper;
 
 import java.util.function.Function;
@@ -10,23 +11,27 @@ public class EffectEntry {
 	public String effectDrinkDiscovered;
 	public String effectSplashDiscovered;
 	public String discoverer;
-	public int usesRemaining;
+	public int baseUses;
+	public int totalUses = -1;
+	public int usedUses = 0;
+	private static final int usesVariance = 2;
+
 	public Function<EffectActionParameters, String> action;
 
-	public EffectEntry(String effectDrink, String effectSplash, int usesRemaining) {
-		this(effectDrink, effectSplash, null, null, null, usesRemaining);
+	public EffectEntry(String effectDrink, String effectSplash, int baseUses) {
+		this(effectDrink, effectSplash, null, null, null, baseUses);
 	}
 
 	public EffectEntry(String effectDrink, String effectSplash) {
 		this(effectDrink, effectSplash, null, null, null);
 	}
 
-	public EffectEntry(String effectDrink, String effectSplash, Function<EffectActionParameters, String> action, int usesRemaining) {
-		this(effectDrink, effectSplash, null, null, action, usesRemaining);
+	public EffectEntry(String effectDrink, String effectSplash, Function<EffectActionParameters, String> action, int baseUses) {
+		this(effectDrink, effectSplash, null, null, action, baseUses);
 	}
 
-	public EffectEntry(String effectDrink, Function<EffectActionParameters, String> action, int usesRemaining) {
-		this(effectDrink, null, null, null, action, usesRemaining);
+	public EffectEntry(String effectDrink, Function<EffectActionParameters, String> action, int baseUses) {
+		this(effectDrink, null, null, null, action, baseUses);
 	}
 
 	public EffectEntry(String effectDrink, String effectSplash, Function<EffectActionParameters, String> action) {
@@ -37,8 +42,8 @@ public class EffectEntry {
 		this(effectDrink, null, null, null, action);
 	}
 
-	public EffectEntry(String effectDrink, int usesRemaining) {
-		this(effectDrink, null, null, null, null, usesRemaining);
+	public EffectEntry(String effectDrink, int baseUses) {
+		this(effectDrink, null, null, null, null, baseUses);
 	}
 
 	public EffectEntry(String effectDrink) {
@@ -49,13 +54,13 @@ public class EffectEntry {
 		this(effectDrink, effectSplash, effectDrinkDiscovered, effectSplashDiscovered, action, -1);
 	}
 
-	public EffectEntry(String effectDrink, String effectSplash, String effectDrinkDiscovered, String effectSplashDiscovered, Function<EffectActionParameters, String> action, int usesRemaining) {
+	public EffectEntry(String effectDrink, String effectSplash, String effectDrinkDiscovered, String effectSplashDiscovered, Function<EffectActionParameters, String> action, int baseUses) {
 		this.effectDrink = effectDrink;
 		this.effectSplash = effectSplash;
 		this.effectDrinkDiscovered = effectDrinkDiscovered;
 		this.effectSplashDiscovered = effectSplashDiscovered;
 		this.action = action;
-		this.usesRemaining = usesRemaining;
+		this.baseUses = baseUses;
 	}
 
 	public String getEffectString(String target) {
@@ -111,9 +116,37 @@ public class EffectEntry {
 	}
 
 	public EffectEntry copy() {
-		EffectEntry copy = new EffectEntry(this.effectDrink, this.effectSplash, this.effectDrinkDiscovered, this.effectSplashDiscovered, this.action, this.usesRemaining);
+		EffectEntry copy = new EffectEntry(this.effectDrink, this.effectSplash, this.effectDrinkDiscovered, this.effectSplashDiscovered, this.action, this.baseUses);
 		copy.discoverer = this.discoverer;
 		return copy;
+	}
+
+	public void setTotalUses() { setTotalUses(false); }
+
+	public void setTotalUses(boolean reset) {
+		if (reset || this.totalUses == -1)
+			this.totalUses = Math.max(1, this.baseUses + Helper.getRandomInt(usesVariance*-1, usesVariance));
+	}
+
+	public int usesRemaining() {
+		setTotalUses();
+		return this.totalUses - this.usedUses;
+	}
+
+	public String usesRemainingOutOf() {
+		setTotalUses();
+		return usesRemaining() + "/" + this.totalUses + "(" + this.baseUses + "±" + usesVariance + ")";
+	}
+
+	public boolean hasUsesRemaining() {
+		return usesRemaining() > 0;
+	}
+
+	public boolean use() {
+		if (!hasUsesRemaining())
+			return false;
+		this.usedUses++;
+		return true;
 	}
 
 	/**
@@ -123,12 +156,10 @@ public class EffectEntry {
 	 */
 	public String doAction(EffectActionParameters params) {
 		if (this.action != null) {
-			if (this.usesRemaining == -1 || this.usesRemaining > 0) {
-				if (this.usesRemaining > 0)
-					this.usesRemaining--;
+			if (this.use()) {
 				String actionString = this.action.apply(params);
 				if (actionString != null)
-					return actionString;
+					return actionString + " (Rem. uses: " + this.usesRemaining() + ")";
 				return params.targetName + ": Nothing seemed to happen...";
 			}
 			return params.targetName + ": The magic of this potion seems to be depleted...";

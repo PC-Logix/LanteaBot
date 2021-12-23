@@ -95,8 +95,6 @@ public class PotionEntry {
 		AppearanceEntry consistency = PotionHelper.findConsistencyInString(str);
 		AppearanceEntry appearance = PotionHelper.findAppearanceInString(str);
 
-		if (!str.toLowerCase().contains("potion"))
-			return null;
 		if (consistency == null) {
 			consistency = PotionHelper.getRandomConsistency();
 			System.out.println("No consistency found in '" + str + "'. Using '" + consistency.Name + "'");

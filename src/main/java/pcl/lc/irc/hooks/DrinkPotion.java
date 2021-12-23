@@ -462,9 +462,17 @@ public class DrinkPotion extends AbstractListener {
 				return "Some tonk points fly by. " + parameters.targetName + " caught " + Tonk.displayTonkPoints(points) + " tonk points.";
 			}
 		}, 2));
+		effects.add(new EffectEntry("{user} feels lighter suddenly...", new Function<EffectActionParameters, String>() {
+			@Override
+			public String apply(EffectActionParameters parameters) {
+				int points = Helper.getRandomInt(1, 100);
+				Tonk.tonkPointsRemove(parameters.targetName, points);
+				return parameters.targetName + " watches helplessly as " + Tonk.displayTonkPoints(points) + " tonk points take flight into the horizon.";
+			}
+		}, 2));
 		effects.add(new EffectEntry("Someone just had some of {user}'s favourite food and they didn't get any!"));
 		effects.add(new EffectEntry("A bunch of people in white coats approach {user}. {evade_qc:12:{user} successfully evade the people!:{user} is caught and is given a nice jacket with long arms and put in a nice padded room{limit}.}"));
-		effects.add(new EffectEntry("For a second it felt like {user} was going to have a huge epiphany...", new Function<EffectActionParameters, String>() {
+		effects.add(new EffectEntry("{user} might be on the verge of a great discovery...", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters parameters) {
 				if (!researchPointsMap.containsKey(parameters.targetName))
@@ -518,7 +526,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("{user} falls into a shaft and drop {r:1-5:floor}!"));
 		effects.add(new EffectEntry("{user} comes face to face with a basilisk! {evade_qc:14:{user} avoids it's gaze and gets away!:{user} is turned to stone{limit}}"));
 		effects.add(new EffectEntry("A genie tries to turn {user} into {transformation_p}, {evade_qc:12:but {user} successfully dodge the beam!:{user} tries to evade but is caught in the beam and transformed{limit}.}", 3));
-		effects.add(new EffectEntry("{user} hears a ringing in the distance....", new Function<EffectActionParameters, String>() {
+		effects.add(new EffectEntry("{user} feels research may yield interesting results.", new Function<EffectActionParameters, String>() {
 			@Override
 			public String apply(EffectActionParameters effectActionParameters) {
 				if (researchPointsMap.containsKey(effectActionParameters.targetName)) {
@@ -552,7 +560,7 @@ public class DrinkPotion extends AbstractListener {
 					return parameters.targetName + " barely manages to catch a green shell that appears in front of them!";
 				}
 			}, 3));*/
-			effects.add(new EffectEntry("For a second it felt like {user} was going to have a huge epiphany. It was just a fart...", new Function<EffectActionParameters, String>() {
+			effects.add(new EffectEntry("{user} might be on the verge of a great discovery...", new Function<EffectActionParameters, String>() {
 				@Override
 				public String apply(EffectActionParameters parameters) {
 					if (!researchPointsMap.containsKey(parameters.targetName))
@@ -562,7 +570,7 @@ public class DrinkPotion extends AbstractListener {
 					return parameters.targetName + " gains one research point. " + parameters.targetName + " now has " + points + " point" + (points == 1 ? "" : "s") + ".";
 				}
 			}, 2));
-			effects.add(new EffectEntry("{user} hears a ringing in the distance....", new Function<EffectActionParameters, String>() {
+			effects.add(new EffectEntry("{user} feels research may yield interesting results.", new Function<EffectActionParameters, String>() {
 				@Override
 				public String apply(EffectActionParameters effectActionParameters) {
 					if (researchPointsMap.containsKey(effectActionParameters.targetName)) {
@@ -581,7 +589,7 @@ public class DrinkPotion extends AbstractListener {
 		}
 
 		//Never end with punctuation and always start with a space
-		//See above for valid tags
+		//See `PotionHelper.DynaParam` for tag list and descriptions.
 		limits.add(" for {r:1-60:second}");
 		limits.add(" for {r:2-60:minute}");
 		limits.add(" for {r:2-5:hour}");
@@ -610,12 +618,13 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they stop thinking about it");
 		limits.add(" until they recite the litany against fear");
 		limits.add(" until they find a lamp");
-		limits.add(" until they have {consistency_p} {appearance} potion");
-		limits.add(" until they have {consistency_p} potion");
-		limits.add(" until they have {appearance_p} potion");
+		limits.add(" until they find {junk_p_lc}");
+		limits.add(" until they have {consistency_p_lc} {appearance_lc} potion");
+		limits.add(" until they have {consistency_p_lc} potion");
+		limits.add(" until they have {appearance_p_lc} potion");
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
-		specialFluids.put("water", new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!", "You splash {user} with some water. Wait... this isn't water... it's {consistency_p} {appearance} potion!"));
+		specialFluids.put("water", new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p_lc} {appearance_lc} potion!", "You splash {user} with some water. Wait... this isn't water... it's {consistency_p_lc} {appearance_lc} potion!"));
 		specialFluids.put("soda", new EffectEntry("{user} has some soda. It's fizzy and sweet.", "You splash {user} with some soda. It's fizzy and sticky."));
 		specialFluids.put("coffee", new EffectEntry("{user} has some coffee. It's hot and bitter.", "You splash {user} with coffee. It's scalding hot! {user} takes 1d6 fire damage!"));
 		specialFluids.put("everything", new EffectEntry("{user} explodes!", "You fail to lift the container containing all the potions. It's too heavy."));
@@ -646,7 +655,7 @@ public class DrinkPotion extends AbstractListener {
 						try {
 							potion.setFromCommandParameters(pot);
 						} catch (InvalidPotionException ex) {
-							Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
+							Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
 							return new CommandChainStateObject(CommandChainState.ERROR, "Unknown potion");
 						}
 					}
@@ -700,7 +709,7 @@ public class DrinkPotion extends AbstractListener {
 					try {
 						potion.setFromCommandParameters(potionString);
 					} catch (InvalidPotionException ex) {
-						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize... Make sure it has an appearance and consistency keyword, and the word \"potion\" in it.");
+						Helper.sendMessage(target, "This doesn't seem to be a potion I recognize...");
 						return new CommandChainStateObject(CommandChainState.ERROR, "Unknown potion");
 					}
 
@@ -762,7 +771,7 @@ public class DrinkPotion extends AbstractListener {
 							EffectEntry potion = entry.getValue();
 							AppearanceEntry consistency = DrinkPotion.consistencyEntries.get(keys[0]);
 							AppearanceEntry appearance = DrinkPotion.appearanceEntries.get(keys[1]);
-							Helper.sendMessage(nick, key + ": Potion: " + consistency.Name + " " + appearance.Name + " EffectDrink: '" + potion.effectDrink + ", DiscoveredDrink: " + potion.effectDrinkDiscovered + ", EffectSplash: " + potion.effectSplash + ", DiscoveredSplash: " + potion.effectSplashDiscovered + ", ´Discovered by: " + potion.discoverer + ", UsesRemaining: " + potion.usesRemaining, null, true);
+							Helper.sendMessage(nick, key + ": Potion: " + consistency.Name + " " + appearance.Name + " EffectDrink: '" + potion.effectDrink + ", DiscoveredDrink: " + potion.effectDrinkDiscovered + ", EffectSplash: " + potion.effectSplash + ", DiscoveredSplash: " + potion.effectSplashDiscovered + ", ´Discovered by: " + potion.discoverer + ", UsesRemaining: " + potion.baseUses, null, true);
 						}
 					} else {
 						int potions_count = potions.size();
@@ -825,14 +834,17 @@ public class DrinkPotion extends AbstractListener {
 			int unique_effect_count = unique_effects_discovered.size();
 			StringBuilder potionShelf = new StringBuilder("<div>There are <b>" + appearanceCount + "</b> appearances and <b>" + consistencyCount + "</b> consistencies! That's <b>" + combinations + "</b> different potions! Out of these <b>" + potionCount + "</b> " + (potionCount == 1 ? "has" : "have") + " been discovered today.</div>" +
 					"<div>There are <b>" + effectCount + "</b> effects. That's <b>" + format.format(ratio) + "</b> effect" + (ratio == 1 ? "" : "s") + " per potion. <b>" + unique_effect_count + "</b> unique effect" + (unique_effect_count == 1 ? "" : "s") + " " + (unique_effect_count == 1 ? "has" : "have") + " been discovered today.</div>" +
-					"<div style='margin-top: 6px;'>A valid potion string (for use with <b>" + Config.commandprefix + "drink</b>) needs an appearance keyword, consistency keyword and the word \"<b>potion</b>\" in it.</div>" +
-					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th></tr>");
+					"<div style='margin-top: 6px;'>The " + Config.commandprefix + "drink command (and aliases) take a \"Potion:string\" argument.</div>" +
+					"<div>A potion is made up of an appearance keyword and a consistency keyword. You can find a list of valid keywords below.</div>" +
+					"<div>If there are multiple the first valid one will be used. If either or both keywords are missing a random one will be selected in place of the missing word(s).</div>" +
+					"<div style='margin-top: 6px;'>You may also " + Config.commandprefix + "splash someone with a potion. The splash command takes a target as the first argument, and a potion string as the second argument.</div>" +
+					"<table style='margin-top: 20px;'><tr><th>Potion</th><th>Effect</th><th>Discovered by</th><th>Uses</th></tr>");
 			for (Map.Entry<String, EffectEntry> stringEffectEntryEntry : potions.entrySet()) {
 				String[] potion = stringEffectEntryEntry.getKey().split(",");
 				String consistency = consistencyEntries.get(potion[0]).getName();
 				String appearance = appearanceEntries.get(potion[1]).getName();
 				EffectEntry entry = stringEffectEntryEntry.getValue();
-				potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(PotionHelper.concealPlaceholdersForDisplay(entry.effectDrinkDiscovered)).append("</td><td>").append(entry.discoverer).append("</td></tr>");
+				potionShelf.append("<tr><td>").append(consistency.substring(0, 1).toUpperCase()).append(consistency.substring(1)).append(" ").append(appearance.substring(0, 1).toUpperCase()).append(appearance.substring(1)).append(" Potion</td><td>").append(PotionHelper.concealPlaceholdersForDisplay(entry.effectDrinkDiscovered)).append("</td><td>").append(entry.discoverer).append("</td><td>").append(entry.usesRemainingOutOf()).append("</td></tr>");
 			}
 			potionShelf.append("</table>");
 			List<NameValuePair> paramsList = URLEncodedUtils.parse(t.getRequestURI(), "utf-8");
