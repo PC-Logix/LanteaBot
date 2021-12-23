@@ -157,7 +157,7 @@ public class Help extends AbstractListener {
 			String response = "";
 
 			String items = "<p>Command syntax works as follows:</p>" +
-				"<ul><li>Arguments encased within [] are optional and may be omitted. Specifying an optional argument requires specifying the preceding ones.</li>" +
+				"<ul><li>Arguments encased within [] are optional and may be omitted. Specifying an optional argument requires specifying the preceding ones. (All arguments are ordered)</li>" +
 				"<li>Certain commands accept certain keywords for some arguments, such as the word \"random\", which can change how the command behaves.</li>" +
 				"<li>Certain commands will substitute missing arguments. For example missing targets or items may use random ones.</li>" +
 				"<li>The following argument types can appear:<ul>";
