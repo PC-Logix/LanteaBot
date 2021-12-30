@@ -25,7 +25,7 @@ public class Defend extends AbstractListener {
 	public static ArrayList<DefendEvent> defendEventLog;
 
 	private static final String damageFormat = "#";
-	public static final int reactionTimeMinutes = 1;
+	public static final int reactionTimeMinutes = 5;
 
 	public static String getReactionTimeString() {
 		return reactionTimeMinutes + " minute" + (reactionTimeMinutes == 1 ? "" : "s");
@@ -88,7 +88,7 @@ public class Defend extends AbstractListener {
 			public void run() {
 				parseEventQueue();
 			}
-		}, 0, 60, TimeUnit.SECONDS);
+		}, 0, 30, TimeUnit.SECONDS);
 	}
 
 	private Actions getActionByType(String type) {
@@ -240,16 +240,12 @@ public class Defend extends AbstractListener {
 
 	public static void parseEventQueue() {
 		try {
-			Date expiredIfAfter = new Date(new Date().getTime() - (reactionTimeMinutes * 60 * 1000));
-			Helper.sendMessage("#MichiBot", "Debug: Process " + defendEventLog.size() + " events. expiredAfter: " + expiredIfAfter);
+			Date expiredIfAfter = new Date(new Date().getTime() + (reactionTimeMinutes * 60 * 1000));
 			ArrayList<DefendEvent> removeEvents = new ArrayList<>();
 			for (DefendEvent event : defendEventLog) {
-				Helper.sendMessage("#MichiBot", "Debug: Event for '" + event.targetUser + "' expires " + event.time + ".");
 				try {
 					if (expiredIfAfter.after(event.time)) {
-						Helper.sendMessage("#MichiBot", "Debug: Defend event triggered for '" + event.targetUser + "'");
 						Helper.sendMessage(event.target, event.result);
-//						defendEventLog.remove(event);
 						removeEvents.add(event);
 					}
 				} catch (Exception e) {
@@ -257,8 +253,7 @@ public class Defend extends AbstractListener {
 					PrintWriter pw = new PrintWriter(sw);
 					e.printStackTrace(pw);
 					String pasteURL = PasteUtils.paste(sw.toString(), PasteUtils.Formats.NONE);
-					Helper.sendMessage("#MichiBot", "An exception occurred parsing a scheduled defend entry: " + pasteURL);
-					System.out.println("An exception occurred parsing a scheduled defend entry:");
+					System.out.println("An exception occurred parsing a scheduled defend entry: " + pasteURL);
 					e.printStackTrace();
 				}
 			}
@@ -266,7 +261,7 @@ public class Defend extends AbstractListener {
 				defendEventLog.remove(event);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Helper.sendMessage("#MichiBot", "Debug: Failed to run timed event handler.");
+			System.out.println("Debug: Error while parsing event queue.");
 		}
 	}
 }
