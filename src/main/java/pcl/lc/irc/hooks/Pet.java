@@ -26,6 +26,7 @@ public class Pet extends AbstractListener {
 		actions = new HashMap<>();
 		actions.put("pets", new ActionType("Petting", "Petting", "Pet", "Petted"));
 		actions.put("brushes", new ActionType("Brushing", "Brushing", "Brush", "Brushed"));
+		actions.put("pats", new ActionType("Patting", "Patting", "Pat", "Patted"));
 
 		local_command = new Command("pet", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Item", "If item is not specified tries to use random inventory item."))) {
 			@Override
@@ -76,6 +77,7 @@ public class Pet extends AbstractListener {
 			}
 		};
 		local_command.registerAlias("stroke");
+		local_command.registerAlias("pat");
 		local_command.setHelpText("Give pets! Give hit points!");
 		IRCBot.registerCommand(local_command);
 	}
