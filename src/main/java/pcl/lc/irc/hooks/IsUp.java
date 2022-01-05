@@ -30,7 +30,6 @@ public class IsUp extends AbstractListener {
 	public static boolean ping(String url, int timeout) {
 
 		//url = url.replaceFirst("https", "http"); // Otherwise an exception may be thrown on invalid SSL certificates.
-
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 			connection.setConnectTimeout(timeout);
@@ -50,8 +49,8 @@ public class IsUp extends AbstractListener {
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String site = this.argumentParser.getArgument("URL");
 				if (!site.startsWith("http://") && !site.startsWith("https://")) {
-					Helper.sendMessage(target, "https is " + ((ping("https://" + site, 1000)) ? "UP" : "DOWN (Might be using untrusted certificates)"), nick);
-					Helper.sendMessage(target, "http  is " + ((ping("http://" + site, 1000)) ? "UP" : "DOWN"), nick);
+					Helper.sendMessage(target, "https is " + ((ping("https://" + site, 5000)) ? "UP" : "DOWN (Might be using untrusted certificates)"), nick);
+					Helper.sendMessage(target, "http  is " + ((ping("http://" + site, 5000)) ? "UP" : "DOWN"), nick);
 				} else {
 					Helper.sendMessage(target, site + " is " + ((ping(site, 1000)) ? "UP" : "DOWN"));
 				}
