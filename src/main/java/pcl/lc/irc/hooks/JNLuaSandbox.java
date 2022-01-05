@@ -133,41 +133,12 @@ public class JNLuaSandbox extends AbstractListener {
 		return results.toString();
 	}
 
-	static String getSnippetIfUrl(String input) {
-		if (input.startsWith("http://") || input.startsWith("https://")) {
-			URL url = null;
-			try {
-				Pattern urlPattern = Pattern.compile(
-					"(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
-						+ "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
-						+ "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
-					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-				Matcher matcher = urlPattern.matcher(input);
-				if (matcher.find()) {
-					System.out.println(matcher.group());
-				}
-				url = new URL(matcher.group());
-
-				URLConnection con = url.openConnection();
-				InputStream in = con.getInputStream();
-				String encoding = con.getContentEncoding();  // ** WRONG: should use "con.getContentType()" instead but it returns something like "text/html; charset=UTF-8" so this value must be parsed to extract the actual encoding
-				encoding = encoding == null ? "UTF-8" : encoding;
-				String body = IOUtils.toString(in, encoding);
-				System.out.println("Body:" + body);
-				return body;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return input;
-	}
-
 	private void initCommands() {
 		command_lua = new Command("lua", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Snippet")), new CommandRateLimit(10, true, true)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String snippet) {
 				if (snippet != null && !snippet.equals("")) {
-					snippet = getSnippetIfUrl(snippet);
+					snippet = Helper.getSnippetIfUrl(snippet);
 
 					output = new StringBuilder();
 					output.append(runScriptInSandbox(snippet));
@@ -192,7 +163,7 @@ public class JNLuaSandbox extends AbstractListener {
 		command_selene = new Command("selene", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Snippet")), new CommandRateLimit(10, true, true)) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String snippet) {
-				snippet = getSnippetIfUrl(snippet);
+				snippet = Helper.getSnippetIfUrl(snippet);
 				output = new StringBuilder();
 				output.append(runScriptInSandbox(runScriptInSandbox("selene.parse([==========[" + snippet + "]==========])")));
 				// Trim last newline

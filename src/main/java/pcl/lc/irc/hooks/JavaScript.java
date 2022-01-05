@@ -1,12 +1,18 @@
 package pcl.lc.irc.hooks;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
+import pcl.lc.irc.AbstractListener;
 import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
+import pcl.lc.irc.entryClasses.*;
+import pcl.lc.utils.CommandChainStateObject;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.SandboxThreadFactory;
 import pcl.lc.utils.SandboxThreadGroup;
@@ -14,8 +20,7 @@ import pcl.lc.utils.SandboxThreadGroup;
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.concurrent.*;
 
 /**
@@ -24,7 +29,7 @@ import java.util.concurrent.*;
  */
 
 @SuppressWarnings("rawtypes")
-public class JavaScript  extends ListenerAdapter {
+public class JavaScript  extends AbstractListener {
 	private NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();;
 	private final SandboxThreadGroup sandboxGroup = new SandboxThreadGroup("javascript");
 	private final ThreadFactory sandboxFactory = new SandboxThreadFactory(sandboxGroup);
@@ -33,31 +38,45 @@ public class JavaScript  extends ListenerAdapter {
 		IRCBot.registerCommand("js", "Do the Javascript? I dunno.");
 	}
 
-	String code = null;
-
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	private Command command_js;
 	@Override
-	public void onMessage(final MessageEvent event) throws Exception {
-		super.onMessage(event);
-		String prefix = Config.commandprefix;
-		String ourinput = event.getMessage().toLowerCase();
-		String trigger = ourinput.trim();
-		if (trigger.length() > 1) {
-			String[] firstWord = StringUtils.split(trigger);
-			String triggerWord = firstWord[0];
-			if (triggerWord.equals(prefix + "js")) {
-				code = event.getMessage().substring(event.getMessage().indexOf("js") + 2).trim();
-				if (engineFactory == null || code == null) return;
-				StringBuilder output = new StringBuilder();
-				NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
-				output.append(eval(engine, code));
-				if (output.length() > 0 && output.charAt(output.length()-1) == '\n')
-					output.setLength(output.length()-1);
-				Helper.sendMessage(event.getChannel().getName(), output.toString().replace("\n", " | ").replace("\r", ""));
-			}
-		}
+	protected void initHook() {
+		initCommands();
+		IRCBot.registerCommand(command_js);
 	}
-	
+
+	private void initCommands() {
+		command_js = new Command("js", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Snippet")), new CommandRateLimit(10, true, true)) {
+			@Override
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String snippet) {
+				if (snippet != null && !snippet.equals("")) {
+					snippet = Helper.getSnippetIfUrl(snippet);
+
+					if (engineFactory == null || snippet == null) return new CommandChainStateObject();
+					StringBuilder output = new StringBuilder();
+					NashornScriptEngine engine = (NashornScriptEngine)engineFactory.getScriptEngine(new String[] {"-strict", "--no-java", "--no-syntax-extensions"});
+					output.append(eval(engine, snippet));
+
+					// Trim last newline
+					if (output.length() > 0 && output.charAt(output.length() - 1) == '\n')
+						output.setLength(output.length() - 1);
+					String jsOut = output.toString().replace("\n", " | ").replace("\r", "");
+
+					if (jsOut.length() > 0) {
+						Helper.AntiPings = Helper.getNamesFromTarget(target);
+						Helper.sendMessage(target, jsOut);
+					}
+
+				} else {
+					Helper.sendMessage(target, "No snippet provided.");
+				}
+				return new CommandChainStateObject();
+			}
+		};
+		command_js.setHelpText("Run JS code snippets (or a file by providing a url)");
+	}
+
+
 	public String eval(NashornScriptEngine engine, String code) {
 		CompiledScript cs;
 		try {

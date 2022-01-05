@@ -2,6 +2,7 @@ package pcl.lc.utils;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.UnmodifiableIterator;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -15,11 +16,9 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.DiceRollGroup;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -853,5 +852,34 @@ public class Helper {
 		nick = nick.replaceAll("\u200B", "");
 		nick = nick.replaceAll("^@", "");
 		return nick.replaceAll("\\p{C}", "");
+	}
+
+	public static String getSnippetIfUrl(String input) {
+		if (input.startsWith("http://") || input.startsWith("https://")) {
+			URL url = null;
+			try {
+				Pattern urlPattern = Pattern.compile(
+						"(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+								+ "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
+								+ "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+						Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+				Matcher matcher = urlPattern.matcher(input);
+				if (matcher.find()) {
+					System.out.println(matcher.group());
+				}
+				url = new URL(matcher.group());
+
+				URLConnection con = url.openConnection();
+				InputStream in = con.getInputStream();
+				String encoding = con.getContentEncoding();  // ** WRONG: should use "con.getContentType()" instead but it returns something like "text/html; charset=UTF-8" so this value must be parsed to extract the actual encoding
+				encoding = encoding == null ? "UTF-8" : encoding;
+				String body = IOUtils.toString(in, encoding);
+				System.out.println("Body:" + body);
+				return body;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return input;
 	}
 }
