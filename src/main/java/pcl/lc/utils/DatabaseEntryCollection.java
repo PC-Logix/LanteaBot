@@ -1,7 +1,5 @@
 package pcl.lc.utils;
 
-import pcl.lc.utils.db_items.DbCommand;
-
 import java.util.ArrayList;
 
 public abstract class DatabaseEntryCollection {
