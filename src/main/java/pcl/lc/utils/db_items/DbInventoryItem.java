@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by Forecaster on 02/06/2018 for the LanteaBot project.
  */
-public class InventoryItem extends DatabaseEntry {
+public class DbInventoryItem extends DatabaseEntry {
 	public static String table = "Inventory";
 	public static String primary_key = "id";
 
@@ -21,9 +21,9 @@ public class InventoryItem extends DatabaseEntry {
 	public String owner;
 	public boolean cursed;
 
-	public InventoryItem() {}
+	public DbInventoryItem() {}
 
-	public InventoryItem(String name, int uses, boolean is_favourite, String added_by, String owner) {
+	public DbInventoryItem(String name, int uses, boolean is_favourite, String added_by, String owner) {
 		this.id = Integer.MIN_VALUE;
 		this.item_name = name;
 		this.uses_left = uses;
@@ -34,7 +34,7 @@ public class InventoryItem extends DatabaseEntry {
 		this.cursed = false;
 	}
 
-	public InventoryItem(String name, int uses, boolean is_favourite, String added_by) {
+	public DbInventoryItem(String name, int uses, boolean is_favourite, String added_by) {
 		this.id = Integer.MIN_VALUE;
 		this.item_name = name;
 		this.uses_left = uses;
@@ -58,7 +58,7 @@ public class InventoryItem extends DatabaseEntry {
 		return super.Delete(table, primary_key);
 	}
 
-	public static ArrayList<InventoryItem> GetAll(boolean can_be_favourite) {
+	public static DbInventoryItemCollection GetAll(boolean can_be_favourite) {
 		String[] fields;
 		Object[] values;
 		if (can_be_favourite) {
@@ -78,30 +78,26 @@ public class InventoryItem extends DatabaseEntry {
 				false
 			};
 		}
-		ArrayList<DatabaseEntry> entries = GetManyByField(InventoryItem::new, table, fields, values, null, null);
-		ArrayList<InventoryItem> items = new ArrayList<>();
-		for (DatabaseEntry entry : entries)
-			items.add((InventoryItem) entry);
-		return items;
+		DbInventoryItemCollection collection = new DbInventoryItemCollection();
+		GetManyByField(collection, DbInventoryItem::new, table, fields, values);
+		return collection;
 	}
 
-	public static InventoryItem GetByID(int ID) {
-		InventoryItem item = new InventoryItem();
-		item = (InventoryItem) GetByField(item, table,"id", ID);
+	public static DbInventoryItem GetByID(int ID) {
+		DbInventoryItem item = new DbInventoryItem();
+		item = (DbInventoryItem) GetByField(item, table,"id", ID);
 		return item;
 	}
 
-	public static InventoryItem GetByName(String name) {
-		InventoryItem item = new InventoryItem();
-		item = (InventoryItem) GetByField(item, table, "item_name", name);
+	public static DbInventoryItem GetByName(String name) {
+		DbInventoryItem item = new DbInventoryItem();
+		item = (DbInventoryItem) GetByField(item, table, "item_name", name);
 		return item;
 	}
 
-	public static ArrayList<InventoryItem> GetRandomItems(int amount) {
-		ArrayList<DatabaseEntry> entries = GetManyByField(InventoryItem::new, table, new String[] {"owner"}, new String[] {null}, "RANDOM()", String.valueOf(amount));
-		ArrayList<InventoryItem> items = new ArrayList<>();
-		for (DatabaseEntry entry : entries)
-			items.add((InventoryItem) entry);
-		return items;
+	public static DbInventoryItemCollection GetRandomItems(int amount) {
+		DbInventoryItemCollection collection = new DbInventoryItemCollection();
+		GetManyByField(collection, DbInventoryItem::new, table, new String[] {"owner"}, new String[] {null}, "RANDOM()", String.valueOf(amount));
+		return collection;
 	}
 }
