@@ -5,7 +5,7 @@ import pcl.lc.utils.DatabaseEntry;
 /**
  * Created by Forecaster on 06/06/2018 for the LanteaBot project.
  */
-public class CommandItem extends DatabaseEntry {
+public class DbCommand extends DatabaseEntry {
 	public static String table = "Commands";
 	public static String primary_key = "command";
 
@@ -13,9 +13,9 @@ public class CommandItem extends DatabaseEntry {
 	public String return_value;
 	public String help;
 
-	public CommandItem() {}
+	public DbCommand() {}
 
-	public CommandItem(String command, String return_value, String help) {
+	public DbCommand(String command, String return_value, String help) {
 		this.command = command;
 		this.return_value = return_value;
 		this.help = help;
@@ -29,9 +29,13 @@ public class CommandItem extends DatabaseEntry {
 		return super.Delete(table, primary_key);
 	}
 
-	public static CommandItem GetByCommand(String command) {
-		CommandItem item = new CommandItem();
-		item = (CommandItem)GetByField(item, table, primary_key, command);
+	public static DbCommandCollection GetAll() {
+		return (DbCommandCollection) GetManyByField(new DbCommandCollection(), DbCommand::new, table);
+	}
+
+	public static DbCommand GetByCommand(String command) {
+		DbCommand item = new DbCommand();
+		item = (DbCommand)GetByField(item, table, primary_key, command);
 		return item;
 	}
 }
