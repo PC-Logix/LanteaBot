@@ -1,14 +1,17 @@
 package pcl.lc.utils;
 
+import com.google.api.client.util.DateTime;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+import org.reflections.Reflections;
+import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 
+import java.lang.reflect.Field;
+import java.net.ConnectException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class UpdateQuery {
 	private int minVersion;
@@ -30,30 +33,135 @@ class UpdateQuery {
 
 public class Database {
 	public static Connection connection;
-	//private static Connection connection;
-	/**
-	 * Updated automatically
-	 */
-	public static int DB_VER = 0;
-	public final static Map<String, PreparedStatement> preparedStatements = new HashMap<>();
+	private static Connection tempConnection;
 	static Statement statement;
+	private static Statement tempStatement;
+	public static int DB_VER = 0; // Updated automatically
+	public final static Map<String, PreparedStatement> preparedStatements = new HashMap<>();
 	public static List<UpdateQuery> updateQueries = new ArrayList<>();
 
-	public static void init() throws SQLException {
-//		try {
-//			Class.forName("com.mysql.jdbc.Driver");
-//			String url = "jdbc:mysql://" + Config.mysqlDbHost + (Config.mysqlDbPort == null || Config.mysqlDbPort == "" ? ":3306" : ":" + Config.mysqlDbPort) + "/" + Config.mysqlDbName + "?rewriteBatchedStatements=true&useUnicode=true";
-//			connection = DriverManager.getConnection(url, Config.mysqlDbUser, Config.mysqlDbPass);
-//			statement = connection.createStatement();
-//			IRCBot.log.info("Connected to " + url);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			IRCBot.log.info("Failed to connect to MySQL database at " + Config.mysqlDbHost + ", falling back to SQLite");
-			connection = DriverManager.getConnection("jdbc:sqlite:michibot.db");
-			statement = connection.createStatement();
-			statement.setPoolable(true);
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
-//		}
+	public static String sqliteDefaultPath = "bot.db";
+
+	public static boolean init() throws SQLException {
+		if (Config.targetDbMode.equalsIgnoreCase("mysql")) {
+			if (Config.mysqlDbHost == null || Config.mysqlDbHost.isEmpty()) {
+				IRCBot.log.error("MySQL mode has been requested but no host has been specified.");
+				return false;
+			}
+			if (Config.mysqlDbName == null || Config.mysqlDbName.isEmpty()) {
+				IRCBot.log.error("MySQL mode has been requested but no database name has been specified.");
+				return false;
+			}
+			try {
+//				Class.forName("com.mysql.cj.jdbc.Driver");
+				String url = "jdbc:mysql://" + Config.mysqlDbHost + (Config.mysqlDbPort == null || Config.mysqlDbPort.equals("") ? ":3306" : ":" + Config.mysqlDbPort) + "/" + Config.mysqlDbName + "?rewriteBatchedStatements=true&useUnicode=true";
+				connection = DriverManager.getConnection(url, Config.mysqlDbUser, Config.mysqlDbPass);
+				statement = connection.createStatement();
+				IRCBot.log.info("Connected to " + url);
+			} catch (SQLNonTransientConnectionException | CommunicationsException e) {
+				IRCBot.log.error(" ### Failed to connect to MySQL database at " + Config.mysqlDbHost + " ### ");
+				IRCBot.log.error(e.getMessage());
+				return false;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		} else if (Config.targetDbMode.equalsIgnoreCase("sqlite")) {
+			try {
+				connection = DriverManager.getConnection("jdbc:sqlite:" + Config.sqlitePath);
+				statement = connection.createStatement();
+				statement.setPoolable(true);
+				statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			} catch (SQLNonTransientConnectionException e) {
+				IRCBot.log.error(" ### Failed to connect to SQLite database at " + Config.sqlitePath + " ###");
+				IRCBot.log.error(e.getMessage());
+				return false;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			return true;
+		}
+		// DB transfer if targetDbMode is set to other db type than currentDbMode
+		// Will attempt to transfer contents of db to new database
+		if (!Config.currentDbMode.equalsIgnoreCase(Config.targetDbMode)) {
+			if (Config.currentDbMode.equals("mysql")) {
+				try {
+//					Class.forName("com.mysql.cj.jdbc.Driver");
+					String url = "jdbc:mysql://" + Config.mysqlDbHost + (Config.mysqlDbPort == null || Config.mysqlDbPort.equals("") ? ":3306" : ":" + Config.mysqlDbPort) + "/" + Config.mysqlDbName + "?rewriteBatchedStatements=true&useUnicode=true";
+					tempConnection = DriverManager.getConnection(url, Config.mysqlDbUser, Config.mysqlDbPass);
+					tempStatement = tempConnection.createStatement();
+				} catch (SQLNonTransientConnectionException | CommunicationsException e) {
+					IRCBot.log.error(" ### Failed to connect to MySQL database at " + Config.mysqlDbHost + " ### ");
+					IRCBot.log.error(e.getMessage());
+					return false;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			} else if (Config.currentDbMode.equals("sqlite")) {
+				try {
+					tempConnection = DriverManager.getConnection("jdbc:sqlite:" + Config.sqlitePath);
+					tempStatement = tempConnection.createStatement();
+					tempStatement.setPoolable(true);
+					tempStatement.setQueryTimeout(30);  // set timeout to 30 sec.
+				} catch (SQLNonTransientConnectionException e) {
+					IRCBot.log.error(" ### Failed to connect to SQLite database at " + Config.sqlitePath + " ###");
+					IRCBot.log.error(e.getMessage());
+					return false;
+				}
+			}
+			Config.prop.setProperty("currentDbMode", Config.targetDbMode);
+			Config.saveProps();
+			System.out.println("Post db migration");
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean tableInit() {
+		IRCBot.log.info("Init database entries in utils.db_items (create tables)");
+		Reflections db_items = new Reflections("pcl.lc.utils.db_items");
+		Set<Class<? extends DatabaseEntry>> allClasses = db_items.getSubTypesOf(DatabaseEntry.class);
+		System.out.println("Found " + allClasses.size() + " db_item entries");
+		for (Class<? extends DatabaseEntry> s : allClasses) {
+			String table = "?";
+			try {
+				table = s.getDeclaredField("table").get(null).toString();
+				System.out.println(s.getName());
+				String query = "CREATE TABLE IF NOT EXISTS '" + table + "'(%s);";
+				ArrayList<String> fields = new ArrayList<>();
+				for (Field myField : s.getDeclaredFields()) {
+					if (!DatabaseEntry.ignoreField(myField.getName())) {
+						String primary = "";
+						if (myField.getName().equals(s.getDeclaredField("primary_key").get("null").toString())) {
+							primary = " PRIMARY KEY";
+//							if (myField.getType() == int.class)
+//								primary += " AUTOINCREMENT";
+						}
+						if (myField.getType() == boolean.class)
+							fields.add("'" + myField.getName() + "' BOOLEAN" + primary);
+						else if (myField.getType() == String.class)
+							fields.add("'" + myField.getName() + "' VARCHAR(1000)" + primary);
+						else if (myField.getType() == int.class)
+							fields.add("'" + myField.getName() + "' INTEGER" + primary);
+						else if (myField.getType() == float.class)
+							fields.add("'" + myField.getName() + "' FLOAT" + primary);
+						else if (myField.getType() == double.class)
+							fields.add("'" + myField.getName() + "' DOUBLE" + primary);
+						else if (myField.getType() == DateTime.class)
+							fields.add("'" + myField.getName() + "' DATETIME" + primary);
+					}
+				}
+				query = String.format(query, String.join(", ", fields));
+				System.out.println(query);
+				Database.statement.executeUpdate(query);
+			} catch (Exception e) {
+				IRCBot.log.error("An exception occurred while initializing database table '" + table + "'");
+				e.printStackTrace();
+			}
+		}
+		return true;
 	}
 
 	public static boolean addStatement(String sql) {

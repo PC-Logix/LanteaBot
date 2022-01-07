@@ -4,6 +4,7 @@ import pcl.lc.irc.hooks.DrinkPotion;
 import pcl.lc.utils.Exceptions.InvalidPotionException;
 import pcl.lc.utils.Helper;
 import pcl.lc.utils.PotionHelper;
+import pcl.lc.utils.db_items.DbStatCounter;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -73,6 +74,8 @@ public class PotionEntry {
 				System.out.println("No effect recorded for " + key + ", Assign effect with index: " + effect);
 
 				EffectEntry eff = DrinkPotion.effects.get(effect);
+
+				DbStatCounter.Increment("potion_effects", eff.key);
 				String effect_drink = eff.effectDrink;
 				String effect_splash = eff.effectSplash;
 				String[] effects = new String[] { effect_drink, effect_splash };

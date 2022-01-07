@@ -13,6 +13,7 @@ import pcl.lc.irc.Config;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.DynamicCommand;
 import pcl.lc.utils.*;
+import pcl.lc.utils.db_items.DbStatCounter;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -80,12 +81,14 @@ public class GenericEventListener extends AbstractListener{
 					String target = Helper.getTarget(event);
 					CommandChainStateObject stateObj = cmd.tryExecute(command, user, target, event, params);
 					System.out.println("Executed command '" + cmd.getCommand() + "': " + stateObj.state + (stateObj.msg != null ? " => '" + stateObj.msg + "'" : ""));
+					DbStatCounter.Increment("commands", cmd.getCommand());
 				} else if (IRCBot.dynamicCommands.containsKey(actualCommand)) {
 					DynamicCommand cmd = IRCBot.dynamicCommands.get(actualCommand);
 					cmd.callingRelay = callingRelay;
 					String target = Helper.getTarget(event);
 					CommandChainStateObject stateObj = cmd.tryExecute(command, user, target, event, params);
 					System.out.println("Executed dynamic command '" + cmd.getCommand() + "': " + stateObj.state + (stateObj.msg != null ? " => '" + stateObj.msg + "'" : ""));
+					DbStatCounter.Increment("commands_dynamic", cmd.getCommand());
 				} else {
 					System.out.println("No command '" + actualCommand + "'");
 				}

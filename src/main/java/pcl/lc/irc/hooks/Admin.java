@@ -74,6 +74,7 @@ public class Admin extends AbstractListener {
 	private Command command_time_test;
 	private Command command_whatami;
 	private Command command_ami;
+	private Command command_debug;
 
 	@Override
 	protected void initHook() {
@@ -515,6 +516,16 @@ public class Admin extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
+		command_debug = new Command("debug") {
+			@Override
+			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
+				if (IRCBot.isDebug)
+					Helper.sendMessage(target, "Debug mode is ENABLED");
+				else
+					Helper.sendMessage(target, "Debug mode is DISABLED");
+				return new CommandChainStateObject(CommandChainState.FINISHED);
+			}
+		};
 		IRCBot.registerCommand(command_prefix);
 		IRCBot.registerCommand(command_join);
 		IRCBot.registerCommand(command_part);
@@ -544,6 +555,7 @@ public class Admin extends AbstractListener {
 		IRCBot.registerCommand(command_time_test);
 		IRCBot.registerCommand(command_whatami);
 		IRCBot.registerCommand(command_ami);
+		IRCBot.registerCommand(command_debug);
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import pcl.lc.utils.PotionHelper;
 import java.util.function.Function;
 
 public class EffectEntry {
+	public String key;
 	public String effectDrink;
 	public String effectSplash;
 	public String effectDrinkDiscovered;
@@ -18,43 +19,44 @@ public class EffectEntry {
 
 	public Function<EffectActionParameters, String> action;
 
-	public EffectEntry(String effectDrink, String effectSplash, int baseUses) {
-		this(effectDrink, effectSplash, null, null, null, baseUses);
+	public EffectEntry(String key, String effectDrink, String effectSplash, int baseUses) {
+		this(key, effectDrink, effectSplash, null, null, null, baseUses);
 	}
 
-	public EffectEntry(String effectDrink, String effectSplash) {
-		this(effectDrink, effectSplash, null, null, null);
+	public EffectEntry(String key, String effectDrink, String effectSplash) {
+		this(key, effectDrink, effectSplash, null, null, null);
 	}
 
-	public EffectEntry(String effectDrink, String effectSplash, Function<EffectActionParameters, String> action, int baseUses) {
-		this(effectDrink, effectSplash, null, null, action, baseUses);
+	public EffectEntry(String key, String effectDrink, String effectSplash, Function<EffectActionParameters, String> action, int baseUses) {
+		this(key, effectDrink, effectSplash, null, null, action, baseUses);
 	}
 
-	public EffectEntry(String effectDrink, Function<EffectActionParameters, String> action, int baseUses) {
-		this(effectDrink, null, null, null, action, baseUses);
+	public EffectEntry(String key, String effectDrink, Function<EffectActionParameters, String> action, int baseUses) {
+		this(key, effectDrink, null, null, null, action, baseUses);
 	}
 
-	public EffectEntry(String effectDrink, String effectSplash, Function<EffectActionParameters, String> action) {
-		this(effectDrink, effectSplash, null, null, action);
+	public EffectEntry(String key, String effectDrink, String effectSplash, Function<EffectActionParameters, String> action) {
+		this(key, effectDrink, effectSplash, null, null, action);
 	}
 
-	public EffectEntry(String effectDrink, Function<EffectActionParameters, String> action) {
-		this(effectDrink, null, null, null, action);
+	public EffectEntry(String key, String effectDrink, Function<EffectActionParameters, String> action) {
+		this(key, effectDrink, null, null, null, action);
 	}
 
-	public EffectEntry(String effectDrink, int baseUses) {
-		this(effectDrink, null, null, null, null, baseUses);
+	public EffectEntry(String key, String effectDrink, int baseUses) {
+		this(key, effectDrink, null, null, null, null, baseUses);
 	}
 
-	public EffectEntry(String effectDrink) {
-		this(effectDrink, null, null, null, null);
+	public EffectEntry(String key, String effectDrink) {
+		this(key, effectDrink, null, null, null, null);
 	}
 
-	public EffectEntry(String effectDrink, String effectSplash, String effectDrinkDiscovered, String effectSplashDiscovered, Function<EffectActionParameters, String> action) {
-		this(effectDrink, effectSplash, effectDrinkDiscovered, effectSplashDiscovered, action, -1);
+	public EffectEntry(String key, String effectDrink, String effectSplash, String effectDrinkDiscovered, String effectSplashDiscovered, Function<EffectActionParameters, String> action) {
+		this(key, effectDrink, effectSplash, effectDrinkDiscovered, effectSplashDiscovered, action, -1);
 	}
 
-	public EffectEntry(String effectDrink, String effectSplash, String effectDrinkDiscovered, String effectSplashDiscovered, Function<EffectActionParameters, String> action, int baseUses) {
+	public EffectEntry(String key, String effectDrink, String effectSplash, String effectDrinkDiscovered, String effectSplashDiscovered, Function<EffectActionParameters, String> action, int baseUses) {
+		this.key = key;
 		this.effectDrink = effectDrink;
 		this.effectSplash = effectSplash;
 		this.effectDrinkDiscovered = effectDrinkDiscovered;
@@ -116,7 +118,7 @@ public class EffectEntry {
 	}
 
 	public EffectEntry copy() {
-		EffectEntry copy = new EffectEntry(this.effectDrink, this.effectSplash, this.effectDrinkDiscovered, this.effectSplashDiscovered, this.action, this.baseUses);
+		EffectEntry copy = new EffectEntry(this.key, this.effectDrink, this.effectSplash, this.effectDrinkDiscovered, this.effectSplashDiscovered, this.action, this.baseUses);
 		copy.discoverer = this.discoverer;
 		return copy;
 	}

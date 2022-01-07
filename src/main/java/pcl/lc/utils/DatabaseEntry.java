@@ -1,7 +1,9 @@
 package pcl.lc.utils;
 
 import com.google.api.client.util.DateTime;
+import jdk.nashorn.internal.ir.annotations.Reference;
 import org.apache.commons.lang3.StringEscapeUtils;
+import pcl.lc.irc.IRCBot;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -18,7 +20,9 @@ public class DatabaseEntry {
 	public static String table;
 	public static String primary_key;
 
-	private static boolean ignoreField(String field) {
+	public boolean stored_item = false;
+
+	public static boolean ignoreField(String field) {
 		switch (field) {
 			case "table":
 			case "primary_key":
@@ -34,30 +38,38 @@ public class DatabaseEntry {
 	 * @return Returns true on successful save, otherwise false
 	 */
 	protected boolean Save(String table) {
-		String query = "INSERT OR REPLACE INTO %s (%s) VALUES (%s);";
+		String query;
+		if (this.stored_item)
+			query = "REPLACE INTO %s (%s) VALUES (%s)";
+		else
+			query = "INSERT INTO %s (%s) VALUES (%s)";
 
 		ArrayList<String> fieldArray = new ArrayList<>();
 		ArrayList<String> valuePlaceholderArray = new ArrayList<>();
 		for (Field field : this.getClass().getDeclaredFields()) {
 			if (!ignoreField(field.getName())) {
-				fieldArray.add("'" + field.getName() + "'");
 				try {
-					if (field.getType() == int.class && field.getInt(this) == Integer.MIN_VALUE) {
-						valuePlaceholderArray.add("?");
-					} else if (field.get(this) == null) {
-						valuePlaceholderArray.add("?");
-					} else if (field.getType() == boolean.class) {
-						valuePlaceholderArray.add("?");
-					} else if (field.getType() == int.class) {
-						valuePlaceholderArray.add("?");
-					} else if (field.getType() == double.class) {
-						valuePlaceholderArray.add("?");
-					} else if (field.getType() == long.class) {
-						valuePlaceholderArray.add("?");
-					} else if (field.getType() == short.class) {
-						valuePlaceholderArray.add("?");
+					if (!this.stored_item && field.getName().equals(this.getClass().getDeclaredField("primary_key").get(null).toString()) && field.getType() == int.class) {
+						System.out.println("Skipped adding primary key '" + field.getName() + "'");
 					} else {
-						valuePlaceholderArray.add("?");
+						fieldArray.add("'" + field.getName() + "'");
+						if (field.getType() == int.class && field.getInt(this) == Integer.MIN_VALUE) {
+							valuePlaceholderArray.add("?");
+						} else if (field.get(this) == null) {
+							valuePlaceholderArray.add("?");
+						} else if (field.getType() == boolean.class) {
+							valuePlaceholderArray.add("?");
+						} else if (field.getType() == int.class) {
+							valuePlaceholderArray.add("?");
+						} else if (field.getType() == double.class) {
+							valuePlaceholderArray.add("?");
+						} else if (field.getType() == long.class) {
+							valuePlaceholderArray.add("?");
+						} else if (field.getType() == short.class) {
+							valuePlaceholderArray.add("?");
+						} else {
+							valuePlaceholderArray.add("?");
+						}
 					}
 				} catch (Exception e) {
 					valuePlaceholderArray.add("?");
@@ -79,35 +91,41 @@ public class DatabaseEntry {
 			for (Field field : this.getClass().getDeclaredFields()) {
 				if (!ignoreField(field.getName())) {
 					try {
-						if (field.getType() == int.class && field.getInt(this) == Integer.MIN_VALUE) {
-							preparedStatement.setString(index, null);
-						} else if (field.get(this) == null) {
-							preparedStatement.setString(index, null);
-						} else if (field.getType() == boolean.class) {
-							preparedStatement.setBoolean(index, field.getBoolean(this));
-						} else if (field.getType() == int.class) {
-							preparedStatement.setInt(index, field.getInt(this));
-						} else if (field.getType() == double.class) {
-							preparedStatement.setDouble(index, field.getDouble(this));
-						} else if (field.getType() == long.class) {
-							preparedStatement.setLong(index, field.getLong(this));
-						} else if (field.getType() == short.class) {
-							preparedStatement.setShort(index, field.getShort(this));
+						if (!this.stored_item && field.getName().equals(this.getClass().getDeclaredField("primary_key").get(null).toString()) && field.getType() == int.class) {
+							System.out.println("Skipped adding primary key '" + field.getName() + "'");
 						} else {
-							preparedStatement.setString(index, String.valueOf(field.get(this)));
+							if (field.getType() == int.class && field.getInt(this) == Integer.MIN_VALUE) {
+								preparedStatement.setString(index, null);
+							} else if (field.get(this) == null) {
+								preparedStatement.setString(index, null);
+							} else if (field.getType() == boolean.class) {
+								preparedStatement.setBoolean(index, field.getBoolean(this));
+							} else if (field.getType() == int.class) {
+								preparedStatement.setInt(index, field.getInt(this));
+							} else if (field.getType() == double.class) {
+								preparedStatement.setDouble(index, field.getDouble(this));
+							} else if (field.getType() == long.class) {
+								preparedStatement.setLong(index, field.getLong(this));
+							} else if (field.getType() == short.class) {
+								preparedStatement.setShort(index, field.getShort(this));
+							} else {
+								preparedStatement.setString(index, String.valueOf(field.get(this)));
+							}
+							index++;
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 						preparedStatement.setString(index, null);
 					}
-					index++;
 				}
 			}
 			preparedStatement.execute();
 		} catch (SQLException e) {
+			IRCBot.log.error("An exception occurred in DatabaseEntry.Save");
 			e.printStackTrace();
 			return false;
 		}
+		this.stored_item = true;
 		return true;
 	}
 
@@ -143,8 +161,10 @@ public class DatabaseEntry {
 				}
 			}
 		} catch (Exception e) {
+			IRCBot.log.error("An exception occurred in DatabaseEntry.Delete");
 			e.printStackTrace();
 		}
+		this.stored_item = false;
 		return false;
 	}
 
@@ -190,54 +210,70 @@ public class DatabaseEntry {
 							myField.set(output, result.getDate(myField.getName()));
 					}
 				}
+				output.stored_item = true;
 				return output;
 			}
 		} catch (Exception e) {
+			IRCBot.log.error("An exception occurred in DatabaseEntry.GetByField");
 			e.printStackTrace();
 		}
 		return null;
 	}
 
+	protected static DatabaseEntryCollection GetManyByField(DatabaseEntryCollection collection, Callable new_entry, String table) {
+		return GetManyByField(collection, new_entry, table, null, null, null, null);
+	}
+
+	protected static DatabaseEntryCollection GetManyByField(DatabaseEntryCollection collection, Callable new_entry, String table, @Nullable String[] fields, @Nullable Object[] values) {
+		return GetManyByField(collection, new_entry, table, fields, values, null, null);
+	}
+
 	/**
+	 * @param collection A collectio to which items will be added before returning it
 	 * @param new_entry Should be something like MyEntry::new, used to create new instances of objects to return
 	 * @param table Target table for query
 	 * @param fields Array of fields to use in condition
 	 * @param values Array of values used in condition, should contain the same amount as fields, conditions are all combined with AND
 	 * @param order_by null to ignore, optional order by statement ('field_name, other_field_name' or 'RANDOM()')
 	 * @param limit null to ignore, optional limit ('1' or '1, 5')
-	 * @return Returns ArrayList of DatabaseEntries, if new_entry was set properly the list can be re-cast to the proper type without issue
+	 * @return Returns ArrayList of DatabaseEntries
 	 */
-	protected static ArrayList<DatabaseEntry> GetManyByField(Callable new_entry, String table, String[] fields, Object[] values, @Nullable String order_by, @Nullable String limit) {
-		ArrayList<DatabaseEntry> collection = new ArrayList<>();
+	protected static DatabaseEntryCollection GetManyByField(DatabaseEntryCollection collection, Callable new_entry, String table, @Nullable String[] fields, @Nullable Object[] values, @Nullable String order_by, @Nullable String limit) {
+		String query = "SELECT * FROM %s";
 
-		String query = "SELECT * FROM %s WHERE %s";
+		if (fields != null && values != null && fields.length > 0 && values.length > 0) {
+			query += " WHERE %s";
 
-		if (order_by != null)
-			query += " ORDER BY " + order_by;
-		if (limit != null)
-			query += " LIMIT " + limit;
+			ArrayList<String> conditions = new ArrayList<>();
 
-		ArrayList<String> conditions = new ArrayList<>();
-
-		for (int i = 0; i < fields.length; i++) {
-			System.out.println("Value " + fields[i] + ": " + (values[i] == null ? "NULL" : values[i] + " (" + values[i].getClass() + ")"));
-			if (values[i] == null)
-				conditions.add(fields[i] + " IS NULL");
-			else if (values[i].getClass() == int.class || values[i].getClass() == double.class || values[i].getClass() == long.class || values[i].getClass() == short.class)
-				conditions.add(fields[i] + " = " + values[i]);
-			else if (values[i].getClass() == boolean.class)
-				conditions.add(fields[i] + " = " + ((boolean) values[i] ? "1" : "0"));
-			else
-				conditions.add(fields[i] + " = '" + values[i] + "'");
+			for (int i = 0; i < fields.length; i++) {
+				System.out.println("Value " + fields[i] + ": " + (values[i] == null ? "NULL" : values[i] + " (" + values[i].getClass() + ")"));
+				if (values[i] == null)
+					conditions.add("\"" + fields[i] + "\" IS NULL");
+				else if (values[i].getClass() == int.class || values[i].getClass() == double.class || values[i].getClass() == long.class || values[i].getClass() == short.class)
+					conditions.add("\"" + fields[i] + "\" = " + values[i]);
+				else if (values[i].getClass() == boolean.class)
+					conditions.add("\"" + fields[i] + "\" = " + ((boolean) values[i] ? "1" : "0"));
+				else
+					conditions.add("\"" + fields[i] + "\" = '" + values[i] + "'");
+			}
+			query = String.format(query, table, String.join(" AND ", conditions));
+		} else {
+			query = String.format(query, table);
 		}
 
-		query = String.format(query, table, String.join(" AND ", conditions));
+		if (order_by != null)
+			query += " ORDER BY \"" + order_by + "\"";
+		if (limit != null)
+			query += " LIMIT " + limit;
 
 		try {
 			System.out.println("Query: " + query);
 			ResultSet result = Database.statement.executeQuery(query);
 
+			int counter = 0;
 			while (result.next()) {
+				counter++;
 				DatabaseEntry entry = (DatabaseEntry) new_entry.call();
 				for (Field myField : entry.getClass().getDeclaredFields()) {
 					if (!ignoreField(myField.getName())) {
@@ -255,11 +291,29 @@ public class DatabaseEntry {
 							myField.set(entry, result.getDate(myField.getName()));
 					}
 				}
-				collection.add(entry);
+				entry.stored_item = true;
+				collection.AddItem(entry);
 			}
+			System.out.println("Parsed " + counter + " result(s), Items: " + collection.items.size());
 		} catch (Exception e) {
+			IRCBot.log.error("An error occurred in DatabaseEntry.GetManyByField");
 			e.printStackTrace();
 		}
 		return collection;
+	}
+
+	public static ArrayList<String> GetUniqueByField(String table, String field) {
+		String query = "SELECT DISTINCT \"" + field + "\" FROM \"" + table + "\";";
+
+		ArrayList<String> results = new ArrayList<>();
+		try {
+			ResultSet resultSet = Database.statement.executeQuery(query);
+			while (resultSet.next()) {
+				results.add(resultSet.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return results;
 	}
 }

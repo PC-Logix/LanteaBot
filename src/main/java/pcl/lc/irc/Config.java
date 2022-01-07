@@ -7,6 +7,7 @@ import org.pircbotx.cap.EnableCapHandler;
 import org.pircbotx.cap.SASLCapHandler;
 import org.pircbotx.cap.TLSCapHandler;
 import pcl.lc.utils.CommentedProperties;
+import pcl.lc.utils.Database;
 import pcl.lc.utils.GoogleSearch;
 
 import java.io.*;
@@ -47,6 +48,11 @@ public class Config {
 	public static List<String> overBridgeUsernameBrackets = null;
 	public static List<String> ignoreMessagesEndingWith = null;
 	public static int maxNumberOfCommandsPerMessage = 2;
+
+	public static String currentDbMode = null;
+	public static String targetDbMode = null;
+
+	public static String sqlitePath = null;
 
 	public static String mysqlDbHost = null;
 	public static String mysqlDbPort = null;
@@ -121,6 +127,9 @@ public class Config {
 				prop.setProperty("mysqlDbUser", "");
 				prop.setProperty("mysqlDbPass", "");
 				prop.setProperty("mysqlDbName", "");
+				prop.setProperty("currentDbMode", "sqlite");
+				prop.setProperty("targetDbMode", "sqlite");
+				prop.setProperty("sqlitePath", "bot.db");
 
 
 				try{
@@ -183,6 +192,11 @@ public class Config {
 			try {
 				maxNumberOfCommandsPerMessage = Integer.parseInt(prop.getProperty("maxNumberOfCommandsPerMessage", "2"));
 			} catch (Exception ignored) {}
+
+			currentDbMode = prop.getProperty("currentDbMode", "sqlite");
+			targetDbMode = prop.getProperty("targetDbMode", "sqlite");
+
+			sqlitePath = prop.getProperty("sqlitePath", Database.sqliteDefaultPath);
 
 			mysqlDbHost = prop.getProperty("mysqlDbHost", "");
 			mysqlDbPort = prop.getProperty("mysqlDbPort", "");

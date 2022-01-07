@@ -15,7 +15,7 @@ import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
-import pcl.lc.utils.db_items.CommandItem;
+import pcl.lc.utils.db_items.DbCommand;
 
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -150,7 +150,7 @@ public class DynamicCommands extends AbstractListener {
 				String cmd = this.argumentParser.getArgument("Command");
 				String content = this.argumentParser.getArgument("Content");
 				if (!IRCBot.dynamicCommands.containsKey(cmd)) {
-					CommandItem item = new CommandItem(cmd, content, null);
+					DbCommand item = new DbCommand(cmd, content, null);
 					item.Save();
 					event.respond("Command Added! Don't forget to set help text with " + Config.commandprefix + base_command.getCommand() + " " + addhelp.getCommand() + "!");
 					registerDynamicCommand(cmd, content);
@@ -166,7 +166,7 @@ public class DynamicCommands extends AbstractListener {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String cmd = this.argumentParser.getArgument("Command");
-				CommandItem item = CommandItem.GetByCommand(cmd);
+				DbCommand item = DbCommand.GetByCommand(cmd);
 				if (item != null) {
 					item.Delete();
 					event.respond("Command deleted");
@@ -380,7 +380,7 @@ public class DynamicCommands extends AbstractListener {
 			return;
 
 		ArrayList<String> commandAliases;
-		CommandItem com = CommandItem.GetByCommand(command.replace(prefix, "").toLowerCase());
+		DbCommand com = DbCommand.GetByCommand(command.replace(prefix, "").toLowerCase());
 		if (com != null) {
 			String message = com.return_value;
 			String[] msg = new String[]{message};

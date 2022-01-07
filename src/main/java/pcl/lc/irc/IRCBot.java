@@ -43,7 +43,7 @@ public class IRCBot {
 		}
 	};
 
-	//Keep a list of invites recieved
+	//Keep a list of invites received
 	public static HashMap<String, String> invites = new HashMap<String, String>();
 	//Keep a list of users, and what server they're connected from
 	public static HashMap<String, String> users = new HashMap<String, String>();
@@ -188,7 +188,7 @@ public class IRCBot {
 		}
 		try {
 			if (!initDatabase()) {
-				log.error("Database Failure!");
+				log.error("Exiting due to database Failure!");
 				return;
 			}
 		} catch (SQLException e1) {
@@ -205,18 +205,16 @@ public class IRCBot {
 			}
 		}
 		//Load all classes in the pcl.lc.irc.hooks package.
-		Reflections plugins = new Reflections("pcl.lc.irc.hooks");
+		/*Reflections plugins = new Reflections("pcl.lc.irc.hooks");
 		Set<Class<? extends ListenerAdapter>> allClasses = plugins.getSubTypesOf(ListenerAdapter.class);
 		for (Class<? extends Object> s : allClasses) {
 			try {
 				log.info("[DEPRECIATED] Loading " + s.getCanonicalName());
 				Config.config.addListener((Listener) s.newInstance());
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 
 		int count = 0;
 		int count_success = 0;
@@ -230,9 +228,7 @@ public class IRCBot {
 				log.info("Loading " + s.getCanonicalName());
 				Config.config.addListener((Listener) s.newInstance());
 				count_success++;
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -264,7 +260,11 @@ public class IRCBot {
 	}
 
 	private boolean initDatabase() throws SQLException {
-		Database.init();
+		if (!Database.init())
+			return false;
+		if (!Database.tableInit())
+			return false;
+
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Channels(name)");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Info(key PRIMARY KEY, data)");
 		Database.addStatement("CREATE TABLE IF NOT EXISTS OptionalHooks(hook, channel)");
@@ -292,7 +292,7 @@ public class IRCBot {
 
 	private void loadOps() {
 		try {
-			ResultSet readOps = Database.getConnection().createStatement().executeQuery("SELECT name FROM ops;");
+			@SuppressWarnings("SqlResolve") ResultSet readOps = Database.getConnection().createStatement().executeQuery("SELECT name FROM ops;");
 			int rowCount = 0;
 			while (readOps.next()) {
 				rowCount++;
@@ -313,7 +313,7 @@ public class IRCBot {
 
 	private void loadChannels() {
 		try {
-			ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
+			@SuppressWarnings("SqlResolve") ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
 			int rowCount = 0;
 			while (readChannels.next()) {
 				rowCount++;
