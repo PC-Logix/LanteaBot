@@ -19,7 +19,7 @@ import pcl.lc.httpd.httpd;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
-import pcl.lc.utils.db_items.InventoryItem;
+import pcl.lc.utils.db_items.DbInventoryItem;
 
 import java.io.*;
 import java.sql.PreparedStatement;
@@ -324,11 +324,11 @@ public class Inventory extends AbstractListener {
 	 * @return int Value of one of Inventory.ERROR_... statics
 	 */
 	public static int removeItem(String id_or_name, boolean override_favourite, boolean override_preserved) {
-		InventoryItem item;
+		DbInventoryItem item;
 		try {
-			item = InventoryItem.GetByID(Integer.parseInt(id_or_name));
+			item = DbInventoryItem.GetByID(Integer.parseInt(id_or_name));
 		} catch (NumberFormatException e) {
-			item = InventoryItem.GetByName(id_or_name);
+			item = DbInventoryItem.GetByName(id_or_name);
 		}
 
 		if (item != null) {
