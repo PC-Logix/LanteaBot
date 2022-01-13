@@ -109,7 +109,11 @@ public class TimedBans extends AbstractListener {
 		command_quiet.registerSubCommand(command_list);
 		command_ban.registerSubCommand(command_list);
 		command_timed.registerAlias("tquiet", "quiet");
+		command_timed.registerAlias("tempquiet", "quiet");
+		command_timed.registerAlias("timedquiet", "quiet");
 		command_timed.registerAlias("tban", "ban");
+		command_timed.registerAlias("tempban", "ban");
+		command_timed.registerAlias("timedban", "ban");
 		command_timed.registerAlias("tlist", "list");
 		IRCBot.registerCommand(command_timed);
 		Database.addStatement("CREATE TABLE IF NOT EXISTS TimedBans(channel, username, hostmask, expires, placedby, reason, type)");
