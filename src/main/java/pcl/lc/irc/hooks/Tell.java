@@ -103,7 +103,7 @@ public class Tell extends AbstractListener {
 	}
 
 	@Override
-	public void handleMessage(String sender, MessageEvent event, String[] args) {
+	public void handleMessage(String sender, GenericMessageEvent event, String[] args) {
 		try {
 			String nick = "";
 			if (nick.contains("@")) {

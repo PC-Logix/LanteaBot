@@ -26,7 +26,7 @@ public class Stats extends AbstractListener {
 	@Override
 	protected void initHook() {
 		try {
-			httpd.registerContext("/stats", new HelpHandler(), "Stats");
+			httpd.registerContext("/stats", new StatsHandler(), "Stats");
 			InputStream htmlIn = getClass().getResourceAsStream("/html/stats.html");
 			html = CharStreams.toString(new InputStreamReader(htmlIn, Charsets.UTF_8));
 		} catch (IOException e1) {
@@ -34,7 +34,7 @@ public class Stats extends AbstractListener {
 		}
 	}
 
-	static class HelpHandler implements HttpHandler {
+	static class StatsHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			String target = t.getRequestURI().toString();
