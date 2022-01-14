@@ -152,7 +152,7 @@ public class CommandArgumentParser {
 								argType.arg = arg;
 								argumentCount++;
 							}
-							arguments = arguments.replaceFirst(arg + " ?", "");
+							arguments = arguments.replaceFirst(Pattern.quote(arg) + " ?", "");
 							if (debug)
 								System.out.println(" Remainder: `" + arguments + "`");
 							if (argumentCount == this.arguments.size() && !arguments.equals("")) {
