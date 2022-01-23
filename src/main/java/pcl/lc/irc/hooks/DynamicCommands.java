@@ -344,6 +344,15 @@ public class DynamicCommands extends AbstractListener {
 
 	public static String parseDynCommandPlaceholders(String input, String user, String params) {
 		System.out.println("Parsing DynTags in: '" + input + "'");
+		if (input.contains("[drama]")) {
+			input = input.replace("[drama]", Drama.dramaParse());
+		}
+		if (input.contains("[argument]")) {
+			input = input.replaceAll("\\[argument\\]", String.join(" ", params));
+		}
+		if (input.contains("[nick]")) {
+			input = input.replaceAll("\\[nick\\]", user);
+		}
 		if (input.startsWith("[lua]")) {
 			output = new StringBuilder();
 			output.append(runScriptInSandbox(input.replace("[lua]", "").trim()));
@@ -356,15 +365,6 @@ public class DynamicCommands extends AbstractListener {
 			if (output.length() > 0 && output.charAt(output.length() - 1) == '\n')
 				output.setLength(output.length() - 1);
 			input = output.toString().replace("\n", " | ").replace("\r", "");
-		}
-		if (input.contains("[drama]")) {
-			input = input.replace("[drama]", Drama.dramaParse());
-		}
-		if (input.contains("[argument]")) {
-			input = input.replaceAll("\\[argument\\]", String.join(" ", params));
-		}
-		if (input.contains("[nick]")) {
-			input = input.replaceAll("\\[nick\\]", user);
 		}
 		return input;
 	}
