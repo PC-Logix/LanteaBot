@@ -254,6 +254,9 @@ public class DynamicCommands extends AbstractListener {
 				return new CommandChainStateObject();
 			}
 		};
+		edit.registerAlias("update");
+		edit.registerAlias("change");
+		edit.registerAlias("set");
 
 		alias = new Command("alias", Permissions.TRUSTED) {
 			@Override
