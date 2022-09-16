@@ -108,6 +108,11 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(1, "I talked to the Swedish Chef, he said \"Bork bork!\" I think that means yes?", 1));
 		templates.add(new Template(1, "Is the moon full? That means you should definitely go for it!", 1));
 		templates.add(new Template(1, "Once the moon cycle restarts you should definitely do it!", 1));
+		templates.add(new Template(1, "A nearby lamp replies \"{choice}\".", 1));
+		templates.add(new Template(2, "A nearby lamp replies \"Not {choice}!\".", 1));
+		templates.add(new Template(2, "A nearby lamp whispers \"{choice}\" such that it's barely audible.", 1));
+		templates.add(new Template(2, "A nearby lamp suddenly screams \"{choice}!\" such that it's barely audible.", 1));
+		templates.add(new Template(2, "You hear a faraway lamp yell \"{choice}!\".", 1));
 		templates.add(new Template(2, "Some \"{choice}\" sounds nice"));
 		templates.add(new Template(2, "I'm 40% \"{choice}\"!"));
 		templates.add(new Template(2, "You *could* do \"{choice}\", I guess."));
