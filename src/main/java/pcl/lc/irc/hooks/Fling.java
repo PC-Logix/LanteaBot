@@ -53,7 +53,7 @@ public class Fling extends AbstractListener {
 					else if (this.getActualCommand().equals(ALIAS_LAUNCH))
 						action = " launches ";
 
-					if (flingTarget.equals(""))
+					if (flingTarget == null || flingTarget.equals(""))
 						flingTarget = Helper.getRandomUser(event);
 					if (!Helper.doInteractWith(flingTarget))
 						flingTarget = nick;
