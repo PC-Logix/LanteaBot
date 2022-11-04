@@ -309,7 +309,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("secret_whisper", "A voice whispers a secret into {user}'s ear only they can hear."));
 		effects.add(new EffectEntry("car_step", "{user} briefly feel like they have just stepped out of a car."));
 		effects.add(new EffectEntry("enlightenment", "True enlightenment can be achieved by drinking another potion. [Timeout reset]",
-				"{user} feels as if they should drink a potion for some reason. [Timeout reset]", resetTimeou));
+				"{user} feels as if they should drink a potion for some reason. [Timeout reset]", resetTimeout));
 		effects.add(new EffectEntry("great_treasure", "For about a second {user} knows the location of a great treasure."));
 		effects.add(new EffectEntry("potion_inside", "The potion was inside {user} all along."));
 		effects.add(new EffectEntry("gloves", "{user} is suddenly wearing gloves they don't remember putting on."));
@@ -598,6 +598,21 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they have {consistency_p_lc} {appearance_lc} potion");
 		limits.add(" until they have {consistency_p_lc} potion");
 		limits.add(" until they have {appearance_p_lc} potion");
+		limits.add(" until they steal a shoe");
+		limits.add(" until they steal a lamp");
+		limits.add(" until they steal the moon");
+		limits.add(" until they steal the concept of stealing");
+		limits.add(" until they download a car");
+		limits.add(" until hell freezes over");
+		limits.add(" until hell has a mild winter");
+		limits.add(" until hell has a nice fall");
+		limits.add(" until hell celebrates midsummer");
+		limits.add(" until an angel gets their wings");
+		limits.add(" until an elephant forgets");
+		limits.add(" until someone turns off a lamp");
+		limits.add(" until someone turns on a lamp");
+		limits.add(" until someone turns on a lamp and then off again");
+		limits.add(" until someone turns off a lamp and then on again");
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		specialFluids.put("water", new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p_lc} {appearance_lc} potion!", "You splash {user} with some water. Wait... this isn't water... it's {consistency_p_lc} {appearance_lc} potion!"));
