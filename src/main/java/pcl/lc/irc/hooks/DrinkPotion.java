@@ -309,7 +309,7 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("secret_whisper", "A voice whispers a secret into {user}'s ear only they can hear."));
 		effects.add(new EffectEntry("car_step", "{user} briefly feel like they have just stepped out of a car."));
 		effects.add(new EffectEntry("enlightenment", "True enlightenment can be achieved by drinking another potion. [Timeout reset]",
-				"{user} feels as if they should drink a potion for some reason. [Timeout reset]"));
+				"{user} feels as if they should drink a potion for some reason. [Timeout reset]", resetTimeou));
 		effects.add(new EffectEntry("great_treasure", "For about a second {user} knows the location of a great treasure."));
 		effects.add(new EffectEntry("potion_inside", "The potion was inside {user} all along."));
 		effects.add(new EffectEntry("gloves", "{user} is suddenly wearing gloves they don't remember putting on."));
