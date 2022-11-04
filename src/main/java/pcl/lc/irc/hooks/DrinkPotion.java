@@ -517,6 +517,8 @@ public class DrinkPotion extends AbstractListener {
 				return effectActionParameters.targetName + " doesn't seem to have any research points.";
 			}
 		}, 1));
+		effects.add(new EffectEntry("axe_drag", "It sounds like someone is dragging a large metal axe along the floor nearby... Wait, now the sound is gone..."));
+		effects.add(new EffectEntry("axe_swing", "A large figure suddenly swings an axe at {user}! {evade_qc:16:{user} ducks under the axe and gets away from the figure!:{user} takes 2d10 axe damage.}"));
 		IRCBot.log.info("Registered " + effects.size() + " effects!");
 
 		if (IRCBot.getDebug()) {
