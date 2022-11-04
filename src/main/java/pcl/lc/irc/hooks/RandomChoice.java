@@ -56,7 +56,7 @@ class Template {
 
 	Template(String template) {
 		this.min_arguments = 1;
-		this.max_arguments = 0;
+		this.max_arguments = Integer.MAX_VALUE;
 		this.template = template;
 	}
 
@@ -80,16 +80,25 @@ public class RandomChoice extends AbstractListener {
 	@Override
 	protected void initHook() {
 		templates = new TemplateCollection();
-		templates.add(new Template(0, "Ah, I was just about to do that!", 0));
-		templates.add(new Template(0, "Whatever you're thinking, don't.", 0));
-		templates.add(new Template(0, "Yes, but only if you do it right now.", 0));
-		templates.add(new Template(0, "Maybe. In a few minutes.", 0));
-		templates.add(new Template(0, "Does cats like knocking things off of other things?", 0));
-		templates.add(new Template(0, "If you pet me, yes, otherwise no.", 0));
-		templates.add(new Template(0, "Only if you stab Inari first.", 0));
-		templates.add(new Template(0, "Ohwouldyoulookatthetime! I suddenly need to be on the other side of the planet!", 0));
-		templates.add(new Template(0, "You haven't pet me recently, so no.", 0));
-		templates.add(new Template(0, "I wouldn't do that if I were you...", 0));
+		// Template(min_required_arguments, "Pattern"[, max_allowed_arguments]);
+		templates.add(new Template(1, "Ah, I was just about to do that!", 1));
+		templates.add(new Template(1, "Whatever you're thinking, don't.", 1));
+		templates.add(new Template(1, "Yes, but only if you do it right now.", 1));
+		templates.add(new Template(1, "Maybe. In a few minutes.", 1));
+		templates.add(new Template(1, "Does cats like knocking things off of other things?", 1));
+		templates.add(new Template(1, "If you pet me, yes, otherwise no.", 1));
+		templates.add(new Template(1, "Only if you stab Inari first.", 1));
+		templates.add(new Template(1, "Ohwouldyoulookatthetime! I suddenly need to be on the other side of the planet!", 1));
+		templates.add(new Template(1, "I haven't received enough pats recently, so no.", 1));
+		templates.add(new Template(1, "I wouldn't do that if I were you...", 1));
+		templates.add(new Template(1, "I've heard that such things lead to bad luck", 1));
+		templates.add(new Template(1, "I'm going to pretend I didn't hear that.", 1));
+		templates.add(new Template(1, "Hah! Good luck with that!", 1));
+		templates.add(new Template(1, "What even is that? Oh right, sure!", 1));
+		templates.add(new Template(1, "What even is that? Oh right, no.", 1));
+		templates.add(new Template(1, "Fine, but only if I receive pats after.", 1));
+		templates.add(new Template(1, "Rip and tear! Sorry I was playing Doom. Go ahead.", 1));
+		templates.add(new Template(1, "Hm, planetary alignment doesn't seem right for that.", 1));
 		templates.add(new Template(1, "Why would you do that when you could do something else instead?", 1));
 		templates.add(new Template(1, "\"{choice}\" doesn't really seem like a good idea right now.", 1));
 		templates.add(new Template(1, "No, maybe tomorrow.", 1));
@@ -108,11 +117,7 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(1, "I talked to the Swedish Chef, he said \"Bork bork!\" I think that means yes?", 1));
 		templates.add(new Template(1, "Is the moon full? That means you should definitely go for it!", 1));
 		templates.add(new Template(1, "Once the moon cycle restarts you should definitely do it!", 1));
-		templates.add(new Template(1, "A nearby lamp replies \"{choice}\".", 1));
-		templates.add(new Template(2, "A nearby lamp replies \"Not {choice}!\".", 1));
-		templates.add(new Template(2, "A nearby lamp whispers \"{choice}\" such that it's barely audible.", 1));
-		templates.add(new Template(2, "A nearby lamp suddenly screams \"{choice}!\" such that it's barely audible.", 1));
-		templates.add(new Template(2, "You hear a faraway lamp yell \"{choice}!\".", 1));
+
 		templates.add(new Template(2, "Some \"{choice}\" sounds nice"));
 		templates.add(new Template(2, "I'm 40% \"{choice}\"!"));
 		templates.add(new Template(2, "You *could* do \"{choice}\", I guess."));
@@ -147,6 +152,12 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "Is it a bird?! Is it a plane?! No! It's \"{choice}\"!"));
 		templates.add(new Template(2, "Huh, what? \"{choice}\" I guess, now leave me alone I'm playing Tetris."));
 		templates.add(new Template(2, "Oh no, not \"{choice}\" again! I'll have \"{other_choice}\" instead."));
+		templates.add(new Template(2, "A nearby lamp replies \"{choice}\"."));
+		templates.add(new Template(2, "A nearby lamp replies \"Not {choice}!\"."));
+		templates.add(new Template(2, "A nearby lamp whispers \"{choice}\" such that it's barely audible."));
+		templates.add(new Template(2, "A nearby lamp suddenly screams \"{choice}!\" such that it's barely audible."));
+		templates.add(new Template(2, "You hear a faraway lamp yell \"{choice}!\"."));
+
 		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
 		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
 
