@@ -126,6 +126,8 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "\"{choice}\" is for cool kids!"));
 		templates.add(new Template(2, "If I had a gold nugget for every time someone asked me about \"{choice}\""));
 		templates.add(new Template(2, "The proof is in the pudding. Definitely \"{choice}\". Now please get it out of my pudding."));
+		templates.add(new Template(2, "The proof is in the pudding. Definitely \"{choice}\". Hm, this is surprisingly good..."));
+		templates.add(new Template(2, "The proof is in the pudding. Definitely \"{choice}\". Hrm, {choice} could use some more salt."));
 		templates.add(new Template(2, "I received a message from future you, said to go with \"{choice}\"."));
 		templates.add(new Template(2, "I saw that \"{choice}\" is the best choice in a vision"));
 		templates.add(new Template(2, "You'll want to go with \"{choice}\"."));
