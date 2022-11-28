@@ -168,7 +168,7 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
 		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
 
-		static String[] colors = { "green", "red", "orange", "pink", "blue", "octarine", "gold", "black" };
+		String[] colors = { "green", "red", "orange", "pink", "blue", "octarine", "gold", "black" };
 
 		local_command = new Command("choose", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
