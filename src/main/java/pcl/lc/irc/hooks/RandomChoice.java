@@ -159,9 +159,16 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "A nearby lamp whispers \"{choice}\" such that it's barely audible."));
 		templates.add(new Template(2, "A nearby lamp suddenly screams \"{choice}!\" such that it's barely audible."));
 		templates.add(new Template(2, "You hear a faraway lamp yell \"{choice}!\"."));
+		templates.add(new Template(2, "A faraway lamp replies something inaudible."));
+		templates.add(new Template(2, "A nearby lamp turns {color}."));
+		templates.add(new Template(2, "A faraway lamp turns {color}"));
+		templates.add(new Template(2, "{user}'s hair turns {color}"));
+		templates.add(new Template(2, "A nearby persons hair turns {color}"));
 
 		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
 		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
+
+		static String[] colors = { "green", "red", "orange", "pink", "blue", "octarine", "gold", "black" };
 
 		local_command = new Command("choose", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING))) {
 			@Override
@@ -241,8 +248,11 @@ public class RandomChoice extends AbstractListener {
 						count = "all " + ruleBasedNumberFormat.format(parts.size());
 						raw_count = "" + ruleBasedNumberFormat.format(parts.size());
 				}
+				msg = msg.replaceAll("\\{user}", nick);
 				msg = msg.replaceAll("\\{count}", count);
 				msg = msg.replaceAll("\\{raw_count}", raw_count);
+				String color = colors[Helper.getRandomInt(0, colors.length - 1)];
+				msg = msg.replaceAll("\\{color}", color);
 
 				Helper.sendMessage(target, msg, nick);
 				return new CommandChainStateObject();
