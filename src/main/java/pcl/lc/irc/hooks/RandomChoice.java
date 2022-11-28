@@ -117,6 +117,12 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(1, "I talked to the Swedish Chef, he said \"Bork bork!\" I think that means yes?", 1));
 		templates.add(new Template(1, "Is the moon full? That means you should definitely go for it!", 1));
 		templates.add(new Template(1, "Once the moon cycle restarts you should definitely do it!", 1));
+		templates.add(new Template(1, "A nearby lamp turns {color}.", 1));
+		templates.add(new Template(1, "A faraway lamp turns {color}", 1));
+		templates.add(new Template(1, "{user}'s hair turns {color}", 1));
+		templates.add(new Template(1, "A nearby persons hair turns {color}", 1));
+
+		templates.add(new Template(1, "A faraway lamp replies something inaudible."));
 
 		templates.add(new Template(2, "Some \"{choice}\" sounds nice"));
 		templates.add(new Template(2, "I'm 40% \"{choice}\"!"));
@@ -159,11 +165,6 @@ public class RandomChoice extends AbstractListener {
 		templates.add(new Template(2, "A nearby lamp whispers \"{choice}\" such that it's barely audible."));
 		templates.add(new Template(2, "A nearby lamp suddenly screams \"{choice}!\" such that it's barely audible."));
 		templates.add(new Template(2, "You hear a faraway lamp yell \"{choice}!\"."));
-		templates.add(new Template(2, "A faraway lamp replies something inaudible."));
-		templates.add(new Template(2, "A nearby lamp turns {color}."));
-		templates.add(new Template(2, "A faraway lamp turns {color}"));
-		templates.add(new Template(2, "{user}'s hair turns {color}"));
-		templates.add(new Template(2, "A nearby persons hair turns {color}"));
 
 		templates.add(new Template(3, "Definitely \"{choice}\"... Or maybe \"{other_choice}\"..."));
 		templates.add(new Template(3, "One the one hand, there's \"{choice}\" but then there's also \"{other_choice}\""));
