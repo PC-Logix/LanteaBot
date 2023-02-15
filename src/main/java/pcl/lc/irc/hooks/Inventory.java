@@ -567,6 +567,7 @@ public class Inventory extends AbstractListener {
 		strings.add("now you see {item}, now you don't!");
 		strings.add("{item} ascended to a higher plane.");
 		strings.add("{item} fell into a well that appeared out of nowhere!");
+		strings.add("a cryptobro comes by and decides {item}coin is their whole personality, tanking it's value");
 
 		String str = strings.get(Helper.getRandomInt(0, strings.size() - 1)).replace("{item}", item);
 		if (!includeEndPunctuation)
