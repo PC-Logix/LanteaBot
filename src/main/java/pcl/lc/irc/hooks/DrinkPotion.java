@@ -204,8 +204,47 @@ public class DrinkPotion extends AbstractListener {
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Woolly", "A"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Rather", "A"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Hairy", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Bald", "A"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Eroded", "An"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Tiny", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Punctual", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Timeless", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Endless", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Big", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Wonderful", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Awful", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Searing", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Icy", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Frosty", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Hot", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Warm", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Rising", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Falling", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Steady", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Robust", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Shaky", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Forked", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Spooned", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Knifey", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Tacky", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Chewy", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Crunchy", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Ommitted", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Included", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Excluded", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Redacted", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Permitted", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Forbidden", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Dotted", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Dashed", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Unaligned", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Aligned", "An"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Proprietary", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Dangerous", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Safe", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Sans-serif", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Serif", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Serif-only", "A")); // XKCD reference
 		System.out.println("Registered " + consistencyEntries.size() + "consistencies!");
 
 		Function<EffectActionParameters, String> resetTimeout = new Function<EffectActionParameters, String>() {
