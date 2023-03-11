@@ -278,24 +278,24 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("clothes_tap_lc", "{user}'s clothes turn {turn_appearance_lc}{limit}."));
 		effects.add(new EffectEntry("eyes_glow_tap_lc", "{user}'s eyes glow {turn_appearance_lc}{limit}."));
 		effects.add(new EffectEntry("skin_tap_lc_glow_ap_lc", "{user}'s skin turn {turn_appearance_lc} but with a {appearance_lc} glow{limit}."));
-		effects.add(new EffectEntry("toes_invisible", "{user}'s toes turn invisible{limit}."));
+		effects.add(new EffectEntry("pinky_vacation", "{user}'s pinky goes on vacation{limit}."));
 		effects.add(new EffectEntry("hair_grow", "{user}'s hair grows {r:2-4:time} longer{limit}."));
 		effects.add(new EffectEntry("prop_str", "{user} gains the proportional strength of a {transformation}{limit}."));
-		effects.add(new EffectEntry("not_seen", "{user} now knows how not to be seen."));
+		effects.add(new EffectEntry("spotted", "{user} is easily spotted."));
 		effects.add(new EffectEntry("useless_knowledge", "{user} gains knowledge about a random useless subject."));
 		effects.add(new EffectEntry("whiskers", "{user} grows whiskers{limit}."));
 		effects.add(new EffectEntry("tail_tf", "{user} grows a tail from a {transformation}{limit}."));
 		effects.add(new EffectEntry("shrink", "{user} shrinks by a negligible amount{limit}."));
 		effects.add(new EffectEntry("grow_slightly", "{user} grows slightly{limit}."));
-		effects.add(new EffectEntry("crave_pie", "{user} suddenly craves pie."));
-		effects.add(new EffectEntry("talk_to_bricks", "{user} gains the ability to talk to bricks{limit}."));
+		effects.add(new EffectEntry("crave_cake", "{user} suddenly craves cake."));
+		effects.add(new EffectEntry("see_bricks", "{user} gains the ability to see previously unseen bricks{limit}."));
 		effects.add(new EffectEntry("recycling", "{user} feels a strong urge to recycle the potion bottle.",
 				"{user} feels like they should clean up the broken bottle."));
 		effects.add(new EffectEntry("bed_less_comfortable", "{user}'s bed is suddenly slightly less comfortable{limit}."));
+		effects.add(new EffectEntry("bed_more_comfortable", "{user}'s bed is suddenly slightly more comfortable{limit}."));
 		effects.add(new EffectEntry("gain_luck", "{user} gains a negligible amount of luck."));
 		effects.add(new EffectEntry("different_potion", "{user} realizes this was actually {consistency_p} {appearance} potion. [Timeout reset]", resetTimeout));
-		effects.add(new EffectEntry("appointment", "{user} remembers an important appointment."));
-		effects.add(new EffectEntry("fake_mustache", "An incredibly fake looking mustache is stuck to {user}'s face{limit}."));
+		effects.add(new EffectEntry("appointment", "{user} remembers an unimportant appointment."));
 		effects.add(new EffectEntry("run_in_circle", "{user} has a sudden desire to run around in a circle{limit}."));
 		effects.add(new EffectEntry("summon_safety_pins", "{user} gains the ability to summon safety pins{limit}."));
 		effects.add(new EffectEntry("slightly_stronger", "{user} feels slightly stronger.")); // gain 1 point of strength
@@ -309,22 +309,14 @@ public class DrinkPotion extends AbstractListener {
 		effects.add(new EffectEntry("cute_things_aware", "{user} is suddenly more aware of cute things nearby{limit}."));
 		effects.add(new EffectEntry("lose_luck", "{user} loses exactly a handful of luck."));
 		effects.add(new EffectEntry("gain_marbles", "{user}'s pockets suddenly contain 1d10 {appearance:marbles:}."));
-		effects.add(new EffectEntry("hat on fire", "{user}'s favourite hat is suddenly on fire."));
-		effects.add(new EffectEntry("disintegrate_hat", "{user}'s favourite hat suddenly disintegrates."));
-		effects.add(new EffectEntry("disintegrate_shirt", "{user}'s favourite shirt suddenly disintegrates."));
-		effects.add(new EffectEntry("disintegrate_pants", "{user}'s favourite pants suddenly disintegrates."));
-		effects.add(new EffectEntry("disintegrate_hair", "{user}'s favourite hair suddenly disintegrates."));
 		effects.add(new EffectEntry("tear", "{user} has a single tear roll down their cheek for some reason."));
-		effects.add(new EffectEntry("nose_vanish", "{user}'s nose vanish{limit}."));
+		effects.add(new EffectEntry("eyebrows_vanish", "{user}'s eyebrows vanish{limit}."));
 		effects.add(new EffectEntry("champion", "{user} feels like a champion!"));
 		effects.add(new EffectEntry("static_electricity", "{user} feels a sudden surge of static electricity."));
-		effects.add(new EffectEntry("large_shoes", "{user}'s shoes are now slightly too large{limit}."));
 		effects.add(new EffectEntry("borg", "{user} is now Borg{limit}."));
 		effects.add(new EffectEntry("no_memory", "{user} has no memory of drinking a potion.",
 				"{user} doesn't remember being splashed."));
 		effects.add(new EffectEntry("oxygen_molecule", "{user} knows the exact location of a particular molecule of oxygen{limit}."));
-		effects.add(new EffectEntry("bottle_snake", "{user} thinks the empty bottle is a snake{limit}.",
-				"{user} thinks they're being chased by an imaginary snake{limit}"));
 		effects.add(new EffectEntry("another_potion", "{user} gets an urge to have another potion. [Timeout reset]",
 				"{user} gets the urge to drink a potion. [Timeout reset]", resetTimeout));
 		effects.add(new EffectEntry("sweet", "It tastes sweet.",
