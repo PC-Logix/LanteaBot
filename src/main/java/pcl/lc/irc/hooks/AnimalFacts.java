@@ -70,7 +70,7 @@ public class AnimalFacts extends AbstractListener {
         local_command = new Command("catfact") {
             @Override
             public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
-                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/cat");
+                    JSONObject json = readJsonFromUrl("https://some-random-api.com/animal/cat");
                     Helper.sendMessage(target, json.get("fact").toString());
                 return new CommandChainStateObject();
             }
@@ -94,7 +94,7 @@ public class AnimalFacts extends AbstractListener {
                     aminal = "red_panda";
                 }
                 if (animalNames.contains(aminal)) {
-                    JSONObject json = readJsonFromUrl("https://some-random-api.ml/animal/" + aminal);
+                    JSONObject json = readJsonFromUrl("https://some-random-api.com/animal/" + aminal);
                     Helper.sendMessage(target, aminal.substring(0, 1).toUpperCase() + aminal.substring(1) + " fact: " + json.get("fact").toString());
                 } else {
                     Helper.sendMessage(target, "Not a valid option. " + String.join(", ", animalNames));
