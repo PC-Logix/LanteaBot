@@ -196,9 +196,8 @@ public class PhraseBan extends AbstractListener {
 				if (message.toLowerCase().contains(phrase)) {
 					String duration = Database.getJsonData("phraseban_duration");
 					if (duration.isEmpty())
-						duration = "24h";
+						duration = "48h";
 					TimedBans.setTimedBan(((GenericChannelUserEvent) event).getChannel(), nick, "", duration, "Banned phrase.", "PhraseBan");
-					Helper.sendMessage("chanserv", "kickban " + target + " " + nick + " PhraseBan");
 					if (IRCBot.getOurNick().equals("ForeBot"))
 						Helper.sendMessage(target, "BAN!");
 					break;
