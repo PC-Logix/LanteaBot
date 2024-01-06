@@ -619,7 +619,7 @@ public class Tonk extends AbstractListener {
 		};
 		tonk_snipe.registerSubCommand(tonk_snipe_count);
 
-		tonk_code = new Command("tonkcode", Permissions.ADMIN) {
+		tonk_code = new Command("tonkcode", Permissions.EVERYONE) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws Exception {
 				Helper.sendMessage(target, getVerificationCode(), nick);
