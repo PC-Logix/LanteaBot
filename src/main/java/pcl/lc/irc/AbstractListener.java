@@ -77,7 +77,7 @@ public abstract class AbstractListener extends ListenerAdapter
 			if (event.getMessage().endsWith(str))
 				return;
 		}
-		for (String str : Config.ignoreMessagesStartsWith) {
+		for (String str : Config.ignoreMessagesStartingWith) {
 			if (event.getMessage().startsWith(str))
 				return;
 		}
