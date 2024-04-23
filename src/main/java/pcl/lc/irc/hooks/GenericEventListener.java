@@ -51,7 +51,7 @@ public class GenericEventListener extends AbstractListener{
 		}
 
 		for (String str : Config.ignoreMessagesStartingWith) {
-			if (event.getMessage().endsWith(str)) {
+			if (event.getMessage().startsWith(str)) {
 				System.out.println("Ignored '" + event.getMessage() + "' because it starts with '" + str + "'");
 				return;
 			}
