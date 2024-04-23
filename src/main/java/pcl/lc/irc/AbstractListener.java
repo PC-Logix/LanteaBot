@@ -78,10 +78,8 @@ public abstract class AbstractListener extends ListenerAdapter
 				return;
 		}
 		for (String str : Config.ignoreMessagesStartingWith) {
-			if (event.getMessage().startsWith(str)) {
-				System.out.println("Ignored '" + event.getMessage() + "' because it starts with '" + str + "'");
+			if (event.getMessage().startsWith(str))
 				return;
-			}
 		}
 		String[] splitMessage = event.getMessage().split(" ");
 		String nickClean = event.getUser().getNick().replaceAll("\\p{C}", "");

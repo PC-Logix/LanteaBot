@@ -49,6 +49,13 @@ public class GenericEventListener extends AbstractListener{
 				return;
 			}
 		}
+
+		for (String str : Config.ignoreMessagesStartingWith) {
+			if (event.getMessage().endsWith(str)) {
+				System.out.println("Ignored '" + event.getMessage() + "' because it starts with '" + str + "'");
+				return;
+			}
+		}
 		String user;
 		String callingRelay = null;
 		String bracketsPre = "";
