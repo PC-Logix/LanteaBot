@@ -77,6 +77,10 @@ public abstract class AbstractListener extends ListenerAdapter
 			if (event.getMessage().endsWith(str))
 				return;
 		}
+		for (String str : Config.ignoreMessagesStartsWith) {
+			if (event.getMessage().startsWithWith(str))
+				return;
+		}
 		String[] splitMessage = event.getMessage().split(" ");
 		String nickClean = event.getUser().getNick().replaceAll("\\p{C}", "");
 		String nick = event.getUser().getNick();

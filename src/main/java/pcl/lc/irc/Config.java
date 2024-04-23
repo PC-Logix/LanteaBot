@@ -47,6 +47,7 @@ public class Config {
 	public static List<String> parseBridgeCommandsFromUsers = null;
 	public static List<String> overBridgeUsernameBrackets = null;
 	public static List<String> ignoreMessagesEndingWith = null;
+	public static List<String> ignoreMessagesStartingWith = null;
 	public static int maxNumberOfCommandsPerMessage = 2;
 
 	public static String currentDbMode = null;
@@ -121,6 +122,7 @@ public class Config {
 				prop.setProperty("parseBridgeCommandsFromUsers", "");
 				prop.setProperty("overBridgeUsernameBrackets", "<>,()");
 				prop.setProperty("ignoreMessagesEndingWith", "%*%");
+				prop.setProperty("ignoreMessagesStartingWith", "%*%");
 				prop.setProperty("maxNumberOfCommandsPerMessage", "2");
 				prop.setProperty("mysqlDbHost", "");
 				prop.setProperty("mysqlDbPort", "");
@@ -189,6 +191,7 @@ public class Config {
 			parseBridgeCommandsFromUsers = Arrays.asList(prop.getProperty("parseBridgeCommandsFromUsers", "").split(","));
 			overBridgeUsernameBrackets = Arrays.asList(prop.getProperty("overBridgeUsernameBrackets", "<>,()").split(","));
 			ignoreMessagesEndingWith = Arrays.asList(prop.getProperty("ignoreMessagesEndingWith", "%*%").split(","));
+			ignoreMessagesStartingWith = Arrays.asList(prop.getProperty("ignoreMessagesStartingWith", "%*%").split(","));
 			try {
 				maxNumberOfCommandsPerMessage = Integer.parseInt(prop.getProperty("maxNumberOfCommandsPerMessage", "2"));
 			} catch (Exception ignored) {}
