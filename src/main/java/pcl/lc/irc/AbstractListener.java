@@ -78,7 +78,7 @@ public abstract class AbstractListener extends ListenerAdapter
 				return;
 		}
 		for (String str : Config.ignoreMessagesStartsWith) {
-			if (event.getMessage().startsWithWith(str))
+			if (event.getMessage().startsWith(str))
 				return;
 		}
 		String[] splitMessage = event.getMessage().split(" ");
