@@ -122,7 +122,7 @@ public class Config {
 				prop.setProperty("parseBridgeCommandsFromUsers", "");
 				prop.setProperty("overBridgeUsernameBrackets", "<>,()");
 				prop.setProperty("ignoreMessagesEndingWith", "%*%");
-				prop.setProperty("ignoreMessagesStartingWith", "%*%");
+				prop.setProperty("ignoreMessagesStartingWith", ">");
 				prop.setProperty("maxNumberOfCommandsPerMessage", "2");
 				prop.setProperty("mysqlDbHost", "");
 				prop.setProperty("mysqlDbPort", "");
