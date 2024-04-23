@@ -78,6 +78,7 @@ public abstract class AbstractListener extends ListenerAdapter
 				return;
 		}
 		for (String str : Config.ignoreMessagesStartingWith) {
+			System.out.println(str);
 			if (event.getMessage().startsWith(str)) {
 				System.out.println("Ignored '" + event.getMessage() + "' because it starts with '" + str + "'");
 				return;
