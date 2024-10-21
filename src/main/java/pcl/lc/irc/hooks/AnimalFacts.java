@@ -79,7 +79,7 @@ public class AnimalFacts extends AbstractListener {
         local_command2 = new Command("fact", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Animal"))) {
             @Override
             public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) throws IOException, JSONException {
-                List<String> animalNames = Arrays.asList("dog", "cat", "panda", "fox", "red_panda", "koala", "birb", "racoon", "kangaroo");
+                List<String> animalNames = Arrays.asList("dog", "cat", "panda", "fox", "red_panda", "koala", "birb", "racoon", "raccoon", "kangaroo");
                 
                 String aminal = this.argumentParser.getArgument("Animal");
                 
