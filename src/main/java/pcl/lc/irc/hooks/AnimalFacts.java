@@ -92,6 +92,8 @@ public class AnimalFacts extends AbstractListener {
                     aminal = "birb"; //Cause this API is dumb. *sigh*
                 } else if (aminal.equals("red panda")) {
                     aminal = "red_panda";
+                } else if (aminal.equals("racoon")) {
+                    aminal = "raccoon";
                 }
                 if (animalNames.contains(aminal)) {
                     JSONObject json = readJsonFromUrl("https://some-random-api.com/animal/" + aminal);
