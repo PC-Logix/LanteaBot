@@ -544,7 +544,7 @@ public class Tonk extends AbstractListener {
 		tonk_snipe.registerAlias("ammocount", "count");
 		tonk_snipe.setHelpText("If you are in last place on the tonk scoreboard you can attempt to snipe someone with a green, red, or blue shell. A successful snipe will remove a percentage (depending on the shell type) of the difference between your and their points, and give it to you. You can only succeed once. If it fails you can try again after " + TonkSnipe.daysBetweenTonkSnipes + " days.");
 
-		tonk_snipe_blue = new Command(TonkSnipeType.BLUE.keyword, new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"))) {
+		tonk_snipe_blue = new Command(TonkSnipeType.BLUE.keyword) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				if (getMaxScoreboardPosition() <= 1) {
@@ -568,11 +568,11 @@ public class Tonk extends AbstractListener {
 		tonk_snipe_red = new Command(TonkSnipeType.RED.keyword, new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() == 0) {
+				if (this.argumentParser.getArgument("Target") == null) {
 					Helper.sendMessage(target, "Provide a target that is within range of you.", nick);
 					return new CommandChainStateObject(CommandChainState.ERROR);
 				}
-				String targetUser = params.get(0);
+				String targetUser = this.argumentParser.getArgument("Target");
 				try {
 					TonkSnipeType.RED.isValidTarget(nick, targetUser);
 				} catch (Exception ex) {
@@ -588,11 +588,11 @@ public class Tonk extends AbstractListener {
 		tonk_snipe_green = new Command(TonkSnipeType.GREEN.keyword, new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"))) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) throws Exception {
-				if (params.size() == 0) {
+				if (this.argumentParser.getArgument("Target") == null) {
 					Helper.sendMessage(target, "Provide a target that is within range of you.", nick);
 					return new CommandChainStateObject(CommandChainState.ERROR);
 				}
-				String targetUser = params.get(0);
+				String targetUser = this.argumentParser.getArgument("Target");
 				try {
 					TonkSnipeType.GREEN.isValidTarget(nick, targetUser);
 				} catch (Exception ex) {
