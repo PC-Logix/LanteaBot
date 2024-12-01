@@ -605,12 +605,12 @@ public class Admin extends AbstractListener {
 	}
 
 	private static void relaunch() throws InterruptedException, UnsupportedEncodingException {
+		Database.storeJsonData("restartFlag", "true");
+		Helper.sendMessageAllChannels("Restart initiated!");
 		String command = "/" + FilenameUtils.getPath(IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(command);
-			Database.storeJsonData("restartFlag", "true");
-			Helper.sendMessageAllChannels("Restart initiated!");
 			p.waitFor();
 		} catch (Exception e) {
 			e.printStackTrace();
