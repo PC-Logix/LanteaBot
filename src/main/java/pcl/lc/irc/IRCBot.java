@@ -263,6 +263,7 @@ public class IRCBot {
 		
 		String restartFlag = "false";
 		try {
+		    IRCBot.log.info("Checking restartFlag");
 		    restartFlag = Database.getJsonData("restartFlag");
 		} catch (Exception e) {
 		    IRCBot.log.info("Error fetching restartFlag: " + e.getMessage(), e);
