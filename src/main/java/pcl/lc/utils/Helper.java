@@ -61,7 +61,9 @@ public class Helper {
 			restartFlag = Database.getJsonData("restartFlag");
 		} catch (Exception e) {}
 		if (restartFlag == "true") {
-			Database.storeJsonData("restartFlag", "false");
+			try {
+				Database.storeJsonData("restartFlag", "false");
+			} catch (Exception e) {}
 			Helper.sendMessageAllChannels("Restart complete!");
 		}
 	}
