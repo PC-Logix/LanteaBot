@@ -609,6 +609,8 @@ public class Admin extends AbstractListener {
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(command);
+			Database.storeJsonData("restartFlag", "true");
+			Helper.sendMessageAllChannels("Restart initiated!");
 			p.waitFor();
 		} catch (IOException e) {
 			e.printStackTrace();

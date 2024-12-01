@@ -55,6 +55,12 @@ public class Helper {
 		//</editor-fold>
 
 		TablesOfRandomThings.initRandomTables();
+
+		String restartFlag = Database.getJsonData("restartFlag");
+		if (restartFlag == "true") {
+			Database.storeJsonData("restartFlag", "false");
+			Helper.sendMessageAllChannels("Restart complete!");
+		}
 	}
 
 	public static final Charset utf8 = Charset.forName("UTF-8");
@@ -367,6 +373,15 @@ public class Helper {
 			IRCBot.log.info("--> " + target + " " + targetUser.replaceAll("\\p{C}", "") + " " + message);
 		}
 		Helper.AntiPings = null;
+	}
+
+	public static void sendMessageAllChannels(String message) {
+		@SuppressWarnings("SqlResolve") ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
+		int rowCount = 0;
+		while (readChannels.next()) {
+			rowCount++;
+			sendMessage(readChannels.getString("name"), message);
+		}
 	}
 
 	public static List<String> splitString(String msg, int lineSize) {
