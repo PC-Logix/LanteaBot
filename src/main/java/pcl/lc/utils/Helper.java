@@ -381,11 +381,15 @@ public class Helper {
 	}
 
 	public static void sendMessageAllChannels(String message) {
-		@SuppressWarnings("SqlResolve") ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
-		int rowCount = 0;
-		while (readChannels.next()) {
-			rowCount++;
-			sendMessage(readChannels.getString("name"), message);
+		try {
+			@SuppressWarnings("SqlResolve") ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
+			int rowCount = 0;
+			while (readChannels.next()) {
+				rowCount++;
+				sendMessage(readChannels.getString("name"), message);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
