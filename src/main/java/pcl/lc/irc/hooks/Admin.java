@@ -612,7 +612,7 @@ public class Admin extends AbstractListener {
 			Database.storeJsonData("restartFlag", "true");
 			Helper.sendMessageAllChannels("Restart initiated!");
 			p.waitFor();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
