@@ -263,16 +263,21 @@ public class IRCBot {
 		
 		String restartFlag = "false";
 		try {
-			restartFlag = Database.getJsonData("restartFlag");
-		} catch (Exception e) {}
-		if (restartFlag == "true") {
-			try {
-				Database.storeJsonData("restartFlag", "false");
-				IRCBot.log.info("Trying to set restartFlag = false");
-			} catch (Exception e) {}
-			Helper.sendMessageAllChannels("Restart complete!");
-			IRCBot.log.info("restart complete");
+		    restartFlag = Database.getJsonData("restartFlag");
+		} catch (Exception e) {
+		    IRCBot.log.info("Error fetching restartFlag: " + e.getMessage(), e);
 		}
+		if (restartFlag.equals("true")) { // Use .equals() for string comparison
+		    try {
+		        Database.storeJsonData("restartFlag", "false");
+		        IRCBot.log.info("Trying to set restartFlag = false");
+		    } catch (Exception e) {
+		        IRCBot.log.info("Error setting restartFlag: " + e.getMessage(), e);
+		    }
+		    Helper.sendMessageAllChannels("Restart complete!");
+		    IRCBot.log.info("Restart complete");
+		}
+
 	}
 
 	private boolean initDatabase() throws SQLException {
