@@ -382,8 +382,8 @@ public class Helper {
 
 	public static void sendMessageAllChannels(String message) {
 
-		IRCBot.getUserChannelDao().getAllChannels().forEach(channel -> {
-            		IRCBot.sendIRC().message(channel.getName(), message);
+		IRCBot.bot.getUserChannelDao().getAllChannels().forEach(channel -> {
+            		IRCBot.bot.sendIRC().message(channel.getName(), message);
         	});
 		/*try {
 			@SuppressWarnings("SqlResolve") ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
