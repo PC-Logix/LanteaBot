@@ -63,8 +63,10 @@ public class Helper {
 		if (restartFlag == "true") {
 			try {
 				Database.storeJsonData("restartFlag", "false");
+				IRCBot.log.info("Trying to set restartFlag = false");
 			} catch (Exception e) {}
 			Helper.sendMessageAllChannels("Restart complete!");
+			IRCBot.log.info("restart complete");
 		}
 	}
 
@@ -383,6 +385,7 @@ public class Helper {
 	public static void sendMessageAllChannels(String message) {
 
 		IRCBot.bot.getUserChannelDao().getAllChannels().forEach(channel -> {
+			IRCBot.log.info("Sending message to: " . channel.getName());
             		IRCBot.bot.sendIRC().message(channel.getName(), message);
         	});
 		/*try {
