@@ -245,6 +245,19 @@ public class DrinkPotion extends AbstractListener {
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Sans-serif", "A"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Serif", "A"));
 		PotionHelper.addConsistencyEntry(new AppearanceEntry("Serif-only", "A")); // XKCD reference
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Crystal", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Glittery", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Fractured", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Crumbling", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Trapezoid", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Hexagonal", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Triangular", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Square", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Circular", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("2-dimensional", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("4th-dimensional", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("5th-dimensional", "A"));
+		PotionHelper.addConsistencyEntry(new AppearanceEntry("Nth-dimensional", "An"));
 		System.out.println("Registered " + consistencyEntries.size() + "consistencies!");
 
 		Function<EffectActionParameters, String> resetTimeout = new Function<EffectActionParameters, String>() {
