@@ -388,7 +388,7 @@ public class Helper {
 				rowCount++;
 				sendMessage(readChannels.getString("name"), message);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
