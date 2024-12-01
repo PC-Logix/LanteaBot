@@ -55,19 +55,6 @@ public class Helper {
 		//</editor-fold>
 
 		TablesOfRandomThings.initRandomTables();
-
-		String restartFlag = "false";
-		try {
-			restartFlag = Database.getJsonData("restartFlag");
-		} catch (Exception e) {}
-		if (restartFlag == "true") {
-			try {
-				Database.storeJsonData("restartFlag", "false");
-				IRCBot.log.info("Trying to set restartFlag = false");
-			} catch (Exception e) {}
-			Helper.sendMessageAllChannels("Restart complete!");
-			IRCBot.log.info("restart complete");
-		}
 	}
 
 	public static final Charset utf8 = Charset.forName("UTF-8");
