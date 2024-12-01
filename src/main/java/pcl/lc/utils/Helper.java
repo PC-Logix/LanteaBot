@@ -381,7 +381,11 @@ public class Helper {
 	}
 
 	public static void sendMessageAllChannels(String message) {
-		try {
+
+		IRCBot.getUserChannelDao().getAllChannels().forEach(channel -> {
+            		IRCBot.sendIRC().message(channel.getName(), message);
+        	});
+		/*try {
 			@SuppressWarnings("SqlResolve") ResultSet readChannels = Database.getConnection().createStatement().executeQuery("SELECT name FROM channels;");
 			int rowCount = 0;
 			while (readChannels.next()) {
@@ -390,7 +394,7 @@ public class Helper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	public static List<String> splitString(String msg, int lineSize) {
