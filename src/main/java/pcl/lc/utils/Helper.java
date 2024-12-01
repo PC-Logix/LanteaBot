@@ -56,7 +56,10 @@ public class Helper {
 
 		TablesOfRandomThings.initRandomTables();
 
-		String restartFlag = Database.getJsonData("restartFlag");
+		String restartFlag = "false";
+		try {
+			restartFlag = Database.getJsonData("restartFlag");
+		} catch (SQLException e) {}
 		if (restartFlag == "true") {
 			Database.storeJsonData("restartFlag", "false");
 			Helper.sendMessageAllChannels("Restart complete!");
