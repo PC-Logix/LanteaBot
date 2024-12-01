@@ -3,17 +3,11 @@
  */
 package pcl.lc.irc.hooks;
 
-import com.github.kevinsawicki.timeago.TimeAgo;
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.CharStreams;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
+import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.ServerResponseEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
@@ -30,14 +24,10 @@ import pcl.lc.utils.*;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Caitlyn
@@ -350,7 +340,7 @@ public class Admin extends AbstractListener {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				try {
-					restart();
+					restart(target);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -600,21 +590,58 @@ public class Admin extends AbstractListener {
 		}
 	}
 
-	public void restart() throws URISyntaxException, IOException, Exception {
-		relaunch();
+	public void restart(String target) throws URISyntaxException, IOException, Exception {
+		relaunch(target);
 	}
 
-	private static void relaunch() throws InterruptedException, UnsupportedEncodingException {
+	private static void relaunch(String target) throws InterruptedException, UnsupportedEncodingException {
 
 		String command = "/" + FilenameUtils.getPath(IRCBot.getThisJarFile().getAbsolutePath()) + "restart.sh";
 		Process p;
 		try {
-			Database.storeJsonData("restartFlag", "true");
-			Helper.sendMessageAllChannels("Restart initiated!");
+			Database.storeJsonData("restartFlag", target);
+			Helper.sendMessage(target,"Restart initiated!");
 			p = Runtime.getRuntime().exec(command);
 			p.waitFor();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	private final Set<String> channelsToJoin = new HashSet<>(Config.config.getAutoJoinChannels().keySet());
+
+
+	@Override
+	public void onJoin(JoinEvent event) {
+		// Check if the bot is the one joining
+		if (event.getUser().getNick().equals(event.getBot().getNick())) {
+			String channel = event.getChannel().getName();
+			channelsToJoin.remove(channel);
+			System.out.println("Joined channel: " + channel);
+			//event.getBot().getLogger().info("Joined channel: " + channel);
+
+			// Check if all channels are joined
+			if (channelsToJoin.isEmpty()) {
+				//event.getBot().getLogger().info("All channels joined!");
+				System.out.println("All channels joined!");
+				// Add your logic here when all channels are joined
+				String restartFlag = "false";
+				try {
+					IRCBot.log.info("Checking restartFlag");
+					restartFlag = Database.getJsonData("restartFlag");
+				} catch (Exception e) {
+					IRCBot.log.info("Error fetching restartFlag: " + e.getMessage(), e);
+				}
+				if (!restartFlag.equals("false")) { // Use .equals() for string comparison
+					try {
+						Database.storeJsonData("restartFlag", "false");
+						IRCBot.log.info("Trying to set restartFlag = false");
+					} catch (Exception e) {
+						IRCBot.log.info("Error setting restartFlag: " + e.getMessage(), e);
+					}
+					Helper.sendMessage(restartFlag, "Restart complete!");
+					IRCBot.log.info("Restart complete");
+				}
+			}
 		}
 	}
 }
