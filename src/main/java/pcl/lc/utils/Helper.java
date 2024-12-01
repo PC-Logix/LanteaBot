@@ -59,7 +59,7 @@ public class Helper {
 		String restartFlag = "false";
 		try {
 			restartFlag = Database.getJsonData("restartFlag");
-		} catch (SQLException e) {}
+		} catch (Exception e) {}
 		if (restartFlag == "true") {
 			Database.storeJsonData("restartFlag", "false");
 			Helper.sendMessageAllChannels("Restart complete!");
