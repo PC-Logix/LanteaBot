@@ -385,7 +385,7 @@ public class Helper {
 	public static void sendMessageAllChannels(String message) {
 
 		IRCBot.bot.getUserChannelDao().getAllChannels().forEach(channel -> {
-			IRCBot.log.info("Sending message to: " . channel.getName());
+			IRCBot.log.info("Sending message to: " + channel.getName());
             		IRCBot.bot.sendIRC().message(channel.getName(), message);
         	});
 		/*try {
