@@ -242,3 +242,4 @@ src/main/resources/jnlua/selene/init.lua
 src/main/resources/jnlua/selene/parser.lua
 config.default
 michibot.db-journal
+bot.db-journal
