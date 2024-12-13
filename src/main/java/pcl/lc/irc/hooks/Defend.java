@@ -6,6 +6,7 @@ import pcl.lc.irc.Permissions;
 import pcl.lc.irc.entryClasses.Command;
 import pcl.lc.irc.IRCBot;
 import pcl.lc.irc.entryClasses.*;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.*;
 
 import java.io.PrintWriter;
@@ -88,7 +89,7 @@ public class Defend extends AbstractListener {
 			public void run() {
 				parseEventQueue();
 			}
-		}, 0, 30, TimeUnit.SECONDS);
+		}, 0, 5, TimeUnit.SECONDS);
 	}
 
 	private Actions getActionByType(String type) {
@@ -240,11 +241,12 @@ public class Defend extends AbstractListener {
 
 	public static void parseEventQueue() {
 		try {
-			Date expiredIfAfter = new Date(new Date().getTime() + (reactionTimeMinutes * 60 * 1000));
 			ArrayList<DefendEvent> removeEvents = new ArrayList<>();
 			for (DefendEvent event : defendEventLog) {
 				try {
-					if (expiredIfAfter.after(event.time)) {
+					Date expirationTime = new Date(event.time.getTime() + (reactionTimeMinutes * 60 * 1000));
+
+					if (new Date().after(expirationTime)) {
 						Helper.sendMessage(event.target, event.result);
 						removeEvents.add(event);
 					}

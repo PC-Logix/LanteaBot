@@ -6,6 +6,7 @@ package pcl.lc.irc.hooks;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
+import pcl.lc.irc.entryClasses.CommandArgumentParser;
 import pcl.lc.utils.*;
 
 import java.util.ArrayList;
