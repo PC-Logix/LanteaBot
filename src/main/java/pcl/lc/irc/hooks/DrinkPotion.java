@@ -44,6 +44,7 @@ public class DrinkPotion extends AbstractListener {
 
 	public CommandRateLimit rateLimit;
 	public CommandRateLimit rateLimitSplash;
+	public CommandRateLimit rateLimitCombined;
 
 	public static int daysPotionsLast = 4;
 	public static String day_of_potioning = DateTime.now().plusDays(DrinkPotion.daysPotionsLast).toString("yyyy-MM-dd");
