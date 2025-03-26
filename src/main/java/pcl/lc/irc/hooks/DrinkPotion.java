@@ -687,7 +687,8 @@ public class DrinkPotion extends AbstractListener {
 	private void initCommands() {
 		rateLimit = new CommandRateLimit(0, 10, 0, true, false, "Having another potion seems like a really bad idea right now...");
 		rateLimitSplash = new CommandRateLimit(0, 10, 0, true, false, "You're way too tired to go throwing any potions right now...");
-		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Potion", "If potion is not specified uses a random potion. If it only contains either consistency or appearance the other is randomly chosen.")), rateLimit) {
+		rateLimitCombined = new CommandRateLimit(0, 30, 0, true, false, "The bottle feels really heavy for some reason...");
+		local_command = new Command("drink", new CommandArgumentParser(0, new CommandArgument(ArgumentTypes.STRING, "Potion", "If potion is not specified uses a random potion. If it only contains either consistency or appearance the other is randomly chosen.")), rateLimitCombined) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, ArrayList<String> params) {
 				String pot = this.argumentParser.getArgument("Potion");
@@ -730,7 +731,7 @@ public class DrinkPotion extends AbstractListener {
 		local_command.registerAlias("down");
 		local_command.registerAlias("slurp");
 
-		splash = new Command("splash", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Potion", "If potion is not specified uses a random potion. If it only contains either consistency or appearance the other is randomly chosen.")), rateLimitSplash) {
+		splash = new Command("splash", new CommandArgumentParser(1, new CommandArgument(ArgumentTypes.STRING, "Target"), new CommandArgument(ArgumentTypes.STRING, "Potion", "If potion is not specified uses a random potion. If it only contains either consistency or appearance the other is randomly chosen.")), rateLimitCombined) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				String splashTarget = this.argumentParser.getArgument("Target");
