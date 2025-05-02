@@ -349,9 +349,12 @@ public class DynamicCommands extends AbstractListener {
 	public static String parseDynCommandPlaceholders(String input, String user, String params) {
 		System.out.println("Parsing DynTags in: '" + input + "'");
 		if (input.contains("[randomitem]")) {
-			ArrayList<DbInventoryItem> items = DbInventoryItem.GetRandomItems(1).items;
-			if (items.size() == 1)
-				input = input.replace("[randomitem]", items.get(0).item_name);
+		    DbInventoryItemCollection allItems = DbInventoryItem.GetAll(true);
+		    if (!allItems.items.isEmpty()) {
+		        Random rand = new Random();
+		        DbInventoryItem randomItem = allItems.items.get(rand.nextInt(allItems.items.size()));
+		        input = input.replace("[randomitem]", randomItem.item_name);
+		    }
 		}
 		if (input.contains("[drama]")) {
 			input = input.replace("[drama]", Drama.dramaParse());
