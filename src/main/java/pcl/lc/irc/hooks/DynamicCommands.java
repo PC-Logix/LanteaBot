@@ -16,6 +16,7 @@ import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
 import pcl.lc.utils.db_items.DbCommand;
+import pcl.lc.utils.db_items.DbInventoryItem;
 
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -348,7 +349,7 @@ public class DynamicCommands extends AbstractListener {
 	public static String parseDynCommandPlaceholders(String input, String user, String params) {
 		System.out.println("Parsing DynTags in: '" + input + "'");
 		if (input.contains("[randomitem]")) {
-			ArrayList<InventoryItem> items = InventoryItem.GetRandomItems(1);
+			ArrayList<DbInventoryItem> items = DbInventoryItem.GetRandomItems(1);
 			if (items.size() == 1)
 				input = input.replace("[randomitem]", items.get(0).item_name);
 		}
