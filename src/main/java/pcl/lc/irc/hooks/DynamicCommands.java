@@ -16,6 +16,8 @@ import pcl.lc.irc.*;
 import pcl.lc.irc.entryClasses.*;
 import pcl.lc.utils.*;
 import pcl.lc.utils.db_items.DbCommand;
+import java.util.Random;
+import pcl.lc.utils.db_items.DbInventoryItemCollection;
 import pcl.lc.utils.db_items.DbInventoryItem;
 
 import javax.script.CompiledScript;
