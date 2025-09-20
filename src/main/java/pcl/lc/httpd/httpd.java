@@ -36,13 +36,20 @@ public class httpd {
      * @param handlerIn
      * @param pageName
      */
-	public static void registerContext(String route,  HttpHandler handlerIn, String pageName) {
-		if(server != null) {
-			IRCBot.log.info("Adding " + pageName + " to page list");
-			pages.put(pageName, route);
-			server.createContext(route, handlerIn);
-		}
-    }
+	public static void registerContext(String route, HttpHandler handlerIn, String pageName) {
+	     if (server != null) {
+             IRCBot.log.info("Adding " + pageName + " to page list");
+             pages.put(pageName, route);
+
+             // Wrap the handler so we always enforce content type
+             HttpHandler wrapped = exchange -> {
+                 exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+                 handlerIn.handle(exchange);
+             };
+
+             server.createContext(route, wrapped);
+         }
+	}
     
 	public static void start() throws Exception {
 		if(server != null) {
