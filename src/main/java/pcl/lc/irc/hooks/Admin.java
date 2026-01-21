@@ -344,16 +344,23 @@ public class Admin extends AbstractListener {
 		command_restart = new Command("restart", Permissions.EVERYONE) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				Duration timeElapsed = Duration.between(start_time, Instant.now());
 				boolean permissionOverride = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
-				if (permissionOverride || (timeElapsed.toMillis() < (1000 * 60 * 60 * 24))) {
+				if (!permissionOverride) {
 					try {
-						restart(target);
-					} catch (Exception e) {
-						e.printStackTrace();
+						Duration timeElapsed = Duration.between(start_time, Instant.now());
+						if (timeElapsed.toMillis() < (1000 * 60 * 60 * 24)) {
+							Helper.sendMessage(target, "Sorry, only an admin can restart the bot within 24 hours of startup.", nick);
+							return new CommandChainStateObject(CommandChainState.ERROR, "No permission");
+						}
+					} catch (NullPointerException e) {
+						Helper.sendMessage(target, "Start time wasn't set... so you're not allowed to restart I guess.", nick);
+						return new CommandChainStateObject(CommandChainState.ERROR, "No permission");
 					}
-				} else {
-					Helper.sendMessage(target, "Sorry, only an admin can restart the bot within 24 hours of startup.", nick);
+				}
+				try {
+					restart(target);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				return new CommandChainStateObject();
 			}
