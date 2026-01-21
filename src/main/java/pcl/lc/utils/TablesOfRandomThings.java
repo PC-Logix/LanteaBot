@@ -15,6 +15,7 @@ public class TablesOfRandomThings {
 	public static String[] hitLocations;
 	public static String[][] garbageItems;
 	public static String[][] animals;
+	public static String[][] objects;
 	public static String[] warpLocations;
 	public static String[] codeWords;
 	public static ArrayList<String[][]> smashTargets;
@@ -374,20 +375,33 @@ public class TablesOfRandomThings {
 			new String[]{"A", "Dryad", "s", null},
 			new String[]{"A", "Dragon", "s", null},
 			new String[]{"A", "Fairy", "ies", "1"},
-			new String[]{"A*", "Spaghetti", "", null},
-			new String[]{"A*", "Water", "", null},
-			new String[]{"A*", "Lava", "", null},
 			new String[]{"A", "Shark", "s", null},
 			new String[]{"An", "Otter", "s", null},
 			new String[]{"A", "Goat", "s", null},
 			new String[]{"A", "Sheep", "", null},
 			new String[]{"A", "Toad", "s", null},
-			new String[]{"A", "Sword", "s", null},
+			new String[]{"A", "Frog", "s", null},
 			new String[]{"A", "Bear", "s", null},
 			new String[]{"A", "Platypus", "i", "2"},
-			new String[]{"A", "Frog", "s", null},
 			new String[]{"An", "Octopus", "i", "3"},
-			new String[]{"A", "Unicorn", "s", null},
+			new String[]{"A", "Squirrel", "s", null},
+			new String[]{"A", "Seahorse", "s", null},
+			new String[]{"A", "Whale", "s", null}
+		};
+
+		objects = new String[][] {
+			//prefix, name, suffix, remove n characters from end before applying suffix
+			new String[]{"A*", "Spaghetti", "", null},
+			new String[]{"A*", "Water", "", null},
+			new String[]{"A*", "Lava", "", null},
+			new String[]{"A", "Sword", "s", null},
+			new String[]{"A", "Tree", "s", null},
+			new String[]{"A", "Plant", "s", null},
+			new String[]{"A", "Concrete", "", null},
+			new String[]{"A", "Rock", "s", null},
+			new String[]{"An", "Iron", "s", null},
+			new String[]{"A", "Steel", "s", null},
+			new String[]{"A", "Grass", "", null}
 		};
 
 		//Valid tags: {user},{appearance},{turn_appearance},{appearance:item},{consistency},{p_transformation},{transformation},{transformation2},{transformations},{transformations2}
