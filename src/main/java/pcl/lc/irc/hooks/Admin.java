@@ -345,7 +345,7 @@ public class Admin extends AbstractListener {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
 				Duration timeElapsed = Duration.between(start_time, Instant.now());
-				bool permissionOverride = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
+				boolean permissionOverride = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
 				if (permissionOverride || (timeElapsed.toMillis() < (1000 * 60 * 60 * 24))) {
 					try {
 						restart(target);
