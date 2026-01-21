@@ -674,7 +674,7 @@ public class TablesOfRandomThings {
 	}
 
 	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes) {
-		return getRandomTransformation(index, lower_case, prefix, plural, ignoreConditionalPrefixes, false);
+		return getRandomTransformation(lower_case, prefix, plural, ignoreConditionalPrefixes, false);
 	}
 
 	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes, boolean secondOrder) {
@@ -687,8 +687,8 @@ public class TablesOfRandomThings {
 				transformations.add(objects[i]);
 			}
 		}
-		int index = Helper.getRandomInt(0, transformations.length - 1);
-		return parseTransformationEntry(transformations[index], lower_case, prefix, plural, ignoreConditionalPrefixes);
+		int index = Helper.getRandomInt(0, transformations.size() - 1);
+		return parseTransformationEntry(transformations.get(index), lower_case, prefix, plural, ignoreConditionalPrefixes);
 	}
 
 	public static int getWarpLocationCount() {
