@@ -674,8 +674,7 @@ public class TablesOfRandomThings {
 	}
 
 	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes) {
-		int index = Helper.getRandomInt(0, animals.length - 1);
-		return getTransformationByIndex(index, lower_case, prefix, plural, ignoreConditionalPrefixes, false);
+		return getRandomTransformation(index, lower_case, prefix, plural, ignoreConditionalPrefixes, false);
 	}
 
 	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes, boolean secondOrder) {
