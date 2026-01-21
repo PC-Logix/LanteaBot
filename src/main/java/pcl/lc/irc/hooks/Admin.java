@@ -28,6 +28,8 @@ import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  * @author Caitlyn
@@ -66,8 +68,11 @@ public class Admin extends AbstractListener {
 	private Command command_ami;
 	private Command command_debug;
 
+	private Instant start_time = null;
+
 	@Override
 	protected void initHook() {
+		start_time = Instant.now();
 		Database.addStatement("CREATE TABLE IF NOT EXISTS Ignore(username PRIMARY KEY, time INTEGER)");
 		Database.addPreparedStatement("addIgnore", "INSERT INTO Ignore (username, time) VALUES (?, ?)");
 		Database.addPreparedStatement("removeIgnore", "DELETE FROM Ignore WHERE username = ?");
@@ -336,13 +341,19 @@ public class Admin extends AbstractListener {
 			}
 		};
 		command_ram.setHelpText("Returns current used ram.");
-		command_restart = new Command("restart", Permissions.ADMIN) {
+		command_restart = new Command("restart", Permissions.EVERYONE) {
 			@Override
 			public CommandChainStateObject onExecuteSuccess(Command command, String nick, String target, GenericMessageEvent event, String params) {
-				try {
-					restart(target);
-				} catch (Exception e) {
-					e.printStackTrace();
+				Duration timeElapsed = Duration.between(start_time, Instant.now());
+				bool permissionOverride = Permissions.hasPermission(IRCBot.bot, (MessageEvent) event, Permissions.ADMIN);
+				if (permissionOverride || (timeElapsed.toMillis() < (1000 * 60 * 60 * 24))) {
+					try {
+						restart(target);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					Helper.sendMessage(target, "Sorry, only an admin can restart the bot within 24 hours of startup.", nick);
 				}
 				return new CommandChainStateObject();
 			}
