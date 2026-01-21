@@ -656,25 +656,17 @@ public class TablesOfRandomThings {
 		return animals.length;
 	}
 
-	public static String getTransformationByIndex(int index) {
-		return getTransformationByIndex(index, false, false, false, true);
-	}
-
-	public static String getTransformationByIndex(int index, boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes) {
+	public static String parseTransformationEntry(String[] transformation, boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes) {
 		String ret = "";
-		try {
-			String[] transformation = animals[index];
-			if (!plural) {
-				ret = (prefix && !transformation[0].equals("") && !(ignoreConditionalPrefixes && transformation[0].contains("*")) ? transformation[0].replaceAll("\\*", "") + " " : "") + transformation[1];
-			} else {
-				if (transformation[3] != null)
-					ret = transformation[1].substring(0, transformation[1].length() - Integer.parseInt(transformation[3])) + transformation[2];
-				else
-					ret = transformation[1] + transformation[2];
-			}
-		} catch (Exception ignored) {
+		if (!plural) {
+			ret = (prefix && !transformation[0].equals("") && !(ignoreConditionalPrefixes && transformation[0].contains("*")) ? transformation[0].replaceAll("\\*", "") + " " : "") + transformation[1];
+		} else {
+			if (transformation[3] != null)
+				ret = transformation[1].substring(0, transformation[1].length() - Integer.parseInt(transformation[3])) + transformation[2];
+			else
+				ret = transformation[1] + transformation[2];
 		}
-		return !lower_case ? ret : ret.toLowerCase();
+		return ret;
 	}
 
 	public static String getRandomTransformation() {
@@ -683,7 +675,21 @@ public class TablesOfRandomThings {
 
 	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes) {
 		int index = Helper.getRandomInt(0, animals.length - 1);
-		return getTransformationByIndex(index, lower_case, prefix, plural, ignoreConditionalPrefixes);
+		return getTransformationByIndex(index, lower_case, prefix, plural, ignoreConditionalPrefixes, false);
+	}
+
+	public static String getRandomTransformation(boolean lower_case, boolean prefix, boolean plural, boolean ignoreConditionalPrefixes, boolean secondOrder) {
+		ArrayList<String[]> transformations = new ArrayList<String[]>();
+		for (int i = 0; i < animals.length; i++) {
+			transformations.add(animals[i]);
+		}
+		if (!secondOrder) {
+			for (int i = 0; i < objects.length; i++) {
+				transformations.add(objects[i]);
+			}
+		}
+		int index = Helper.getRandomInt(0, transformations.length - 1);
+		return parseTransformationEntry(transformations[index], lower_case, prefix, plural, ignoreConditionalPrefixes);
 	}
 
 	public static int getWarpLocationCount() {
