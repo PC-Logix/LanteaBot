@@ -345,14 +345,14 @@ public class PotionHelper {
 			return input;
 		}),
 		TRANSFORMATION_2("transformation2", "{transformation2}", "Returns a random transformation, in lowercase, without prefix. Used to have two different transformations in one string.", true, (input) -> {
-			String transformation = TablesOfRandomThings.getRandomTransformation(true, false, false, true);
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, false, false, true, true);
 			for (int i = 0; i < input.length; i++)
 				if (input[i] != null)
 					input[i] = input[i].replace("{transformation2}", transformation);
 			return input;
 		}),
 		TRANSFORMATION_2_PREFIX("transformation2_p", "{transformation2_p}", "Returns a random transformation, in lowercase, with prefix. Used to have two different transformations in one string.", true, (input) -> {
-			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, false, true);
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, false, true, true);
 			for (int i = 0; i < input.length; i++)
 				if (input[i] != null)
 					input[i] = input[i].replace("{transformation2_p}", transformation);
@@ -373,14 +373,14 @@ public class PotionHelper {
 			return input;
 		}),
 		TRANSFORMATIONS_2("transformations2", "{transformations2}", "A transformation in plural, such as \"cats\", in lowercase, without prefix. Used to have two different transformations in one string.", true, (input) -> {
-			String transformation = TablesOfRandomThings.getRandomTransformation(true, false, true, true);
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, false, true, true, true);
 			for (int i = 0; i < input.length; i++)
 				if (input[i] != null)
 					input[i] = input[i].replace("{transformations2}", transformation);
 			return input;
 		}),
 		TRANSFORMATIONS_2_PREFIX("transformations2_p", "{transformations2_p}", "A transformation in plural, such as \"cats\", in lowercase, with prefix. Used to have two different transformations in one string.", true, (input) -> {
-			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, true, true);
+			String transformation = TablesOfRandomThings.getRandomTransformation(true, true, true, true, true);
 			for (int i = 0; i < input.length; i++)
 				if (input[i] != null)
 					input[i] = input[i].replace("{transformations2_p}", transformation);
