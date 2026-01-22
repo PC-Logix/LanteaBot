@@ -68,7 +68,7 @@ public class Admin extends AbstractListener {
 	private Command command_ami;
 	private Command command_debug;
 
-	private Instant start_time = null;
+	private Instant start_time;
 
 	@Override
 	protected void initHook() {
