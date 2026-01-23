@@ -666,6 +666,8 @@ public class TablesOfRandomThings {
 			else
 				ret = transformation[1] + transformation[2];
 		}
+		if (lower_case)
+			return ret.toLowerCase();
 		return ret;
 	}
 
