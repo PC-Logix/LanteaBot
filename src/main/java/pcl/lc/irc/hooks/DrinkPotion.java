@@ -78,7 +78,7 @@ public class DrinkPotion extends AbstractListener {
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Silver", "A", "{appearance} colored {item}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Copper", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Iron", "An", "{appearance} colored {item}", "the color of {appearance}"));
-		PotionHelper.addAppearanceEntry(new AppearanceEntry("Stainless steel", "A", "{appearance} colored {item}", "the color of {appearance}"));
+		PotionHelper.addAppearanceEntry(new AppearanceEntry("Steel", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Aluminium", "An", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Titanium", "A", "{appearance} colored {item}", "the color of {appearance}"));
 		PotionHelper.addAppearanceEntry(new AppearanceEntry("Platinum", "A", "{appearance} colored {item}", "the color of {appearance}"));
@@ -624,11 +624,15 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they use \"{codeword}\" in a sentence");
 		limits.add(" until they use \"{codeword} {codeword2}\" in a sentence");
 		limits.add(" until they exit the room");
-		limits.add(" until they see a bird");
 		limits.add(" for {r:1-10:moon}");
 		limits.add(" until Sozin's Comet returns");
 		limits.add(" until they see a unicorn");
+		limits.add(" until they see a bird");
+		limits.add(" until they see a cat");
+		limits.add(" until they see a dog");
+		limits.add(" until they see a moose");
 		limits.add(" until they see a star fall");
+		limits.add(" until they see a pie");
 		limits.add(" until they eat a pie");
 		limits.add(" until they have an apple");
 		limits.add(" until they have a nap");
@@ -649,7 +653,6 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until they steal a shoe");
 		limits.add(" until they steal a lamp");
 		limits.add(" until they steal the moon");
-		limits.add(" until they steal the concept of stealing");
 		limits.add(" until they download a car");
 		limits.add(" until hell freezes over");
 		limits.add(" until hell has a mild winter");
@@ -661,6 +664,22 @@ public class DrinkPotion extends AbstractListener {
 		limits.add(" until someone turns on a lamp");
 		limits.add(" until someone turns on a lamp and then off again");
 		limits.add(" until someone turns off a lamp and then on again");
+		limits.add(" until they run in a circle for {r:1-10:minute}");
+		limits.add(" until they run in a square for {r:1-10:minute}");
+		limits.add(" until they run in a triangle for {r:1-10:minute}");
+		limits.add(" until they find a great tresure");
+		limits.add(" until they find a small tresure");
+		limits.add(" until they spot a leaf");
+		limits.add(" until they spot a cloud");
+		limits.add(" until they move");
+		limits.add(" until they lay down");
+		limits.add(" until they get up");
+		limits.add(" until they go downstairs");
+		limits.add(" until they go upstairs");
+		limits.add(" until they go outside");
+		limits.add(" until they go inside");
+		limits.add(" until they go to bed");
+		limits.add(" until they p̸̮̪͗͝r̶̛̺͕ä̸̡y̴̢̮̚ ̵͎̉ẗ̴̹̜̊o̷̭͕͝ ̵̰̟̾t̶̩̿̎h̸̗̝̾͠ĕ̵̝ ̶̺̓͛ṿ̸̓o̵̗͔̎ǐ̵̱d̷͈̤̅");
 
 		//Valid tags: {user},{appearance},{appearance_p},{turn_appearance},{appearance:<item>:p},{consistency},{consistency_p},{transformation},{transformation2},{transformations},{transformations2},{limit}
 		specialFluids.put("water", new EffectEntry("{user} drinks some water. Wait... this isn't water... it's {consistency_p_lc} {appearance_lc} potion!", "You splash {user} with some water. Wait... this isn't water... it's {consistency_p_lc} {appearance_lc} potion!"));
